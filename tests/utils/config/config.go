@@ -1,7 +1,9 @@
 package config
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -29,8 +31,11 @@ func NewConfig() (*Config, error) {
 	var c Config
 	_, filename, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
-	confFile := filepath.Join(baseDir, FileConfigPath)
-	err := readFile(&c, confFile)
+	confFile, err := checkFileExists(baseDir, FileConfigPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = readFile(&c, confFile)
 	if err != nil {
 		return nil, err
 	}
@@ -70,4 +75,15 @@ func readEnv(c *Config) error {
 func (c *Config) GetReportPath(file string) string {
 	reportFileName := strings.TrimSuffix(filepath.Base(file), filepath.Ext(filepath.Base(file)))
 	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
+}
+
+func checkFileExists(filePath, name string) (string, error) {
+	fullPath, _ := filepath.Abs(filepath.Join(filePath, name))
+	if _, err := os.Stat(fullPath); err == nil {
+		return fullPath, nil
+	} else if errors.Is(err, os.ErrNotExist) {
+		return "", fmt.Errorf("path to %s file not found: %s , Exiting", name, fullPath)
+	} else {
+		return "", fmt.Errorf("path to %s file not valid: %s , err=%s, exiting", name, fullPath, err)
+	}
 }
