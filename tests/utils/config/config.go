@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"log"
 	"os"
 	"path/filepath"
@@ -75,6 +76,15 @@ func readEnv(c *Config) error {
 func (c *Config) GetReportPath(file string) string {
 	reportFileName := strings.TrimSuffix(filepath.Base(file), filepath.Ext(filepath.Base(file)))
 	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
+}
+
+// DefineClients sets client and return it's instance
+func DefineClients() (*testclient.ClientSet, error) {
+	clients := testclient.New("")
+	if clients == nil {
+		return nil, fmt.Errorf("client is not set please check KUBECONFIG env variable")
+	}
+	return clients, nil
 }
 
 func checkFileExists(filePath, name string) (string, error) {
