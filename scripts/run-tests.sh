@@ -2,6 +2,7 @@
 
 GOPATH="${GOPATH:-~/go}"
 export PATH=$PATH:$GOPATH/bin
+export ACK_GINKGO_DEPRECATIONS=1.16.5
 EXCLUDED_FOLDERS=""
 ALL_TESTS_FOLDERS=$(ls -d ./tests/*/)
 
