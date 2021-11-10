@@ -48,7 +48,7 @@ func New(kubeconfig string) *ClientSet {
 		config, err = rest.InClusterConfig()
 	}
 	if err != nil {
-		return nil
+		panic(err)
 	}
 
 	clientSet := &ClientSet{}

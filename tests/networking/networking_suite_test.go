@@ -1,6 +1,7 @@
 package networking
 
 import (
+	"flag"
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 	. "github.com/onsi/gomega"
@@ -28,6 +29,9 @@ func TestNetworking(t *testing.T) {
 		return
 	}
 
+	_ = flag.Lookup("logtostderr").Value.Set("true")
+	_ = flag.Lookup("v").Value.Set(configSuite.General.LogLevel)
+
 	junitPath := configSuite.GetReportPath(currentFile)
 	RegisterFailHandler(Fail)
 	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
@@ -40,10 +44,10 @@ var _ = BeforeSuite(func() {
 		isClusterReady, err := cluster.IsClusterStable(globalhelper.ApiClient)
 		Expect(err).ToNot(HaveOccurred())
 		return isClusterReady
-	}, WaitingTime, 5*time.Second).Should(BeTrue())
+	}, WaitingTime, RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err := nodes.WaitForNodesReady(globalhelper.ApiClient, WaitingTime, 5)
+	err := nodes.WaitForNodesReady(globalhelper.ApiClient, WaitingTime, RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
 	By(fmt.Sprintf("Create %s namespace", TestNetworkingNameSpace))

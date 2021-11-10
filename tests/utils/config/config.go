@@ -3,8 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
+	"github.com/golang/glog"
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -24,6 +24,7 @@ type Config struct {
 	General struct {
 		ReportDirAbsPath string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
 		CnfNodeLabel     string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
+		LogLevel         string `yaml:"log_level" envconfig:"LOG_LEVEL"`
 	} `yaml:"general"`
 }
 
@@ -34,7 +35,7 @@ func NewConfig() (*Config, error) {
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
 	confFile, err := checkFileExists(baseDir, FileConfigPath)
 	if err != nil {
-		log.Fatal(err)
+		glog.Fatal(err)
 	}
 	err = readFile(&c, confFile)
 	if err != nil {

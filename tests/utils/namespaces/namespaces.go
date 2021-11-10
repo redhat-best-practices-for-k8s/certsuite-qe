@@ -48,18 +48,29 @@ func DeleteAndWait(cs *testclient.ClientSet, namespace string, timeout time.Dura
 	return WaitForDeletion(cs, namespace, timeout)
 }
 
-// Exists tells whether the given namespace exists
-func Exists(namespace string, cs *testclient.ClientSet) bool {
+func Exists(namespace string, cs *testclient.ClientSet) (bool, error) {
 	_, err := cs.Namespaces().Get(context.Background(), namespace, metav1.GetOptions{})
-	return err == nil || !k8serrors.IsNotFound(err)
+	if err == nil {
+		return true, nil
+	} else {
+		if k8serrors.IsNotFound(err) {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
 }
 
 // CleanPods deletes all pods in namespace
 func CleanPods(namespace string, cs *testclient.ClientSet) error {
-	if !Exists(namespace, cs) {
+	nsExist, err := Exists(namespace, cs)
+	if err != nil {
+		return err
+	}
+	if !nsExist {
 		return nil
 	}
-	err := cs.Pods(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+	err = cs.Pods(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64Ptr(0),
 	}, metav1.ListOptions{})
 	if err != nil {
@@ -69,10 +80,6 @@ func CleanPods(namespace string, cs *testclient.ClientSet) error {
 }
 
 // Clean cleans all dangling objects from the given namespace.
-func Clean(operatorNamespace, namespace string, cs *testclient.ClientSet, discoveryEnabled bool) error {
-	err := CleanPods(namespace, cs)
-	if err != nil {
-		return err
-	}
-	return err
+func Clean(namespace string, cs *testclient.ClientSet) error {
+	return CleanPods(namespace, cs)
 }

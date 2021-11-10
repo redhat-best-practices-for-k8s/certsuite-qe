@@ -2,3 +2,4 @@
 general:
   report: reports/
   cnf_worker_label: "node-role.kubernetes.io/worker-cnf"
+  log_level: 4

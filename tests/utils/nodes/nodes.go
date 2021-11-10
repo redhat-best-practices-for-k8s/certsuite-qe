@@ -2,11 +2,11 @@ package nodes
 
 import (
 	"context"
+	"github.com/golang/glog"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"log"
 	"time"
 )
 
@@ -22,7 +22,7 @@ func WaitForNodesReady(cs *client.ClientSet, timeout, interval time.Duration) er
 				return false, nil
 			}
 		}
-		log.Println("All nodes are Ready")
+		glog.V(4).Info("All nodes are Ready")
 		return true, nil
 	})
 }
