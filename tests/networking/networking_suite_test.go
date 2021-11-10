@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 	. "github.com/onsi/gomega"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"time"
 
@@ -44,19 +45,19 @@ var _ = BeforeSuite(func() {
 		isClusterReady, err := cluster.IsClusterStable(globalhelper.ApiClient)
 		Expect(err).ToNot(HaveOccurred())
 		return isClusterReady
-	}, WaitingTime, RetryInterval*time.Second).Should(BeTrue())
+	}, netparameters.WaitingTime, netparameters.RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err := nodes.WaitForNodesReady(globalhelper.ApiClient, WaitingTime, RetryInterval)
+	err := nodes.WaitForNodesReady(globalhelper.ApiClient, netparameters.WaitingTime, netparameters.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
-	By(fmt.Sprintf("Create %s namespace", TestNetworkingNameSpace))
-	err = namespaces.Create(TestNetworkingNameSpace, globalhelper.ApiClient)
+	By(fmt.Sprintf("Create %s namespace", netparameters.TestNetworkingNameSpace))
+	err = namespaces.Create(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
 	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
-	By(fmt.Sprintf("Remove %s namespace", TestNetworkingNameSpace))
-	err := namespaces.DeleteAndWait(globalhelper.ApiClient, TestNetworkingNameSpace, WaitingTime)
+	By(fmt.Sprintf("Remove %s namespace", netparameters.TestNetworkingNameSpace))
+	err := namespaces.DeleteAndWait(globalhelper.ApiClient, netparameters.TestNetworkingNameSpace, netparameters.WaitingTime)
 	Expect(err).ToNot(HaveOccurred())
 })
