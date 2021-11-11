@@ -3,7 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
-	"log"
+	"github.com/golang/glog"
+	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -23,6 +24,7 @@ type Config struct {
 	General struct {
 		ReportDirAbsPath string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
 		CnfNodeLabel     string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
+		LogLevel         string `yaml:"log_level" envconfig:"LOG_LEVEL"`
 	} `yaml:"general"`
 }
 
@@ -33,7 +35,7 @@ func NewConfig() (*Config, error) {
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
 	confFile, err := checkFileExists(baseDir, FileConfigPath)
 	if err != nil {
-		log.Fatal(err)
+		glog.Fatal(err)
 	}
 	err = readFile(&c, confFile)
 	if err != nil {
@@ -75,6 +77,15 @@ func readEnv(c *Config) error {
 func (c *Config) GetReportPath(file string) string {
 	reportFileName := strings.TrimSuffix(filepath.Base(file), filepath.Ext(filepath.Base(file)))
 	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
+}
+
+// DefineClients sets client and return it's instance
+func DefineClients() (*testclient.ClientSet, error) {
+	clients := testclient.New("")
+	if clients == nil {
+		return nil, fmt.Errorf("client is not set please check KUBECONFIG env variable")
+	}
+	return clients, nil
 }
 
 func checkFileExists(filePath, name string) (string, error) {
