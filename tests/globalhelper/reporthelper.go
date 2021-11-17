@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -22,7 +22,7 @@ func OpenClaimReport() (*claim.Root, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s report file: %s", globalparameters.DefaultClaimFileName, err)
 	}
-	byteValueClaim, err := ioutil.ReadAll(dataClaim)
+	byteValueClaim, err := io.ReadAll(dataClaim)
 	if err != nil {
 		return nil, fmt.Errorf("error reading %s report file: %s", globalparameters.DefaultClaimFileName, err)
 	}
@@ -45,7 +45,7 @@ func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s report file: %s", globalparameters.DefaultJunitReportName, err)
 	}
-	junitReportByte, err := ioutil.ReadAll(junitReportFile)
+	junitReportByte, err := io.ReadAll(junitReportFile)
 	if err != nil {
 		return nil, fmt.Errorf("error reading %s report file: %s", globalparameters.DefaultJunitReportName, err)
 	}

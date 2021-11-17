@@ -16,7 +16,9 @@ func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string
 	if len(namespaces) < 1 {
 		return fmt.Errorf("target namespaces cannot be empty list")
 	}
-
+	if config == nil {
+		return fmt.Errorf("config struct cannot be nil")
+	}
 	for _, namespace := range namespaces {
 		config.TargetNameSpaces = append(config.TargetNameSpaces, globalparameters.TargetNameSpaces{
 			Name: namespace,
