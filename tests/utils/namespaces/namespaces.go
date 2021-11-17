@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/golang/glog"
+
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	k8sv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -19,6 +21,7 @@ func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Durat
 	return wait.PollImmediate(time.Second, timeout, func() (bool, error) {
 		_, err := cs.Namespaces().Get(context.Background(), nsName, metav1.GetOptions{})
 		if errors.IsNotFound(err) {
+			glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
 			return true, nil
 		}
 		return false, nil
@@ -34,6 +37,7 @@ func Create(namespace string, cs *testclient.ClientSet) error {
 		}}, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("namespaces %s already installed", namespace))
 		return nil
 	}
 	return err
@@ -79,7 +83,33 @@ func CleanPods(namespace string, cs *testclient.ClientSet) error {
 	return err
 }
 
+// CleanDeployments deletes all pods in namespace
+func CleanDeployments(namespace string, cs *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, cs)
+	if err != nil {
+		return err
+	}
+	if !nsExist {
+		return nil
+	}
+	err = cs.Deployments(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+		GracePeriodSeconds: pointer.Int64Ptr(0),
+	}, metav1.ListOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to deployment pods %v", err)
+	}
+	return err
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, cs *testclient.ClientSet) error {
-	return CleanPods(namespace, cs)
+	err := CleanPods(namespace, cs)
+	if err != nil {
+		return err
+	}
+	err = CleanDeployments(namespace, cs)
+	if err != nil {
+		return err
+	}
+	return err
 }
