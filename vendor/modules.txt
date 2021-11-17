@@ -96,6 +96,9 @@ github.com/openshift/client-go/config/clientset/versioned/typed/config/v1
 github.com/pkg/errors
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
+# github.com/test-network-function/test-network-function-claim v1.0.5
+## explicit
+github.com/test-network-function/test-network-function-claim/pkg/claim
 # golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
 ## explicit
 golang.org/x/net/context

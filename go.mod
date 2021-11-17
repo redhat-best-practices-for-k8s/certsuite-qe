@@ -10,6 +10,7 @@ require (
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.17.0
 	github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47
+	github.com/test-network-function/test-network-function-claim v1.0.5
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/sys v0.0.0-20211107104306-e0b2ad06fe42 // indirect
 	gopkg.in/yaml.v2 v2.4.0
