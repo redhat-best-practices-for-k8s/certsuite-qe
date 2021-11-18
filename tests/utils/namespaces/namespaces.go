@@ -96,7 +96,7 @@ func CleanDeployments(namespace string, cs *testclient.ClientSet) error {
 		GracePeriodSeconds: pointer.Int64Ptr(0),
 	}, metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to deployment pods %v", err)
+		return fmt.Errorf("failed to delete deployment %v", err)
 	}
 	return err
 }
