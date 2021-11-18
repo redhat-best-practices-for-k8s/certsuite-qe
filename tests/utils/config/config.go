@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -41,6 +42,7 @@ func NewConfig() (*Config, error) {
 	var c Config
 	_, filename, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
+	log.Println(baseDir)
 	confFile, err := checkFileExists(baseDir, FileConfigPath)
 	if err != nil {
 		glog.Fatal(err)
@@ -130,6 +132,11 @@ func DefineClients() (*testclient.ClientSet, error) {
 }
 
 func checkFileExists(filePath, name string) (string, error) {
+	if !filepath.IsAbs(filePath) {
+		return "", fmt.Errorf(
+			"make sure env var TNF_REPO_PATH is configured with absolute path instead of relative",
+			)
+	}
 	fullPath, _ := filepath.Abs(filepath.Join(filePath, name))
 	if _, err := os.Stat(fullPath); err == nil {
 		return fullPath, nil
@@ -150,7 +157,7 @@ func deployTnfDir(confFileName string, dirName string, yamlTag string, envVar st
 	}
 	if err != nil {
 		return fmt.Errorf(
-			"error to verify %s directory. Check if either %s is present in %s or "+
+			"error in verifying the %s directory. Check if either %s is present in %s or "+
 				"%s env var is set", dirName, yamlTag, envVar, confFileName)
 	}
 

@@ -73,7 +73,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			junitTestReport,
 			netparameters.TestCaseDefaultNetworkName)).To(BeTrue())
 
-		By("Verify test case status in clam report file")
+		By("Verify test case status in claim report file")
 		claimReport, err := globalhelper.OpenClaimReport()
 		Expect(err).ToNot(HaveOccurred())
 		testPassed, err := globalhelper.IsTestCasePassedInClaimReport(

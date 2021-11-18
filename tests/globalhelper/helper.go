@@ -20,7 +20,7 @@ func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string
 		return fmt.Errorf("config struct cannot be nil")
 	}
 	for _, namespace := range namespaces {
-		config.TargetNameSpaces = append(config.TargetNameSpaces, globalparameters.TargetNameSpaces{
+		config.TargetNameSpaces = append(config.TargetNameSpaces, globalparameters.TargetNameSpace{
 			Name: namespace,
 		})
 	}
@@ -46,7 +46,7 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 		name := strings.TrimSpace(nameValue[0])
 		value := strings.TrimSpace(nameValue[1])
 
-		config.TargetPodLabels = append(config.TargetPodLabels, globalparameters.PodLabels{
+		config.TargetPodLabels = append(config.TargetPodLabels, globalparameters.PodLabel{
 			Prefix: prefix,
 			Name:   name,
 			Value:  value,
