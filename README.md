@@ -30,6 +30,11 @@ Optional:
 
 #### Environment variables
 * `FEATURES` - select the test scenarios that you are going to test, comma separated
+* `TNF_REPO_PATH` - absolute path to  [test-network-function](https://github.com/test-network-function/test-network-function) on your machine
+* `TNF_IMAGE` - link to tnf image. Default is quay.io/testnetworkfunction/test-network-function
+* `TNF_IMAGE_TAG` - image tag that is going to be tested. Default is latest
+* `LOG_LEVEL` - Log level. Default is 4
+* `TEST_IMAGE` - Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
 
 #### Available features
 The list of available features:
@@ -56,7 +61,11 @@ Below is an e2e flow example:
 
 3. Download and install needed dependencies - `make install`
 
-4. Run all tests - `make test-all`
+4. Define absolute path to [test-network-function](https://github.com/test-network-function/test-network-function) project on you computer by setting environment variable: `export TNF_REPO_PATH=/path/to/project/test-network-function`
+
+5. OPTIONAL: Set test-network-function container tag that you are going to test. Default is latest. `export TNF_IMAGE_TAG=unstable` 
+
+6. Run all tests - `make test-all`
 
 
 # cnfcert-tests-verification - How to contribute
@@ -81,16 +90,16 @@ The project uses a development method - forking workflow
     ├── scripts                        # Makefile Scripts 
     ├── tests                          # Test cases directory
     │   ├── networking                 # Networking test cases directory
-    │   │   ├── networkinghelper       # Networking common test function
-    │   │   ├── networkingparameters   # Networking constans and parameters 
+    │   │   ├── nethelper       # Networking common test function
+    │   │   ├── netparameters   # Networking constans and parameters 
     │   │   └── tests                  # Networking test suite directory
     │   ├── platform                   # Platform test cases directory
     │   │   ├── platformghelper        # Platform common test function
     │   │   ├── platformparameters     # Platform constans and parameters
     │   │   └── tests                  # Platform test suite directory
-    │   ├── helper                     # Common test test function
-    │   ├── parameters                 # Common test function
-    │   └── units                      # Common utils functions. These utils are based on Kubernetes api calls
+    │   ├── globalhelper                     # Common test test function
+    │   ├── globalparameters                 # Common test function
+    │   └── utils                      # Common utils functions. These utils are based on Kubernetes api calls
     │       ├── client
     │       ├── config
     │       ├── node
