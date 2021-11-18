@@ -3,3 +3,9 @@ general:
   report: reports/
   cnf_worker_label: "node-role.kubernetes.io/worker-cnf"
   log_level: 4
+  test_image: "quay.io/testnetworkfunction/cnf-test-partner"
+  tnf_entry_point_script: "run-tnf-container.sh"
+  tnf_config_dir: "/tmp/tnf_config"
+  tnf_report_dir: "/tmp/tnf_report"
+  tnf_image: "quay.io/testnetworkfunction/test-network-function"
+  tnf_image_tag: "stable"
