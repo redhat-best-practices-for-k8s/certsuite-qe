@@ -8,4 +8,4 @@ general:
   tnf_config_dir: "/tmp/tnf_config"
   tnf_report_dir: "/tmp/tnf_report"
   tnf_image: "quay.io/testnetworkfunction/test-network-function"
-  tnf_image_tag: "stable"
+  tnf_image_tag: "latest"
