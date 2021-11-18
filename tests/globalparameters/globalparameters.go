@@ -4,8 +4,8 @@ import "encoding/xml"
 
 type (
 	TnfConfig struct {
-		TargetNameSpaces       []TargetNameSpace           `yaml:"targetNameSpaces" json:"targetNameSpaces"`
-		TargetPodLabels        []PodLabel                  `yaml:"targetPodLabels" json:"targetPodLabels"`
+		TargetNameSpaces       []TargetNameSpace            `yaml:"targetNameSpaces" json:"targetNameSpaces"`
+		TargetPodLabels        []PodLabel                   `yaml:"targetPodLabels" json:"targetPodLabels"`
 		Certifiedcontainerinfo []CertifiedContainerRepoInfo `yaml:"certifiedcontainerinfo" json:"certifiedcontainerinfo"`
 		Certifiedoperatorinfo  []CertifiedOperatorRepoInfo  `yaml:"certifiedoperatorinfo" json:"certifiedoperatorinfo"`
 	}

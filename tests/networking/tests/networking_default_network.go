@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"os"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -13,7 +14,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
@@ -28,6 +28,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Clean namespace before all tests")
 		err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+		Expect(err).ToNot(HaveOccurred())
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -45,18 +47,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	// 45440
 	It("3 custom pods on Default network networking-icmpv4-connectivity", func() {
 
-		By("Define deployment")
-		deploymentUnderTest := deployment.RedefineWithReplicaNumber(
-			deployment.DefineDeployment(
-				netparameters.TestNetworkingNameSpace,
-				configSuite.General.TestImage,
-				netparameters.TestDeploymentLabels),
-			3)
-
-		By("Create Deployment on cluster")
-		err := nethelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
-		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -66,25 +58,39 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit report")
-		junitTestReport, err := globalhelper.OpenJunitTestReport()
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(netparameters.TestCaseDefaultNetworkName)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(globalhelper.IsTestCasePassedInJunitReport(
-			junitTestReport,
-			netparameters.TestCaseDefaultNetworkName)).To(BeTrue())
-
-		By("Verify test case status in claim report file")
-		claimReport, err := globalhelper.OpenClaimReport()
-		Expect(err).ToNot(HaveOccurred())
-		testPassed, err := globalhelper.IsTestCasePassedInClaimReport(
-			netparameters.TestCaseDefaultNetworkName,
-			*claimReport)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(testPassed).To(BeTrue())
 	})
 
 	// 45441
 	It("custom daemonset, 4 custom pods on Default network", func() {
+
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentOnCluster(2)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define daemonSet")
+		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.DefineDaemonSet(
+			netparameters.TestNetworkingNameSpace,
+			configSuite.General.TestImage,
+			netparameters.TestDeploymentLabels,
+		), map[string]string{configSuite.General.CnfNodeLabel: ""})
+
+		By("Create DaemonSet on cluster")
+		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(netparameters.TestCaseDefaultNetworkName)
+		Expect(err).ToNot(HaveOccurred())
 
 	})
 
