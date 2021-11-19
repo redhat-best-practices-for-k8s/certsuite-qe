@@ -83,3 +83,19 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
 		globalparameters.DefaultTnfConfigFileName, Configuration.General.TnfConfigDir))
 	return err
 }
+
+// IsExpectedStatusParamValid validates if requested test status is valid
+func IsExpectedStatusParamValid(status string) error {
+	return validateIfParamInAllowedListOfParams(
+		status,
+		[]string{globalparameters.TestCaseFailed, globalparameters.TestCasePassed, globalparameters.TestCaseSkipped})
+}
+
+func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []string) error {
+	for _, allowedParameter := range listOfParameters {
+		if allowedParameter == parameter {
+			return nil
+		}
+	}
+	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
+}

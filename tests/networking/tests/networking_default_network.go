@@ -2,18 +2,17 @@ package tests
 
 import (
 	"fmt"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"os"
-
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
@@ -59,7 +58,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(netparameters.TestCaseDefaultNetworkName)
+		err = nethelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseDefaultNetworkName,
+			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -89,15 +90,41 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(netparameters.TestCaseDefaultNetworkName)
+		err = nethelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseDefaultNetworkName,
+			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 45442
 	It("3 custom pods on Default network networking-icmpv4-connectivity fail when one pod is "+
 		"disconnected [negative]", func() {
 
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Collect partner's pod info")
+		partnerPod, err := nethelper.GetPartnerPodDefinition()
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Close communication between partner and test pods")
+		err = nethelper.ExecCmdCommandOnOnePodInNamespace(
+			[]string{"ip", "route", "add", partnerPod.Status.PodIP, "via", "127.0.0.1"})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseDefaultNetworkName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 45443

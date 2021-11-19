@@ -83,7 +83,7 @@ func CleanPods(namespace string, cs *testclient.ClientSet) error {
 	return err
 }
 
-// CleanDeployments deletes all pods in namespace
+// CleanDeployments deletes all deployments in namespace
 func CleanDeployments(namespace string, cs *testclient.ClientSet) error {
 	nsExist, err := Exists(namespace, cs)
 	if err != nil {
@@ -101,6 +101,24 @@ func CleanDeployments(namespace string, cs *testclient.ClientSet) error {
 	return err
 }
 
+// CleanDaemonSets deletes all daemonsets in namespace
+func CleanDaemonSets(namespace string, cs *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, cs)
+	if err != nil {
+		return err
+	}
+	if !nsExist {
+		return nil
+	}
+	err = cs.DaemonSets(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+		GracePeriodSeconds: pointer.Int64Ptr(0),
+	}, metav1.ListOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to delete daemonSet %v", err)
+	}
+	return err
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, cs *testclient.ClientSet) error {
 	err := CleanPods(namespace, cs)
@@ -111,5 +129,6 @@ func Clean(namespace string, cs *testclient.ClientSet) error {
 	if err != nil {
 		return err
 	}
+	err = CleanDaemonSets(namespace, cs)
 	return err
 }
