@@ -106,6 +106,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 				return false, err
 			}
 			if testCaseResult[0].State == expectedStatus {
+				glog.V(5).Info("claim report test case status passed")
 				return true, nil
 			} else {
 				return false, fmt.Errorf("invalid test status %s instead expected %s",
