@@ -34,10 +34,17 @@ func OpenClaimReport() (*claim.Root, error) {
 	return &claimRootReport, nil
 }
 
+// IsTestCasePassedInClaimReport tests if test case is passed as expected in claim.json file
 func IsTestCasePassedInClaimReport(testCaseName string, claimReport claim.Root) (bool, error) {
-	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, "passed")
+	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCasePassed)
 }
 
+// IsTestCaseFailedInClaimReport test if test case is failed as expected in claim.json file
+func IsTestCaseFailedInClaimReport(testCaseName string, claimReport claim.Root) (bool, error) {
+	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCaseFailed)
+}
+
+// OpenJunitTestReport returns junit struct
 func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
 	junitReportFile, err := os.Open(
 		path.Join(Configuration.General.TnfReportDir, globalparameters.DefaultJunitReportName),
@@ -57,16 +64,17 @@ func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
 	return &junitReport, nil
 }
 
+// IsTestCasePassedInJunitReport tests if test case is passed as expected in junit report file
 func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
-	for _, tc := range report.Suites[0].Testcases {
-		if strings.Contains(tc.Name, testCaseName) {
-			glog.V(5).Info(fmt.Sprintf("test case status %s", tc.Status))
-			return tc.Status == "passed"
-		}
-	}
-	return false
+	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCasePassed)
 }
 
+// IsTestCaseFailedInJunitReport tests if test case is failed as expected in junit report file
+func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
+	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseFailed)
+}
+
+// RemoveContentsFromReportDir removes all files from report dir
 func RemoveContentsFromReportDir() error {
 	tnfReportDir, err := os.Open(Configuration.General.TnfReportDir)
 	if err != nil {
@@ -87,6 +95,20 @@ func RemoveContentsFromReportDir() error {
 			Configuration.General.TnfReportDir))
 	}
 	return nil
+}
+
+func isTestCaseInRequiredStatusInJunitReport(
+	report *globalparameters.JUnitTestSuites,
+	testCaseName string,
+	status string) bool {
+
+	for _, tc := range report.Suites[0].Testcases {
+		if strings.Contains(tc.Name, testCaseName) {
+			glog.V(5).Info(fmt.Sprintf("test case status %s", tc.Status))
+			return tc.Status == status
+		}
+	}
+	return false
 }
 
 func isTestCaseInExpectedStatusInClaimReport(

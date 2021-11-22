@@ -18,7 +18,9 @@ var (
 	TestDeploymentLabels    = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "networkingput"}
-	TestCaseDefaultNetworkName = "networking Both Pods are on the Default network Testing network connectivity networking-icmpv4-connectivity"
-	TestCaseDefaultSkipRegEx   = "nodePort|Multus"
-	NetworkingTestSuiteName    = "networking"
+	TestCaseDefaultNetworkName  = "networking Both Pods are on the Default network Testing network connectivity networking-icmpv4-connectivity"
+	TestCaseDefaultSkipRegEx    = "nodePort|Multus"
+	NetworkingTestSuiteName     = "networking"
+	DefaultPartnerPodNamespace  = "default"
+	DefaultPartnerPodPrefixName = "tnfpartner-"
 )

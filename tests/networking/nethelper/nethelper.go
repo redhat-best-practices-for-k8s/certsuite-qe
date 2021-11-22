@@ -3,9 +3,15 @@ package nethelper
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"time"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
+	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	"github.com/golang/glog"
 
@@ -39,6 +45,19 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 		}
 	}
 	return false, nil
+}
+
+func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool) *v1.Deployment {
+	deploymentStruct := deployment.RedefineWithReplicaNumber(
+		deployment.DefineDeployment(
+			netparameters.TestNetworkingNameSpace,
+			globalhelper.Configuration.General.TestImage,
+			netparameters.TestDeploymentLabels),
+		replicaNumber)
+	if privileged {
+		deploymentStruct = deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
+	}
+	return deploymentStruct
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running
@@ -86,42 +105,120 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 }
 
 // ValidateIfReportsAreValid test if report is valid for given test case
-func ValidateIfReportsAreValid(tcName string) error {
+func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 	glog.V(5).Info("Verify test case status in Junit report")
 	junitTestReport, err := globalhelper.OpenJunitTestReport()
 	if err != nil {
 		return err
 	}
-	if !globalhelper.IsTestCasePassedInJunitReport(junitTestReport, tcName) {
-		return fmt.Errorf("test case %s is not in expected passed state in junit report", tcName)
-	}
-	glog.V(5).Info("Verify test case status in claim report file")
 	claimReport, err := globalhelper.OpenClaimReport()
 	if err != nil {
 		return err
 	}
-	testPassed, err := globalhelper.IsTestCasePassedInClaimReport(tcName, *claimReport)
+	err = globalhelper.IsExpectedStatusParamValid(tcExpectedStatus)
+	if err != nil {
+		return err
+	}
+	isTestCaseInValidStatusInJunitReport := globalhelper.IsTestCasePassedInJunitReport
+	isTestCaseInValidStatusInClaimReport := globalhelper.IsTestCasePassedInClaimReport
+	if tcExpectedStatus == globalparameters.TestCaseFailed {
+		isTestCaseInValidStatusInJunitReport = globalhelper.IsTestCaseFailedInJunitReport
+		isTestCaseInValidStatusInClaimReport = globalhelper.IsTestCaseFailedInClaimReport
+	}
+	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
+		return fmt.Errorf("test case %s is not in expected %s state in junit report", tcName, tcExpectedStatus)
+	}
+	glog.V(5).Info("Verify test case status in claim report file")
+	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
 	if err != nil {
 		return err
 	}
 	if !testPassed {
-		return fmt.Errorf("test case %s is not in expected passed state in claim report", tcName)
+		return fmt.Errorf("test case %s is not in expected %s state in claim report", tcName, tcExpectedStatus)
 	}
 	return nil
 }
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := deployment.RedefineWithReplicaNumber(
-		deployment.DefineDeployment(
-			netparameters.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels),
-		replicaNumber)
-
+	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, false)
 	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster
+func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, true)
+	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group
+func AllowAuthenticatedUsersRunPrivilegedContainers() error {
+	_, err := globalhelper.ApiClient.ClusterRoleBindings().Get(
+		context.Background(),
+		"system:openshift:scc:privileged",
+		metav1.GetOptions{},
+	)
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info("RBAC policy is not found")
+		roleBind := rbac.DefineClusterRoleBinding(
+			*rbac.DefineRbacAuthorizationClusterRoleRef("system:openshift:scc:privileged"),
+			*rbac.DefineRbacAuthorizationClusterGroupSubjects([]string{"system:authenticated"}),
+		)
+		_, err = globalhelper.ApiClient.ClusterRoleBindings().Create(
+			context.Background(),
+			roleBind,
+			metav1.CreateOptions{},
+		)
+		if err != nil {
+			return err
+		}
+		glog.V(5).Info("RBAC policy created")
+		return nil
+	} else if err == nil {
+		glog.V(5).Info("RBAC policy detected")
+	}
+	glog.V(5).Info("error to query RBAC policy")
+	return err
+}
+
+// GetPartnerPodDefinition returns partner's pod struct
+func GetPartnerPodDefinition() (*corev1.Pod, error) {
+	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.DefaultPartnerPodNamespace)
+	if err != nil {
+		return nil, err
+	}
+	var partnerPodIP *corev1.Pod
+	for _, runningPod := range podsList.Items {
+		if strings.Contains(runningPod.Name, netparameters.DefaultPartnerPodPrefixName) {
+			partnerPodIP = &runningPod
+		}
+	}
+	if partnerPodIP == nil {
+		return nil, fmt.Errorf("can not detect partner pods in %s namespace",
+			netparameters.DefaultPartnerPodNamespace)
+	}
+	return partnerPodIP, nil
+}
+
+// ExecCmdCommandOnOnePodInNamespace runs command on the first available pod in namespace
+func ExecCmdCommandOnOnePodInNamespace(command []string) error {
+	runningTestPods, err := globalhelper.ApiClient.Pods(netparameters.TestNetworkingNameSpace).List(
+		context.Background(),
+		metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+	if len(runningTestPods.Items) < 1 {
+		return fmt.Errorf("there is no running pods under %s namespace", netparameters.TestNetworkingNameSpace)
+	}
+	_, err = globalhelper.ExecCommand(runningTestPods.Items[1], command)
+	return err
 }

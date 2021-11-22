@@ -4,6 +4,8 @@ import (
 	"flag"
 	"time"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
+
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 	. "github.com/onsi/gomega"
@@ -52,6 +54,10 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel})
+	Expect(err).ToNot(HaveOccurred())
+
+	By("Set rbac policy which allows authenticated users to run privileged containers")
+	err = nethelper.AllowAuthenticatedUsersRunPrivilegedContainers()
 	Expect(err).ToNot(HaveOccurred())
 
 })

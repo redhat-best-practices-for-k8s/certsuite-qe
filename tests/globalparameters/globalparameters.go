@@ -76,4 +76,7 @@ var (
 	DefaultTnfConfigFileName   = "tnf_config.yml"
 	DefaultJunitReportName     = "cnf-certification-tests_junit.xml"
 	PartnerNamespaceEnvVarName = "TNF_PARTNER_NAMESPACE"
+	TestCasePassed             = "passed"
+	TestCaseFailed             = "failed"
+	TestCaseSkipped            = "skipped"
 )

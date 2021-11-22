@@ -1,9 +1,10 @@
 package client
 
 import (
+	"os"
+
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/discovery"
-	"os"
 
 	"github.com/golang/glog"
 	netattdefv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
@@ -12,6 +13,7 @@ import (
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 	networkv1client "k8s.io/client-go/kubernetes/typed/networking/v1"
+	rbacv1client "k8s.io/client-go/kubernetes/typed/rbac/v1"
 
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -24,7 +26,7 @@ type ClientSet struct {
 	corev1client.CoreV1Interface
 	clientconfigv1.ConfigV1Interface
 	networkv1client.NetworkingV1Client
-
+	rbacv1client.RbacV1Interface
 	appsv1client.AppsV1Interface
 	discovery.DiscoveryInterface
 	Config *rest.Config
@@ -55,6 +57,7 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.CoreV1Interface = corev1client.NewForConfigOrDie(config)
 	clientSet.ConfigV1Interface = clientconfigv1.NewForConfigOrDie(config)
 	clientSet.AppsV1Interface = appsv1client.NewForConfigOrDie(config)
+	clientSet.RbacV1Interface = rbacv1client.NewForConfigOrDie(config)
 	clientSet.DiscoveryInterface = discovery.NewDiscoveryClientForConfigOrDie(config)
 	clientSet.NetworkingV1Client = *networkv1client.NewForConfigOrDie(config)
 	clientSet.Config = config
@@ -75,6 +78,5 @@ func New(kubeconfig string) *ClientSet {
 	if err != nil {
 		panic(err)
 	}
-
 	return clientSet
 }
