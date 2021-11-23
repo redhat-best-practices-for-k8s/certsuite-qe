@@ -44,6 +44,11 @@ func IsTestCaseFailedInClaimReport(testCaseName string, claimReport claim.Root) 
 	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCaseFailed)
 }
 
+// IsTestCaseSkippedInClaimReport test if test case is failed as expected in claim.json file
+func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root) (bool, error) {
+	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCaseSkipped)
+}
+
 // OpenJunitTestReport returns junit struct
 func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
 	junitReportFile, err := os.Open(
@@ -72,6 +77,11 @@ func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, tes
 // IsTestCaseFailedInJunitReport tests if test case is failed as expected in junit report file
 func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
 	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseFailed)
+}
+
+// IsTestCaseSkippedInJunitReport tests if test case is skipped as expected in junit report file
+func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
+	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseSkipped)
 }
 
 // RemoveContentsFromReportDir removes all files from report dir
