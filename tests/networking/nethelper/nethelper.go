@@ -150,21 +150,13 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, false, nil)
-	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
-	if err != nil {
-		return err
-	}
-	return nil
+	return CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster
 func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, true, nil)
-	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
-	if err != nil {
-		return err
-	}
-	return nil
+	return CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster
@@ -229,7 +221,7 @@ func GetPartnerPodDefinition() (*corev1.Pod, error) {
 	return partnerPodIP, nil
 }
 
-func execCmdCommandOnPodsListInNamespace(command []string, execOn string) error {
+func execCmdOnPodsListInNamespace(command []string, execOn string) error {
 	runningTestPods, err := globalhelper.ApiClient.Pods(netparameters.TestNetworkingNameSpace).List(
 		context.Background(),
 		metav1.ListOptions{})
@@ -247,7 +239,7 @@ func execCmdCommandOnPodsListInNamespace(command []string, execOn string) error 
 		execOcPods = &corev1.PodList{
 			TypeMeta: runningTestPods.TypeMeta,
 			ListMeta: runningTestPods.ListMeta,
-			Items:    []corev1.Pod{runningTestPods.Items[1]}}
+			Items:    []corev1.Pod{runningTestPods.Items[0]}}
 	default:
 		return fmt.Errorf("invalid parameter %s", execOn)
 	}
@@ -258,14 +250,13 @@ func execCmdCommandOnPodsListInNamespace(command []string, execOn string) error 
 		}
 	}
 	return nil
-
 }
 
-// ExecCmdCommandOnOnePodInNamespace runs command on the first available pod in namespace
-func ExecCmdCommandOnOnePodInNamespace(command []string) error {
-	return execCmdCommandOnPodsListInNamespace(command, "first")
+// ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace
+func ExecCmdOnOnePodInNamespace(command []string) error {
+	return execCmdOnPodsListInNamespace(command, "first")
 }
 
-func ExecCmdCommandOnAllPodInNamespace(command []string) error {
-	return execCmdCommandOnPodsListInNamespace(command, "all")
+func ExecCmdOnAllPodInNamespace(command []string) error {
+	return execCmdOnPodsListInNamespace(command, "all")
 }

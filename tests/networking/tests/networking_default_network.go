@@ -109,7 +109,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Close communication between partner and test pods")
-		err = nethelper.ExecCmdCommandOnOnePodInNamespace(
+		err = nethelper.ExecCmdOnOnePodInNamespace(
 			[]string{"ip", "route", "add", partnerPod.Status.PodIP, "via", "127.0.0.1"})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -136,7 +136,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
-		err = nethelper.ExecCmdCommandOnOnePodInNamespace(
+		err = nethelper.ExecCmdOnOnePodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -163,7 +163,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
-		err = nethelper.ExecCmdCommandOnOnePodInNamespace(
+		err = nethelper.ExecCmdOnOnePodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -190,7 +190,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
-		err = nethelper.ExecCmdCommandOnAllPodInNamespace(
+		err = nethelper.ExecCmdOnAllPodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -229,7 +229,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Remove ip binary from test pod")
-			err = nethelper.ExecCmdCommandOnAllPodInNamespace(
+			err = nethelper.ExecCmdOnAllPodInNamespace(
 				[]string{"rm", "-rf", "/usr/bin/ip", "/usr/sbin/ip"})
 			Expect(err).ToNot(HaveOccurred())
 
