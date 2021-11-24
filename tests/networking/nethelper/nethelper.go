@@ -48,19 +48,18 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 }
 
 func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map[string]string) *v1.Deployment {
-	deploymentStruct := deployment.RedefineWithReplicaNumber(
-		deployment.DefineDeployment(
-			netparameters.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels),
-		replicaNumber)
+	deploymentStruct := deployment.DefineDeployment(
+		netparameters.TestNetworkingNameSpace,
+		globalhelper.Configuration.General.TestImage,
+		netparameters.TestDeploymentLabels)
+	deploymentStruct.RedefineWithReplicaNumber(replicaNumber)
 	if privileged {
-		deploymentStruct = deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
+		deploymentStruct.RedefineWithContainersSecurityContextAll()
 	}
 	if label != nil {
-		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
+		deploymentStruct.RedefineWithLabels(label)
 	}
-	return deploymentStruct
+	return &deploymentStruct.Deployment
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running
@@ -86,10 +85,10 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time
 }
 
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and wait until all deployment replicas are up and running
-func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Duration) error {
+func CreateAndWaitUntilDaemonSetIsReady(daemonSet v1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := globalhelper.ApiClient.DaemonSets(daemonSet.Namespace).Create(
 		context.Background(),
-		daemonSet,
+		&daemonSet,
 		metav1.CreateOptions{})
 	if err != nil {
 		return err

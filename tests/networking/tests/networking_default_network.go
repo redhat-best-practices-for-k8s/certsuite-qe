@@ -72,14 +72,12 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.DefineDaemonSet(
-			netparameters.TestNetworkingNameSpace,
+		daemonSet := daemonset.DefineDaemonSet(netparameters.TestNetworkingNameSpace,
 			configSuite.General.TestImage,
-			netparameters.TestDeploymentLabels,
-		), map[string]string{configSuite.General.CnfNodeLabel: ""})
-
+			netparameters.TestDeploymentLabels)
+		daemonSet.RedefineDaemonSetWithNodeSelector(map[string]string{configSuite.General.CnfNodeLabel: ""})
 		By("Create DaemonSet on cluster")
-		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet.DaemonSet, netparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -195,15 +193,15 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(
-			daemonset.DefineDaemonSet(
-				netparameters.TestNetworkingNameSpace,
-				configSuite.General.TestImage,
-				netparameters.TestDeploymentLabels,
-			), map[string]string{configSuite.General.CnfNodeLabel: ""})
+		daemonSet := daemonset.DefineDaemonSet(netparameters.TestNetworkingNameSpace,
+			configSuite.General.TestImage,
+			netparameters.TestDeploymentLabels)
+		daemonSet.RedefineDaemonSetWithNodeSelector(map[string]string{configSuite.General.CnfNodeLabel: ""})
+		By("Create DaemonSet on cluster")
+		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet.DaemonSet, netparameters.WaitingTime)
 
 		By("Create DaemonSet on cluster")
-		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet.DaemonSet, netparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
