@@ -196,8 +196,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			configSuite.General.TestImage,
 			netparameters.TestDeploymentLabels)
 		daemonSet.RedefineDaemonSetWithNodeSelector(map[string]string{configSuite.General.CnfNodeLabel: ""})
-		By("Create DaemonSet on cluster")
-		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet.DaemonSet, netparameters.WaitingTime)
 
 		By("Create DaemonSet on cluster")
 		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet.DaemonSet, netparameters.WaitingTime)

@@ -36,6 +36,6 @@ func DefineDaemonSet(namespace string, image string, label map[string]string) *D
 								Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}}
 }
 
-func (daemonSet DaemonSet) RedefineDaemonSetWithNodeSelector(nodeSelector map[string]string) {
+func (daemonSet *DaemonSet) RedefineDaemonSetWithNodeSelector(nodeSelector map[string]string) {
 	daemonSet.Spec.Template.Spec.NodeSelector = nodeSelector
 }

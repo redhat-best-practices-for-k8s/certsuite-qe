@@ -30,7 +30,7 @@ func DefineNamespace(name string) *Namespace {
 }
 
 // WaitForDeletion waits until the namespace will be removed from the cluster
-func (namespace Namespace) WaitForDeletion(cs *testclient.ClientSet, timeout time.Duration) error {
+func (namespace *Namespace) WaitForDeletion(cs *testclient.ClientSet, timeout time.Duration) error {
 	return wait.PollImmediate(time.Second, timeout, func() (bool, error) {
 		_, err := cs.Namespaces().Get(context.Background(), namespace.Name, metav1.GetOptions{})
 		if errors.IsNotFound(err) {
@@ -54,7 +54,7 @@ func (namespace *Namespace) Create(cs *testclient.ClientSet) error {
 }
 
 // DeleteAndWait deletes a namespace and waits until delete
-func (namespace Namespace) DeleteAndWait(cs *testclient.ClientSet, timeout time.Duration) error {
+func (namespace *Namespace) DeleteAndWait(cs *testclient.ClientSet, timeout time.Duration) error {
 	err := cs.Namespaces().Delete(context.Background(), namespace.Name, metav1.DeleteOptions{})
 	if err != nil {
 		return err
@@ -130,7 +130,7 @@ func (namespace *Namespace) CleanDaemonSets(cs *testclient.ClientSet) error {
 }
 
 // Clean cleans all dangling objects from the given namespace.
-func (namespace Namespace) Clean(cs *testclient.ClientSet) error {
+func (namespace *Namespace) Clean(cs *testclient.ClientSet) error {
 	err := namespace.CleanPods(cs)
 	if err != nil {
 		return err
