@@ -109,7 +109,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Close communication between partner and test pods")
-		err = nethelper.ExecCmdCommandOnOnePodInNamespace(
+		err = nethelper.ExecCmdOnOnePodInNamespace(
 			[]string{"ip", "route", "add", partnerPod.Status.PodIP, "via", "127.0.0.1"})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -131,24 +131,119 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("2 custom pods on Default network networking-icmpv4-connectivity fail when there is no ping binary "+
 		"[negative]", func() {
 
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Remove ping binary from test pod")
+		err = nethelper.ExecCmdOnOnePodInNamespace(
+			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseDefaultNetworkName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 45444
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
 
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Remove ping binary from test pod")
+		err = nethelper.ExecCmdOnOnePodInNamespace(
+			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseDefaultNetworkName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 45445
 	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
 
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Remove ping binary from test pod")
+		err = nethelper.ExecCmdOnAllPodInNamespace(
+			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define daemonSet")
+		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(
+			daemonset.DefineDaemonSet(
+				netparameters.TestNetworkingNameSpace,
+				configSuite.General.TestImage,
+				netparameters.TestDeploymentLabels,
+			), map[string]string{configSuite.General.CnfNodeLabel: ""})
+
+		By("Create DaemonSet on cluster")
+		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseDefaultNetworkName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 45446
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when there is no ip binary [skip]",
 		func() {
 
-		})
+			By("Define deployment and create it on cluster")
+			err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
+			Expect(err).ToNot(HaveOccurred())
 
+			By("Remove ip binary from test pod")
+			err = nethelper.ExecCmdOnAllPodInNamespace(
+				[]string{"rm", "-rf", "/usr/bin/ip", "/usr/sbin/ip"})
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Start tests")
+			err = globalhelper.LaunchTests(
+				[]string{netparameters.NetworkingTestSuiteName},
+				netparameters.TestCaseDefaultSkipRegEx,
+			)
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Verify test case status in Junit and Claim reports")
+			err = nethelper.ValidateIfReportsAreValid(
+				netparameters.TestCaseDefaultNetworkName,
+				globalparameters.TestCaseSkipped)
+			Expect(err).ToNot(HaveOccurred())
+		})
 })

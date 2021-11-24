@@ -43,6 +43,19 @@ func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) *v1.Dep
 	return deployment
 }
 
+// RedefineWithLabels redefines deployment with additional label
+func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.Deployment {
+	newMap := make(map[string]string)
+	for k, v := range deployment.Spec.Template.Labels {
+		newMap[k] = v
+	}
+	for k, v := range label {
+		newMap[k] = v
+	}
+	deployment.Spec.Template.Labels = newMap
+	return deployment
+}
+
 // RedefineWithReplicaNumber redefines deployment with requested replica number
 func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) *v1.Deployment {
 	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)

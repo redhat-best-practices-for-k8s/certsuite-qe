@@ -47,7 +47,7 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 	return false, nil
 }
 
-func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool) *v1.Deployment {
+func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map[string]string) *v1.Deployment {
 	deploymentStruct := deployment.RedefineWithReplicaNumber(
 		deployment.DefineDeployment(
 			netparameters.TestNetworkingNameSpace,
@@ -56,6 +56,9 @@ func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool) *v1.Deplo
 		replicaNumber)
 	if privileged {
 		deploymentStruct = deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
+	}
+	if label != nil {
+		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
 	}
 	return deploymentStruct
 }
@@ -125,6 +128,11 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 		isTestCaseInValidStatusInJunitReport = globalhelper.IsTestCaseFailedInJunitReport
 		isTestCaseInValidStatusInClaimReport = globalhelper.IsTestCaseFailedInClaimReport
 	}
+
+	if tcExpectedStatus == globalparameters.TestCaseSkipped {
+		isTestCaseInValidStatusInJunitReport = globalhelper.IsTestCaseSkippedInJunitReport
+		isTestCaseInValidStatusInClaimReport = globalhelper.IsTestCaseSkippedInClaimReport
+	}
 	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
 		return fmt.Errorf("test case %s is not in expected %s state in junit report", tcName, tcExpectedStatus)
 	}
@@ -141,17 +149,22 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, false)
-	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
-	if err != nil {
-		return err
-	}
-	return nil
+	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, false, nil)
+	return CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster
 func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, true)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, true, nil)
+	return CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+}
+
+// DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster
+func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(
+		replicaNumber,
+		true,
+		netparameters.NetworkingTestSkipLabel)
 	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 	if err != nil {
 		return err
@@ -208,17 +221,42 @@ func GetPartnerPodDefinition() (*corev1.Pod, error) {
 	return partnerPodIP, nil
 }
 
-// ExecCmdCommandOnOnePodInNamespace runs command on the first available pod in namespace
-func ExecCmdCommandOnOnePodInNamespace(command []string) error {
+func execCmdOnPodsListInNamespace(command []string, execOn string) error {
 	runningTestPods, err := globalhelper.ApiClient.Pods(netparameters.TestNetworkingNameSpace).List(
 		context.Background(),
 		metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
-	if len(runningTestPods.Items) < 1 {
-		return fmt.Errorf("there is no running pods under %s namespace", netparameters.TestNetworkingNameSpace)
+
+	var execOcPods *corev1.PodList
+	switch execOn {
+
+	case "all":
+		execOcPods = runningTestPods
+
+	case "first":
+		execOcPods = &corev1.PodList{
+			TypeMeta: runningTestPods.TypeMeta,
+			ListMeta: runningTestPods.ListMeta,
+			Items:    []corev1.Pod{runningTestPods.Items[0]}}
+	default:
+		return fmt.Errorf("invalid parameter %s", execOn)
 	}
-	_, err = globalhelper.ExecCommand(runningTestPods.Items[1], command)
-	return err
+	for _, runningPod := range execOcPods.Items {
+		_, err := globalhelper.ExecCommand(runningPod, command)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace
+func ExecCmdOnOnePodInNamespace(command []string) error {
+	return execCmdOnPodsListInNamespace(command, "first")
+}
+
+func ExecCmdOnAllPodInNamespace(command []string) error {
+	return execCmdOnPodsListInNamespace(command, "all")
 }
