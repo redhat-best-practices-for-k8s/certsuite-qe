@@ -10,7 +10,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Networking custom namespace, custom deployment,", func() {
@@ -18,9 +17,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
-		err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+		err := netparameters.TestNamespace.Clean(globalhelper.ApiClient)
 		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNamespace.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -28,7 +27,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	BeforeEach(func() {
 
 		By("Clean namespace before each test")
-		err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+		err := netparameters.TestNamespace.Clean(globalhelper.ApiClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")

@@ -49,7 +49,7 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 
 func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map[string]string) *v1.Deployment {
 	deploymentStruct := deployment.DefineDeployment(
-		netparameters.TestNetworkingNameSpace,
+		netparameters.TestNamespace.Name,
 		globalhelper.Configuration.General.TestImage,
 		netparameters.TestDeploymentLabels)
 	deploymentStruct.RedefineWithReplicaNumber(replicaNumber)
@@ -221,7 +221,7 @@ func GetPartnerPodDefinition() (*corev1.Pod, error) {
 }
 
 func execCmdOnPodsListInNamespace(command []string, execOn string) error {
-	runningTestPods, err := globalhelper.ApiClient.Pods(netparameters.TestNetworkingNameSpace).List(
+	runningTestPods, err := globalhelper.ApiClient.Pods(netparameters.TestNamespace.Name).List(
 		context.Background(),
 		metav1.ListOptions{})
 	if err != nil {

@@ -14,7 +14,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Networking custom namespace, custom deployment,", func() {
@@ -26,16 +25,16 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
-		err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+		err = netparameters.TestNamespace.Clean(globalhelper.ApiClient)
 		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNamespace.Name)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
 
 		By("Clean namespace before each test")
-		err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+		err := netparameters.TestNamespace.Clean(globalhelper.ApiClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -72,7 +71,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(netparameters.TestNetworkingNameSpace,
+		daemonSet := daemonset.DefineDaemonSet(netparameters.TestNamespace.Name,
 			configSuite.General.TestImage,
 			netparameters.TestDeploymentLabels)
 		daemonSet.RedefineDaemonSetWithNodeSelector(map[string]string{configSuite.General.CnfNodeLabel: ""})
@@ -193,7 +192,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(netparameters.TestNetworkingNameSpace,
+		daemonSet := daemonset.DefineDaemonSet(netparameters.TestNamespace.Name,
 			configSuite.General.TestImage,
 			netparameters.TestDeploymentLabels)
 		daemonSet.RedefineDaemonSetWithNodeSelector(map[string]string{configSuite.General.CnfNodeLabel: ""})

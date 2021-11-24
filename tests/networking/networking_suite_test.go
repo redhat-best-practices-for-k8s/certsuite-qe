@@ -20,7 +20,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/networking/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func TestNetworking(t *testing.T) {
@@ -46,13 +45,13 @@ var _ = BeforeSuite(func() {
 	err := nodes.WaitForNodesReady(globalhelper.ApiClient, netparameters.WaitingTime, netparameters.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
-	By(fmt.Sprintf("Create %s namespace", netparameters.TestNetworkingNameSpace))
-	err = namespaces.Create(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+	By(fmt.Sprintf("Create %s namespace", netparameters.TestNamespace.Name))
+	err = netparameters.TestNamespace.Create(globalhelper.ApiClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
-		[]string{netparameters.TestNetworkingNameSpace},
+		[]string{netparameters.TestNamespace.Name},
 		[]string{netparameters.TestPodLabel})
 	Expect(err).ToNot(HaveOccurred())
 
@@ -64,8 +63,8 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", netparameters.TestNetworkingNameSpace))
-	err := namespaces.DeleteAndWait(globalhelper.ApiClient, netparameters.TestNetworkingNameSpace, netparameters.WaitingTime)
+	By(fmt.Sprintf("Remove %s namespace", netparameters.TestNamespace.Name))
+	err := netparameters.TestNamespace.DeleteAndWait(globalhelper.ApiClient, netparameters.WaitingTime)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove reports from report directory")
