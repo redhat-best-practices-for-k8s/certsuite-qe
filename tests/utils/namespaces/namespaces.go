@@ -119,16 +119,43 @@ func CleanDaemonSets(namespace string, cs *testclient.ClientSet) error {
 	return err
 }
 
-// Clean cleans all dangling objects from the given namespace.
-func Clean(namespace string, cs *testclient.ClientSet) error {
-	err := CleanPods(namespace, cs)
+// CleanServices deletes all service in namespace
+func CleanServices(namespace string, cs *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, cs)
 	if err != nil {
 		return err
 	}
-	err = CleanDeployments(namespace, cs)
+	if !nsExist {
+		return nil
+	}
+	serviceList, err := cs.Services(namespace).List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+	for _, s := range serviceList.Items {
+		err = cs.Services(namespace).Delete(context.Background(), s.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: pointer.Int64Ptr(0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete service %v", err)
+		}
+	}
+	return err
+}
+
+// Clean cleans all dangling objects from the given namespace.
+func Clean(namespace string, cs *testclient.ClientSet) error {
+	err := CleanDeployments(namespace, cs)
 	if err != nil {
 		return err
 	}
 	err = CleanDaemonSets(namespace, cs)
-	return err
+	if err != nil {
+		return err
+	}
+	err = CleanPods(namespace, cs)
+	if err != nil {
+		return err
+	}
+	return CleanServices(namespace, cs)
 }
