@@ -10,6 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
@@ -259,4 +260,26 @@ func ExecCmdOnOnePodInNamespace(command []string) error {
 
 func ExecCmdOnAllPodInNamespace(command []string) error {
 	return execCmdOnPodsListInNamespace(command, "all")
+}
+
+// DefineAndCreateServiceOnCluster defines service resource and creates it on cluster
+func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool) error {
+	testService := service.DefineService(
+		name,
+		netparameters.TestNetworkingNameSpace,
+		port,
+		targetPort,
+		corev1.ProtocolTCP,
+		netparameters.TestDeploymentLabels)
+	if withNodePort {
+		var err error
+		testService, err = service.RedefineWithNodePort(testService)
+		if err != nil {
+			return err
+		}
+	}
+	_, err := globalhelper.ApiClient.Services(netparameters.TestNetworkingNameSpace).Create(
+		context.Background(),
+		testService, metav1.CreateOptions{})
+	return err
 }
