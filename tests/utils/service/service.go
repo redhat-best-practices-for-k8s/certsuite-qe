@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	k8sv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -36,8 +37,11 @@ func DefineService(name string,
 }
 
 // RedefineWithNodePort redefines service struct with NodePort
-func RedefineWithNodePort(testService *k8sv1.Service) *k8sv1.Service {
+func RedefineWithNodePort(testService *k8sv1.Service) (*k8sv1.Service, error) {
 	testService.Spec.Type = "NodePort"
+	if len(testService.Spec.Ports) < 1 {
+		return nil, fmt.Errorf("service does not have available ports")
+	}
 	testService.Spec.Ports[0].NodePort = testService.Spec.Ports[0].Port
-	return testService
+	return testService, nil
 }

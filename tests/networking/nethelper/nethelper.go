@@ -272,23 +272,12 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		corev1.ProtocolTCP,
 		netparameters.TestDeploymentLabels)
 	if withNodePort {
-		testService = service.RedefineWithNodePort(testService)
+		var err error
+		testService, err = service.RedefineWithNodePort(testService)
+		if err != nil {
+			return err
+		}
 	}
-	_, err := globalhelper.ApiClient.Services(netparameters.TestNetworkingNameSpace).Create(
-		context.Background(),
-		testService, metav1.CreateOptions{})
-	return err
-}
-
-// DefineAndCreateMultipleServiceOnCluster defines multiple service resources and creates them on cluster
-func DefineAndCreateMultipleServiceOnCluster() error {
-	testService := service.DefineService(
-		"testService",
-		netparameters.TestNetworkingNameSpace,
-		3022,
-		3022,
-		corev1.ProtocolTCP,
-		netparameters.TestDeploymentLabels)
 	_, err := globalhelper.ApiClient.Services(netparameters.TestNetworkingNameSpace).Create(
 		context.Background(),
 		testService, metav1.CreateOptions{})
