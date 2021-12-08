@@ -7,11 +7,12 @@ import (
 	"strings"
 )
 
-// SelectEngine check what container engine is present on the machine
+// SelectEngine check what container engine is present on the machine.
 func SelectEngine() (string, error) {
 	for _, containerEngine := range []string{"docker", "podman"} {
 		containerEngineCMD := exec.Command(containerEngine)
 		directoryName, _ := path.Split(containerEngineCMD.Path)
+
 		if directoryName != "" {
 			if strings.Contains(containerEngineCMD.String(), "docker") {
 				err := validateDockerDaemonRunning()
@@ -19,17 +20,20 @@ func SelectEngine() (string, error) {
 					return "", err
 				}
 			}
+
 			return containerEngine, nil
 		}
 	}
+
 	return "nil", fmt.Errorf("no container Engine present on host machine")
 }
 
 func validateDockerDaemonRunning() error {
 	isDaemonRunning := exec.Command("systemctl", "is-active", "--quiet", "docker")
-	err := isDaemonRunning.Run()
-	if err != nil {
+
+	if isDaemonRunning.Run() != nil {
 		return fmt.Errorf("docker daemon is not active on host")
 	}
+
 	return nil
 }

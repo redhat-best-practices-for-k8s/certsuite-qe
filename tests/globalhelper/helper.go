@@ -16,14 +16,17 @@ func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string
 	if len(namespaces) < 1 {
 		return fmt.Errorf("target namespaces cannot be empty list")
 	}
+
 	if config == nil {
 		return fmt.Errorf("config struct cannot be nil")
 	}
+
 	for _, namespace := range namespaces {
 		config.TargetNameSpaces = append(config.TargetNameSpaces, globalparameters.TargetNameSpace{
 			Name: namespace,
 		})
 	}
+
 	return nil
 }
 
@@ -31,11 +34,13 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	if len(targetPodLabels) < 1 {
 		return fmt.Errorf("target pod labels cannot be empty list")
 	}
+
 	for _, targetPodLabel := range targetPodLabels {
 		prefixNameValue := strings.Split(targetPodLabel, "/")
 		if len(prefixNameValue) != 2 {
 			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
 		}
+
 		prefix := strings.TrimSpace(prefixNameValue[0])
 		nameValue := strings.Split(prefixNameValue[1], ":")
 
@@ -52,10 +57,11 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 			Value:  value,
 		})
 	}
+
 	return nil
 }
 
-// DefineTnfConfig creates tnf_config.yml file under tnf config directory
+// DefineTnfConfig creates tnf_config.yml file under tnf config directory.
 func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
 	configFile, err := os.OpenFile(
 		path.Join(
@@ -63,7 +69,7 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
 			globalparameters.DefaultTnfConfigFileName),
 		os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		return fmt.Errorf("error opening/creating file: %v", err)
+		return fmt.Errorf("error opening/creating file: %w", err)
 	}
 	defer configFile.Close()
 	configFileEncoder := yaml.NewEncoder(configFile)
@@ -78,13 +84,16 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
 	if err != nil {
 		return err
 	}
+
 	err = configFileEncoder.Encode(tnfConfig)
+
 	glog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
 		globalparameters.DefaultTnfConfigFileName, Configuration.General.TnfConfigDir))
+
 	return err
 }
 
-// IsExpectedStatusParamValid validates if requested test status is valid
+// IsExpectedStatusParamValid validates if requested test status is valid.
 func IsExpectedStatusParamValid(status string) error {
 	return validateIfParamInAllowedListOfParams(
 		status,
@@ -97,5 +106,6 @@ func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []s
 			return nil
 		}
 	}
+
 	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
 }

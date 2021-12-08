@@ -11,19 +11,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-// WaitForNodesReady waits for all nodes become ready
+// WaitForNodesReady waits for all nodes become ready.
 func WaitForNodesReady(cs *client.ClientSet, timeout, interval time.Duration) error {
 	return wait.PollImmediate(interval, timeout, func() (bool, error) {
-		nodes_, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
+		nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
 		if err != nil {
 			return false, nil
 		}
-		for _, node := range nodes_.Items {
+		for _, node := range nodesList.Items {
 			if !IsNodeInCondition(&node, corev1.NodeReady) {
 				return false, nil
 			}
 		}
 		glog.V(5).Info("All nodes are Ready")
+
 		return true, nil
 	})
 }
@@ -35,5 +36,6 @@ func IsNodeInCondition(node *corev1.Node, condition corev1.NodeConditionType) bo
 			return true
 		}
 	}
+
 	return false
 }

@@ -20,9 +20,10 @@ func IsClusterStable(clients *testclient.ClientSet) (bool, error) {
 	for _, node := range nodes.Items {
 		if node.Spec.Unschedulable {
 			glog.V(5).Info(fmt.Sprintf("node %s is in unschedulable state", node.Name))
+
 			return false, nil
 		}
-
 	}
+
 	return true, nil
 }

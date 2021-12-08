@@ -1,0 +1,108 @@
+run:
+  timeout: 15m0s
+  skip-dirs-use-default: true
+  fast: false
+  skip-files:
+    - test/tools.go
+
+linters-settings:
+  revive:
+    rules:
+      - name: indent-error-flow
+      - name: var-naming
+      - name: increment-decrement
+  wsl:
+    strict-append: false
+  gocognit:
+    min-complexity: 36
+  gofmt:
+    simplify: true
+  funlen:
+    lines: 175
+    statements: 85
+  unused:
+    check-exported: true
+    go: "1.17"
+  stylecheck:
+    dot-import-whitelist:
+      - github.com/onsi/gomega
+      - github.com/onsi/ginkgo
+    # Select the Go version to target. The default is '1.13'.
+    go: "1.17"
+    # https://staticcheck.io/docs/options#checks
+    checks: [ "all", "-ST1001"]
+
+linters:
+  enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - contextcheck
+    - deadcode
+    - depguard
+    - durationcheck
+    - errcheck
+    - errname
+    - errorlint
+    - exhaustive
+    - forcetypeassert
+    - funlen
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - godox
+    - gofmt
+    - goheader
+    - goimports
+    - gomodguard
+    - goprintffuncname
+    - gosimple
+    - govet
+    - ifshort
+    - importas
+    - ineffassign
+    - interfacer
+    - ireturn
+    - lll
+    - makezero
+    - maligned
+    - misspell
+    - nakedret
+    - nilnil
+    - noctx
+    - nolintlint
+    - predeclared
+    - promlinter
+    - revive
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - tenv
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - varnamelen
+    - wastedassign
+    - wsl
+    - nlreturn
+
+output:
+  format: colored-line-number
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  new: false
+  include:
+    - EXC0002 # disable excluding of issues about comments from golint
+  exclude-rules:
+    - path: tests/globalhelper/init.go
+      linters:
+        - gochecknoinits

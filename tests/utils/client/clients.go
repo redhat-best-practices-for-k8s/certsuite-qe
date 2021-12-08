@@ -17,11 +17,10 @@ import (
 
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	runtimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// ClientSet provides the struct to talk with relevant API
+// ClientSet provides the struct to talk with relevant API.
 type ClientSet struct {
 	corev1client.CoreV1Interface
 	clientconfigv1.ConfigV1Interface
@@ -35,8 +34,10 @@ type ClientSet struct {
 
 // New returns a *ClientBuilder with the given kubeconfig.
 func New(kubeconfig string) *ClientSet {
-	var config *rest.Config
-	var err error
+	var (
+		config *rest.Config
+		err    error
+	)
 
 	if kubeconfig == "" {
 		kubeconfig = os.Getenv("KUBECONFIG")
@@ -49,6 +50,7 @@ func New(kubeconfig string) *ClientSet {
 		glog.V(4).Infof("Using in-cluster kube client config")
 		config, err = rest.InClusterConfig()
 	}
+
 	if err != nil {
 		panic(err)
 	}
@@ -67,16 +69,18 @@ func New(kubeconfig string) *ClientSet {
 	if err := clientgoscheme.AddToScheme(crScheme); err != nil {
 		panic(err)
 	}
+
 	if err := netattdefv1.SchemeBuilder.AddToScheme(crScheme); err != nil {
 		panic(err)
 	}
 
-	clientSet.Client, err = runtimeclient.New(config, client.Options{
+	clientSet.Client, err = runtimeclient.New(config, runtimeclient.Options{
 		Scheme: crScheme,
 	})
 
 	if err != nil {
 		panic(err)
 	}
+
 	return clientSet
 }

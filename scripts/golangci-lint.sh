@@ -7,7 +7,13 @@ if which golangci-lint; then
 	echo "golint installed"
 else
 	echo "Downloading golint tool"
-	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
+
+	if [[ -z "${GOPATH}" ]]; then
+    DEPLOY_PATH=/tmp/
+  else
+    DEPLOY_PATH=${GOPATH}/bin
+  fi
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${DEPLOY_PATH}" v1.43.0
 fi
 
-golangci-lint run --skip-dirs-use-default
+PATH=${PATH}:${DEPLOY_PATH} golangci-lint run -v

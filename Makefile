@@ -32,6 +32,9 @@ test-all:
 test-features:
 	FEATURES="$(FEATURES)" ./scripts/run-tests.sh features
 
+install-ginkgo:
+	scripts/install-ginkgo.sh
+
 install: deps-update
 	@echo "Installing needed dependencies"
 	scripts/install-ginkgo.sh

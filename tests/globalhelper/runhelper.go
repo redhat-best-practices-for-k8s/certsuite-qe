@@ -15,10 +15,13 @@ func LaunchTests(testSuites []string, skipRegEx string) error {
 	if err != nil {
 		return err
 	}
+
 	err = os.Setenv("TNF_CONTAINER_CLIENT", containerEngine)
+
 	if err != nil {
 		return err
 	}
+
 	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
 	testArgs := []string{
 		"-s", skipRegEx,
@@ -44,5 +47,6 @@ func LaunchTests(testSuites []string, skipRegEx string) error {
 	cmd := exec.Command(fmt.Sprintf("./%s", Configuration.General.TnfEntryPointScript))
 	cmd.Args = append(cmd.Args, testArgs...)
 	cmd.Dir = Configuration.General.TnfRepoPath
+
 	return cmd.Run()
 }

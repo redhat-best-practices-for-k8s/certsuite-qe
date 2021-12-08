@@ -16,11 +16,11 @@ import (
 )
 
 const (
-	// FileConfigPath path to config file
+	// FileConfigPath path to config file.
 	FileConfigPath = "config/config.yaml"
 )
 
-// Config type keeps general configuration
+// Config type keeps general configuration.
 type Config struct {
 	General struct {
 		ReportDirAbsPath    string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
@@ -36,26 +36,33 @@ type Config struct {
 	} `yaml:"general"`
 }
 
-// NewConfig returns instance Config type
+// NewConfig returns instance Config type.
 func NewConfig() (*Config, error) {
 	var c Config
+
 	_, filename, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
 	confFile, err := checkFileExists(baseDir, FileConfigPath)
+
 	if err != nil {
 		glog.Fatal(err)
 	}
+
 	err = readFile(&c, confFile)
+
 	if err != nil {
 		return nil, err
 	}
+
 	c.General.ReportDirAbsPath = filepath.Join(baseDir, c.General.ReportDirAbsPath)
 
 	err = readEnv(&c)
 	if err != nil {
 		return nil, err
 	}
+
 	err = c.deployTnfConfigDir(confFile)
+
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +71,9 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	c.General.TnfRepoPath, err = c.defineTnfRepoPath()
+
 	if err != nil {
 		glog.Fatal(err)
 	}
@@ -72,18 +81,20 @@ func NewConfig() (*Config, error) {
 	return &c, nil
 }
 
-func readFile(c *Config, cfgFile string) error {
-	f, err := os.Open(cfgFile)
+func readFile(cfg *Config, cfgFile string) error {
+	openedCnfFile, err := os.Open(cfgFile)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer openedCnfFile.Close()
 
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&c)
+	decoder := yaml.NewDecoder(openedCnfFile)
+	err = decoder.Decode(&cfg)
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -92,6 +103,7 @@ func readEnv(c *Config) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -103,9 +115,10 @@ func (c *Config) deployTnfReportDir(configFileName string) error {
 	return deployTnfDir(configFileName, c.General.TnfReportDir, "tnf_report_dir", "TNF_REPORT_DIR")
 }
 
-// GetReportPath returns full path to the report file
+// GetReportPath returns full path to the report file.
 func (c *Config) GetReportPath(file string) string {
 	reportFileName := strings.TrimSuffix(filepath.Base(file), filepath.Ext(filepath.Base(file)))
+
 	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
 }
 
@@ -113,19 +126,23 @@ func (c *Config) defineTnfRepoPath() (string, error) {
 	if c.General.TnfRepoPath == "" {
 		return "", fmt.Errorf("TNF_REPO_PATH env variable is not set. Please export TNF_REPO_PATH")
 	}
+
 	_, err := checkFileExists(c.General.TnfRepoPath, c.General.TnfEntryPointScript)
+
 	if err != nil {
 		return "", err
 	}
+
 	return c.General.TnfRepoPath, nil
 }
 
-// DefineClients sets client and return it's instance
+// DefineClients sets client and return it's instance.
 func DefineClients() (*testclient.ClientSet, error) {
 	clients := testclient.New("")
 	if clients == nil {
 		return nil, fmt.Errorf("client is not set please check KUBECONFIG env variable")
 	}
+
 	return clients, nil
 }
 
@@ -135,14 +152,19 @@ func checkFileExists(filePath, name string) (string, error) {
 			"make sure env var TNF_REPO_PATH is configured with absolute path instead of relative",
 		)
 	}
+
 	fullPath, _ := filepath.Abs(filepath.Join(filePath, name))
-	if _, err := os.Stat(fullPath); err == nil {
+	_, err := os.Stat(fullPath)
+
+	if err == nil {
 		return fullPath, nil
-	} else if errors.Is(err, os.ErrNotExist) {
-		return "", fmt.Errorf("path to %s file not found: %s , Exiting", name, fullPath)
-	} else {
-		return "", fmt.Errorf("path to %s file not valid: %s , err=%s, exiting", name, fullPath, err)
 	}
+
+	if errors.Is(err, os.ErrNotExist) {
+		return "", fmt.Errorf("path to %s file not found: %s , Exiting", name, fullPath)
+	}
+
+	return "", fmt.Errorf("path to %s file not valid: %s , err=%w, exiting", name, fullPath, err)
 }
 
 func deployTnfDir(confFileName string, dirName string, yamlTag string, envVar string) error {
@@ -150,9 +172,10 @@ func deployTnfDir(confFileName string, dirName string, yamlTag string, envVar st
 
 	if os.IsNotExist(err) {
 		glog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
-		return os.MkdirAll(dirName, 0777)
 
+		return os.MkdirAll(dirName, 0777)
 	}
+
 	if err != nil {
 		return fmt.Errorf(
 			"error in verifying the %s directory. Check if either %s is present in %s or "+
