@@ -28,6 +28,7 @@ func TestNetworking(t *testing.T) {
 	_ = flag.Lookup("logtostderr").Value.Set("true")
 	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.LogLevel)
 	junitPath := globalhelper.Configuration.GetReportPath(currentFile)
+
 	RegisterFailHandler(Fail)
 	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
 	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert networking tests", rr)
@@ -37,17 +38,18 @@ var _ = BeforeSuite(func() {
 
 	By("Validate that cluster is Schedulable")
 	Eventually(func() bool {
-		isClusterReady, err := cluster.IsClusterStable(globalhelper.ApiClient)
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+
 		return isClusterReady
 	}, netparameters.WaitingTime, netparameters.RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err := nodes.WaitForNodesReady(globalhelper.ApiClient, netparameters.WaitingTime, netparameters.RetryInterval)
+	err := nodes.WaitForNodesReady(globalhelper.APIClient, netparameters.WaitingTime, netparameters.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
 	By(fmt.Sprintf("Create %s namespace", netparameters.TestNetworkingNameSpace))
-	err = namespaces.Create(netparameters.TestNetworkingNameSpace, globalhelper.ApiClient)
+	err = namespaces.Create(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
@@ -65,7 +67,11 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", netparameters.TestNetworkingNameSpace))
-	err := namespaces.DeleteAndWait(globalhelper.ApiClient, netparameters.TestNetworkingNameSpace, netparameters.WaitingTime)
+	err := namespaces.DeleteAndWait(
+		globalhelper.APIClient,
+		netparameters.TestNetworkingNameSpace,
+		netparameters.WaitingTime,
+	)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove reports from report directory")

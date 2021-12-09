@@ -33,5 +33,6 @@ func DefineDaemonSet(namespace string, image string, label map[string]string) *v
 
 func RedefineDaemonSetWithNodeSelector(daemonSet *v1.DaemonSet, nodeSelector map[string]string) *v1.DaemonSet {
 	daemonSet.Spec.Template.Spec.NodeSelector = nodeSelector
+
 	return daemonSet
 }

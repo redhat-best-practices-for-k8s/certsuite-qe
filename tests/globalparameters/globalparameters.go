@@ -35,7 +35,7 @@ type (
 		Suites  []TestSuite `xml:"testsuite"`
 	}
 
-	//TestSuite is created from XML output by a Ant JUnit task.
+	// TestSuite is created from XML output by a Ant JUnit task.
 	TestSuite struct {
 		XMLName    xml.Name   `xml:"testsuite"`
 		Errors     int        `xml:"errors,attr"`
@@ -47,7 +47,7 @@ type (
 		Testcases  []TestCase `xml:"testcase"`
 	}
 
-	//TestCase represents a failed testcase
+	// TestCase represents a failed testcase.
 	TestCase struct {
 		XMLName   xml.Name `xml:"testcase"`
 		ClassName string   `xml:"classname,attr"`
@@ -58,7 +58,7 @@ type (
 		Skipped   *string  `xml:"skipped"`
 	}
 
-	//Failure gives details as to why a test case failed.
+	// Failure gives details as to why a test case failed.
 	Failure struct {
 		Message string `xml:"message,attr"`
 		Type    string `xml:"type,attr"`

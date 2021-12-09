@@ -11,10 +11,11 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 )
 
-// ExecCommand runs command in the pod and returns buffer output
+// ExecCommand runs command in the pod and returns buffer output.
 func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
-	req := ApiClient.CoreV1Interface.RESTClient().
+
+	req := APIClient.CoreV1Interface.RESTClient().
 		Post().
 		Namespace(pod.Namespace).
 		Resource("pods").
@@ -29,7 +30,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 			TTY:       true,
 		}, scheme.ParameterCodec)
 
-	exec, err := remotecommand.NewSPDYExecutor(ApiClient.Config, "POST", req.URL())
+	exec, err := remotecommand.NewSPDYExecutor(APIClient.Config, "POST", req.URL())
 	if err != nil {
 		return buf, err
 	}
@@ -47,11 +48,12 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 	return buf, nil
 }
 
-// GetListOfPodsInNamespace returns list of pods for given namespace
+// GetListOfPodsInNamespace returns list of pods for given namespace.
 func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
-	runningPods, err := ApiClient.Pods(namespace).List(context.Background(), metav1.ListOptions{})
+	runningPods, err := APIClient.Pods(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+
 	return runningPods, nil
 }

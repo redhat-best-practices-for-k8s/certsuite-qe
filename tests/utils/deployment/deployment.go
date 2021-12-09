@@ -7,7 +7,7 @@ import (
 	"k8s.io/utils/pointer"
 )
 
-// DefineDeployment returns deployment struct
+// DefineDeployment returns deployment struct.
 func DefineDeployment(namespace string, image string, label map[string]string) *v1.Deployment {
 	return &v1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -32,7 +32,7 @@ func DefineDeployment(namespace string, image string, label map[string]string) *
 							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
 }
 
-// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions
+// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
 func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
@@ -40,24 +40,29 @@ func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) *v1.Dep
 				Add: []corev1.Capability{"ALL"}},
 		}
 	}
+
 	return deployment
 }
 
-// RedefineWithLabels redefines deployment with additional label
+// RedefineWithLabels redefines deployment with additional label.
 func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.Deployment {
 	newMap := make(map[string]string)
 	for k, v := range deployment.Spec.Template.Labels {
 		newMap[k] = v
 	}
+
 	for k, v := range label {
 		newMap[k] = v
 	}
+
 	deployment.Spec.Template.Labels = newMap
+
 	return deployment
 }
 
-// RedefineWithReplicaNumber redefines deployment with requested replica number
+// RedefineWithReplicaNumber redefines deployment with requested replica number.
 func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) *v1.Deployment {
 	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+
 	return deployment
 }

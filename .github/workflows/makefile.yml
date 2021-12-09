@@ -1,0 +1,30 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SHELL: /bin/bash
+
+    steps:
+      - name: Set up Go 1.17
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.4
+
+      - uses: actions/checkout@v2
+
+      - name: Run golint
+        run: make golint
+
+      - name:  Install ginkgo
+        run: make install-ginkgo
+
+      - name: Compile test suites
+        run: ginkgo build -r ./tests

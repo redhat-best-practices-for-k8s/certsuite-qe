@@ -18,7 +18,8 @@ var (
 	TestDeploymentLabels    = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "networkingput"}
-	TestCaseDefaultNetworkName  = "networking Both Pods are on the Default network Testing network connectivity networking-icmpv4-connectivity"
+	TestCaseDefaultNetworkName = "networking Both Pods are on the Default network Testing network connectivity " +
+		"networking-icmpv4-connectivity"
 	TestCaseDefaultSkipRegEx    = "nodePort|Multus"
 	TestCaseNodePortNetworkName = "networking Should not have type of nodePort networking-service-type"
 	TestCaseNodePortSkipRegEx   = "Default|Multus"
