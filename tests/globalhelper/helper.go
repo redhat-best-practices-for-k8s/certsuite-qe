@@ -61,6 +61,54 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	return nil
 }
 
+func defineCertifiedContainerInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
+	if len(certifiedContainerInfo) < 1 {
+		// do not add certifiedcontainerinfo to tnf_config at all in this case
+		return nil
+	}
+
+	for _, certifiedContainerFields := range certifiedContainerInfo {
+		nameRepository := strings.Split(certifiedContainerFields, "/")
+		if len(nameRepository) != 2 {
+			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
+		}
+
+		name := strings.TrimSpace(nameRepository[0])
+		repo := strings.TrimSpace(nameRepository[1])
+
+		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
+			Name:       name,
+			Repository: repo,
+		})
+	}
+
+	return nil
+}
+
+func defineCertifiedOperatorInfo(config *globalparameters.TnfConfig, certifiedOperatorInfo []string) error {
+	if len(certifiedOperatorInfo) < 1 {
+		// do not add certifiedoperatorinfo to tnf_config at all in this case
+		return nil
+	}
+
+	for _, certifiedOperatorFields := range certifiedOperatorInfo {
+		nameOrganization := strings.Split(certifiedOperatorFields, "/")
+		if len(nameOrganization) != 2 {
+			return fmt.Errorf(fmt.Sprintf("certified operator info %s is invalid", certifiedOperatorFields))
+		}
+
+		name := strings.TrimSpace(nameOrganization[0])
+		org := strings.TrimSpace(nameOrganization[1])
+
+		config.Certifiedoperatorinfo = append(config.Certifiedoperatorinfo, globalparameters.CertifiedOperatorRepoInfo{
+			Name:         name,
+			Organization: org,
+		})
+	}
+
+	return nil
+}
+
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
 func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
 	configFile, err := os.OpenFile(
