@@ -25,10 +25,12 @@ func TestAffiliatedCertification(t *testing.T) {
 
 	if err != nil {
 		fmt.Print(err)
+
 		return
 	}
 
 	junitPath := configSuite.GetReportPath(currentFile)
+
 	RegisterFailHandler(Fail)
 	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
 	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert affiliated-certification tests", rr)
