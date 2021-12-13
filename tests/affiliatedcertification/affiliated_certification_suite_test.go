@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"testing"
 
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliated_certification/tests"
+	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 )
