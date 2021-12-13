@@ -1,4 +1,4 @@
-package affiliated_certification
+package affiliatedcertification
 
 import (
 	"flag"
