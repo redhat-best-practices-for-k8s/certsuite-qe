@@ -2,6 +2,12 @@ package tests
 
 import (
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
@@ -17,22 +23,94 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46562
 	It("one container to test, container is certified", func() {
-		Skip("Under development")
+		By("Add container information to tnf_config.yml")
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{affiliatedcertparameters.CertifiedConatiner1})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseContainerSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46563
 	It("one container to test, container is not certified [negative]", func() {
-		Skip("Under development")
+		By("Add container information to tnf_config.yml")
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{affiliatedcertparameters.UncertifiedConatiner1})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseContainerSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46564
 	It("two containers to test, both are certified", func() {
-		Skip("Under development")
+		By("Add container information to tnf_config.yml")
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{affiliatedcertparameters.CertifiedConatiner1, affiliatedcertparameters.CertifiedContainer2})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseContainerSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46565
 	It("two containers to test, one is certified, one is not [negative]", func() {
-		Skip("Under development")
+		By("Add container information to tnf_config.yml")
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{affiliatedcertparameters.CertifiedConatiner1, affiliatedcertparameters.CertifiedContainer2})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseContainerSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46566
