@@ -27,7 +27,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.CertifiedConatiner1})
+			[]string{affiliatedcertparameters.CertifiedContainer1})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -50,7 +50,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.UncertifiedConatiner1})
+			[]string{affiliatedcertparameters.UncertifiedContainer1})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -73,7 +73,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.CertifiedConatiner1, affiliatedcertparameters.CertifiedContainer2})
+			[]string{affiliatedcertparameters.CertifiedContainer1, affiliatedcertparameters.CertifiedContainer2})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -96,7 +96,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.CertifiedConatiner1, affiliatedcertparameters.CertifiedContainer2})
+			[]string{affiliatedcertparameters.UncertifiedContainer1, affiliatedcertparameters.CertifiedContainer1})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
