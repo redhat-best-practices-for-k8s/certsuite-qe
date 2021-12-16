@@ -3,7 +3,6 @@ package nethelper
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -245,29 +244,6 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 	glog.V(5).Info("error to query RBAC policy")
 
 	return err
-}
-
-// GetPartnerPodDefinition returns partner's pod struct.
-func GetPartnerPodDefinition() (*corev1.Pod, error) {
-	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.DefaultPartnerPodNamespace)
-	if err != nil {
-		return nil, err
-	}
-
-	var partnerPodIP *corev1.Pod
-
-	for _, runningPod := range podsList.Items {
-		if strings.Contains(runningPod.Name, netparameters.DefaultPartnerPodPrefixName) {
-			partnerPodIP = &runningPod
-		}
-	}
-
-	if partnerPodIP == nil {
-		return nil, fmt.Errorf("can not detect partner pods in %s namespace",
-			netparameters.DefaultPartnerPodNamespace)
-	}
-
-	return partnerPodIP, nil
 }
 
 func execCmdOnPodsListInNamespace(command []string, execOn string) error {
