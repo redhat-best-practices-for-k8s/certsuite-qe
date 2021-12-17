@@ -58,7 +58,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseContainerSkipRegEx,
 		)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = nethelper.ValidateIfReportsAreValid(
@@ -104,7 +104,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseContainerSkipRegEx,
 		)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = nethelper.ValidateIfReportsAreValid(
