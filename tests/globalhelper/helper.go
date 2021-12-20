@@ -61,7 +61,7 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	return nil
 }
 
-func defineCertifiedContainerInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
+func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
 	if len(certifiedContainerInfo) < 1 {
 		// do not add certifiedcontainerinfo to tnf_config at all in this case
 		return nil
@@ -109,7 +109,7 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedCon
 		return err
 	}
 
-	err = defineCertifiedContainerInfo(&tnfConfig, certifiedContainerInfo)
+	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
 	if err != nil {
 		return err
 	}

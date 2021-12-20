@@ -23,94 +23,100 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46562
 	It("one container to test, container is certified", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.CertifiedContainer1})
-		Expect(err).ToNot(HaveOccurred())
+			[]string{affiliatedcertparameters.CertifiedContainerNodeJsUbi})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
-		By("Start tests")
+		By("Start test")
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseContainerSkipRegEx,
 		)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = nethelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46563
 	It("one container to test, container is not certified [negative]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.UncertifiedContainer1})
-		Expect(err).ToNot(HaveOccurred())
+			[]string{affiliatedcertparameters.UncertifiedContainerFooBar})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
-		By("Start tests")
+		By("Start test")
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseContainerSkipRegEx,
 		)
-		Expect(err).To(HaveOccurred())
+		Expect(err).To(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = nethelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46564
 	It("two containers to test, both are certified", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.CertifiedContainer1, affiliatedcertparameters.CertifiedContainer2})
-		Expect(err).ToNot(HaveOccurred())
+			[]string{affiliatedcertparameters.CertifiedContainerNodeJsUbi,
+				affiliatedcertparameters.CertifiedContainerRhel7OpenJdk})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
-		By("Start tests")
+		By("Start test")
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseContainerSkipRegEx,
 		)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = nethelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46565
 	It("two containers to test, one is certified, one is not [negative]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.UncertifiedContainer1, affiliatedcertparameters.CertifiedContainer1})
-		Expect(err).ToNot(HaveOccurred())
+			[]string{affiliatedcertparameters.UncertifiedContainerFooBar,
+				affiliatedcertparameters.CertifiedContainerNodeJsUbi})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
-		By("Start tests")
+		By("Start test")
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseContainerSkipRegEx,
 		)
-		Expect(err).To(HaveOccurred())
+		Expect(err).To(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = nethelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46566
