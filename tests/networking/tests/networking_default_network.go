@@ -104,14 +104,17 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Collect partner's pod info")
-		partnerPod, err := nethelper.GetPartnerPodDefinition()
+		By("Close communication between deployment pods")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Close communication between partner and test pods")
-		err = nethelper.ExecCmdOnOnePodInNamespace(
-			[]string{"ip", "route", "add", partnerPod.Status.PodIP, "via", "127.0.0.1"})
-		Expect(err).ToNot(HaveOccurred())
+		for index := range podsList.Items {
+			_, err := globalhelper.ExecCommand(
+				podsList.Items[0],
+				[]string{"ip", "route", "add", podsList.Items[index].Status.PodIP, "via", "127.0.0.1"},
+			)
+			Expect(err).ToNot(HaveOccurred())
+		}
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
