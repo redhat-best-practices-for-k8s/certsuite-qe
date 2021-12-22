@@ -55,7 +55,8 @@ var _ = BeforeSuite(func() {
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
-		[]string{netparameters.TestPodLabel})
+		[]string{netparameters.TestPodLabel},
+		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Set rbac policy which allows authenticated users to run privileged containers")

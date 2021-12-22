@@ -61,8 +61,34 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	return nil
 }
 
+func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
+	if len(certifiedContainerInfo) < 1 {
+		// do not add certifiedcontainerinfo to tnf_config at all in this case
+		return nil
+	}
+
+	for _, certifiedContainerFields := range certifiedContainerInfo {
+		nameRepository := strings.Split(certifiedContainerFields, "/")
+		if len(nameRepository) != 2 {
+			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
+		}
+
+		name := strings.TrimSpace(nameRepository[0])
+		repo := strings.TrimSpace(nameRepository[1])
+
+		glog.V(5).Info(fmt.Sprintf("Adding container name:%s repository:%s to configuration", name, repo))
+
+		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
+			Name:       name,
+			Repository: repo,
+		})
+	}
+
+	return nil
+}
+
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string) error {
 	configFile, err := os.OpenFile(
 		path.Join(
 			Configuration.General.TnfConfigDir,
@@ -81,6 +107,11 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string) error {
 	}
 
 	err = defineTargetPodLabels(&tnfConfig, targetPodLabels)
+	if err != nil {
+		return err
+	}
+
+	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
 	if err != nil {
 		return err
 	}
