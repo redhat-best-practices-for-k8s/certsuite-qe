@@ -76,6 +76,8 @@ func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certified
 		name := strings.TrimSpace(nameRepository[0])
 		repo := strings.TrimSpace(nameRepository[1])
 
+		glog.V(5).Info(fmt.Sprintf("Adding container name:%s repository:%s to configuration", name, repo))
+
 		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
 			Name:       name,
 			Repository: repo,
