@@ -10,6 +10,6 @@ var (
 	UncertifiedContainerFooBar           = "foo/bar"
 	ContainerFieldNoSubFields            = ""
 	EmptyFieldsContainer                 = "/"
-	ContainerNameOnly                    = "openjdk-11-rhel7/"
-	ContainerRepoOnly                    = "/openjdk"
+	ContainerNameOnlyRhel7OpenJdk        = "openjdk-11-rhel7/"
+	ContainerRepoOnlyOpenJdk             = "/openjdk"
 )
