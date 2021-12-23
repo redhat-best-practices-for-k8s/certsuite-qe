@@ -48,17 +48,79 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46695
 	It("one operator to test, operator is not certified [negative]", func() {
-		Skip("Under development")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{},
+			[]string{affiliatedcertparameters.UncertifiedOperatorBarFoo})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46696
 	It("two operators to test, both are certified", func() {
-		Skip("Under development")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{},
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
+				affiliatedcertparameters.CertifiedOperatorKubeturbo})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46697
 	It("two operators to test, one is certified, one is not [negative]", func() {
-		Skip("Under development")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+		err := globalhelper.DefineTnfConfig(
+			[]string{netparameters.TestNetworkingNameSpace},
+			[]string{netparameters.TestPodLabel},
+			[]string{},
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
+				affiliatedcertparameters.UncertifiedOperatorBarFoo})
+		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46698
