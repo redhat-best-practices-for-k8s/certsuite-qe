@@ -69,12 +69,16 @@ func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certified
 
 	for _, certifiedContainerFields := range certifiedContainerInfo {
 		nameRepository := strings.Split(certifiedContainerFields, "/")
+
 		if len(nameRepository) == 1 {
 			// certifiedContainerInfo item does not contain separation character
 			// use this to add only the Certifiedcontainerinfo field with no sub fields
-			config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo)
+			var emptyInfo globalparameters.CertifiedContainerRepoInfo
+			config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, emptyInfo)
+
 			return nil
 		}
+
 		if len(nameRepository) != 2 {
 			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
 		}
