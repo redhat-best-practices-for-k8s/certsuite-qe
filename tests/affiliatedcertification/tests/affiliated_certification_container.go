@@ -125,7 +125,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
-			[]string{affiliatedcertparameters.ContainerFieldNoSubFields})
+			[]string{""})
 		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
 		By("Start test")
