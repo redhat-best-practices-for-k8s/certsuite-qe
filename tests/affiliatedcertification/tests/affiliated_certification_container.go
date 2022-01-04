@@ -121,7 +121,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46566
 	It("certifiedcontainerinfo field exists in tnf_config but has no value [skip]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
@@ -145,7 +145,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46567
 	It("certifiedcontainerinfo field does not exist in tnf_config [skip]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
@@ -169,7 +169,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46578
 	It("name and repository fields exist in certifiedcontainerinfo field but are empty [skip]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
@@ -193,7 +193,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46579
 	It("name field in certifiedcontainerinfo field is populated but repository field is not [skip]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
@@ -217,7 +217,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 
 	// 46580
 	It("repository field in certifiedcontainerinfo field is populated but name field is not [skip]", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
@@ -242,7 +242,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	// 46581
 	It("two containers listed in certifiedcontainerinfo field, one is certified, one has empty name and "+
 		"repository fields", func() {
-		By("Add container information to tnf_config.yml")
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err := globalhelper.DefineTnfConfig(
 			[]string{netparameters.TestNetworkingNameSpace},
 			[]string{netparameters.TestPodLabel},
