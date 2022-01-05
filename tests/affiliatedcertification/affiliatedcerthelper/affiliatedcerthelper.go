@@ -16,6 +16,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	var err error
 
 	By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel},
@@ -23,10 +24,12 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
 	By("Start test")
+
 	err = globalhelper.LaunchTests(
 		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 		affiliatedcertparameters.TestCaseContainerSkipRegEx,
 	)
+
 	if strings.Compare(expectedResult, globalparameters.TestCaseFailed) == 0 {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
@@ -36,6 +39,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	}
 
 	By("Verify test case status in Junit and Claim reports")
+
 	err = nethelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 		expectedResult)
