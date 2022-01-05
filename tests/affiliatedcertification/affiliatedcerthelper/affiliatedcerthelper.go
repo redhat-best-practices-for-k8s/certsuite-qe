@@ -1,10 +1,10 @@
 package affiliatedcerthelper
 
 import (
+	"fmt"
 	"strings"
 
 	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -21,7 +21,10 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel},
 		containersInfo)
-	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
+
+	if err != nil {
+		return fmt.Errorf("Error defining tnf config file: %s", err)
+	}
 
 	By("Start test")
 
@@ -31,11 +34,17 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	)
 
 	if strings.Compare(expectedResult, globalparameters.TestCaseFailed) == 0 {
-		Expect(err).To(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		if err == nil {
+			return fmt.Errorf("Error running %s test",
+				affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
+		}
 	} else {
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		if err != nil {
+			return fmt.Errorf("Error running %s test: %s",
+				affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
+		}
 	}
 
 	By("Verify test case status in Junit and Claim reports")
@@ -43,10 +52,9 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	err = nethelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 		expectedResult)
-	Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Error validating test reports: %s", err)
 	}
 
 	return nil
