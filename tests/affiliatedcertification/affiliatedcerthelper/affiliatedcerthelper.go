@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -15,7 +15,7 @@ import (
 func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string) error {
 	var err error
 
-	By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
@@ -26,7 +26,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 		return fmt.Errorf("error defining tnf config file: %w", err)
 	}
 
-	By("Start test")
+	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
 		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
@@ -46,7 +46,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 		}
 	}
 
-	By("Verify test case status in Junit and Claim reports")
+	ginkgo.By("Verify test case status in Junit and Claim reports")
 
 	err = nethelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
