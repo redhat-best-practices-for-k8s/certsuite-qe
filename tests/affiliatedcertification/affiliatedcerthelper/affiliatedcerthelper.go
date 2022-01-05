@@ -33,17 +33,15 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 		affiliatedcertparameters.TestCaseContainerSkipRegEx,
 	)
 
-	if strings.Compare(expectedResult, globalparameters.TestCaseFailed) == 0 {
-		if err == nil {
-			return fmt.Errorf("error running %s test",
-				affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
-		}
-	} else {
+	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
+		return fmt.Errorf("error running %s test",
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
+	}
 
-		if err != nil {
-			return fmt.Errorf("error running %s test: %w",
-				affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
-		}
+	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
+		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
+		return fmt.Errorf("error running %s test: %w",
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
 	}
 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
