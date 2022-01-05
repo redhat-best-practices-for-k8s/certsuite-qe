@@ -39,6 +39,7 @@ Optional:
 #### Available features
 The list of available features:
 * *networking*
+* *affiliated-certification*
 
 #### Running the tests
 
@@ -91,8 +92,12 @@ The project uses a development method - forking workflow
     ├── tests                          # Test cases directory
     │   ├── networking                 # Networking test cases directory
     │   │   ├── nethelper       # Networking common test function
-    │   │   ├── netparameters   # Networking constans and parameters 
+    │   │   ├── netparameters   # Networking constants and parameters 
     │   │   └── tests                  # Networking test suite directory
+    |   ├── affiliatedcertification    # Affiliated Certification test cases directory   
+    |   |   ├── affiliatedcerthelper         # Affiliated Certification common test function
+    |   |   ├── affiliatedcertparameters     # Affiliated Certification constants and parameters 
+    |   |   └── tests                        # Affiliated Certification test suite directory
     │   ├── platform                   # Platform test cases directory
     │   │   ├── platformghelper        # Platform common test function
     │   │   ├── platformparameters     # Platform constans and parameters
