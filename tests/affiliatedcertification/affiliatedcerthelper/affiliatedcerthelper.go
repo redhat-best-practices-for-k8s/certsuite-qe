@@ -23,7 +23,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 		containersInfo)
 
 	if err != nil {
-		return fmt.Errorf("Error defining tnf config file: %s", err)
+		return fmt.Errorf("error defining tnf config file: %w", err)
 	}
 
 	By("Start test")
@@ -34,15 +34,14 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	)
 
 	if strings.Compare(expectedResult, globalparameters.TestCaseFailed) == 0 {
-
 		if err == nil {
-			return fmt.Errorf("Error running %s test",
+			return fmt.Errorf("error running %s test",
 				affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
 		}
 	} else {
 
 		if err != nil {
-			return fmt.Errorf("Error running %s test: %s",
+			return fmt.Errorf("error running %s test: %w",
 				affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
 		}
 	}
@@ -54,7 +53,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 		expectedResult)
 
 	if err != nil {
-		return fmt.Errorf("Error validating test reports: %s", err)
+		return fmt.Errorf("error validating test reports: %w", err)
 	}
 
 	return nil
