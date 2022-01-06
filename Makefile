@@ -1,20 +1,19 @@
 # Export GO111MODULE=on to enable project to be built from within GOPATH/src
 export GO111MODULE=on
+GO_PACKAGES=$(shell go list ./... | grep -v vendor)
 
-.PHONY: govet \
-		golint \
+.PHONY: lint \
 		deps-update \
 		gofmt \
 		test-all \
 		test-features \
-		install
+		install \
+		vet
 
-govet:
-	@echo "Running go vet"
-	# Disabling GO111MODULE just for go vet execution
-	GO111MODULE=off go vet github.com/test-network-function/cnfcert-tests-verification/test...
+vet:
+	go vet ${GO_PACKAGES}
 
-golint:
+lint:
 	@echo "Running go lint"
 	scripts/golangci-lint.sh
 
@@ -35,6 +34,5 @@ test-features:
 install-ginkgo:
 	scripts/install-ginkgo.sh
 
-install: deps-update
+install: deps-update install-ginkgo
 	@echo "Installing needed dependencies"
-	scripts/install-ginkgo.sh
