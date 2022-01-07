@@ -62,6 +62,7 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	var err error
 
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel},
@@ -72,6 +73,7 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	}
 
 	ginkgo.By("Start test")
+
 	err = globalhelper.LaunchTests(
 		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 		affiliatedcertparameters.TestCaseOperatorSkipRegEx,
@@ -89,6 +91,7 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	}
 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
+
 	err = nethelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 		expectedResult)

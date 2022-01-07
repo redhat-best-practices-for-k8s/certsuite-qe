@@ -134,7 +134,8 @@ func defineCertifiedOperatorsInfo(config *globalparameters.TnfConfig, certifiedO
 }
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string, certifiedOperatorsInfo []string) error {
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string,
+	certifiedOperatorsInfo []string) error {
 	configFile, err := os.OpenFile(
 		path.Join(
 			Configuration.General.TnfConfigDir,
