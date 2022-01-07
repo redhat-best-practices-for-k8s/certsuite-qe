@@ -91,7 +91,7 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
 	err = nethelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-		globalparameters.TestCasePassed)
+		expectedResult)
 
 	if err != nil {
 		return fmt.Errorf("error validating test reports: %w", err)
