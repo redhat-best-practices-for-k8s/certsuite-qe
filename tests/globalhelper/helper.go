@@ -105,6 +105,16 @@ func defineCertifiedOperatorsInfo(config *globalparameters.TnfConfig, certifiedO
 
 	for _, certifiedOperatorFields := range certifiedOperatorInfo {
 		nameOrganization := strings.Split(certifiedOperatorFields, "/")
+
+		if len(nameOrganization) == 1 {
+			// certifiedOperatorInfo item does not contain separation character
+			// use this to add only the Certifiedoperatorinfo field with no sub fields
+			var emptyInfo globalparameters.CertifiedOperatorRepoInfo
+			config.Certifiedoperatorinfo = append(config.Certifiedoperatorinfo, emptyInfo)
+
+			return nil
+		}
+
 		if len(nameOrganization) != 2 {
 			return fmt.Errorf(fmt.Sprintf("certified operator info %s is invalid", certifiedOperatorFields))
 		}
