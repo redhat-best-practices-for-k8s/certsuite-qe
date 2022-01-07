@@ -20,7 +20,8 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel},
-		containersInfo)
+		containersInfo,
+		[]string{})
 
 	if err != nil {
 		return fmt.Errorf("error defining tnf config file: %w", err)
@@ -49,6 +50,48 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	err = nethelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 		expectedResult)
+
+	if err != nil {
+		return fmt.Errorf("error validating test reports: %w", err)
+	}
+
+	return nil
+}
+
+func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) error {
+	var err error
+
+	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+	err = globalhelper.DefineTnfConfig(
+		[]string{netparameters.TestNetworkingNameSpace},
+		[]string{netparameters.TestPodLabel},
+		[]string{},
+		operatorsInfo)
+	if err != nil {
+		return fmt.Errorf("error defining tnf config file: %w", err)
+	}
+
+	ginkgo.By("Start test")
+	err = globalhelper.LaunchTests(
+		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+	)
+
+	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
+		return fmt.Errorf("error running %s test",
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
+	}
+
+	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
+		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
+		return fmt.Errorf("error running %s test: %w",
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
+	}
+
+	ginkgo.By("Verify test case status in Junit and Claim reports")
+	err = nethelper.ValidateIfReportsAreValid(
+		affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+		globalparameters.TestCasePassed)
 
 	if err != nil {
 		return fmt.Errorf("error validating test reports: %w", err)

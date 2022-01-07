@@ -3,6 +3,7 @@ package tests
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -23,27 +24,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46582
 	It("one operator to test, operator is certified", func() {
-		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
-		err := globalhelper.DefineTnfConfig(
-			[]string{netparameters.TestNetworkingNameSpace},
-			[]string{netparameters.TestPodLabel},
-			[]string{},
-			[]string{affiliatedcertparameters.CertifiedOperatorApicast})
-		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
-
-		By("Start test")
-		err = globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
-			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
-
-		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast}, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46695
