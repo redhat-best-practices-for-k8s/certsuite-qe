@@ -59,11 +59,9 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 }
 
 func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) error {
-	var err error
-
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
-	err = globalhelper.DefineTnfConfig(
+	err := globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel},
 		[]string{},
