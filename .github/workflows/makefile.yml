@@ -20,8 +20,8 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Run golint
-        run: make golint
+      - name: Run lint
+        run: make lint
 
       - name:  Install ginkgo
         run: make install-ginkgo
