@@ -66,3 +66,18 @@ func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) 
 
 	return deployment
 }
+
+// RedefineWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
+func RedefineWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PreStop: &corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: command,
+				},
+			},
+		}
+	}
+
+	return deployment
+}
