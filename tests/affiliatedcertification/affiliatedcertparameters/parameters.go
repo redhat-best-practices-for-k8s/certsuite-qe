@@ -8,7 +8,7 @@ var (
 	CertifiedContainerNodeJsUbi         = "nodejs-12/ubi8"
 	CertifiedContainerRhel7OpenJdk      = "openjdk-11-rhel7/openjdk"
 	UncertifiedContainerFooBar          = "foo/bar"
-	EmptyFieldsContainer                = "/"
+	EmptyFieldsContainerOrOperator      = "/"
 	ContainerNameOnlyRhel7OpenJdk       = "openjdk-11-rhel7/"
 	ContainerRepoOnlyOpenJdk            = "/openjdk"
 
@@ -17,4 +17,6 @@ var (
 	CertifiedOperatorApicast           = "apicast-operator/redhat-operators"
 	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
 	UncertifiedOperatorBarFoo          = "bar/foo"
+	OperatorNameOnlyKubeturbo          = "kubeturbo-certified"
+	OperatorOrgOnlyCertifiedOperators  = "certified-operators"
 )
