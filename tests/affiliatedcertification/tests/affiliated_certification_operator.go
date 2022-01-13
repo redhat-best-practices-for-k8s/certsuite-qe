@@ -2,6 +2,10 @@ package tests
 
 import (
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
@@ -17,22 +21,32 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46582
 	It("one operator to test, operator is certified", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast}, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46695
 	It("one operator to test, operator is not certified [negative]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.UncertifiedOperatorBarFoo}, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46696
 	It("two operators to test, both are certified", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
+				affiliatedcertparameters.CertifiedOperatorKubeturbo}, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46697
 	It("two operators to test, one is certified, one is not [negative]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
+				affiliatedcertparameters.UncertifiedOperatorBarFoo}, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46698
