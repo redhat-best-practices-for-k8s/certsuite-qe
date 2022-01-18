@@ -12,8 +12,8 @@ const (
 
 var (
 	LifecycleNamespace     = "lifecycle-tests"
-	testPodLabelPrefixName = "test-network-function.com/generic"
-	testPodLabelValue      = "target"
+	testPodLabelPrefixName = "test-network-function.com/lifecycle"
+	testPodLabelValue      = "testing"
 	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 	TestDeploymentLabels   = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,

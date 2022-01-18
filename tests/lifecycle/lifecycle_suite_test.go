@@ -2,7 +2,6 @@ package lifecycle
 
 import (
 	"flag"
-	"fmt"
 	"runtime"
 	"testing"
 	"time"
@@ -62,15 +61,15 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", lifeparameters.LifecycleNamespace))
-	err := namespaces.DeleteAndWait(
-		globalhelper.APIClient,
-		lifeparameters.LifecycleNamespace,
-		lifeparameters.WaitingTime,
-	)
-	Expect(err).ToNot(HaveOccurred())
+	// 	By(fmt.Sprintf("Remove %s namespace", lifeparameters.LifecycleNamespace))
+	// 	err := namespaces.DeleteAndWait(
+	// 		globalhelper.APIClient,
+	// 		lifeparameters.LifecycleNamespace,
+	// 		lifeparameters.WaitingTime,
+	// 	)
+	// 	Expect(err).ToNot(HaveOccurred())
 
-	By("Remove reports from reports directory")
-	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())
+	// 	By("Remove reports from reports directory")
+	// 	err = globalhelper.RemoveContentsFromReportDir()
+	// 	Expect(err).ToNot(HaveOccurred())
 })

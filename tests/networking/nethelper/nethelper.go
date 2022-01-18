@@ -62,6 +62,7 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map[string]string) *v1.Deployment {
 	deploymentStruct := deployment.RedefineWithReplicaNumber(
 		deployment.DefineDeployment(
+			"networkingput",
 			netparameters.TestNetworkingNameSpace,
 			globalhelper.Configuration.General.TestImage,
 			netparameters.TestDeploymentLabels),

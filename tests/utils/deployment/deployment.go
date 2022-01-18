@@ -8,10 +8,10 @@ import (
 )
 
 // DefineDeployment returns deployment struct.
-func DefineDeployment(namespace string, image string, label map[string]string) *v1.Deployment {
+func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *v1.Deployment {
 	return &v1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "networkingput",
+			Name:      deploymentName,
 			Namespace: namespace},
 		Spec: v1.DeploymentSpec{
 			Replicas: pointer.Int32Ptr(1),
