@@ -66,7 +66,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	// 46578
 	It("name and repository fields exist in certifiedcontainerinfo field but are empty [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
-			[]string{affiliatedcertparameters.EmptyFieldsContainer}, globalparameters.TestCaseSkipped)
+			[]string{affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -89,7 +89,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		"repository fields", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			[]string{affiliatedcertparameters.CertifiedContainerNodeJsUbi,
-				affiliatedcertparameters.EmptyFieldsContainer}, globalparameters.TestCasePassed)
+				affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
