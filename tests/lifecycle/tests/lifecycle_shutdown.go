@@ -28,7 +28,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 			lifehelper.DefineLifecycleDeployment(),
 			[]string{"/bin/sh", "-c", "killall -0 tail"})
 
-		err := nethelper.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
+		err := deployment.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-container-shutdown test")
@@ -47,26 +47,26 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47315
-	// It("One deployment, one pod with one container that does not have preStop field configured [negative]", func() {
+	It("One deployment, one pod with one container that does not have preStop field configured [negative]", func() {
 
-	// 	By("Define deployment without prestop field configured")
-	// 	deploymentStruct := lifehelper.DefineLifecycleDeployment()
+		By("Define deployment without prestop field configured")
+		deploymentStructWithOutPreStop := lifehelper.DefineLifecycleDeployment()
 
-	// 	err := nethelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
-	// 	Expect(err).ToNot(HaveOccurred())
+		err := deployment.CreateAndWaitUntilDeploymentIsReady(deploymentStructWithOutPreStop, lifeparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
 
-	// 	By("Start lifecycle lifecycle-container-shutdown test")
-	// 	err = globalhelper.LaunchTests(
-	// 		[]string{lifeparameters.LifecycleTestSuiteName},
-	// 		lifeparameters.SkipAllButShutdownRegex)
-	// 	Expect(err).To(HaveOccurred())
+		By("Start lifecycle lifecycle-container-shutdown test")
+		err = globalhelper.LaunchTests(
+			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.SkipAllButShutdownRegex)
+		Expect(err).To(HaveOccurred())
 
-	// 	By("Verify test case status in Junit and Claim reports")
-	// 	err = nethelper.ValidateIfReportsAreValid(
-	// 		lifeparameters.ShutdownDefaultName,
-	// 		globalparameters.TestCaseFailed)
-	// 	Expect(err).ToNot(HaveOccurred())
+		By("Verify test case status in Junit and Claim reports")
+		err = nethelper.ValidateIfReportsAreValid(
+			lifeparameters.ShutdownDefaultName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 
-	// })
+	})
 
 })
