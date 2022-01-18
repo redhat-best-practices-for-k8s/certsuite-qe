@@ -130,33 +130,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 45443
-	It("2 custom pods on Default network networking-icmpv4-connectivity fail when there is no ping binary "+
-		"[negative]", func() {
-
-		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Remove ping binary from test pod")
-		err = nethelper.ExecCmdOnOnePodInNamespace(
-			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Start tests")
-		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
-			netparameters.TestCaseDefaultSkipRegEx,
-		)
-		Expect(err).To(HaveOccurred())
-
-		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseDefaultNetworkName,
-			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 	// 45444
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
@@ -222,31 +195,4 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
-	// 45446
-	It("2 custom pods on Default network networking-icmpv4-connectivity skip when there is no ip binary [skip]",
-		func() {
-
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Remove ip binary from test pod")
-			err = nethelper.ExecCmdOnAllPodInNamespace(
-				[]string{"rm", "-rf", "/usr/bin/ip", "/usr/sbin/ip"})
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseDefaultSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Verify test case status in Junit and Claim reports")
-			err = nethelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseDefaultNetworkName,
-				globalparameters.TestCaseSkipped)
-			Expect(err).ToNot(HaveOccurred())
-		})
 })
