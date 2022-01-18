@@ -14,6 +14,6 @@ func DefineLifecycleDeployment() *v1.Deployment {
 		lifeparameters.LifecycleNamespace,
 		globalhelper.Configuration.General.TnfImage,
 		lifeparameters.TestDeploymentLabels)
-	return deploymentStruct
 
+	return deploymentStruct
 }
