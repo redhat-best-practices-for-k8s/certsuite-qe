@@ -21,25 +21,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func isDeploymentReady(operatorNamespace string, deploymentName string) (bool, error) {
-	testDeployment, err := globalhelper.APIClient.Deployments(operatorNamespace).Get(
-		context.Background(),
-		deploymentName,
-		metav1.GetOptions{},
-	)
-	if err != nil {
-		return false, err
-	}
-
-	if testDeployment.Status.ReadyReplicas > 0 {
-		if testDeployment.Status.Replicas == testDeployment.Status.ReadyReplicas {
-			return true, nil
-		}
-	}
-
-	return false, nil
-}
-
 func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, error) {
 	daemonSet, err := globalhelper.APIClient.DaemonSets(operatorNamespace).Get(
 		context.Background(),
@@ -62,6 +43,7 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map[string]string) *v1.Deployment {
 	deploymentStruct := deployment.RedefineWithReplicaNumber(
 		deployment.DefineDeployment(
+			"networkingput",
 			netparameters.TestNetworkingNameSpace,
 			globalhelper.Configuration.General.TestImage,
 			netparameters.TestDeploymentLabels),
@@ -75,31 +57,6 @@ func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map
 	}
 
 	return deploymentStruct
-}
-
-// CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
-func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time.Duration) error {
-	runningDeployment, err := globalhelper.APIClient.Deployments(deployment.Namespace).Create(
-		context.Background(),
-		deployment,
-		metav1.CreateOptions{})
-	if err != nil {
-		return err
-	}
-
-	Eventually(func() bool {
-		status, err := isDeploymentReady(runningDeployment.Namespace, runningDeployment.Name)
-		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not ready, retry in 5 seconds", runningDeployment.Name))
-
-			return false
-		}
-
-		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "Deployment is not ready")
-
-	return nil
 }
 
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and wait until all deployment replicas are up and running.
@@ -185,14 +142,14 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, false, nil)
 
-	return CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, true, nil)
 
-	return CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
@@ -201,7 +158,7 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) err
 		replicaNumber,
 		true,
 		netparameters.NetworkingTestSkipLabel)
-	err := CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 
 	if err != nil {
 		return err

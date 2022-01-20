@@ -34,7 +34,7 @@ function run_tests {
             echo "#### Run feature tests: ${FEATURES} ####"
             for feature in ${FEATURES}
                 do
-                    for dir in tests/*/*; do
+                    for dir in tests/*; do
                     if [[ $dir != *"util"* ]] && [[ $dir == *"${feature}"* ]]; then {
                         command+=" "$dir
                     } fi

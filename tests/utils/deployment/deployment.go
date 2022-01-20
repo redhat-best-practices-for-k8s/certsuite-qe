@@ -8,10 +8,10 @@ import (
 )
 
 // DefineDeployment returns deployment struct.
-func DefineDeployment(namespace string, image string, label map[string]string) *v1.Deployment {
+func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *v1.Deployment {
 	return &v1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "networkingput",
+			Name:      deploymentName,
 			Namespace: namespace},
 		Spec: v1.DeploymentSpec{
 			Replicas: pointer.Int32Ptr(1),
@@ -63,6 +63,21 @@ func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.
 // RedefineWithReplicaNumber redefines deployment with requested replica number.
 func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) *v1.Deployment {
 	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+
+	return deployment
+}
+
+// RedefineWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
+func RedefineWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PreStop: &corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: command,
+				},
+			},
+		}
+	}
 
 	return deployment
 }
