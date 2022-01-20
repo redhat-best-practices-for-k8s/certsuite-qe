@@ -51,32 +51,45 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46698
 	It("certifiedoperatorinfo field exists in tnf_config but has no value [skip]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{""}, globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46699
 	It("certifiedoperatorinfo field does not exist in tnf_config [skip]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{}, globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46700
 	It("name and organization fields exist in certifiedoperatorinfo but are empty [skip]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46702
 	It("name field in certifiedoperatorinfo field is populated but organization field is not [skip]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.OperatorNameOnlyKubeturbo}, globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46704
 	It("organization field in certifiedoperatorinfo field is populated but name field is not [skip]", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.OperatorOrgOnlyCertifiedOperators}, globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46706
 	It("two operators to test, one is certified, one has empty name and organization fields", func() {
-		Skip("Under development")
+		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
+				affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 })

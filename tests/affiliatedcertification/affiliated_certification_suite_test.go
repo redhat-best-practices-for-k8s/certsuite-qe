@@ -42,4 +42,7 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 
+	By("Remove reports from report directory")
+	err := globalhelper.RemoveContentsFromReportDir()
+	Expect(err).ToNot(HaveOccurred())
 })
