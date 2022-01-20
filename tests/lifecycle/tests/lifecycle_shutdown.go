@@ -28,7 +28,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 			lifehelper.DefineLifecycleDeployment(),
 			[]string{"/bin/sh", "-c", "killall -0 tail"})
 
-		err := deployment.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-container-shutdown test")
@@ -52,7 +52,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Define deployment without prestop field configured")
 		deploymentStructWithOutPreStop := lifehelper.DefineLifecycleDeployment()
 
-		err := deployment.CreateAndWaitUntilDeploymentIsReady(deploymentStructWithOutPreStop, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructWithOutPreStop, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-container-shutdown test")
