@@ -106,8 +106,9 @@ func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []
 	return deployment
 }
 
-// DefineDeploymentWithTwoContainers defines a deployment with two containers
-func DefineDeploymentWithTwoContainers(deploymentName string, namespace string, image string, label map[string]string) *v1.Deployment {
+// DefineDeploymentWithTwoContainers defines a deployment with two containers.
+func DefineDeploymentWithTwoContainers(deploymentName string,
+	namespace string, image string, label map[string]string) *v1.Deployment {
 	return &v1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      deploymentName,

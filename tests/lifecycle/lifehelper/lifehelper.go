@@ -9,20 +9,19 @@ import (
 
 // DefineLifecycleDeployment Defines basic deployment structure for lifecycle tests.
 func DefineLifecycleDeployment(moreThanOneContainer bool, deploymentName string) *v1.Deployment {
-	if moreThanOneContainer == false {
+	if !moreThanOneContainer {
 		return deployment.DefineDeployment(
-			deploymentName,
-			lifeparameters.LifecycleNamespace,
-			globalhelper.Configuration.General.TnfImage,
-			lifeparameters.TestDeploymentLabels)
-	} else {
-		return deployment.DefineDeploymentWithTwoContainers(
 			deploymentName,
 			lifeparameters.LifecycleNamespace,
 			globalhelper.Configuration.General.TnfImage,
 			lifeparameters.TestDeploymentLabels)
 	}
 
+	return deployment.DefineDeploymentWithTwoContainers(
+		deploymentName,
+		lifeparameters.LifecycleNamespace,
+		globalhelper.Configuration.General.TnfImage,
+		lifeparameters.TestDeploymentLabels)
 }
 
 /* DefineLifecycleDeploymentSeveralPodsWithTwoContainers Defines a deployment with
@@ -31,5 +30,4 @@ func DefineLifecycleDeploymentSeveralPodsWithTwoContainers(deploymentName string
 	return deployment.RedefineWithReplicaNumber(
 		DefineLifecycleDeployment(true, deploymentName),
 		numOfPods)
-
 }

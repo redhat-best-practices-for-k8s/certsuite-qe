@@ -20,7 +20,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47311
-	It("One deployment, one pod with one container that has preStop field configured", func() {
+	It("One deployment, one pod with one container that"+
+		"has preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct := deployment.RedefineWithPreStopSpec(
@@ -46,7 +47,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47315
-	It("One deployment, one pod with one container that does not have preStop field configured [negative]", func() {
+	It("One deployment, one pod with one container that does not"+
+		"have preStop field configured [negative]", func() {
 
 		By("Define deployment without prestop field configured")
 		deploymentStructWithOutPreStop := lifehelper.DefineLifecycleDeployment(false, "lifecycleput")
@@ -69,7 +71,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47382
-	It("One deployment, several pods, several containers that has preStop field configured", func() {
+	It("One deployment, several pods, several containers that"+
+		"has preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
 		replicaDefinedDeployment := lifehelper.DefineLifecycleDeploymentSeveralPodsWithTwoContainers(
@@ -95,7 +98,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47383
-	It("Several deployments, several pods, several containers that has preStop field configured", func() {
+	It("Several deployments, several pods, several containers"+
+		"that has preStop field configured", func() {
 
 		By("Define first deployment with preStop field configured")
 		replicaDefinedDeploymentA := lifehelper.DefineLifecycleDeploymentSeveralPodsWithTwoContainers(
@@ -133,7 +137,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47384
-	It("One deployment, several pods, several containers, one without preStop field configured [negative]", func() {
+	It("One deployment, several pods, several containers, one without preStop"+
+		"field configured [negative]", func() {
 
 		By("Define deployment with preStop field configured")
 		replicaDefinedDeployment := lifehelper.DefineLifecycleDeploymentSeveralPodsWithTwoContainers(
@@ -159,7 +164,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47385
-	It("Several deployments, several pods, several containers that does not have preStop field configured [negative]", func() {
+	It("Several deployments, several pods, several containers"+
+		"that does not have preStop field configured [negative]", func() {
 
 		By("Define first deployment")
 		replicaDefinedDeploymentA := lifehelper.DefineLifecycleDeploymentSeveralPodsWithTwoContainers(
