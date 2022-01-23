@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
@@ -80,60 +79,6 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 
 		return status
 	}, timeout, 5*time.Second).Should(Equal(true), "DaemonSet is not ready")
-
-	return nil
-}
-
-// ValidateIfReportsAreValid test if report is valid for given test case.
-func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
-	glog.V(5).Info("Verify test case status in Junit report")
-
-	junitTestReport, err := globalhelper.OpenJunitTestReport()
-
-	if err != nil {
-		return err
-	}
-
-	claimReport, err := globalhelper.OpenClaimReport()
-
-	if err != nil {
-		return err
-	}
-
-	err = globalhelper.IsExpectedStatusParamValid(tcExpectedStatus)
-
-	if err != nil {
-		return err
-	}
-
-	isTestCaseInValidStatusInJunitReport := globalhelper.IsTestCasePassedInJunitReport
-	isTestCaseInValidStatusInClaimReport := globalhelper.IsTestCasePassedInClaimReport
-
-	if tcExpectedStatus == globalparameters.TestCaseFailed {
-		isTestCaseInValidStatusInJunitReport = globalhelper.IsTestCaseFailedInJunitReport
-		isTestCaseInValidStatusInClaimReport = globalhelper.IsTestCaseFailedInClaimReport
-	}
-
-	if tcExpectedStatus == globalparameters.TestCaseSkipped {
-		isTestCaseInValidStatusInJunitReport = globalhelper.IsTestCaseSkippedInJunitReport
-		isTestCaseInValidStatusInClaimReport = globalhelper.IsTestCaseSkippedInClaimReport
-	}
-
-	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
-		return fmt.Errorf("test case %s is not in expected %s state in junit report", tcName, tcExpectedStatus)
-	}
-
-	glog.V(5).Info("Verify test case status in claim report file")
-
-	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
-
-	if err != nil {
-		return err
-	}
-
-	if !testPassed {
-		return fmt.Errorf("test case %s is not in expected %s state in claim report", tcName, tcExpectedStatus)
-	}
 
 	return nil
 }

@@ -61,6 +61,60 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	return nil
 }
 
+// ValidateIfReportsAreValid test if report is valid for given test case.
+func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
+	glog.V(5).Info("Verify test case status in Junit report")
+
+	junitTestReport, err := OpenJunitTestReport()
+
+	if err != nil {
+		return err
+	}
+
+	claimReport, err := OpenClaimReport()
+
+	if err != nil {
+		return err
+	}
+
+	err = IsExpectedStatusParamValid(tcExpectedStatus)
+
+	if err != nil {
+		return err
+	}
+
+	isTestCaseInValidStatusInJunitReport := IsTestCasePassedInJunitReport
+	isTestCaseInValidStatusInClaimReport := IsTestCasePassedInClaimReport
+
+	if tcExpectedStatus == globalparameters.TestCaseFailed {
+		isTestCaseInValidStatusInJunitReport = IsTestCaseFailedInJunitReport
+		isTestCaseInValidStatusInClaimReport = IsTestCaseFailedInClaimReport
+	}
+
+	if tcExpectedStatus == globalparameters.TestCaseSkipped {
+		isTestCaseInValidStatusInJunitReport = IsTestCaseSkippedInJunitReport
+		isTestCaseInValidStatusInClaimReport = IsTestCaseSkippedInClaimReport
+	}
+
+	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
+		return fmt.Errorf("test case %s is not in expected %s state in junit report", tcName, tcExpectedStatus)
+	}
+
+	glog.V(5).Info("Verify test case status in claim report file")
+
+	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
+
+	if err != nil {
+		return err
+	}
+
+	if !testPassed {
+		return fmt.Errorf("test case %s is not in expected %s state in claim report", tcName, tcExpectedStatus)
+	}
+
+	return nil
+}
+
 func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
 	if len(certifiedContainerInfo) < 1 {
 		// do not add certifiedcontainerinfo to tnf_config at all in this case
