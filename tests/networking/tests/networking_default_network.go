@@ -58,7 +58,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
+		err = globalhelper.ValidateIfReportsAreValid(
 			netparameters.TestCaseDefaultNetworkName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
@@ -90,7 +90,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
+		err = globalhelper.ValidateIfReportsAreValid(
 			netparameters.TestCaseDefaultNetworkName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
@@ -124,7 +124,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
+		err = globalhelper.ValidateIfReportsAreValid(
 			netparameters.TestCaseDefaultNetworkName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
@@ -151,7 +151,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
+		err = globalhelper.ValidateIfReportsAreValid(
 			netparameters.TestCaseDefaultNetworkName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
@@ -190,7 +190,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = nethelper.ValidateIfReportsAreValid(
+		err = globalhelper.ValidateIfReportsAreValid(
 			netparameters.TestCaseDefaultNetworkName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
