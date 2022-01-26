@@ -38,7 +38,7 @@ type Config struct {
 
 // NewConfig returns instance Config type.
 func NewConfig() (*Config, error) {
-	var c Config
+	var conf Config
 
 	_, filename, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
@@ -48,37 +48,37 @@ func NewConfig() (*Config, error) {
 		glog.Fatal(err)
 	}
 
-	err = readFile(&c, confFile)
+	err = readFile(&conf, confFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	c.General.ReportDirAbsPath = filepath.Join(baseDir, c.General.ReportDirAbsPath)
+	conf.General.ReportDirAbsPath = filepath.Join(baseDir, conf.General.ReportDirAbsPath)
 
-	err = readEnv(&c)
+	err = readEnv(&conf)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.deployTnfConfigDir(confFile)
+	err = conf.deployTnfConfigDir(confFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.deployTnfReportDir(confFile)
+	err = conf.deployTnfReportDir(confFile)
 	if err != nil {
 		return nil, err
 	}
 
-	c.General.TnfRepoPath, err = c.defineTnfRepoPath()
+	conf.General.TnfRepoPath, err = conf.defineTnfRepoPath()
 
 	if err != nil {
 		glog.Fatal(err)
 	}
 
-	return &c, nil
+	return &conf, nil
 }
 
 func readFile(cfg *Config, cfgFile string) error {
