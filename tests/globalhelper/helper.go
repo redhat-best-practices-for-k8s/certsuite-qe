@@ -7,9 +7,11 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
+	v1 "k8s.io/api/apps/v1"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"gopkg.in/yaml.v2"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string) error {
@@ -245,4 +247,20 @@ func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []s
 	}
 
 	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
+}
+
+// AppendContainersToDeployment appends containers to a deployment.
+func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, image string) *v1.Deployment {
+	containerList := &deployment.Spec.Template.Spec.Containers
+
+	for i := 0; i < containersNum; i++ {
+		*containerList = append(
+			*containerList, corev1.Container{
+				Name:    fmt.Sprintf("container%d", i+1),
+				Image:   image,
+				Command: []string{"/bin/bash", "-c", "sleep INF"},
+			})
+	}
+
+	return deployment
 }

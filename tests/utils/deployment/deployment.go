@@ -1,6 +1,8 @@
 package deployment
 
 import (
+	"fmt"
+
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -97,41 +99,17 @@ func RedefineWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.De
 	return deployment
 }
 
-func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
-	deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
-		PreStop: &corev1.Handler{
-			Exec: &corev1.ExecAction{
-				Command: command}}}
+func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
+	if len(deployment.Spec.Template.Spec.Containers) > 0 {
+		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
+			PreStop: &corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: command}}}
 
-	return deployment
-}
+		return deployment, nil
+	}
 
-// DefineDeploymentWithTwoContainers defines a deployment with two containers.
-func DefineDeploymentWithTwoContainers(deploymentName string,
-	namespace string, image string, label map[string]string) *v1.Deployment {
-	return &v1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      deploymentName,
-			Namespace: namespace},
-		Spec: v1.DeploymentSpec{
-			Replicas: pointer.Int32Ptr(1),
-			Selector: &metav1.LabelSelector{
-				MatchLabels: label,
-			},
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:   "testpod-",
-					Labels: label,
-				},
-				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
-					Containers: []corev1.Container{
-						{
-							Name:    "test",
-							Image:   image,
-							Command: []string{"/bin/bash", "-c", "sleep INF"}},
-						{
-							Name:    "test2",
-							Image:   image,
-							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
+	err := fmt.Errorf("deployment %s does not have any containers", deployment.Name)
+
+	return nil, err
 }
