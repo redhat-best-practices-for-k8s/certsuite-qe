@@ -19,9 +19,11 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
+	PreStopCommand          = []string{"/bin/sh", "-c", "killall -0 tail"}
 	LifecycleTestSuiteName  = "lifecycle"
 	SkipAllButShutdownRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
 		" lifecycle-pod-termination-grace-period lifecycle-pod-owner-type" +
 		" lifecycle-pod-recreation lifecycle-scaling lifecycle-image-pull-policy"
+
 	ShutdownDefaultName = "lifecycle lifecycle-container-shutdown"
 )

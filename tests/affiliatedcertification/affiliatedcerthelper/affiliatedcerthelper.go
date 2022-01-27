@@ -8,7 +8,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 )
 
@@ -47,7 +46,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
 
-	err = nethelper.ValidateIfReportsAreValid(
+	err = globalhelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 		expectedResult)
 
@@ -90,7 +89,7 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
 
-	err = nethelper.ValidateIfReportsAreValid(
+	err = globalhelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 		expectedResult)
 

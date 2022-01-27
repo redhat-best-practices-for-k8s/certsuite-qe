@@ -7,13 +7,22 @@ import (
 	v1 "k8s.io/api/apps/v1"
 )
 
-// DefineLifecycleDeployment Defines basic deployment structure for lifecycle tests.
-func DefineLifecycleDeployment() *v1.Deployment {
-	deploymentStruct := deployment.DefineDeployment(
-		"lifecycleput",
-		lifeparameters.LifecycleNamespace,
-		globalhelper.Configuration.General.TnfImage,
-		lifeparameters.TestDeploymentLabels)
+// DefineDeploymentAllPreStop defines a deployment with/out preStop field.
+func DefineDeploymentAllPreStop(preStop bool, replica int32, containers int, name string) (*v1.Deployment, error) {
+	deploymentStruct := globalhelper.AppendContainersToDeployment(
+		deployment.RedefineWithReplicaNumber(
+			deployment.DefineDeployment(
+				name,
+				lifeparameters.LifecycleNamespace,
+				globalhelper.Configuration.General.TnfImage,
+				lifeparameters.TestDeploymentLabels), replica),
+		containers,
+		globalhelper.Configuration.General.TnfImage)
 
-	return deploymentStruct
+	if !preStop {
+		return deploymentStruct, nil
+	}
+
+	return deployment.RedefineAllContainersWithPreStopSpec(
+		deploymentStruct, lifeparameters.PreStopCommand)
 }

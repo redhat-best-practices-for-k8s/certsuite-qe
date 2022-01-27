@@ -7,9 +7,11 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
+	v1 "k8s.io/api/apps/v1"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"gopkg.in/yaml.v2"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string) error {
@@ -56,6 +58,60 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 			Name:   name,
 			Value:  value,
 		})
+	}
+
+	return nil
+}
+
+// ValidateIfReportsAreValid test if report is valid for given test case.
+func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
+	glog.V(5).Info("Verify test case status in Junit report")
+
+	junitTestReport, err := OpenJunitTestReport()
+
+	if err != nil {
+		return err
+	}
+
+	claimReport, err := OpenClaimReport()
+
+	if err != nil {
+		return err
+	}
+
+	err = IsExpectedStatusParamValid(tcExpectedStatus)
+
+	if err != nil {
+		return err
+	}
+
+	isTestCaseInValidStatusInJunitReport := IsTestCasePassedInJunitReport
+	isTestCaseInValidStatusInClaimReport := IsTestCasePassedInClaimReport
+
+	if tcExpectedStatus == globalparameters.TestCaseFailed {
+		isTestCaseInValidStatusInJunitReport = IsTestCaseFailedInJunitReport
+		isTestCaseInValidStatusInClaimReport = IsTestCaseFailedInClaimReport
+	}
+
+	if tcExpectedStatus == globalparameters.TestCaseSkipped {
+		isTestCaseInValidStatusInJunitReport = IsTestCaseSkippedInJunitReport
+		isTestCaseInValidStatusInClaimReport = IsTestCaseSkippedInClaimReport
+	}
+
+	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
+		return fmt.Errorf("test case %s is not in expected %s state in junit report", tcName, tcExpectedStatus)
+	}
+
+	glog.V(5).Info("Verify test case status in claim report file")
+
+	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
+
+	if err != nil {
+		return err
+	}
+
+	if !testPassed {
+		return fmt.Errorf("test case %s is not in expected %s state in claim report", tcName, tcExpectedStatus)
 	}
 
 	return nil
@@ -191,4 +247,20 @@ func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []s
 	}
 
 	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
+}
+
+// AppendContainersToDeployment appends containers to a deployment.
+func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, image string) *v1.Deployment {
+	containerList := &deployment.Spec.Template.Spec.Containers
+
+	for i := 0; i < containersNum; i++ {
+		*containerList = append(
+			*containerList, corev1.Container{
+				Name:    fmt.Sprintf("container%d", i+1),
+				Image:   image,
+				Command: []string{"/bin/bash", "-c", "sleep INF"},
+			})
+	}
+
+	return deployment
 }

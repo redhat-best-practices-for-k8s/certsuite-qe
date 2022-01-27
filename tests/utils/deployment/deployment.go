@@ -1,6 +1,8 @@
 package deployment
 
 import (
+	"fmt"
+
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -30,6 +32,25 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 							Name:    "test",
 							Image:   image,
 							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
+}
+
+// RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
+func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
+	if len(deployment.Spec.Template.Spec.Containers) > 0 {
+		for index := range deployment.Spec.Template.Spec.Containers {
+			deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+				PreStop: &corev1.Handler{
+					Exec: &corev1.ExecAction{
+						Command: command,
+					},
+				},
+			}
+		}
+
+		return deployment, nil
+	}
+
+	return nil, fmt.Errorf("deployment %s does not have any containers", deployment.Name)
 }
 
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
@@ -80,4 +101,17 @@ func RedefineWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.De
 	}
 
 	return deployment
+}
+
+func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
+	if len(deployment.Spec.Template.Spec.Containers) > 0 {
+		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
+			PreStop: &corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: command}}}
+
+		return deployment, nil
+	}
+
+	return nil, fmt.Errorf("deployment %s does not have any containers", deployment.Name)
 }
