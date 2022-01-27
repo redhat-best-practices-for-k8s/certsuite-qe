@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -23,15 +24,10 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"has preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct := deployment.RedefineWithPreStopSpec(
-			deployment.DefineDeployment(
-				"lifecycleput",
-				lifeparameters.LifecycleNamespace,
-				globalhelper.Configuration.General.TnfImage,
-				lifeparameters.TestDeploymentLabels),
-			lifeparameters.PreStopCommand)
+		preStopDeploymentStruct, err := lifehelper.DefineDeploymentAllPreStop(true, 1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-container-shutdown test")
@@ -54,13 +50,10 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"have preStop field configured [negative]", func() {
 
 		By("Define deployment without prestop field configured")
-		deploymentStructWithOutPreStop := deployment.DefineDeployment(
-			"lifecycleput",
-			lifeparameters.LifecycleNamespace,
-			globalhelper.Configuration.General.TnfImage,
-			lifeparameters.TestDeploymentLabels)
+		deploymentStructWithOutPreStop, err := lifehelper.DefineDeploymentAllPreStop(false, 1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructWithOutPreStop, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructWithOutPreStop, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-container-shutdown test")
@@ -82,20 +75,10 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"have preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		replicaDefinedDeployment := globalhelper.AppendContainersToDeployment(
-			deployment.RedefineWithReplicaNumber(
-				deployment.DefineDeployment(
-					"lifecycleput",
-					lifeparameters.LifecycleNamespace,
-					globalhelper.Configuration.General.TnfImage,
-					lifeparameters.TestDeploymentLabels), 3),
-			2,
-			globalhelper.Configuration.General.TnfImage)
+		preStopDeploymentStruct, err := lifehelper.DefineDeploymentAllPreStop(true, 3, 2, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		preStopDeploymentStruct := deployment.RedefineAllContainersWithPreStopSpec(
-			replicaDefinedDeployment, lifeparameters.PreStopCommand)
-
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			preStopDeploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -117,35 +100,16 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"that have preStop field configured", func() {
 
 		By("Define first deployment with preStop field configured")
-		replicaDefinedDeploymentA := globalhelper.AppendContainersToDeployment(
-			deployment.RedefineWithReplicaNumber(
-				deployment.DefineDeployment(
-					"lifecycleputone",
-					lifeparameters.LifecycleNamespace,
-					globalhelper.Configuration.General.TnfImage,
-					lifeparameters.TestDeploymentLabels), 3),
-			2,
-			globalhelper.Configuration.General.TnfImage)
-		preStopDeploymentStructA := deployment.RedefineAllContainersWithPreStopSpec(
-			replicaDefinedDeploymentA, lifeparameters.PreStopCommand)
+		preStopDeploymentStructA, err := lifehelper.DefineDeploymentAllPreStop(true, 3, 2, "lifecycleputone")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			preStopDeploymentStructA, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with preStop field configured")
-		replicaDefinedDeploymentB := globalhelper.AppendContainersToDeployment(
-			deployment.RedefineWithReplicaNumber(
-				deployment.DefineDeployment(
-					"lifecycleputtwo",
-					lifeparameters.LifecycleNamespace,
-					globalhelper.Configuration.General.TnfImage,
-					lifeparameters.TestDeploymentLabels), 3),
-			2,
-			globalhelper.Configuration.General.TnfImage)
-
-		preStopDeploymentStructB := deployment.RedefineAllContainersWithPreStopSpec(
-			replicaDefinedDeploymentB, lifeparameters.PreStopCommand)
+		preStopDeploymentStructB, err := lifehelper.DefineDeploymentAllPreStop(true, 3, 2, "lifecycleputtwo")
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			preStopDeploymentStructB, lifeparameters.WaitingTime)
@@ -170,18 +134,11 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"field configured [negative]", func() {
 
 		By("Define deployment with preStop field configured")
-		replicaDefinedDeployment := globalhelper.AppendContainersToDeployment(
-			deployment.RedefineWithReplicaNumber(
-				deployment.DefineDeployment(
-					"lifecycleput",
-					lifeparameters.LifecycleNamespace,
-					globalhelper.Configuration.General.TnfImage,
-					lifeparameters.TestDeploymentLabels), 3),
-			2,
-			globalhelper.Configuration.General.TnfImage)
+		preStopDeploymentStruct, err := lifehelper.DefineDeploymentAllPreStop(false, 3, 2, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		preStopDeploymentStruct, err := deployment.RedefineFirstContainerWithPreStopSpec(
-			replicaDefinedDeployment, lifeparameters.PreStopCommand)
+		preStopDeploymentStruct, err = deployment.RedefineFirstContainerWithPreStopSpec(
+			preStopDeploymentStruct, lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -206,30 +163,16 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"that don't have preStop field configured [negative]", func() {
 
 		By("Define first deployment")
-		replicaDefinedDeploymentA := globalhelper.AppendContainersToDeployment(
-			deployment.RedefineWithReplicaNumber(
-				deployment.DefineDeployment(
-					"lifecycleputone",
-					lifeparameters.LifecycleNamespace,
-					globalhelper.Configuration.General.TnfImage,
-					lifeparameters.TestDeploymentLabels), 3),
-			2,
-			globalhelper.Configuration.General.TnfImage)
+		replicaDefinedDeploymentA, err := lifehelper.DefineDeploymentAllPreStop(false, 3, 2, "lifecycleputone")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			replicaDefinedDeploymentA, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment")
-		replicaDefinedDeploymentB := globalhelper.AppendContainersToDeployment(
-			deployment.RedefineWithReplicaNumber(
-				deployment.DefineDeployment(
-					"lifecycleputtwo",
-					lifeparameters.LifecycleNamespace,
-					globalhelper.Configuration.General.TnfImage,
-					lifeparameters.TestDeploymentLabels), 3),
-			2,
-			globalhelper.Configuration.General.TnfImage)
+		replicaDefinedDeploymentB, err := lifehelper.DefineDeploymentAllPreStop(false, 3, 2, "lifecycleputtwo")
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			replicaDefinedDeploymentB, lifeparameters.WaitingTime)
