@@ -103,6 +103,7 @@ func RedefineWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.De
 	return deployment
 }
 
+// RedefineFirstContainerWithPreStopSpec redefines deployment first container with lifecycle/preStop spec.
 func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
 	if len(deployment.Spec.Template.Spec.Containers) > 0 {
 		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
@@ -114,4 +115,11 @@ func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []
 	}
 
 	return nil, fmt.Errorf("deployment %s does not have any containers", deployment.Name)
+}
+
+// RedefineWithTerminationGracePeriod redefines deployment with terminationGracePeriod spec.
+func RedefineWithTerminationGracePeriod(deployment *v1.Deployment, terminationGracePeriod *int64) *v1.Deployment {
+	deployment.Spec.Template.Spec.TerminationGracePeriodSeconds = terminationGracePeriod
+
+	return deployment
 }

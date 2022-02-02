@@ -26,3 +26,8 @@ func DefineDeployment(preStop bool, replica int32, containers int, name string) 
 	return deployment.RedefineAllContainersWithPreStopSpec(
 		deploymentStruct, lifeparameters.PreStopCommand)
 }
+
+// RemoveterminationGracePeriod removes terminationGracePeriodSeconds field in a deployment.
+func RemoveterminationGracePeriod(deploymentStruct *v1.Deployment) *v1.Deployment {
+	return deployment.RedefineWithTerminationGracePeriod(deploymentStruct, nil)
+}
