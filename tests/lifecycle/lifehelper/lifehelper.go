@@ -7,8 +7,8 @@ import (
 	v1 "k8s.io/api/apps/v1"
 )
 
-// DefineDeploymentAllPreStop defines a deployment with/out preStop field.
-func DefineDeploymentAllPreStop(preStop bool, replica int32, containers int, name string) (*v1.Deployment, error) {
+// DefineDeployment defines a deployment with/out preStop field.
+func DefineDeployment(preStop bool, replica int32, containers int, name string) (*v1.Deployment, error) {
 	deploymentStruct := globalhelper.AppendContainersToDeployment(
 		deployment.RedefineWithReplicaNumber(
 			deployment.DefineDeployment(
