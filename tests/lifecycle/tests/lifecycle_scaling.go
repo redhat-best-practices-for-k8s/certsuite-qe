@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"os"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -10,12 +12,13 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-// in order to run the test, export TNF_NON_INTRUSIVE_ONLY=false.
 var _ = Describe("lifecycle lifecycle-scaling", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -41,6 +44,11 @@ var _ = Describe("lifecycle lifecycle-scaling", func() {
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
+	})
+
+	AfterEach(func() {
+		err := os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 })

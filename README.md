@@ -40,6 +40,8 @@ Optional:
 The list of available features:
 * *networking*
 * *affiliated-certification*
+* *lifecycle*
+
 
 #### Running the tests
 
