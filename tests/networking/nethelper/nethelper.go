@@ -3,10 +3,17 @@ package nethelper
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
 	"time"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nad"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	corev1 "k8s.io/api/core/v1"
@@ -39,10 +46,11 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 	return false, nil
 }
 
-func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map[string]string) *v1.Deployment {
+func defineDeploymentBasedOnArgs(
+	name string, replicaNumber int32, privileged bool, multus string, label map[string]string) *v1.Deployment {
 	deploymentStruct := deployment.RedefineWithReplicaNumber(
 		deployment.DefineDeployment(
-			"networkingput",
+			name,
 			netparameters.TestNetworkingNameSpace,
 			globalhelper.Configuration.General.TestImage,
 			netparameters.TestDeploymentLabels),
@@ -53,6 +61,10 @@ func defineDeploymentBasedOnArgs(replicaNumber int32, privileged bool, label map
 
 	if label != nil {
 		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
+	}
+
+	if len(multus) > 1 {
+		deploymentStruct = deployment.RedefineWithMultus(deploymentStruct, multus)
 	}
 
 	return deploymentStruct
@@ -85,14 +97,26 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, false, nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(netparameters.TestDeploymentAName, replicaNumber, false, "", nil)
+
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+}
+
+// DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
+func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadName string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(name, replicaNumber, false, nadName, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(replicaNumber, true, nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(
+		netparameters.TestDeploymentAName,
+		replicaNumber,
+		true,
+		"",
+		nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
@@ -100,10 +124,45 @@ func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(
+		netparameters.TestDeploymentAName,
 		replicaNumber,
 		true,
+		"",
 		netparameters.NetworkingTestSkipLabel)
 	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
+	testDaemonset := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.RedefineWithMultus(
+		daemonset.DefineDaemonSet(
+			netparameters.TestNetworkingNameSpace,
+			globalhelper.Configuration.General.TestImage,
+			netparameters.TestDeploymentLabels),
+		nadName,
+	), map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
+
+	err := CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func defineAndCreatePrivilegedDaemonset() error {
+	daemonSet := daemonset.RedefineWithPrivilegeAndHostNetwork(daemonset.RedefineDaemonSetWithNodeSelector(
+		daemonset.DefineDaemonSet(
+			netparameters.TestNetworkingNameSpace,
+			globalhelper.Configuration.General.TestImage,
+			netparameters.TestDeploymentLabels,
+		), map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""}))
+	err := CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
 
 	if err != nil {
 		return err
@@ -214,4 +273,159 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		testService, metav1.CreateOptions{})
 
 	return err
+}
+
+func DefineAndCreateNadOnCluster(name string, intName string, network string) error {
+	nadOneInteface := nad.DefineNad(name, netparameters.TestNetworkingNameSpace, intName)
+
+	if network != "" {
+		nadOneInteface = nad.RedefineNadWithWhereaboutsIpam(nadOneInteface, network)
+	}
+
+	return globalhelper.APIClient.Create(context.Background(), nadOneInteface)
+}
+
+func GetClusterMultusInterfaces() ([]string, error) {
+	err := defineAndCreatePrivilegedDaemonset()
+	if err != nil {
+		return nil, err
+	}
+
+	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
+	if err != nil {
+		return nil, err
+	}
+
+	var nodesInterfacesList [][]string
+
+	for _, runningPod := range podsList.Items {
+		nodeIterfaces, err := getInterfacesList(runningPod)
+		if err != nil {
+			return nil, err
+		}
+		nodesInterfacesList = append(nodesInterfacesList, nodeIterfaces)
+	}
+
+	var lastMatch []string
+
+	for _, nodeInterfaces := range nodesInterfacesList {
+		if len(lastMatch) == 0 {
+			lastMatch = findListIntersections(nodesInterfacesList[0], nodeInterfaces)
+		}
+
+		lastMatch = findListIntersections(lastMatch, nodeInterfaces)
+	}
+
+	return lastMatch, nil
+}
+
+func findListIntersections(listA []string, listB []string) []string {
+	var overlap []string
+
+	for _, elementA := range listA {
+		for _, elementB := range listB {
+			if elementA == elementB {
+				overlap = append(overlap, elementA)
+			}
+		}
+	}
+
+	return overlap
+}
+
+func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
+	routes, err := globalhelper.ExecCommand(
+		runningPod,
+		[]string{"ip", "link", "show"},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var interfaceList []string
+
+	for _, line := range strings.Split(routes.String(), "\n") {
+		if !strings.Contains(line, "master") && strings.Contains(line, "state UP") {
+			if len(strings.Split(line, " ")) > 0 {
+				interfaceList = append(interfaceList, strings.Trim(strings.Split(line, " ")[1], ":"))
+			}
+		}
+	}
+
+	if len(interfaceList) < 1 {
+		return nil, fmt.Errorf("there is no multus interfaces available on node")
+	}
+
+	return interfaceList, nil
+}
+
+func PutDownInterfaceOnNode(name string, state string) error {
+	err := defineAndCreatePrivilegedDaemonset()
+
+	if err != nil {
+		return err
+	}
+
+	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
+	if err != nil {
+		return err
+	}
+
+	command := []string{"ip", "link", "set", name}
+
+	if state == "up" || state == "down" {
+		command = append(command, state)
+	} else {
+		return fmt.Errorf("invalid argument %s", state)
+	}
+
+	output, err := globalhelper.ExecCommand(podsList.Items[0], command)
+	if err != nil {
+		log.Print(output.String())
+
+		return err
+	}
+
+	err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func PutAllInterfaceUPonAllNodes(name string) error {
+	err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+	if err != nil {
+		return err
+	}
+
+	err = defineAndCreatePrivilegedDaemonset()
+
+	if err != nil {
+		return err
+	}
+
+	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
+	if err != nil {
+		return err
+	}
+
+	for _, runningPod := range podsList.Items {
+		output, err := globalhelper.ExecCommand(runningPod, []string{"ip", "link", "set", name, "up"})
+
+		if err != nil {
+			log.Print(output.String())
+
+			return err
+		}
+	}
+
+	err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

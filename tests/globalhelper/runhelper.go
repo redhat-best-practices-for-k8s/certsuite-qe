@@ -24,7 +24,6 @@ func LaunchTests(testSuites []string, skipRegEx string) error {
 
 	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
 	testArgs := []string{
-		"-s", skipRegEx,
 		"-k", os.Getenv("KUBECONFIG"),
 		"-t", Configuration.General.TnfConfigDir,
 		"-o", Configuration.General.TnfReportDir,
