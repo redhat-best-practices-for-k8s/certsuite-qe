@@ -12,7 +12,7 @@ import (
 	"k8s.io/utils/pointer"
 )
 
-var _ = Describe("lifecycle lifecycle-scaling", func() {
+var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
