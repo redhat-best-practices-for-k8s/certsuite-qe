@@ -7,8 +7,8 @@ import (
 	v1 "k8s.io/api/apps/v1"
 )
 
-// DefineDeployment defines a deployment with/out preStop field.
-func DefineDeployment(preStop bool, replica int32, containers int, name string) (*v1.Deployment, error) {
+// DefineDeployment defines a deployment.
+func DefineDeployment(replica int32, containers int, name string) *v1.Deployment {
 	deploymentStruct := globalhelper.AppendContainersToDeployment(
 		deployment.RedefineWithReplicaNumber(
 			deployment.DefineDeployment(
@@ -19,12 +19,7 @@ func DefineDeployment(preStop bool, replica int32, containers int, name string) 
 		containers,
 		globalhelper.Configuration.General.TnfImage)
 
-	if !preStop {
-		return deploymentStruct, nil
-	}
-
-	return deployment.RedefineAllContainersWithPreStopSpec(
-		deploymentStruct, lifeparameters.PreStopCommand)
+	return deploymentStruct
 }
 
 // RemoveterminationGracePeriod removes terminationGracePeriodSeconds field in a deployment.
