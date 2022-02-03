@@ -29,6 +29,11 @@ var (
 		" lifecycle-pod-termination-grace-period lifecycle-pod-owner-type" +
 		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
 
-	ShutdownDefaultName = "lifecycle lifecycle-container-shutdown"
-	ScalingDefaultName  = "lifecycle lifecycle-scaling"
+	SkipAllButTerminationGracePeriodRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
+		" lifecycle-scaling lifecycle-pod-owner-type" +
+		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
+
+	ShutdownDefaultName               = "lifecycle lifecycle-container-shutdown"
+	ScalingDefaultName                = "lifecycle lifecycle-scaling"
+	TerminationGracePeriodDefaultName = "lifecycle lifecycle-pod-termination-grace-period"
 )
