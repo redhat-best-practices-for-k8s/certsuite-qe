@@ -2,9 +2,8 @@ package nethelper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"log"
-	"strings"
 	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nad"
@@ -83,7 +82,7 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 	Eventually(func() bool {
 		status, err := isDaemonSetReady(runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			glog.Fatal(fmt.Sprintf(
 				"daemonset %s is not ready, retry in 5 seconds", runningDaemonSet.Name))
 
 			return false
@@ -276,13 +275,13 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 }
 
 func DefineAndCreateNadOnCluster(name string, intName string, network string) error {
-	nadOneInteface := nad.DefineNad(name, netparameters.TestNetworkingNameSpace, intName)
+	nadOneInterface := nad.DefineNad(name, netparameters.TestNetworkingNameSpace, intName)
 
 	if network != "" {
-		nadOneInteface = nad.RedefineNadWithWhereaboutsIpam(nadOneInteface, network)
+		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
 	}
 
-	return globalhelper.APIClient.Create(context.Background(), nadOneInteface)
+	return globalhelper.APIClient.Create(context.Background(), nadOneInterface)
 }
 
 func GetClusterMultusInterfaces() ([]string, error) {
@@ -334,9 +333,9 @@ func findListIntersections(listA []string, listB []string) []string {
 }
 
 func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
-	routes, err := globalhelper.ExecCommand(
+	links, err := globalhelper.ExecCommand(
 		runningPod,
-		[]string{"ip", "link", "show"},
+		[]string{"ip", "-j", "link", "show"},
 	)
 	if err != nil {
 		return nil, err
@@ -344,11 +343,16 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 
 	var interfaceList []string
 
-	for _, line := range strings.Split(routes.String(), "\n") {
-		if !strings.Contains(line, "master") && strings.Contains(line, "state UP") {
-			if len(strings.Split(line, " ")) > 0 {
-				interfaceList = append(interfaceList, strings.Trim(strings.Split(line, " ")[1], ":"))
-			}
+	var linuxInterfaces []netparameters.IPOutputInterface
+	err = json.Unmarshal(links.Bytes(), &linuxInterfaces)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, nodeInterface := range linuxInterfaces {
+		if nodeInterface.Master == "" && nodeInterface.Operstate == "UP" {
+			interfaceList = append(interfaceList, nodeInterface.IfName)
 		}
 	}
 
@@ -381,7 +385,7 @@ func PutDownInterfaceOnNode(name string, state string) error {
 
 	output, err := globalhelper.ExecCommand(podsList.Items[0], command)
 	if err != nil {
-		log.Print(output.String())
+		glog.Fatal(output.String())
 
 		return err
 	}
@@ -416,7 +420,7 @@ func PutAllInterfaceUPonAllNodes(name string) error {
 		output, err := globalhelper.ExecCommand(runningPod, []string{"ip", "link", "set", name, "up"})
 
 		if err != nil {
-			log.Print(output.String())
+			glog.Fatal(output.String())
 
 			return err
 		}
