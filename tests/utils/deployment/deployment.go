@@ -81,24 +81,18 @@ func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.
 	return deployment
 }
 
-// RedefineWithReplicaNumber redefines deployment with requested replica number.
-func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) *v1.Deployment {
-	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+// RedefineWithMultus redefines deployment with additional label.
+func RedefineWithMultus(deployment *v1.Deployment, nadName string) *v1.Deployment {
+	deployment.Spec.Template.Annotations = map[string]string{
+		"k8s.v1.cni.cncf.io/networks": fmt.Sprintf(`[ { "name": "%s" } ]`, nadName),
+	}
 
 	return deployment
 }
 
-// RedefineWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
-func RedefineWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
-	for index := range deployment.Spec.Template.Spec.Containers {
-		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
-			PreStop: &corev1.Handler{
-				Exec: &corev1.ExecAction{
-					Command: command,
-				},
-			},
-		}
-	}
+// RedefineWithReplicaNumber redefines deployment with requested replica number.
+func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) *v1.Deployment {
+	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
 
 	return deployment
 }
