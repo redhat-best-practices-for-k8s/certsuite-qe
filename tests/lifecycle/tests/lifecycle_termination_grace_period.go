@@ -24,9 +24,8 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 	It("One deployment, one pod, terminationGracePeriodSeconds is not set", func() {
 
 		By("Define deployment without terminationGracePeriodSeconds")
-		deploymentStruct := lifehelper.DefineDeployment(1, 1, "lifecycleput")
-
-		deploymentStruct = lifehelper.RemoveterminationGracePeriod(deploymentStruct)
+		deploymentStruct := lifehelper.RemoveterminationGracePeriod(
+			lifehelper.DefineDeployment(1, 1, "lifecycleput"))
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -49,8 +48,8 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 	It("One deployment, one pod, terminationGracePeriodSeconds is set", func() {
 
 		By("Define deployment with terminationGracePeriodSeconds specified")
-		deploymentStruct := lifehelper.DefineDeployment(1, 1, "lifecycleput")
-		deploymentStruct = deployment.RedefineWithTerminationGracePeriod(deploymentStruct, pointer.Int64Ptr(45))
+		deploymentStruct := deployment.RedefineWithTerminationGracePeriod(
+			lifehelper.DefineDeployment(1, 1, "lifecycleput"), pointer.Int64Ptr(45))
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -73,15 +72,15 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 	It("Multiple deployments, replica > 1, terminationGracePeriodSeconds is set on one deployment", func() {
 
 		By("Define first deployment with terminationGracePeriodSeconds specified")
-		firstDeployment := lifehelper.DefineDeployment(3, 1, "lifecycleputone")
-		firstDeployment = deployment.RedefineWithTerminationGracePeriod(firstDeployment, pointer.Int64Ptr(45))
+		firstDeployment := deployment.RedefineWithTerminationGracePeriod(
+			lifehelper.DefineDeployment(3, 1, "lifecycleputone"), pointer.Int64Ptr(45))
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment without terminationGracePeriodSeconds")
-		secondDeployment := lifehelper.DefineDeployment(3, 1, "lifecycleputtwo")
-		secondDeployment = lifehelper.RemoveterminationGracePeriod(secondDeployment)
+		secondDeployment := lifehelper.RemoveterminationGracePeriod(
+			lifehelper.DefineDeployment(3, 1, "lifecycleputtwo"))
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(secondDeployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

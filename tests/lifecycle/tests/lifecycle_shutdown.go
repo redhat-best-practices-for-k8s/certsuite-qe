@@ -24,9 +24,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"has preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
-			preStopDeploymentStruct, lifeparameters.PreStopCommand)
+			lifehelper.DefineDeployment(1, 1, "lifecycleput"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
@@ -76,9 +75,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"have preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct := lifehelper.DefineDeployment(3, 2, "lifecycleput")
 		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
-			preStopDeploymentStruct, lifeparameters.PreStopCommand)
+			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -103,9 +101,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"that have preStop field configured", func() {
 
 		By("Define first deployment with preStop field configured")
-		preStopDeploymentStructA := lifehelper.DefineDeployment(3, 2, "lifecycleputone")
 		preStopDeploymentStructA, err := deployment.RedefineAllContainersWithPreStopSpec(
-			preStopDeploymentStructA, lifeparameters.PreStopCommand)
+			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -113,9 +110,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with preStop field configured")
-		preStopDeploymentStructB := lifehelper.DefineDeployment(3, 2, "lifecycleputtwo")
-		preStopDeploymentStructB, err = deployment.RedefineAllContainersWithPreStopSpec(
-			preStopDeploymentStructB, lifeparameters.PreStopCommand)
+		preStopDeploymentStructB, err := deployment.RedefineAllContainersWithPreStopSpec(
+			lifehelper.DefineDeployment(3, 2, "lifecycleputtwo"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -141,10 +137,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"field configured [negative]", func() {
 
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct := lifehelper.DefineDeployment(3, 2, "lifecycleput")
-
 		preStopDeploymentStruct, err := deployment.RedefineFirstContainerWithPreStopSpec(
-			preStopDeploymentStruct, lifeparameters.PreStopCommand)
+			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -169,17 +163,14 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		"that don't have preStop field configured [negative]", func() {
 
 		By("Define first deployment")
-		replicaDefinedDeploymentA := lifehelper.DefineDeployment(3, 2, "lifecycleputone")
-
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			replicaDefinedDeploymentA, lifeparameters.WaitingTime)
+			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment")
-		replicaDefinedDeploymentB := lifehelper.DefineDeployment(3, 2, "lifecycleputtwo")
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			replicaDefinedDeploymentB, lifeparameters.WaitingTime)
+			lifehelper.DefineDeployment(3, 2, "lifecycleputtwo"), lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-container-shutdown test")
