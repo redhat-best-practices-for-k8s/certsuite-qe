@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	k8sv1 "k8s.io/api/core/v1"
@@ -135,6 +136,37 @@ func CleanDaemonSets(namespace string, clientSet *testclient.ClientSet) error {
 	return err
 }
 
+func CleanNetworkAttachmentDefinition(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	nadList := &v1.NetworkAttachmentDefinitionList{}
+	err = clientSet.List(context.Background(), nadList)
+
+	if err != nil {
+		return err
+	}
+
+	if len(nadList.Items) > 1 {
+		for _, nad := range nadList.Items {
+			if nad.Name != "dummy-dhcp-network" {
+				err = clientSet.Delete(context.Background(), &nad)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
 // CleanServices deletes all service in namespace.
 func CleanServices(namespace string, clientSet *testclient.ClientSet) error {
 	nsExist, err := Exists(namespace, clientSet)
@@ -178,6 +210,12 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = CleanPods(namespace, clientSet)
+
+	if err != nil {
+		return err
+	}
+
+	err = CleanNetworkAttachmentDefinition(namespace, clientSet)
 
 	if err != nil {
 		return err

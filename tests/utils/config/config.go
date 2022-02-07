@@ -25,6 +25,7 @@ type Config struct {
 	General struct {
 		ReportDirAbsPath    string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
 		CnfNodeLabel        string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
+		WorkerNodeLabel     string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
 		TestImage           string `yaml:"test_image" envconfig:"TEST_IMAGE"`
 		LogLevel            string `yaml:"log_level" envconfig:"LOG_LEVEL"`
 		TnfConfigDir        string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`

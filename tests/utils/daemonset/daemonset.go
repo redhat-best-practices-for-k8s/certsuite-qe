@@ -1,6 +1,8 @@
 package daemonset
 
 import (
+	"fmt"
+
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -33,6 +35,26 @@ func DefineDaemonSet(namespace string, image string, label map[string]string) *v
 
 func RedefineDaemonSetWithNodeSelector(daemonSet *v1.DaemonSet, nodeSelector map[string]string) *v1.DaemonSet {
 	daemonSet.Spec.Template.Spec.NodeSelector = nodeSelector
+
+	return daemonSet
+}
+
+func RedefineWithPrivilegeAndHostNetwork(daemonSet *v1.DaemonSet) *v1.DaemonSet {
+	daemonSet.Spec.Template.Spec.HostNetwork = true
+
+	if daemonSet.Spec.Template.Spec.Containers[0].SecurityContext == nil {
+		daemonSet.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{}
+	}
+
+	daemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Privileged = pointer.BoolPtr(true)
+
+	return daemonSet
+}
+
+func RedefineWithMultus(daemonSet *v1.DaemonSet, nadName string) *v1.DaemonSet {
+	daemonSet.Spec.Template.Annotations = map[string]string{
+		"k8s.v1.cni.cncf.io/networks": fmt.Sprintf(`[ { "name": "%s" } ]`, nadName),
+	}
 
 	return daemonSet
 }
