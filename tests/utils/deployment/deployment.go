@@ -1,6 +1,7 @@
 package deployment
 
 import (
+	"encoding/json"
 	"fmt"
 
 	v1 "k8s.io/api/apps/v1"
@@ -8,6 +9,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 )
+
+type MultusAnnotation struct {
+	Name string `json:"name"`
+}
 
 // DefineDeployment returns deployment struct.
 func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *v1.Deployment {
@@ -81,10 +86,22 @@ func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.
 	return deployment
 }
 
-// RedefineWithMultus redefines deployment with additional label.
-func RedefineWithMultus(deployment *v1.Deployment, nadName string) *v1.Deployment {
+// RedefineWithMultus redefines deployment with additional labels.
+func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deployment {
+	if len(nadNames) < 1 {
+		return deployment
+	}
+
+	var nadAnnotations []MultusAnnotation
+
+	for _, nadName := range nadNames {
+		nadAnnotations = append(nadAnnotations, MultusAnnotation{Name: nadName})
+	}
+
+	bSrting, _ := json.Marshal(nadAnnotations)
+
 	deployment.Spec.Template.Annotations = map[string]string{
-		"k8s.v1.cni.cncf.io/networks": fmt.Sprintf(`[ { "name": "%s" } ]`, nadName),
+		"k8s.v1.cni.cncf.io/networks": string(bSrting),
 	}
 
 	return deployment

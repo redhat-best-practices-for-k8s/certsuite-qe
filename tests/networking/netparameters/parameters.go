@@ -27,13 +27,14 @@ var (
 	TestCaseDefaultNetworkName = "networking Both Pods are on the Default network Testing Default network connectivity " +
 		"networking-icmpv4-connectivity"
 	TestCaseMultusConnectivityName = "networking Both Pods are connected via a Multus Overlay Network Testing Multus " +
-		"network connectivity networking-icmpv4-connectivity"
-	TestCaseDefaultSkipRegEx    = "nodePort|Multus"
-	TestCaseNodePortNetworkName = "networking Should not have type of nodePort networking-service-type"
-	TestCaseNodePortSkipRegEx   = "Default|Multus"
-	TestCaseMultusSkipRegEx     = "nodePort|Default"
-	NetworkingTestSkipLabel     = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
-	NetworkingTestSuiteName     = "networking"
+		"network connectivity networking-icmpv4-connectivity-multus"
+	TestCaseDefaultSkipRegEx      = "nodePort|Multus"
+	TestCaseNodePortNetworkName   = "networking Should not have type of nodePort networking-service-type"
+	TestCaseNodePortSkipRegEx     = "Default|Multus"
+	TestCaseMultusSkipRegEx       = "nodePort|Default|networking-service-type"
+	NetworkingTestSkipLabel       = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
+	NetworkingTestMultusSkipLabel = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
+	NetworkingTestSuiteName       = "networking"
 )
 
 type IPOutputInterface struct {

@@ -46,7 +46,7 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 }
 
 func defineDeploymentBasedOnArgs(
-	name string, replicaNumber int32, privileged bool, multus string, label map[string]string) *v1.Deployment {
+	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *v1.Deployment {
 	deploymentStruct := deployment.RedefineWithReplicaNumber(
 		deployment.DefineDeployment(
 			name,
@@ -62,7 +62,7 @@ func defineDeploymentBasedOnArgs(
 		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
 	}
 
-	if len(multus) > 1 {
+	if len(multus) > 0 {
 		deploymentStruct = deployment.RedefineWithMultus(deploymentStruct, multus)
 	}
 
@@ -96,14 +96,26 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(netparameters.TestDeploymentAName, replicaNumber, false, "", nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(netparameters.TestDeploymentAName, replicaNumber, false, nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
-func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadName string, replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(name, replicaNumber, false, nadName, nil)
+func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(name, replicaNumber, false, nadNames, nil)
+
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
+}
+
+// DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster defines deployment resource and creates it on cluster.
+func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
+	name string, nadNames []string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(
+		name, replicaNumber,
+		false,
+		nadNames,
+		netparameters.NetworkingTestMultusSkipLabel)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
@@ -114,7 +126,7 @@ func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
 		netparameters.TestDeploymentAName,
 		replicaNumber,
 		true,
-		"",
+		nil,
 		nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
@@ -126,7 +138,7 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) err
 		netparameters.TestDeploymentAName,
 		replicaNumber,
 		true,
-		"",
+		nil,
 		netparameters.NetworkingTestSkipLabel)
 	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 
@@ -137,7 +149,7 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) err
 	return nil
 }
 
-func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
+func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
 	testDaemonset := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.RedefineWithMultus(
 		daemonset.DefineDaemonSet(
 			netparameters.TestNetworkingNameSpace,
@@ -146,12 +158,19 @@ func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
 		nadName,
 	), map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
 
-	err := CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
-	if err != nil {
-		return err
+	if labels != nil {
+		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
 	}
 
-	return nil
+	return CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
+}
+
+func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
+	return defineDaemonSetBasedOnArgs(nadName, nil)
+}
+
+func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
+	return defineDaemonSetBasedOnArgs(nadName, netparameters.NetworkingTestMultusSkipLabel)
 }
 
 func defineAndCreatePrivilegedDaemonset() error {
