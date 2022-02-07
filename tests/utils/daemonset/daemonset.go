@@ -39,6 +39,21 @@ func RedefineDaemonSetWithNodeSelector(daemonSet *v1.DaemonSet, nodeSelector map
 	return daemonSet
 }
 
+func RedefineDaemonSetWithLabel(daemonSet *v1.DaemonSet, label map[string]string) *v1.DaemonSet {
+	newMap := make(map[string]string)
+	for k, v := range daemonSet.Spec.Template.Labels {
+		newMap[k] = v
+	}
+
+	for k, v := range label {
+		newMap[k] = v
+	}
+
+	daemonSet.Spec.Template.Labels = newMap
+
+	return daemonSet
+}
+
 func RedefineWithPrivilegeAndHostNetwork(daemonSet *v1.DaemonSet) *v1.DaemonSet {
 	daemonSet.Spec.Template.Spec.HostNetwork = true
 

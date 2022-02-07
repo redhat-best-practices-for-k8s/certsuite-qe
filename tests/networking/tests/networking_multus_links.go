@@ -60,7 +60,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 			By("Define deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, netparameters.TestNadNameA, 3)
+				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
@@ -88,12 +88,12 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 			By("Define first deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, netparameters.TestNadNameA, 3)
+				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Define second deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentBName, netparameters.TestNadNameA, 3)
+				netparameters.TestDeploymentBName, []string{netparameters.TestNadNameA}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
@@ -126,12 +126,12 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 			By("Define first deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, netparameters.TestNadNameA, 3)
+				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Define second deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentBName, netparameters.TestNadNameB, 3)
+				netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
@@ -146,7 +146,6 @@ var _ = Describe("Networking custom namespace, ", func() {
 				netparameters.TestCaseMultusConnectivityName,
 				globalparameters.TestCasePassed)
 			Expect(err).ToNot(HaveOccurred())
-			time.Sleep(30 * time.Second)
 		})
 
 	// 48334
@@ -159,7 +158,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 			By("Define deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, netparameters.TestNadNameA, 3)
+				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
@@ -193,12 +192,12 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 			By("Define deployment-a and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, netparameters.TestNadNameA, 1)
+				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 1)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Define deployment-b and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentBName, netparameters.TestNadNameB, 3)
+				netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
@@ -233,7 +232,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 			By("Define deployment and create it on cluster")
 			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, netparameters.TestNadNameA, 3)
+				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Define daemonset and create it on cluster")
@@ -254,4 +253,124 @@ var _ = Describe("Networking custom namespace, ", func() {
 				globalparameters.TestCasePassed)
 			Expect(err).ToNot(HaveOccurred())
 		})
+
+	// 48580
+	It("custom daemonset 3 pods with skip label [skip]", func() {
+
+		By("Define and create network-attachment-definitions")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define daemonset and create it on cluster")
+		err = nethelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(netparameters.TestNadNameA)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	// 48582
+	It("custom deployment and daemonset 3 pods with skip label[skip]", func() {
+
+		By("Define and create network-attachment-definitions")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define daemonset and create it on cluster")
+		err = nethelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(netparameters.TestNadNameA)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	// 48582
+	It("custom deployment and daemonSet 3 pods, daemonSet has skip label", func() {
+
+		By("Define and create network-attachment-definitions")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define daemonset and create it on cluster")
+		err = nethelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(netparameters.TestNadNameA)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	// 48582
+	It("custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment", func() {
+
+		By("Define and create network-attachment-definitions")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameB, multusInterfaces[0], netparameters.TestIPamIPNetworkB)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA, netparameters.TestNadNameB}, 3)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+
+	})
 })
