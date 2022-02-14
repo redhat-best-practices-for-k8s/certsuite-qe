@@ -18,6 +18,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+const retryInterval = 5
+
 func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string) error {
 	if len(namespaces) < 1 {
 		return fmt.Errorf("target namespaces cannot be empty list")
@@ -283,13 +285,13 @@ func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout t
 		status, err := isStatefulSetReady(runningReplica.Namespace, runningReplica.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"statefulSet %s is not ready, retry in 5 seconds", runningReplica.Name))
+				"statefulSet %s is not ready, retry in %d seconds", runningReplica.Name, retryInterval))
 
 			return false
 		}
 
 		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "statefulSet is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "statefulSet is not ready")
 
 	return nil
 }
@@ -308,13 +310,13 @@ func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time
 		status, err := isReplicaSetReady(runningReplica.Namespace, runningReplica.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"replicaSet %s is not ready, retry in 5 seconds", runningReplica.Name))
+				"replicaSet %s is not ready, retry in %d seconds", runningReplica.Name, retryInterval))
 
 			return false
 		}
 
 		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "replicaSet is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "replicaSet is not ready")
 
 	return nil
 }
@@ -389,13 +391,13 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		if err != nil {
 
 			glog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not ready, retry in 5 seconds", pod.Name))
+				"deployment %s is not ready, retry in %d seconds", pod.Name, retryInterval))
 
 			return false
 		}
 
 		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "Deployment is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "Deployment is not ready")
 
 	return nil
 }
