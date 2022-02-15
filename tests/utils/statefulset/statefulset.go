@@ -7,7 +7,7 @@ import (
 	"k8s.io/utils/pointer"
 )
 
-// DefineStatefulSet returns replicaset struct.
+// DefineStatefulSet returns statefulset struct.
 func DefineStatefulSet(statefulSetName string, namespace string,
 	image string, label map[string]string) *v1.StatefulSet {
 	return &v1.StatefulSet{

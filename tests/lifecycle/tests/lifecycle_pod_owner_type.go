@@ -8,6 +8,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 )
 
@@ -22,11 +23,9 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	// 47409
 	It("1 ReplicaSet, several pods", func() {
 		By("Define ReplicaSet with replica number")
-		replicaStruct := replicaset.RedefineWithReplicaNumber(
-			lifehelper.DefineReplicaSet("lifecyclers"), 3)
+		replicaStruct := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
 
-		err := globalhelper.CreateAndWaitUntilReplicaSetIsReady(
-			replicaStruct, lifeparameters.WaitingTime)
+		err := lifehelper.CreateAndWaitUntilReplicaSetIsReady(replicaStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
@@ -71,7 +70,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	It("StatefulSet pod", func() {
 		By("Define statefulSet")
 		statefulSetStruct := lifehelper.DefineStatefulSet("lifecyclesf")
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSetStruct, lifeparameters.WaitingTime)
+		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulSetStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
@@ -91,8 +90,9 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	// 47429
 	It("1 pod, not part of any workload resource [negative]", func() {
 		By("Define pod")
-		podStruct := lifehelper.DefindPod("lifecyclepod")
-		err := globalhelper.CreateAndWaitUntilPodIsReady(podStruct, lifeparameters.WaitingTime)
+		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
+			lifeparameters.TestDeploymentLabels)
+		err := lifehelper.CreateAndWaitUntilPodIsReady(podStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
@@ -122,8 +122,9 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		podStruct := lifehelper.DefindPod("lifecyclepod")
-		err = globalhelper.CreateAndWaitUntilPodIsReady(podStruct, lifeparameters.WaitingTime)
+		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
+			lifeparameters.TestDeploymentLabels)
+		err = lifehelper.CreateAndWaitUntilPodIsReady(podStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
