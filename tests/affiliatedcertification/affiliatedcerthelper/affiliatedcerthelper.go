@@ -8,7 +8,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 )
 
 func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string) error {
@@ -17,8 +16,8 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
 	err = globalhelper.DefineTnfConfig(
-		[]string{netparameters.TestNetworkingNameSpace},
-		[]string{netparameters.TestPodLabel},
+		[]string{affiliatedcertparameters.TestCertificationNameSpace},
+		[]string{affiliatedcertparameters.TestPodLabel},
 		containersInfo,
 		[]string{})
 
@@ -61,8 +60,8 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
 	err := globalhelper.DefineTnfConfig(
-		[]string{netparameters.TestNetworkingNameSpace},
-		[]string{netparameters.TestPodLabel},
+		[]string{affiliatedcertparameters.TestCertificationNameSpace},
+		[]string{affiliatedcertparameters.TestPodLabel},
 		[]string{},
 		operatorsInfo)
 	if err != nil {

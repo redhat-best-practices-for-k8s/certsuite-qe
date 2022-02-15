@@ -1,7 +1,14 @@
 package affiliatedcertparameters
 
+import "fmt"
+
 var (
 	AffiliatedCertificationTestSuiteName = "affiliated-certification"
+
+	TestCertificationNameSpace = "cert-tests"
+	testPodLabelPrefixName     = "cert-test/test"
+	testPodLabelValue          = "testing"
+	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
 	TestCaseContainerSkipRegEx          = "operator-is-certified"
 	TestCaseContainerAffiliatedCertName = "affiliated-certification affiliated-certification-container-is-certified"
