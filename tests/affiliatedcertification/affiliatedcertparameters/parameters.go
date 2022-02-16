@@ -5,8 +5,8 @@ import "fmt"
 var (
 	AffiliatedCertificationTestSuiteName = "affiliated-certification"
 
-	TestCertificationNameSpace = "cert-tests"
-	testPodLabelPrefixName     = "cert-test/test"
+	TestCertificationNameSpace = "affiliatedcert-tests"
+	testPodLabelPrefixName     = "affiliatedcert-test/test"
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
