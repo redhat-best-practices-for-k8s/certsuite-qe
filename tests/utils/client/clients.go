@@ -9,6 +9,7 @@ import (
 	"github.com/golang/glog"
 	netattdefv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	clientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
+	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -30,6 +31,7 @@ type ClientSet struct {
 	discovery.DiscoveryInterface
 	Config *rest.Config
 	runtimeclient.Client
+	v1alpha1.OperatorsV1alpha1Interface
 }
 
 // New returns a *ClientBuilder with the given kubeconfig.
@@ -62,6 +64,7 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.RbacV1Interface = rbacv1client.NewForConfigOrDie(config)
 	clientSet.DiscoveryInterface = discovery.NewDiscoveryClientForConfigOrDie(config)
 	clientSet.NetworkingV1Client = *networkv1client.NewForConfigOrDie(config)
+	clientSet.OperatorsV1alpha1Interface = v1alpha1.NewForConfigOrDie(config)
 	clientSet.Config = config
 
 	crScheme := runtime.NewScheme()

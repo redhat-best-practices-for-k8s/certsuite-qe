@@ -167,6 +167,50 @@ func CleanNetworkAttachmentDefinition(namespace string, clientSet *testclient.Cl
 	return nil
 }
 
+// CleanReplicaSets deletes all ReplicaSets in namespace.
+func CleanReplicaSets(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.ReplicaSets(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+		GracePeriodSeconds: pointer.Int64Ptr(0),
+	}, metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete ReplicaSet %w", err)
+	}
+
+	return err
+}
+
+// CleanStatefulSets deletes all StatefulSets in namespace.
+func CleanStatefulSets(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.StatefulSets(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+		GracePeriodSeconds: pointer.Int64Ptr(0),
+	}, metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete StatefulSet %w", err)
+	}
+
+	return err
+}
+
 // CleanServices deletes all service in namespace.
 func CleanServices(namespace string, clientSet *testclient.ClientSet) error {
 	nsExist, err := Exists(namespace, clientSet)
@@ -210,6 +254,18 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = CleanPods(namespace, clientSet)
+
+	if err != nil {
+		return err
+	}
+
+	err = CleanReplicaSets(namespace, clientSet)
+
+	if err != nil {
+		return err
+	}
+
+	err = CleanStatefulSets(namespace, clientSet)
 
 	if err != nil {
 		return err
