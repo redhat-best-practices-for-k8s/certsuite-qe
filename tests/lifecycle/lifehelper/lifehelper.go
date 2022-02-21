@@ -189,3 +189,20 @@ func isPodReady(namespace string, podName string) (bool, error) {
 
 	return false, nil
 }
+
+// EnableMasterScheduling enables/disables master nodes scheduling.
+func EnableMasterScheduling(scheduleable bool) error {
+	scheduler, err := globalhelper.APIClient.ConfigV1Interface.Schedulers().Get(
+		context.TODO(), "cluster", metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	scheduler.Spec.MastersSchedulable = scheduleable
+	if _, err = globalhelper.APIClient.ConfigV1Interface.Schedulers().Update(context.TODO(),
+		scheduler, metav1.UpdateOptions{}); err != nil {
+		return err
+	}
+
+	return nil
+}

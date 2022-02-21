@@ -39,3 +39,17 @@ func IsNodeInCondition(node *corev1.Node, condition corev1.NodeConditionType) bo
 
 	return false
 }
+
+// GetNumOfReadyNodesInCluster get the number of ready nodes in the cluster.
+func GetNumOfReadyNodesInCluster(cs *client.ClientSet) int32 {
+	nodesList, _ := cs.Nodes().List(context.Background(), metav1.ListOptions{})
+	numOfNodesExistsInCluster := len(nodesList.Items)
+
+	for _, node := range nodesList.Items {
+		if !IsNodeInCondition(&node, corev1.NodeReady) {
+			numOfNodesExistsInCluster--
+		}
+	}
+
+	return int32(numOfNodesExistsInCluster)
+}

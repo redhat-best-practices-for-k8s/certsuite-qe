@@ -36,7 +36,14 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 						{
 							Name:    "test",
 							Image:   image,
-							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
+							Command: []string{"/bin/bash", "-c", "sleep INF"},
+						},
+					},
+					Affinity: &corev1.Affinity{PodAntiAffinity: &corev1.PodAntiAffinity{}},
+				},
+			},
+		},
+	}
 }
 
 // RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
@@ -131,6 +138,22 @@ func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []
 // RedefineWithTerminationGracePeriod redefines deployment with terminationGracePeriod spec.
 func RedefineWithTerminationGracePeriod(deployment *v1.Deployment, terminationGracePeriod *int64) *v1.Deployment {
 	deployment.Spec.Template.Spec.TerminationGracePeriodSeconds = terminationGracePeriod
+
+	return deployment
+}
+
+// RedefineWithPodAntiAffinity redefines deployment with podAntiAffinity spec.
+func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]string) *v1.Deployment {
+	deployment.Spec.Template.Spec.Affinity.PodAntiAffinity = &corev1.PodAntiAffinity{
+		RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+			{
+				LabelSelector: &metav1.LabelSelector{
+					MatchLabels: label,
+				},
+				TopologyKey: "kubernetes.io/hostname",
+			},
+		},
+	}
 
 	return deployment
 }
