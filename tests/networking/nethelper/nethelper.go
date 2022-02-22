@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nad"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	corev1 "k8s.io/api/core/v1"
@@ -103,7 +103,7 @@ func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string, replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(name, replicaNumber, false, nadNames, nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(name, replicaNumber, true, nadNames, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, netparameters.WaitingTime)
 }
@@ -370,7 +370,11 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 	}
 
 	for _, nodeInterface := range linuxInterfaces {
-		if nodeInterface.Master == "" && nodeInterface.Operstate == "UP" {
+		if nodeInterface.Master == "" &&
+			!strings.Contains(nodeInterface.IfName, "ovn") &&
+			!strings.Contains(nodeInterface.IfName, "br") &&
+			!strings.Contains(nodeInterface.IfName, "ovs") &&
+			!strings.Contains(nodeInterface.IfName, "lo") {
 			interfaceList = append(interfaceList, nodeInterface.IfName)
 		}
 	}
@@ -380,75 +384,4 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 	}
 
 	return interfaceList, nil
-}
-
-func PutDownInterfaceOnNode(name string, state string) error {
-	err := defineAndCreatePrivilegedDaemonset()
-
-	if err != nil {
-		return err
-	}
-
-	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
-	if err != nil {
-		return err
-	}
-
-	command := []string{"ip", "link", "set", name}
-
-	if state == "up" || state == "down" {
-		command = append(command, state)
-	} else {
-		return fmt.Errorf("invalid argument %s", state)
-	}
-
-	output, err := globalhelper.ExecCommand(podsList.Items[0], command)
-	if err != nil {
-		glog.Fatal(output.String())
-
-		return err
-	}
-
-	err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func PutAllInterfaceUPonAllNodes(name string) error {
-	err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
-	if err != nil {
-		return err
-	}
-
-	err = defineAndCreatePrivilegedDaemonset()
-
-	if err != nil {
-		return err
-	}
-
-	podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
-	if err != nil {
-		return err
-	}
-
-	for _, runningPod := range podsList.Items {
-		output, err := globalhelper.ExecCommand(runningPod, []string{"ip", "link", "set", name, "up"})
-
-		if err != nil {
-			glog.Fatal(output.String())
-
-			return err
-		}
-	}
-
-	err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
