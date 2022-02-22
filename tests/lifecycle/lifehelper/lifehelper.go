@@ -199,10 +199,8 @@ func EnableMasterScheduling(scheduleable bool) error {
 	}
 
 	scheduler.Spec.MastersSchedulable = scheduleable
-	if _, err = globalhelper.APIClient.ConfigV1Interface.Schedulers().Update(context.TODO(),
-		scheduler, metav1.UpdateOptions{}); err != nil {
-		return err
-	}
+	_, err = globalhelper.APIClient.ConfigV1Interface.Schedulers().Update(context.TODO(),
+		scheduler, metav1.UpdateOptions{})
 
-	return nil
+	return err
 }

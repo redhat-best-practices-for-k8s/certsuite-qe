@@ -33,10 +33,10 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 	// 47405
 	It("One deployment with PodAntiAffinity, replicas < schedulable nodes", func() {
-		scheduleableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 
 		// at least one "clean of any reosource" worker is needed.
-		maxPodsPerDeployment := scheduleableNodes - 1
+		maxPodsPerDeployment := schedulableNodes - 1
 		By("Define & create deployment")
 		deploymentStruct := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput"),
@@ -60,11 +60,11 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	// 47406
-	It("Multiple deployments with PodAntiAffinity, replicas < schedulable nodes", func() {
-		scheduleableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+	It("Two deployments with PodAntiAffinity, replicas < schedulable nodes", func() {
+		schedulableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 
 		// at least one "clean of any reosource" worker is needed.
-		maxPodsPerDeployment := (scheduleableNodes / 2) - 1
+		maxPodsPerDeployment := (schedulableNodes / 2) - 1
 		By("Define & create first deployment")
 		firstDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputone"),
@@ -121,14 +121,19 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	// 47408
-	It("multiple deployments with PodAntiAffinity, replicas = schedulable nodes [negative]", func() {
-		scheduleableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+	It("Two deployments with PodAntiAffinity, replicas = schedulable nodes [negative]", func() {
+		schedulableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 
 		// all nodes will be scheduled with a pod.
-		maxPodsPerDeployment := (scheduleableNodes / 2)
+		if schedulableNodes < 2 {
+			Skip("The cluster does not have enought schedulable nodes.")
+		}
+		maxPodsPerDeploymentPerFirstDeployment := (schedulableNodes / 2)
+		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment
+
 		By("Define & create first deployment")
 		firstDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputone"),
+			lifehelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
@@ -136,7 +141,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 		By("Define & create second deployment")
 		secondDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputtwo"),
+			lifehelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputtwo"),
 			lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(secondDeploymentStruct, lifeparameters.WaitingTime)
