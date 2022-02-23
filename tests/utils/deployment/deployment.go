@@ -39,7 +39,6 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 							Command: []string{"/bin/bash", "-c", "sleep INF"},
 						},
 					},
-					Affinity: &corev1.Affinity{PodAntiAffinity: &corev1.PodAntiAffinity{}},
 				},
 			},
 		},
@@ -144,16 +143,17 @@ func RedefineWithTerminationGracePeriod(deployment *v1.Deployment, terminationGr
 
 // RedefineWithPodAntiAffinity redefines deployment with podAntiAffinity spec.
 func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]string) *v1.Deployment {
-	deployment.Spec.Template.Spec.Affinity.PodAntiAffinity = &corev1.PodAntiAffinity{
-		RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
-			{
-				LabelSelector: &metav1.LabelSelector{
-					MatchLabels: label,
+	deployment.Spec.Template.Spec.Affinity = &corev1.Affinity{
+		PodAntiAffinity: &corev1.PodAntiAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: label,
+					},
+					TopologyKey: "kubernetes.io/hostname",
 				},
-				TopologyKey: "kubernetes.io/hostname",
 			},
-		},
-	}
+		}}
 
 	return deployment
 }

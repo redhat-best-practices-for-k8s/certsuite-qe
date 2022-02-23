@@ -45,10 +45,4 @@ var _ = Describe("lifecycle lifecycle-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 	})
-
-	AfterEach(func() {
-		err := os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 })

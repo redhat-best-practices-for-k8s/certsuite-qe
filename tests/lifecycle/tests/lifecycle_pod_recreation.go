@@ -10,39 +10,45 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 )
 
 var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
-	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
-		Expect(err).ToNot(HaveOccurred())
-
+	execute.BeforeAll(func() {
 		By("Make masters schedulable")
-		err = lifehelper.EnableMasterScheduling(true)
+		err := lifehelper.EnableMasterScheduling(true)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
 		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	BeforeEach(func() {
+		By("Clean namespace before each test")
+		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 47405
 	It("One deployment with PodAntiAffinity, replicas < schedulable nodes", func() {
-		schedulableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
-		// at least one "clean of any reosource" worker is needed.
+		if schedulableNodes == 0 {
+			Skip("The cluster does not have enought schedulable nodes.")
+		}
+		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
 		By("Define & create deployment")
 		deploymentStruct := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput"),
 			lifeparameters.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-pod-recreation test")
@@ -61,16 +67,20 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 	// 47406
 	It("Two deployments with PodAntiAffinity, replicas < schedulable nodes", func() {
-		schedulableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
-		// at least one "clean of any reosource" worker is needed.
+		if schedulableNodes < 4 {
+			Skip("The cluster does not have enought schedulable nodes.")
+		}
+		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
 		By("Define & create first deployment")
 		firstDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
@@ -97,13 +107,19 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 	// 47407
 	It("One deployment with PodAntiAffinity, replicas = schedulable nodes [negative]", func() {
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		if schedulableNodes == 0 {
+			Skip("The cluster does not have enought schedulable nodes.")
+		}
+
 		By("Define & create deployment")
 		deploymentStruct := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(
-				nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient),
-				1, "lifecycleput"), lifeparameters.TestDeploymentLabels)
+			lifehelper.DefineDeployment(schedulableNodes, 1, "lifecycleput"),
+			lifeparameters.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-pod-recreation test")
@@ -122,7 +138,8 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 	// 47408
 	It("Two deployments with PodAntiAffinity, replicas = schedulable nodes [negative]", func() {
-		schedulableNodes := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
 		// all nodes will be scheduled with a pod.
 		if schedulableNodes < 2 {
@@ -136,7 +153,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 			lifehelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
@@ -160,14 +177,4 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 	})
-
-	AfterEach(func() {
-		By("Remove masters scheduling")
-		err := lifehelper.EnableMasterScheduling(false)
-		Expect(err).ToNot(HaveOccurred())
-
-		err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 })
