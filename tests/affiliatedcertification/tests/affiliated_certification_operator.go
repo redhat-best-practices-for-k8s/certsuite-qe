@@ -36,7 +36,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Validate that operator is deployed")
 		Eventually(
-			globalhelper.IsOperatorInstalled("crunchy-postgres-operator", "cert-tests")).ShouldNot(HaveOccurred())
+			globalhelper.IsOperatorInstalled("postgresoperator", "cert-tests")).ShouldNot(HaveOccurred())
 
 		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err = globalhelper.DefineTnfConfig(
