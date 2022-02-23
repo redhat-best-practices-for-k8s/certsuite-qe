@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"time"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
@@ -36,7 +38,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Validate that operator is deployed")
 		Eventually(
-			globalhelper.IsOperatorInstalled("postgresoperator", "cert-tests")).ShouldNot(HaveOccurred())
+			globalhelper.IsOperatorInstalled("postgresoperator", "cert-tests"),
+			10*time.Minute,
+			30*time.Second).ShouldNot(HaveOccurred())
 
 		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 		err = globalhelper.DefineTnfConfig(
