@@ -18,6 +18,8 @@ var _ = Describe("lifecycle lifecycle-scaling", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Enable intrusive tests")
 		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -43,10 +45,4 @@ var _ = Describe("lifecycle lifecycle-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 	})
-
-	AfterEach(func() {
-		err := os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 })
