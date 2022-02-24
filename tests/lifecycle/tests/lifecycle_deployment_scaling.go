@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("lifecycle lifecycle-scaling", func() {
+var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
@@ -32,7 +32,7 @@ var _ = Describe("lifecycle lifecycle-scaling", func() {
 			lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("start lifecycle lifecycle-scaling")
+		By("start lifecycle lifecycle-deployment-scaling")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.SkipAllButScalingRegex)
@@ -40,7 +40,7 @@ var _ = Describe("lifecycle lifecycle-scaling", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ScalingDefaultName,
+			lifeparameters.DeploymentScalingDefaultName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 

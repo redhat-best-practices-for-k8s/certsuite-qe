@@ -23,27 +23,33 @@ var (
 	LifecycleTestSuiteName  = "lifecycle"
 	SkipAllButShutdownRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
 		" lifecycle-pod-termination-grace-period lifecycle-pod-owner-type" +
-		" lifecycle-pod-recreation lifecycle-scaling lifecycle-image-pull-policy"
+		" lifecycle-pod-recreation lifecycle-deployment-scaling lifecycle-image-pull-policy"
 
 	SkipAllButScalingRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
 		" lifecycle-pod-termination-grace-period lifecycle-pod-owner-type" +
 		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
 
 	SkipAllButTerminationGracePeriodRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-scaling lifecycle-pod-owner-type" +
+		" lifecycle-deployment-scaling lifecycle-pod-owner-type" +
 		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
 
 	SkipAllButPodOwnerTypeRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-scaling lifecycle-pod-termination-grace-period" +
+		" lifecycle-deployment-scaling lifecycle-pod-termination-grace-period" +
 		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
 
 	SkipAllButPodRecreationRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-scaling lifecycle-pod-termination-grace-period" +
+		" lifecycle-deployment-scaling lifecycle-pod-termination-grace-period" +
+		" lifecycle-pod-owner-type lifecycle-container-shutdown lifecycle-image-pull-policy"
+
+	SkipAllButPodHighAvailabilityRegex = "lifecycle-pod-recreation  lifecycle-pod-scheduling" +
+		" lifecycle-deployment-scaling lifecycle-pod-termination-grace-period" +
 		" lifecycle-pod-owner-type lifecycle-container-shutdown lifecycle-image-pull-policy"
 
 	ShutdownDefaultName               = "lifecycle lifecycle-container-shutdown"
-	ScalingDefaultName                = "lifecycle lifecycle-deployment-scaling"
+	DeploymentScalingDefaultName      = "lifecycle lifecycle-deployment-scaling"
 	TerminationGracePeriodDefaultName = "lifecycle lifecycle-pod-termination-grace-period"
 	PodOwnerTypeDefaultName           = "lifecycle lifecycle-pod-owner-type"
 	PodRecreationDefaultName          = "lifecycle lifecycle-pod-recreation"
+	PodHighAvailabilityDefaultName    = "lifecycle CNF is designed in high availability mode" +
+		"lifecycle-pod-high-availability"
 )
