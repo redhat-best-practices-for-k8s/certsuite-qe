@@ -36,8 +36,8 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 				Namespace: subscription.Namespace,
 			},
 			Spec: &v1alpha1.SubscriptionSpec{
-				Channel: subscription.Spec.Channel,
-				//Package:                subscription.Spec.Package,
+				Channel:                subscription.Spec.Channel,
+				Package:                subscription.Spec.Package,
 				CatalogSource:          subscription.Spec.CatalogSource,
 				CatalogSourceNamespace: subscription.Spec.CatalogSourceNamespace,
 			},
@@ -50,7 +50,7 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 }
 
 // IsOperatorInstalled validates if the given operator is deployed on the given cluster.
-func IsOperatorInstalled(operatorDeploymentName string, namespace string) error {
+func IsOperatorInstalled(namespace string, operatorDeploymentName string) error {
 	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))
 
 	namespaceExists, err := namespaces.Exists(namespace, APIClient)

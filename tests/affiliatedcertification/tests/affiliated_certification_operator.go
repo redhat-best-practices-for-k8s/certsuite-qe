@@ -1,17 +1,12 @@
 package tests
 
 import (
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
 var _ = Describe("Affiliated-certification operator certification,", func() {
@@ -21,57 +16,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	BeforeEach(func() {
-
-	})
-
-	It("operator certification operator install and label test", func() {
-		By("Create namespace")
-		err := namespaces.Create("cert-tests", globalhelper.APIClient)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Deploy Operator")
-		group := utils.DefineOperatorGroup("cert-test-operator-group", "cert-tests", []string{"cert-tests"})
-		operator := utils.DefineSubscription("crunchy-postgres-operator-subscription",
-			"cert-tests", "v5", "crunchy-postgres-operator", "certified-operators", "openshift-marketplace")
-		err = globalhelper.DeployOperator("cert-tests", group, operator)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Validate that operator is deployed")
-		Eventually(
-			globalhelper.IsOperatorInstalled("postgresoperator", "cert-tests"),
-			10*time.Minute,
-			30*time.Second).ShouldNot(HaveOccurred())
-
-		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
-		err = globalhelper.DefineTnfConfig(
-			[]string{"cert-tests"},
-			[]string{affiliatedcertparameters.TestPodLabel},
-			[]string{},
-			[]string{})
-		Expect(err).ToNot(HaveOccurred())
-
-		m := make(map[string]string)
-		m["test-network-function.com/operator"] = "target"
-
-		By("Label operator to be certified")
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			"postgresoperator",
-			"cert-tests",
-			m)
-
-		Expect(err).ToNot(HaveOccurred())
-
-		err = globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
-			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
-		)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 
 	})
 
