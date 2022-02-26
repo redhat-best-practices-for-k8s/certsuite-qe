@@ -36,7 +36,8 @@ func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, e
 // IsDeploymentInstalled checks if deployment is installed.
 func IsDeploymentInstalled(
 	cs *client.ClientSet, operatorNamespace string, operatorDeploymentName string) (bool, error) {
-	_, err := APIClient.Deployments(operatorNamespace).Get(context.Background(), operatorDeploymentName, metav1.GetOptions{})
+	_, err := APIClient.Deployments(operatorNamespace).Get(context.Background(),
+		operatorDeploymentName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}

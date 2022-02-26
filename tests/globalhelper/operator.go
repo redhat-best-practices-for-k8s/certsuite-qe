@@ -17,6 +17,7 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 	if err != nil {
 		return err
 	}
+
 	err = APIClient.Create(context.TODO(),
 		&olmv1.OperatorGroup{
 			ObjectMeta: metav1.ObjectMeta{
@@ -26,9 +27,11 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 				TargetNamespaces: operatorGroup.Spec.TargetNamespaces},
 		},
 	)
+
 	if err != nil {
 		return fmt.Errorf("can not deploy operatorGroup %w", err)
 	}
+
 	err = APIClient.Create(context.TODO(),
 		&v1alpha1.Subscription{
 			ObjectMeta: metav1.ObjectMeta{
@@ -43,9 +46,11 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 			},
 		},
 	)
+
 	if err != nil {
 		return fmt.Errorf("can not install Subscription %w", err)
 	}
+
 	return nil
 }
 
