@@ -1,6 +1,10 @@
 package affiliatedcertparameters
 
-import "fmt"
+import (
+	"fmt"
+
+	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
+)
 
 var (
 	AffiliatedCertificationTestSuiteName = "affiliated-certification"
@@ -9,6 +13,9 @@ var (
 	testPodLabelPrefixName     = "affiliatedcert-test/test"
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	certifiedOperatorGroup     = "certified-operators"
+	operatorSourceNamespace    = "openshift-marketplace"
+	OperatorLabel              = map[string]string{"test-network-function.com/operator": "target"}
 
 	TestCaseContainerSkipRegEx          = "operator-is-certified"
 	TestCaseContainerAffiliatedCertName = "affiliated-certification affiliated-certification-container-is-certified"
@@ -21,9 +28,13 @@ var (
 
 	TestCaseOperatorSkipRegEx          = "container-is-certified"
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
-	CertifiedOperatorApicast           = "apicast-operator/redhat-operators"
-	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
-	UncertifiedOperatorBarFoo          = "bar/foo"
-	OperatorNameOnlyKubeturbo          = "kubeturbo-certified"
-	OperatorOrgOnlyCertifiedOperators  = "certified-operators"
+	OperatorGroup                      = utils.DefineOperatorGroup("affiliatedcert-test-operator-group", TestCertificationNameSpace,
+		[]string{TestCertificationNameSpace})
+	CertifiedOperatorPostgresSubscription = utils.DefineSubscription("crunchy-postgres-operator-subscription",
+		TestCertificationNameSpace, "v5", "crunchy-postgres-operator", certifiedOperatorGroup, operatorSourceNamespace)
+	CertifiedOperatorApicast          = "apicast-operator/redhat-operators"
+	CertifiedOperatorKubeturbo        = "kubeturbo-certified/certified-operators"
+	UncertifiedOperatorBarFoo         = "bar/foo"
+	OperatorNameOnlyKubeturbo         = "kubeturbo-certified"
+	OperatorOrgOnlyCertifiedOperators = "certified-operators"
 )

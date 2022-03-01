@@ -1,18 +1,34 @@
 package tests
 
 import (
+	"time"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	execute.BeforeAll(func() {
+		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
+		err := globalhelper.DefineTnfConfig(
+			[]string{affiliatedcertparameters.TestCertificationNameSpace},
+			[]string{affiliatedcertparameters.TestPodLabel},
+			[]string{},
+			[]string{})
+
+		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file: %w", err)
+
+		By("Create namespace")
+		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
@@ -20,10 +36,27 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46582
-	It("one operator to test, operator is certified", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{affiliatedcertparameters.CertifiedOperatorApicast}, globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred())
+	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
+		"and its version is certified", func() {
+		By("Deploy operator to be certified")
+
+		err := globalhelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorGroup,
+			affiliatedcertparameters.CertifiedOperatorPostgresSubscription)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator")
+
+		By("Confirm that operator is installed and ready")
+
+		Eventually(globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo"),
+			5*time.Minute, 5*time.Second)
+
+		By("Label operator to be certified")
+
+		err = affiliatedcerthelper.AddLabelToInstalledCSV(
+			"postgresoperator",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorLabel)
+
 	})
 
 	// 46695
