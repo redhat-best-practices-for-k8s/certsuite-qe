@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 )
 
-var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
+var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
