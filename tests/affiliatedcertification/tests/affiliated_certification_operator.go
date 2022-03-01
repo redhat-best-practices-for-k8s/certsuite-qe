@@ -48,7 +48,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Confirm that operator is installed and ready")
 
 		Eventually(globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo"),
-			5*time.Minute, 5*time.Second)
+			5*time.Minute, 5*time.Second).ShouldNot(HaveOccurred())
 
 		By("Label operator to be certified")
 
