@@ -3,6 +3,7 @@ package lifecycle
 import (
 	"flag"
 	"fmt"
+	"os"
 	"runtime"
 	"testing"
 	"time"
@@ -10,6 +11,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
@@ -57,7 +59,6 @@ var _ = BeforeSuite(func() {
 		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
-
 })
 
 var _ = AfterSuite(func() {
@@ -73,4 +74,12 @@ var _ = AfterSuite(func() {
 	By("Remove reports from reports directory")
 	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
+
+	By("Remove masters scheduling")
+	err = lifehelper.EnableMasterScheduling(false)
+	Expect(err).ToNot(HaveOccurred())
+
+	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
+	Expect(err).ToNot(HaveOccurred())
+
 })
