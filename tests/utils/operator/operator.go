@@ -6,6 +6,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// DefineOperatorGroup returns an operator group struct
 func DefineOperatorGroup(groupName string, namespace string, targetNamespace []string) *olmv1.OperatorGroup {
 	return &olmv1.OperatorGroup{
 		ObjectMeta: metav1.ObjectMeta{
@@ -16,6 +17,7 @@ func DefineOperatorGroup(groupName string, namespace string, targetNamespace []s
 	}
 }
 
+// DefineSubscription returns a subscription struct
 func DefineSubscription(subName, namespace, channel, operatorName, catalogSource,
 	catalogSourceNamespace string) *v1alpha1.Subscription {
 	return &v1alpha1.Subscription{

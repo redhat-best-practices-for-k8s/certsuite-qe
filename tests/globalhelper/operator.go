@@ -64,8 +64,7 @@ func IsOperatorInstalled(namespace string, operatorDeploymentName string) error 
 	}
 
 	glog.V(5).Info(fmt.Sprintf("Validate that operator's deployment %s exists", operatorDeploymentName))
-	operatorInstalled, err := IsDeploymentInstalled(
-		APIClient, namespace, operatorDeploymentName)
+	operatorInstalled, err := IsDeploymentInstalled(namespace, operatorDeploymentName)
 
 	if err != nil {
 		return err
