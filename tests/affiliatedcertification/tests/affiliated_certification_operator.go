@@ -27,8 +27,25 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file: %w", err)
 
 		By("Create namespace")
+
 		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Deploy operators to test")
+
+		err = globalhelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorGroup,
+			affiliatedcertparameters.CertifiedOperatorPostgresSubscription)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator")
+
+		By("Confirm that operator is installed and ready")
+
+		Eventually(func() bool {
+			err = globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
+
+			return err == nil
+		}, 5*time.Minute, 5*time.Second).Should(Equal(true), "Operator is not ready")
+
 	})
 
 	BeforeEach(func() {
@@ -38,27 +55,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46582
 	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
 		"and its version is certified", func() {
-		By("Deploy operator to be certified")
-
-		err := globalhelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorGroup,
-			affiliatedcertparameters.CertifiedOperatorPostgresSubscription)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator")
-
-		By("Confirm that operator is installed and ready")
-
-		Eventually(func() bool {
-			err = globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
-			if err != nil {
-				return false
-			}
-
-			return true
-		}, 5*time.Minute, 5*time.Second).Should(Equal(true), "Operator is not ready")
 
 		By("Label operator to be certified")
 
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
+		err := affiliatedcerthelper.AddLabelToInstalledCSV(
 			"postgresoperator",
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
@@ -72,6 +72,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,

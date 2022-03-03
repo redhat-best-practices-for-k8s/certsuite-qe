@@ -119,7 +119,7 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 		newMap[k] = v
 	}
 
-	csv.Spec.Labels = newMap
+	csv.SetLabels(newMap)
 
 	return updateCsv(namespace, csv)
 }
@@ -141,7 +141,7 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 		newMap[k] = v
 	}
 
-	csv.Spec.Labels = newMap
+	csv.SetLabels(newMap)
 
 	return updateCsv(namespace, csv)
 }
