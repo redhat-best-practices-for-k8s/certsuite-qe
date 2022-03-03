@@ -32,17 +32,6 @@ func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, e
 	return false, nil
 }
 
-// IsDeploymentInstalled checks if deployment is installed.
-func IsDeploymentInstalled(operatorNamespace string, operatorDeploymentName string) (bool, error) {
-	_, err := APIClient.Deployments(operatorNamespace).Get(context.Background(),
-		operatorDeploymentName, metav1.GetOptions{})
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
 func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time.Duration) error {
 	runningDeployment, err := APIClient.Deployments(deployment.Namespace).Create(

@@ -1,4 +1,4 @@
-package globalhelper
+package affiliatedcerthelper
 
 import (
 	"context"
@@ -9,16 +9,17 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscription *v1alpha1.Subscription) error {
-	err := namespaces.Create(namespace, APIClient)
+	err := namespaces.Create(namespace, globalhelper.APIClient)
 	if err != nil {
 		return err
 	}
 
-	err = APIClient.Create(context.TODO(),
+	err = globalhelper.APIClient.Create(context.TODO(),
 		&olmv1.OperatorGroup{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      operatorGroup.Name,
@@ -32,7 +33,7 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 		return fmt.Errorf("can not deploy operatorGroup %w", err)
 	}
 
-	err = APIClient.Create(context.TODO(),
+	err = globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.Subscription{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      subscription.Name,
@@ -54,11 +55,22 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 	return nil
 }
 
+// IsDeploymentInstalled checks if deployment is installed.
+func IsDeploymentInstalled(operatorNamespace string, operatorDeploymentName string) (bool, error) {
+	_, err := globalhelper.APIClient.Deployments(operatorNamespace).Get(context.Background(),
+		operatorDeploymentName, metav1.GetOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 // IsOperatorInstalled validates if the given operator is deployed on the given cluster.
 func IsOperatorInstalled(namespace string, operatorDeploymentName string) error {
 	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))
 
-	namespaceExists, err := namespaces.Exists(namespace, APIClient)
+	namespaceExists, err := namespaces.Exists(namespace, globalhelper.APIClient)
 	if !namespaceExists && err == nil {
 		return fmt.Errorf("operator namespace %s doesn't exist", namespace)
 	}
