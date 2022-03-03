@@ -47,8 +47,14 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Confirm that operator is installed and ready")
 
-		Eventually(globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo"),
-			5*time.Minute, 5*time.Second).ShouldNot(HaveOccurred())
+		Eventually(func() bool {
+			err = globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
+			if err != nil {
+				return false
+			}
+
+			return true
+		}, 5*time.Minute, 5*time.Second).Should(Equal(true), "Operator is not ready")
 
 		By("Label operator to be certified")
 
@@ -56,11 +62,26 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			"postgresoperator",
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
 
+		By("Start test")
+
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		err = globalhelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46695
 	It("one operator to test, operator is not certified [negative]", func() {
+		Skip("Under development to match new functionality")
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
 			[]string{affiliatedcertparameters.UncertifiedOperatorBarFoo}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
@@ -68,6 +89,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46696
 	It("two operators to test, both are certified", func() {
+		Skip("Under development to match new functionality")
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
 			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
 				affiliatedcertparameters.CertifiedOperatorKubeturbo}, globalparameters.TestCasePassed)
@@ -76,6 +98,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46697
 	It("two operators to test, one is certified, one is not [negative]", func() {
+		Skip("Under development to match new functionality")
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
 			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
 				affiliatedcertparameters.UncertifiedOperatorBarFoo}, globalparameters.TestCaseFailed)
@@ -119,6 +142,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46706
 	It("two operators to test, one is certified, one has empty name and organization fields", func() {
+		Skip("Under development to match new functionality")
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
 			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
 				affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCasePassed)

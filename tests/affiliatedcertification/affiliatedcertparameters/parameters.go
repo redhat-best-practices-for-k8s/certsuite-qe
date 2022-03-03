@@ -17,7 +17,7 @@ var (
 	operatorSourceNamespace    = "openshift-marketplace"
 	OperatorLabel              = map[string]string{"test-network-function.com/operator": "target"}
 
-	TestCaseContainerSkipRegEx          = "operator-is-certified"
+	TestCaseContainerSkipRegEx          = "operator-is-certified helmchart-is-certified"
 	TestCaseContainerAffiliatedCertName = "affiliated-certification affiliated-certification-container-is-certified"
 	CertifiedContainerNodeJsUbi         = "nodejs-12/ubi8"
 	CertifiedContainerRhel7OpenJdk      = "openjdk-11-rhel7/openjdk"
@@ -26,7 +26,7 @@ var (
 	ContainerNameOnlyRhel7OpenJdk       = "openjdk-11-rhel7/"
 	ContainerRepoOnlyOpenJdk            = "/openjdk"
 
-	TestCaseOperatorSkipRegEx          = "container-is-certified"
+	TestCaseOperatorSkipRegEx          = "container-is-certified helmchart-is-certified"
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
 	OperatorGroup                      = utils.DefineOperatorGroup("affiliatedcert-test-operator-group", TestCertificationNameSpace,
 		[]string{TestCertificationNameSpace})
