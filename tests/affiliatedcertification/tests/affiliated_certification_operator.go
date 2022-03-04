@@ -44,7 +44,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
 			"nginx-operator",
-			affiliatedcertparameters.TestCertificationNameSpace,
+			"tnf",
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
 
@@ -67,7 +67,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Remove label from operator")
 		err = affiliatedcerthelper.DeleteLabelFromInstalledCSV(
 			"nginx-operator",
-			affiliatedcertparameters.TestCertificationNameSpace,
+			"tnf",
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error removing label from operator")
 	})
