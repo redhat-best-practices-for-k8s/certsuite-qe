@@ -155,13 +155,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 46699
-	It("certifiedoperatorinfo field does not exist in tnf_config [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 	// 46700
 	It("name and organization fields exist in certifiedoperatorinfo but are empty [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
