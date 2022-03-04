@@ -43,8 +43,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operator to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			"nginx-operator",
-			"tnf",
+			affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
+			affiliatedcertparameters.ExistingOperatorNamespace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
 
@@ -66,8 +66,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Remove label from operator")
 		err = affiliatedcerthelper.DeleteLabelFromInstalledCSV(
-			"nginx-operator",
-			"tnf",
+			affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
+			affiliatedcertparameters.ExistingOperatorNamespace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error removing label from operator")
 	})
@@ -93,7 +93,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operator to be certified")
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			"postgresoperator",
+			affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
@@ -113,6 +113,13 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+
+		By("Remove label from operator")
+		err = affiliatedcerthelper.DeleteLabelFromInstalledCSV(
+			affiliatedcertparameters.CertifiedOperatorPrefixPostgres,,
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred(), "Error removing label from operator")
 	})
 
 	// 46695

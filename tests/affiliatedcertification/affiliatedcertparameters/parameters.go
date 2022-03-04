@@ -28,10 +28,13 @@ var (
 
 	TestCaseOperatorSkipRegEx          = "container-is-certified helmchart-is-certified"
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
+	UncertifiedOperatorPrefixNginx     = "nginx-operator"
+	ExistingOperatorNamespace          = "tnf"
 	OperatorGroup                      = utils.DefineOperatorGroup("affiliatedcert-test-operator-group",
 		TestCertificationNameSpace, []string{TestCertificationNameSpace})
 	CertifiedOperatorPostgresSubscription = utils.DefineSubscription("crunchy-postgres-operator-subscription",
 		TestCertificationNameSpace, "v5", "crunchy-postgres-operator", certifiedOperatorGroup, operatorSourceNamespace)
+	CertifiedOperatorPrefixPostgres   = "postgresoperator"
 	CertifiedOperatorApicast          = "apicast-operator/redhat-operators"
 	CertifiedOperatorKubeturbo        = "kubeturbo-certified/certified-operators"
 	UncertifiedOperatorBarFoo         = "bar/foo"
