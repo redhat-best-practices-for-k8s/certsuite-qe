@@ -31,9 +31,53 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
+	})
+
+	BeforeEach(func() {
+
+	})
+
+	// 46699
+	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]", func() {
+		//operator is already installed
+		By("Label operator to be certified")
+
+		err := affiliatedcerthelper.AddLabelToInstalledCSV(
+			"nginx-operator",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
+
+		By("Start test")
+
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+
+		err = globalhelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+
+		By("Remove label from operator")
+		err = affiliatedcerthelper.DeleteLabelFromInstalledCSV(
+			"nginx-operator",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred(), "Error removing label from operator")
+	})
+
+	// 46582
+	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
+		"and its version is certified", func() {
 		By("Deploy operators to test")
 
-		err = globalhelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
+		err := affiliatedcerthelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorGroup,
 			affiliatedcertparameters.CertifiedOperatorPostgresSubscription)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator")
@@ -41,24 +85,14 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Confirm that operator is installed and ready")
 
 		Eventually(func() bool {
-			err = globalhelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
+			err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
 
 			return err == nil
 		}, 5*time.Minute, 5*time.Second).Should(Equal(true), "Operator is not ready")
 
-	})
-
-	BeforeEach(func() {
-
-	})
-
-	// 46582
-	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
-		"and its version is certified", func() {
-
 		By("Label operator to be certified")
 
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
+		err = affiliatedcerthelper.AddLabelToInstalledCSV(
 			"postgresoperator",
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
