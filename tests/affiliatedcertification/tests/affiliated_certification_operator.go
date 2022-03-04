@@ -38,39 +38,40 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46699
-	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]", func() {
-		//operator is already installed
-		By("Label operator to be certified")
+	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]",
+		func() {
+			// operator is already installed
+			By("Label operator to be certified")
 
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
-			affiliatedcertparameters.ExistingOperatorNamespace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
+			err := affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
+				affiliatedcertparameters.ExistingOperatorNamespace,
+				affiliatedcertparameters.OperatorLabel)
+			Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
 
-		By("Start test")
+			By("Start test")
 
-		err = globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
-			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			err = globalhelper.LaunchTests(
+				[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+				affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+			)
+			Expect(err).ToNot(HaveOccurred(), "Error running "+
+				affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+			By("Verify test case status in Junit and Claim reports")
 
-		err = globalhelper.ValidateIfReportsAreValid(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+			err = globalhelper.ValidateIfReportsAreValid(
+				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+				globalparameters.TestCaseSkipped)
+			Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 
-		By("Remove label from operator")
-		err = affiliatedcerthelper.DeleteLabelFromInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
-			affiliatedcertparameters.ExistingOperatorNamespace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error removing label from operator")
-	})
+			By("Remove label from operator")
+			err = affiliatedcerthelper.DeleteLabelFromInstalledCSV(
+				affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
+				affiliatedcertparameters.ExistingOperatorNamespace,
+				affiliatedcertparameters.OperatorLabel)
+			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator")
+		})
 
 	// 46582
 	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
