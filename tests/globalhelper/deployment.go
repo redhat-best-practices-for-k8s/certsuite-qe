@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -31,18 +30,6 @@ func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, e
 	}
 
 	return false, nil
-}
-
-// IsDeploymentInstalled checks if deployment is installed.
-func IsDeploymentInstalled(
-	cs *client.ClientSet, operatorNamespace string, operatorDeploymentName string) (bool, error) {
-	_, err := APIClient.Deployments(operatorNamespace).Get(context.Background(),
-		operatorDeploymentName, metav1.GetOptions{})
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
