@@ -9,6 +9,7 @@ import (
 	"github.com/golang/glog"
 	netattdefv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	clientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
+	olm "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme"
 	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
@@ -74,6 +75,10 @@ func New(kubeconfig string) *ClientSet {
 	}
 
 	if err := netattdefv1.SchemeBuilder.AddToScheme(crScheme); err != nil {
+		panic(err)
+	}
+
+	if err := olm.AddToScheme(crScheme); err != nil {
 		panic(err)
 	}
 
