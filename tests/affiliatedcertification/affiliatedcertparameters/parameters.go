@@ -2,8 +2,19 @@ package affiliatedcertparameters
 
 import (
 	"fmt"
+)
 
-	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
+type (
+	OperatorLabelInfo struct {
+		OperatorPrefix string
+		Namespace      string
+		Label          map[string]string
+	}
+
+	CsvInfo struct {
+		OperatorPrefix string
+		Namespace      string
+	}
 )
 
 var (
@@ -13,9 +24,6 @@ var (
 	testPodLabelPrefixName     = "affiliatedcert-test/test"
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
-	certifiedOperatorGroup     = "certified-operators"
-	operatorSourceNamespace    = "openshift-marketplace"
-	OperatorLabel              = map[string]string{"test-network-function.com/operator": "target"}
 
 	TestCaseContainerSkipRegEx          = "operator-is-certified helmchart-is-certified"
 	TestCaseContainerAffiliatedCertName = "affiliated-certification affiliated-certification-container-is-certified"
@@ -28,16 +36,15 @@ var (
 
 	TestCaseOperatorSkipRegEx          = "container-is-certified helmchart-is-certified"
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
+	CertifiedOperatorGroup             = "certified-operators"
+	OperatorSourceNamespace            = "openshift-marketplace"
+	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
 	UncertifiedOperatorPrefixNginx     = "nginx-operator"
 	ExistingOperatorNamespace          = "tnf"
-	OperatorGroup                      = utils.DefineOperatorGroup("affiliatedcert-test-operator-group",
-		TestCertificationNameSpace, []string{TestCertificationNameSpace})
-	CertifiedOperatorPostgresSubscription = utils.DefineSubscription("crunchy-postgres-operator-subscription",
-		TestCertificationNameSpace, "v5", "crunchy-postgres-operator", certifiedOperatorGroup, operatorSourceNamespace)
-	CertifiedOperatorPrefixPostgres   = "postgresoperator"
-	CertifiedOperatorApicast          = "apicast-operator/redhat-operators"
-	CertifiedOperatorKubeturbo        = "kubeturbo-certified/certified-operators"
-	UncertifiedOperatorBarFoo         = "bar/foo"
-	OperatorNameOnlyKubeturbo         = "kubeturbo-certified"
-	OperatorOrgOnlyCertifiedOperators = "certified-operators"
+	CertifiedOperatorPrefixPostgres    = "postgresoperator"
+	CertifiedOperatorApicast           = "apicast-operator/redhat-operators"
+	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
+	UncertifiedOperatorBarFoo          = "bar/foo"
+	OperatorNameOnlyKubeturbo          = "kubeturbo-certified"
+	OperatorOrgOnlyCertifiedOperators  = "certified-operators"
 )
