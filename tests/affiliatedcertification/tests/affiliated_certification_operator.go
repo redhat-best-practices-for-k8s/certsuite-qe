@@ -16,9 +16,10 @@ import (
 
 var _ = Describe("Affiliated-certification operator certification,", func() {
 
-	var installedLabeledOperators []affiliatedcertparameters.OperatorLabelInfo
-
-	var csvsToDelete []affiliatedcertparameters.CsvInfo
+	var (
+		installedLabeledOperators []affiliatedcertparameters.OperatorLabelInfo
+		csvsToDelete              []affiliatedcertparameters.CsvInfo
+	)
 
 	execute.BeforeAll(func() {
 		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
@@ -35,10 +36,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
-
-	})
-
-	BeforeEach(func() {
 
 	})
 
@@ -209,7 +206,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46706
 	It("two operators to test, one is certified, one has empty name and organization fields", func() {
-		Skip("Under development to match new functionality")
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
 			[]string{affiliatedcertparameters.CertifiedOperatorApicast,
 				affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCasePassed)
