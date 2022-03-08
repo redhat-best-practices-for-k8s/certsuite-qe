@@ -126,7 +126,7 @@ func isTestCaseInRequiredStatusInJunitReport(
 	testCaseName string,
 	status string) bool {
 	for _, tc := range report.Suites[0].Testcases {
-		if strings.Contains(tc.Name, testCaseName) {
+		if strings.Contains(formatTestCaseName(tc.Name), formatTestCaseName(testCaseName)) {
 			glog.V(5).Info(fmt.Sprintf("test case status %s", tc.Status))
 
 			return tc.Status == status
@@ -168,7 +168,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 		}
 	}
 
-	return false, fmt.Errorf("test case is not found in the report")
+	return false, fmt.Errorf("test case is not found in the claim report")
 }
 
 func removeCharactersFromString(stringToFormat string, charactersToRemove []string) string {
