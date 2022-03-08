@@ -111,7 +111,7 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 	}
 
 	newMap := make(map[string]string)
-	for k, v := range csv.Spec.Labels {
+	for k, v := range csv.GetLabels() {
 		newMap[k] = v
 	}
 
@@ -119,7 +119,7 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 		newMap[k] = v
 	}
 
-	csv.Spec.Labels = newMap
+	csv.SetLabels(newMap)
 
 	return updateCsv(namespace, csv)
 }
@@ -133,7 +133,7 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 
 	newMap := make(map[string]string)
 
-	for k, v := range csv.Spec.Labels {
+	for k, v := range csv.GetLabels() {
 		if _, ok := label[k]; ok {
 			continue
 		}
@@ -141,7 +141,7 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 		newMap[k] = v
 	}
 
-	csv.Spec.Labels = newMap
+	csv.SetLabels(newMap)
 
 	return updateCsv(namespace, csv)
 }
@@ -176,6 +176,23 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 
 	if err != nil {
 		return fmt.Errorf("fail to update CSV due to %w", err)
+	}
+
+	return nil
+}
+
+func DeleteCsv(prefixCsvName string, namespace string) error {
+	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	if err != nil {
+		return err
+	}
+
+	err = globalhelper.APIClient.ClusterServiceVersions(namespace).Delete(
+		context.TODO(), csv.GetName(), metav1.DeleteOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("fail to delete CSV due to %w", err)
 	}
 
 	return nil
