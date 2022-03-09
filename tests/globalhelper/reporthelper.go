@@ -102,6 +102,7 @@ func RemoveContentsFromReportDir() error {
 	}
 	defer tnfReportDir.Close()
 	names, err := tnfReportDir.Readdirnames(-1)
+	fmt.Println("RemoveContentsFromReportDir names = ", names)
 
 	if err != nil {
 		return err
@@ -187,4 +188,11 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 
 func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " "})
+}
+
+func ConvertSpecNameToFileName(stringToFormat string) string {
+	formatString := strings.ReplaceAll(stringToFormat, " ", "_")
+	formatString = removeCharactersFromString(formatString, []string{","})
+
+	return strings.ToLower(formatString)
 }

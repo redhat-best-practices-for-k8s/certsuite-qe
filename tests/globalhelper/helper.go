@@ -2,6 +2,7 @@ package globalhelper
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
 	"strings"
@@ -263,4 +264,17 @@ func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, 
 	}
 
 	return deployment
+}
+
+// VerifyFolderExists verifies if a given folder exists, and creates it if it doesn't.
+func VerifyFolderExists(folderPath string, perm fs.FileMode) (bool, error) {
+	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
+		err := os.MkdirAll(folderPath, perm)
+
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
