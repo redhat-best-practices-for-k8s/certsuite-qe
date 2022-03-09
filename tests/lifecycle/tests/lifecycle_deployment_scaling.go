@@ -25,8 +25,9 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 	})
 
 	// 47398
-	It("One deployment, one pod, one container, scale in & out", func() {
-
+	specName := "One deployment, one pod, one container, scale in and out"
+	It(specName, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName)
 		By("Define Deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(lifehelper.DefineDeployment(1, 1, "lifecycleput"),
 			lifeparameters.WaitingTime)
@@ -35,6 +36,8 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 		By("start lifecycle lifecycle-deployment-scaling")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.DeploymentScalingDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButScalingRegex)
 		Expect(err).ToNot(HaveOccurred())
 

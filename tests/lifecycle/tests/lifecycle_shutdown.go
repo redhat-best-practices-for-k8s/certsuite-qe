@@ -20,9 +20,9 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47311
-	It("One deployment, one pod with one container that "+
-		"has preStop field configured", func() {
-
+	specName1 := "One deployment, one pod, with one container that has preStop field configured"
+	It(specName1, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"), lifeparameters.PreStopCommand)
@@ -34,6 +34,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.ShutdownDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButShutdownRegex,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -47,9 +49,9 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47315
-	It("One deployment, one pod with one container that does not "+
-		"have preStop field configured [negative]", func() {
-
+	specName2 := "One deployment, one pod, with one container that does not have preStop field configured [negative]"
+	It(specName2, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
 		By("Define deployment without prestop field configured")
 		deploymentStructWithOutPreStop := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 
@@ -59,6 +61,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.ShutdownDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButShutdownRegex)
 		Expect(err).To(HaveOccurred())
 
@@ -71,8 +75,9 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47382
-	It("One deployment, several pods, several containers that "+
-		"have preStop field configured", func() {
+	specName3 := "One deployment, several pods, several containers that have preStop field configured"
+	It(specName3, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
 
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
@@ -86,6 +91,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.ShutdownDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButShutdownRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -97,8 +104,9 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47383
-	It("Several deployments, several pods, several containers "+
-		"that have preStop field configured", func() {
+	specName4 := "Two deployments, several pods, several containers that have preStop field configured"
+	It(specName4, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
 
 		By("Define first deployment with preStop field configured")
 		preStopDeploymentStructA, err := deployment.RedefineAllContainersWithPreStopSpec(
@@ -121,6 +129,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.ShutdownDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButShutdownRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -133,8 +143,9 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47384
-	It("One deployment, several pods, several containers, one without preStop "+
-		"field configured [negative]", func() {
+	specName5 := "One deployment, several pods, several containers one without preStop field configured [negative]"
+	It(specName5, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
 
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct, err := deployment.RedefineFirstContainerWithPreStopSpec(
@@ -148,6 +159,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.ShutdownDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButShutdownRegex)
 		Expect(err).To(HaveOccurred())
 
@@ -159,8 +172,9 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47385
-	It("Several deployments, several pods, several containers "+
-		"that don't have preStop field configured [negative]", func() {
+	specName6 := "Two deployments, several pods, several containers that don't have preStop field configured [negative]"
+	It(specName6, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName6)
 
 		By("Define first deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -176,6 +190,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.ShutdownDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButShutdownRegex)
 		Expect(err).To(HaveOccurred())
 

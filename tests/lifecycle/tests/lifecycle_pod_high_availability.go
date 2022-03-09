@@ -28,7 +28,9 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48492
-	It("One deployment, replica > 1, podAntiAffinity is set", func() {
+	specName1 := "One deployment, replicas are more than 1, podAntiAffinity is set"
+	It(specName1, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -47,6 +49,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.PodHighAvailabilityDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButPodHighAvailabilityRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -59,7 +63,9 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48495
-	It("Two deployments, replica > 1, podAntiAffinity is set", func() {
+	specName2 := "Two deployments, replicas are more than 1, podAntiAffinity is set"
+	It(specName2, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -86,6 +92,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.PodHighAvailabilityDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButPodHighAvailabilityRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -98,7 +106,9 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48499
-	It("One deployment, replica > 1, podAntiAffinity is not set [negative]", func() {
+	specName3 := "One deployment, replicas are more than 1, podAntiAffinity is not set [negative]"
+	It(specName3, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -115,6 +125,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.PodHighAvailabilityDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButPodHighAvailabilityRegex)
 		Expect(err).To(HaveOccurred())
 
@@ -127,7 +139,9 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48500
-	It("Two deployments, replica > 1, podAntiAffinity is not set [negative]", func() {
+	specName4 := "Two deployments, replicas are more than 1, podAntiAffinity is not set [negative]"
+	It(specName4, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -150,6 +164,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.PodHighAvailabilityDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButPodHighAvailabilityRegex)
 		Expect(err).To(HaveOccurred())
 
@@ -161,7 +177,9 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48869
-	It("One deployment, replica = 1, podAntiAffinity is set [negative]", func() {
+	specName5 := "One deployment, replicas equal to 1, podAntiAffinity is set [negative]"
+	It(specName5, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -180,6 +198,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.PodHighAvailabilityDefaultName,
+			tcNameForReport,
 			lifeparameters.SkipAllButPodHighAvailabilityRegex)
 		Expect(err).To(HaveOccurred())
 

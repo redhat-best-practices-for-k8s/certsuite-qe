@@ -1,6 +1,21 @@
 package affiliatedcertparameters
 
-import "fmt"
+import (
+	"fmt"
+)
+
+type (
+	OperatorLabelInfo struct {
+		OperatorPrefix string
+		Namespace      string
+		Label          map[string]string
+	}
+
+	CsvInfo struct {
+		OperatorPrefix string
+		Namespace      string
+	}
+)
 
 var (
 	AffiliatedCertificationTestSuiteName = "affiliated-certification"
@@ -10,7 +25,7 @@ var (
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
-	TestCaseContainerSkipRegEx          = "operator-is-certified"
+	TestCaseContainerSkipRegEx          = "operator-is-certified helmchart-is-certified"
 	TestCaseContainerAffiliatedCertName = "affiliated-certification affiliated-certification-container-is-certified"
 	CertifiedContainerNodeJsUbi         = "nodejs-12/ubi8"
 	CertifiedContainerRhel7OpenJdk      = "openjdk-11-rhel7/openjdk"
@@ -19,8 +34,14 @@ var (
 	ContainerNameOnlyRhel7OpenJdk       = "openjdk-11-rhel7/"
 	ContainerRepoOnlyOpenJdk            = "/openjdk"
 
-	TestCaseOperatorSkipRegEx          = "container-is-certified"
+	TestCaseOperatorSkipRegEx          = "container-is-certified helmchart-is-certified"
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
+	CertifiedOperatorGroup             = "certified-operators"
+	OperatorSourceNamespace            = "openshift-marketplace"
+	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
+	UncertifiedOperatorPrefixNginx     = "nginx-operator"
+	ExistingOperatorNamespace          = "tnf"
+	CertifiedOperatorPrefixPostgres    = "postgresoperator"
 	CertifiedOperatorApicast           = "apicast-operator/redhat-operators"
 	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
 	UncertifiedOperatorBarFoo          = "bar/foo"
