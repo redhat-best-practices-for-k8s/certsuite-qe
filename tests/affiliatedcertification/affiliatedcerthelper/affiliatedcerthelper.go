@@ -33,6 +33,8 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 
 	err = globalhelper.LaunchTests(
 		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		"Add container information to "+globalparameters.DefaultTnfConfigFileName,
+		"SetUpAndRunContainerCertTest",
 		affiliatedcertparameters.TestCaseContainerSkipRegEx,
 	)
 
@@ -76,6 +78,8 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 
 	err = globalhelper.LaunchTests(
 		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		"Add container information to "+globalparameters.DefaultTnfConfigFileName,
+		"SetUpAndRunOperatorCertTest",
 		affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 	)
 

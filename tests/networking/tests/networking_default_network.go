@@ -44,8 +44,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45440
-	It("3 custom pods on Default network networking-icmpv4-connectivity", func() {
-
+	specName1 := "3 custom pods on Default network networking-icmpv4-connectivity"
+	It(specName1, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
 		Expect(err).ToNot(HaveOccurred())
@@ -53,6 +54,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -65,8 +68,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45441
-	It("custom daemonset, 4 custom pods on Default network", func() {
-
+	specName2 := "custom daemonset, 4 custom pods on Default network"
+	It(specName2, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -85,6 +89,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -97,9 +103,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45442
-	It("3 custom pods on Default network networking-icmpv4-connectivity fail when one pod is "+
-		"disconnected [negative]", func() {
-
+	specName3 := "3 custom pods on Default network networking-icmpv4-connectivity fail when " +
+		"one pod is disconnected [negative]"
+	It(specName3, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -119,6 +126,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())
@@ -131,9 +140,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45444
-	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
-		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
-
+	specName4 := "2 custom pods on Default network networking-icmpv4-connectivity skip when label " +
+		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]"
+	It(specName4, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -146,6 +156,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -158,9 +170,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45445
-	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
-		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
-
+	specName5 := "custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label " +
+		"test-network-function.com/skip_connectivity_tests is set in deployment only"
+	It(specName5, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -185,6 +198,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseDefaultNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())

@@ -37,7 +37,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45447
-	It("2 custom pods, no service installed, service Should not have type of nodePort", func() {
+	specName1 := "2 custom pods, no service installed, service Should not have type of nodePort"
+	It(specName1, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
 
 		By("Define deployment and create it on cluster")
 		err := nethelper.DefineAndCreateDeploymentOnCluster(3)
@@ -46,6 +48,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseNodePortNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -59,7 +63,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45481
-	It("2 custom pods, service installed without NodePort, service Should not have type of nodePort", func() {
+	specName2 := "2 custom pods, service installed without NodePort, service Should not have type of nodePort"
+	It(specName2, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
 
 		By("Define Service")
 		err := nethelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false)
@@ -72,6 +78,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseNodePortNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -85,63 +93,72 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45482
-	It("2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort",
-		func() {
-			By("Define multiple Services")
-			err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false)
-			Expect(err).ToNot(HaveOccurred())
+	specName3 := "2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort"
+	It(specName3, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
 
-			err = nethelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define multiple Services")
+		err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentOnCluster(3)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseNodePortSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseNodePortNetworkName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseNodePortNetworkName,
+			tcNameForReport,
+			netparameters.TestCaseNodePortSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseNodePortNetworkName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 45483
-	It("2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]",
-		func() {
+	specName4 := "2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]"
+	It(specName4, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
 
-			By("Define Services with NodePort")
-			err := nethelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define Services with NodePort")
+		err := nethelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentOnCluster(3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseNodePortSkipRegEx,
-			)
-			Expect(err).To(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseNodePortNetworkName,
+			tcNameForReport,
+			netparameters.TestCaseNodePortSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseNodePortNetworkName,
-				globalparameters.TestCaseFailed)
-			Expect(err).ToNot(HaveOccurred())
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseNodePortNetworkName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 
-		})
+	})
 
 	// 45484
-	It("2 custom pods, multiple services installed and one has NodePort, service Should not have type of "+
-		"nodePort [negative]", func() {
+	specName5 := "2 custom pods, multiple services installed and one has NodePort, service Should not have type of " +
+		"nodePort [negative]"
+	It(specName5, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
 
 		By("Define Services")
 		err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 30022, 3022, true)
@@ -156,6 +173,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseNodePortNetworkName,
+			tcNameForReport,
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())

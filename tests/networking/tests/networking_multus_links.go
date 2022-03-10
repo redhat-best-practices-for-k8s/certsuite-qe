@@ -50,212 +50,234 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48328
-	It("custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface",
-		func() {
+	specName1 := "custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface"
+	It(specName1, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
 
-			By("Define and create Network-attachment-definition")
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create Network-attachment-definition")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48330
-	It("2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface",
-		func() {
+	specName2 := "2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface"
+	It(specName2, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
 
-			By("Define and create Network-attachment-definition")
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create Network-attachment-definition")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define first deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define first deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define second deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentBName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define second deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentBName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
-			time.Sleep(30 * time.Second)
-		})
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+		time.Sleep(30 * time.Second)
+	})
 
 	// 48331
-	It("custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces",
-		func() {
+	specName3 := "custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces"
+	It(specName3, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
 
-			By("Define and create Network-attachment-definition")
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create Network-attachment-definition")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			err = nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameB, multusInterfaces[0], netparameters.TestIPamIPNetworkB)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameB, multusInterfaces[0], netparameters.TestIPamIPNetworkB)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define first deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define first deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define second deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define second deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48334
-	It("custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]",
-		func() {
-			By("Define and create Network-attachment-definition")
+	specName4 := "custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]"
+	It(specName4, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
 
-			err := nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameA, multusInterfaces[0], "")
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create Network-attachment-definition")
+		err := nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameA, multusInterfaces[0], "")
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCaseSkipped)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48338
-	It("custom deployments 3 pods and 1 pod, standalone IP, connectivity via Multus secondary interface[skip]",
-		func() {
-			if len(multusInterfaces) < 2 {
-				Skip("There is not enough secondary network interfaces to run the test case")
-			}
+	specName5 := "custom deployments 3 pods and 1 pod, standalone IP, connectivity via Multus secondary interface[skip]"
+	It(specName5, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
 
-			By("Define and create Network-attachment-definitions")
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		if len(multusInterfaces) < 2 {
+			Skip("There is not enough secondary network interfaces to run the test case")
+		}
 
-			err = nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameB, multusInterfaces[1], "")
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create Network-attachment-definitions")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment-a and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 1)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameB, multusInterfaces[1], "")
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment-b and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment-a and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 1)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment-b and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCaseSkipped)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48343
-	It("custom deployment and daemonset 3 pods, daemonset missing ip, 2 NADs, connectivity via Multus "+
-		"secondary interface",
-		func() {
-			if len(multusInterfaces) < 2 {
-				Skip("There is not enough secondary network interfaces to run the test case")
-			}
+	specName6 := "custom deployment and daemonset 3 pods, daemonset missing ip, 2 NADs, connectivity via Multus " +
+		"secondary interface"
+	It(specName6, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName6)
 
-			By("Define and create network-attachment-definitions")
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		if len(multusInterfaces) < 2 {
+			Skip("There is not enough secondary network interfaces to run the test case")
+		}
 
-			err = nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameB, multusInterfaces[1], "")
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create network-attachment-definitions")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameB, multusInterfaces[1], "")
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define daemonset and create it on cluster")
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameB)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define daemonset and create it on cluster")
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameB)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48580
-	It("custom daemonset 3 pods with skip label [skip]", func() {
+	specName7 := "custom daemonset 3 pods with skip label [skip]"
+	It(specName7, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName7)
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -269,6 +291,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -281,7 +305,9 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48582
+	specName8 := "custom deployment and daemonset 3 pods with skip label[skip]"
 	It("custom deployment and daemonset 3 pods with skip label[skip]", func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName8)
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -300,6 +326,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -312,7 +340,9 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48582
+	specName9 := "custom deployment and daemonSet 3 pods, daemonSet has skip label"
 	It("custom deployment and daemonSet 3 pods, daemonSet has skip label", func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName9)
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -331,6 +361,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -343,7 +375,9 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48582
-	It("custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment", func() {
+	specName10 := "custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment"
+	It(specName10, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName10)
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -362,6 +396,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -375,84 +411,92 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48346
-	It("custom deployment 3 pods,1 NAD,no connectivity via Multus secondary interface[negative]",
-		func() {
+	specName11 := "custom deployment 3 pods,1 NAD,no connectivity via Multus secondary interface[negative]"
+	It(specName11, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName11)
 
-			By("Define and create Network-attachment-definition")
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define and create Network-attachment-definition")
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Put one deployment's pod  interface down")
-			err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
-			Expect(err).ToNot(HaveOccurred())
+		By("Put one deployment's pod  interface down")
+		err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).To(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCaseFailed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48347
-	It("custom deployment and daemonset 3 pods, 2 NADs, No connectivity on daemonset via Multus secondary "+
-		"interface[negative]",
-		func() {
+	specName12 := "custom deployment and daemonset 3 pods, 2 NADs, No connectivity on daemonset via Multus secondary " +
+		"interface[negative]"
+	It(specName12, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName12)
 
-			if len(multusInterfaces) < 2 {
-				Skip("There is not enough secondary network interfaces to run the test case")
-			}
+		if len(multusInterfaces) < 2 {
+			Skip("There is not enough secondary network interfaces to run the test case")
+		}
 
-			err := nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
-			Expect(err).ToNot(HaveOccurred())
+		err := nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		Expect(err).ToNot(HaveOccurred())
 
-			err = nethelper.DefineAndCreateNadOnCluster(
-				netparameters.TestNadNameB, multusInterfaces[1], netparameters.TestIPamIPNetworkB)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateNadOnCluster(
+			netparameters.TestNadNameB, multusInterfaces[1], netparameters.TestIPamIPNetworkB)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-				netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Put one deployment's pod interface down")
-			err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
-			Expect(err).ToNot(HaveOccurred())
+		By("Put one deployment's pod interface down")
+		err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define daemonset and create it on cluster")
-			err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameA)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define daemonset and create it on cluster")
+		err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameA)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseMultusSkipRegEx,
-			)
-			Expect(err).To(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
+			netparameters.TestCaseMultusSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseMultusConnectivityName,
-				globalparameters.TestCaseFailed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseMultusConnectivityName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 48590
-	It("custom deployment and daemonset 3 pods, 2 NADs, multiple Multus interfaces on deployment no "+
-		"connectivity via secondary interface[negative]", func() {
+	specName13 := "custom deployment and daemonset 3 pods, 2 NADs, multiple Multus interfaces on deployment no " +
+		"connectivity via secondary interface[negative]"
+	It(specName13, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName13)
 
 		if len(multusInterfaces) < 2 {
 			Skip("There is no enough Multus interfaces available")
@@ -483,6 +527,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.TestCaseMultusConnectivityName,
+			tcNameForReport,
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())

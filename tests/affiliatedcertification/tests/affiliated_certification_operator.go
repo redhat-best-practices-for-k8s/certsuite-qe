@@ -60,44 +60,52 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46699
-	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]",
-		func() {
-			// operator is already installed
-			// add csv to list to be deleted after test case
-			// (only needed for this test case because label removal is not working for this csv)
-			csvsToDelete = append(csvsToDelete, affiliatedcertparameters.CsvInfo{
-				OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
-				Namespace:      affiliatedcertparameters.ExistingOperatorNamespace,
-			})
+	specName1 := "one operator to test, operator does not belong to certified-operators organization " +
+		"in Red Hat catalog [skip]"
+	It(specName1, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
 
-			By("Label operator to be certified")
-
-			err := affiliatedcerthelper.AddLabelToInstalledCSV(
-				affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
-				affiliatedcertparameters.ExistingOperatorNamespace,
-				affiliatedcertparameters.OperatorLabel)
-			Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
-
-			By("Start test")
-
-			err = globalhelper.LaunchTests(
-				[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
-				affiliatedcertparameters.TestCaseOperatorSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error running "+
-				affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
-
-			By("Verify test case status in Junit and Claim reports")
-
-			err = globalhelper.ValidateIfReportsAreValid(
-				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-				globalparameters.TestCaseSkipped)
-			Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+		// operator is already installed
+		// add csv to list to be deleted after test case
+		// (only needed for this test case because label removal is not working for this csv)
+		csvsToDelete = append(csvsToDelete, affiliatedcertparameters.CsvInfo{
+			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
+			Namespace:      affiliatedcertparameters.ExistingOperatorNamespace,
 		})
 
+		By("Label operator to be certified")
+
+		err := affiliatedcerthelper.AddLabelToInstalledCSV(
+			affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
+			affiliatedcertparameters.ExistingOperatorNamespace,
+			affiliatedcertparameters.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred(), "Error labeling operator")
+
+		By("Start test")
+
+		err = globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			tcNameForReport,
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+
+		err = globalhelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+	})
+
 	// 46582
-	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
-		" and its version is certified", func() {
+	specName2 := "one operator to test, operator belongs to certified-operators organization in Red Hat catalog" +
+		" and its version is certified"
+	It(specName2, func() {
+		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
+
 		By("Deploy operators to test")
 
 		operatorGroup := utils.DefineOperatorGroup("affiliatedcert-test-operator-group",
@@ -140,6 +148,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			tcNameForReport,
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
