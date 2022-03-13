@@ -35,12 +35,12 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 		By("start lifecycle lifecycle-deployment-scaling")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButScalingRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.DeploymentScalingName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.DeploymentScalingDefaultName,
+			lifeparameters.DeploymentScalingName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -47,12 +47,12 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodHighAvailabilityRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodHighAvailabilityName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityDefaultName,
+			lifeparameters.PodHighAvailabilityName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -86,12 +86,12 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodHighAvailabilityRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodHighAvailabilityName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityDefaultName,
+			lifeparameters.PodHighAvailabilityName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -115,12 +115,12 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodHighAvailabilityRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodHighAvailabilityName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityDefaultName,
+			lifeparameters.PodHighAvailabilityName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -150,12 +150,12 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodHighAvailabilityRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodHighAvailabilityName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityDefaultName,
+			lifeparameters.PodHighAvailabilityName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -180,12 +180,12 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodHighAvailabilityRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodHighAvailabilityName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityDefaultName,
+			lifeparameters.PodHighAvailabilityName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 

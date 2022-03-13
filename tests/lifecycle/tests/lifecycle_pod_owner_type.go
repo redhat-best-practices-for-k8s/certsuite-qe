@@ -31,12 +31,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodOwnerTypeName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.PodOwnerTypeName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -56,12 +56,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodOwnerTypeName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.PodOwnerTypeName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -76,12 +76,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodOwnerTypeName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.PodOwnerTypeName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -98,12 +98,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodOwnerTypeName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.PodOwnerTypeName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -130,12 +130,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodOwnerTypeName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.PodOwnerTypeName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

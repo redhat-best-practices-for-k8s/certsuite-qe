@@ -34,13 +34,12 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButShutdownRegex,
-		)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ShutdownDefaultName,
+			lifeparameters.ShutdownName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -59,12 +58,12 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButShutdownRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ShutdownDefaultName,
+			lifeparameters.ShutdownName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -86,12 +85,12 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButShutdownRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ShutdownDefaultName,
+			lifeparameters.ShutdownName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -121,12 +120,12 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButShutdownRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ShutdownDefaultName,
+			lifeparameters.ShutdownName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -148,12 +147,12 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButShutdownRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ShutdownDefaultName,
+			lifeparameters.ShutdownName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -176,12 +175,12 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButShutdownRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.ShutdownDefaultName,
+			lifeparameters.ShutdownName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

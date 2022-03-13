@@ -33,12 +33,12 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButTerminationGracePeriodRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.TerminationGracePeriodName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodDefaultName,
+			lifeparameters.TerminationGracePeriodName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -57,12 +57,12 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButTerminationGracePeriodRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.TerminationGracePeriodName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodDefaultName,
+			lifeparameters.TerminationGracePeriodName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -88,12 +88,12 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButTerminationGracePeriodRegex)
+			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.TerminationGracePeriodName))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodDefaultName,
+			lifeparameters.TerminationGracePeriodName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

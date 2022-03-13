@@ -19,37 +19,19 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	PreStopCommand          = []string{"/bin/sh", "-c", "killall -0 tail"}
-	LifecycleTestSuiteName  = "lifecycle"
-	SkipAllButShutdownRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-pod-termination-grace-period lifecycle-pod-owner-type" +
-		" lifecycle-pod-recreation lifecycle-deployment-scaling lifecycle-image-pull-policy"
+	PreStopCommand         = []string{"/bin/sh", "-c", "killall -0 tail"}
+	LifecycleTestSuiteName = "lifecycle"
 
-	SkipAllButScalingRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-pod-termination-grace-period lifecycle-pod-owner-type" +
-		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
+	SkipsTcsSlice = []string{"lifecycle-pod-recreation", "lifecycle-pod-scheduling",
+		"lifecycle-deployment-scaling", "lifecycle-pod-termination-grace-period",
+		"lifecycle-pod-owner-type", "lifecycle-container-shutdown", "lifecycle-image-pull-policy",
+		"lifecycle-liveness", "lifecycle-readiness", "lifecycle-statefulset-scaling",
+		"lifecycle-pod-high-availability"}
 
-	SkipAllButTerminationGracePeriodRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-deployment-scaling lifecycle-pod-owner-type" +
-		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
-
-	SkipAllButPodOwnerTypeRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-deployment-scaling lifecycle-pod-termination-grace-period" +
-		" lifecycle-pod-recreation lifecycle-container-shutdown lifecycle-image-pull-policy"
-
-	SkipAllButPodRecreationRegex = "lifecycle-pod-high-availability lifecycle-pod-scheduling" +
-		" lifecycle-deployment-scaling lifecycle-pod-termination-grace-period" +
-		" lifecycle-pod-owner-type lifecycle-container-shutdown lifecycle-image-pull-policy"
-
-	SkipAllButPodHighAvailabilityRegex = "lifecycle-pod-recreation  lifecycle-pod-scheduling" +
-		" lifecycle-deployment-scaling lifecycle-pod-termination-grace-period" +
-		" lifecycle-pod-owner-type lifecycle-container-shutdown lifecycle-image-pull-policy"
-
-	ShutdownDefaultName               = "lifecycle lifecycle-container-shutdown"
-	DeploymentScalingDefaultName      = "lifecycle lifecycle-deployment-scaling"
-	TerminationGracePeriodDefaultName = "lifecycle lifecycle-pod-termination-grace-period"
-	PodOwnerTypeDefaultName           = "lifecycle lifecycle-pod-owner-type"
-	PodRecreationDefaultName          = "lifecycle lifecycle-pod-recreation"
-	PodHighAvailabilityDefaultName    = "lifecycle CNF is designed in high availability mode" +
-		"lifecycle-pod-high-availability"
+	ShutdownName               = "lifecycle-container-shutdown"
+	DeploymentScalingName      = "lifecycle-deployment-scaling"
+	TerminationGracePeriodName = "lifecycle-pod-termination-grace-period"
+	PodOwnerTypeName           = "lifecycle-pod-owner-type"
+	PodRecreationName          = "lifecycle-pod-recreation"
+	PodHighAvailabilityName    = "lifecycle-pod-high-availability"
 )
