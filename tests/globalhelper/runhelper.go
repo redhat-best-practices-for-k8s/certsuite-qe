@@ -51,9 +51,20 @@ func LaunchTests(testSuites []string, tcNameForFolder string, tcNameForReport st
 	if os.Getenv("DEBUG_TNF") == "true" {
 		os.Setenv("LOG_LEVEL", "trace")
 
-		folderPath := filepath.Join(Configuration.General.ReportDirAbsPath, "Debug", tcNameForFolder)
+		buildNumber, present := os.LookupEnv("BUILD_NUMBER")
 
+		var debugFolderName string
+
+		if present {
+			debugFolderName = "Debug-" + buildNumber
+		} else {
+			debugFolderName = "Debug-Manual"
+
+		}
+
+		folderPath := filepath.Join(Configuration.General.ReportDirAbsPath, debugFolderName, tcNameForFolder)
 		_, err := VerifyFolderExists(folderPath, 0755)
+
 		if err != nil {
 			panic(err)
 		}
