@@ -19,7 +19,7 @@ type patchStringValue struct {
 	Value     bool   `json:"value"`
 }
 
-// WaitForNodesReady waits for all nodes to become ready.
+// WaitForNodesReady waits for all the nodes to become ready.
 func WaitForNodesReady(cs *client.ClientSet, timeout, interval time.Duration) error {
 	return wait.PollImmediate(interval, timeout, func() (bool, error) {
 		nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
@@ -68,15 +68,19 @@ func GetNumOfReadyNodesInCluster(cs *client.ClientSet) (int32, error) {
 
 // CordonOrUnCordonNodeByName cordones/uncordones a node by a given node name.
 func CordonOrUnCordonNodeByName(nodeName string, clients *client.ClientSet, cordon bool) (bool, error) {
-	payload := []patchStringValue{{
+	cordonPatch := []patchStringValue{{
 		Operation: "replace",
 		Path:      "/spec/unschedulable",
 		Value:     cordon,
 	}}
-	payloadBytes, _ := json.Marshal(payload)
+	cordonPatchBytes, err := json.Marshal(cordonPatch)
 
-	_, err := clients.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
-		payloadBytes, metav1.PatchOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	_, err = clients.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
+		cordonPatchBytes, metav1.PatchOptions{})
 
 	if err != nil {
 		return false, err
