@@ -19,7 +19,7 @@ type patchStringValue struct {
 	Value     bool   `json:"value"`
 }
 
-// WaitForNodesReady waits for all nodes become ready.
+// WaitForNodesReady waits for all nodes to become ready.
 func WaitForNodesReady(cs *client.ClientSet, timeout, interval time.Duration) error {
 	return wait.PollImmediate(interval, timeout, func() (bool, error) {
 		nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})

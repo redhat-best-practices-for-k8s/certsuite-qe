@@ -15,8 +15,11 @@ import (
 var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
 	BeforeEach(func() {
+		_, err := lifehelper.ValidateClusterIsStable()
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Clean namespace before each test")
-		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
