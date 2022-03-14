@@ -20,9 +20,9 @@ type patchStringValue struct {
 }
 
 // WaitForNodesReady waits for all the nodes to become ready.
-func WaitForNodesReady(cs *client.ClientSet, timeout, interval time.Duration) error {
+func WaitForNodesReady(clients *client.ClientSet, timeout, interval time.Duration) error {
 	return wait.PollImmediate(interval, timeout, func() (bool, error) {
-		nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
+		nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
 		if err != nil {
 			return false, nil
 		}
@@ -49,8 +49,8 @@ func IsNodeInCondition(node *corev1.Node, condition corev1.NodeConditionType) bo
 }
 
 // GetNumOfReadyNodesInCluster gets the number of ready nodes in the cluster.
-func GetNumOfReadyNodesInCluster(cs *client.ClientSet) (int32, error) {
-	nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
+func GetNumOfReadyNodesInCluster(clients *client.ClientSet) (int32, error) {
+	nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return 0, err
 	}
@@ -66,25 +66,25 @@ func GetNumOfReadyNodesInCluster(cs *client.ClientSet) (int32, error) {
 	return int32(numOfNodesExistsInCluster), nil
 }
 
-// CordonOrUnCordonNodeByName cordones/uncordones a node by a given node name.
-func CordonOrUnCordonNodeByName(nodeName string, clients *client.ClientSet, cordon bool) (bool, error) {
+func UnCordon(clients *client.ClientSet, nodeName string) error {
+	return setUnSchedulableValue(clients, nodeName, false)
+}
+
+// setUnSchedulableValue cordones/uncordones a node by a given node name.
+func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedulable bool) error {
 	cordonPatch := []patchStringValue{{
 		Operation: "replace",
 		Path:      "/spec/unschedulable",
-		Value:     cordon,
+		Value:     unSchedulable,
 	}}
 	cordonPatchBytes, err := json.Marshal(cordonPatch)
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	_, err = clients.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
 		cordonPatchBytes, metav1.PatchOptions{})
 
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return err
 }
