@@ -14,7 +14,7 @@ import (
 
 var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodOwnerTypeName)
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodOwnerTypeTcName)
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
@@ -38,7 +38,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -63,7 +63,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -83,7 +83,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -105,7 +105,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -137,7 +137,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

@@ -14,7 +14,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.DeploymentScalingName)
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
+		lifeparameters.TnfDeploymentScalingTcName)
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
@@ -42,7 +43,7 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.DeploymentScalingName,
+			lifeparameters.TnfDeploymentScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 

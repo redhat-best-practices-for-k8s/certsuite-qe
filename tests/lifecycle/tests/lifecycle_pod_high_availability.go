@@ -15,8 +15,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice,
-		lifeparameters.PodHighAvailabilityName)
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
+		lifeparameters.TnfPodHighAvailabilityTcName)
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
@@ -55,7 +55,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityName,
+			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -94,7 +94,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityName,
+			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -123,7 +123,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityName,
+			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -158,7 +158,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityName,
+			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -188,7 +188,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodHighAvailabilityName,
+			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 

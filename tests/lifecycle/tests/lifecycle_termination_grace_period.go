@@ -14,8 +14,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice,
-		lifeparameters.TerminationGracePeriodName)
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
+		lifeparameters.TnfTerminationGracePeriodTcName)
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
@@ -41,7 +41,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodName,
+			lifeparameters.TnfTerminationGracePeriodTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -65,7 +65,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodName,
+			lifeparameters.TnfTerminationGracePeriodTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -96,7 +96,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodName,
+			lifeparameters.TnfTerminationGracePeriodTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

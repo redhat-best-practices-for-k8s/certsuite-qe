@@ -17,7 +17,7 @@ import (
 
 var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodRecreationName)
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodRecreationTcName)
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
@@ -61,7 +61,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,7 +101,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -132,7 +132,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -174,7 +174,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
