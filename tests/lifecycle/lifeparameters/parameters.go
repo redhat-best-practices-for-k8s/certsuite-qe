@@ -22,16 +22,16 @@ var (
 	PreStopCommand         = []string{"/bin/sh", "-c", "killall -0 tail"}
 	LifecycleTestSuiteName = "lifecycle"
 
-	SkipsTcsSlice = []string{"lifecycle-pod-recreation", "lifecycle-pod-scheduling",
+	TnfTestCases = []string{"lifecycle-pod-recreation", "lifecycle-pod-scheduling",
 		"lifecycle-deployment-scaling", "lifecycle-pod-termination-grace-period",
 		"lifecycle-pod-owner-type", "lifecycle-container-shutdown", "lifecycle-image-pull-policy",
 		"lifecycle-liveness", "lifecycle-readiness", "lifecycle-statefulset-scaling",
 		"lifecycle-pod-high-availability"}
 
-	ShutdownName               = "lifecycle-container-shutdown"
-	DeploymentScalingName      = "lifecycle-deployment-scaling"
-	TerminationGracePeriodName = "lifecycle-pod-termination-grace-period"
-	PodOwnerTypeName           = "lifecycle-pod-owner-type"
-	PodRecreationName          = "lifecycle-pod-recreation"
-	PodHighAvailabilityName    = "lifecycle-pod-high-availability"
+	TnfShutdownTcName               = "lifecycle-container-shutdown"
+	TnfDeploymentScalingTcName      = "lifecycle-deployment-scaling"
+	TnfTerminationGracePeriodTcName = "lifecycle-pod-termination-grace-period"
+	TnfPodOwnerTypeTcName           = "lifecycle-pod-owner-type"
+	TnfPodRecreationTcName          = "lifecycle-pod-recreation"
+	TnfPodHighAvailabilityTcName    = "lifecycle-pod-high-availability"
 )
