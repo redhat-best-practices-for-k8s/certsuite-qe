@@ -240,7 +240,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
 
-		// add info to array for cleanup in AfterEach
+		// add datadog and postgres operators info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
 			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixDatadog,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
