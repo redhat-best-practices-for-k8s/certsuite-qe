@@ -42,7 +42,7 @@ var (
 	UncertifiedOperatorPrefixNginx     = "nginx-operator"
 	ExistingOperatorNamespace          = "tnf"
 	CertifiedOperatorPrefixPostgres    = "postgresoperator"
-	CertifiedOperatorApicast           = "apicast-operator/redhat-operators"
+	CertifiedOperatorPrefixDatadog     = "datadog-operator"
 	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
 	UncertifiedOperatorBarFoo          = "bar/foo"
 	OperatorNameOnlyKubeturbo          = "kubeturbo-certified"

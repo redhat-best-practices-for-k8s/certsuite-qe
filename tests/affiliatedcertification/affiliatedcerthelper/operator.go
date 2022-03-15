@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscription *v1alpha1.Subscription) error {
+func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) error {
 	err := namespaces.Create(namespace, globalhelper.APIClient)
 	if err != nil {
 		return err
@@ -33,7 +33,11 @@ func DeployOperator(namespace string, operatorGroup *olmv1.OperatorGroup, subscr
 		return fmt.Errorf("can not deploy operatorGroup %w", err)
 	}
 
-	err = globalhelper.APIClient.Create(context.TODO(),
+	return nil
+}
+
+func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error {
+	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.Subscription{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      subscription.Name,
