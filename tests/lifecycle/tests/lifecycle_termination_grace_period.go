@@ -14,6 +14,9 @@ import (
 
 var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice,
+		lifeparameters.TerminationGracePeriodName)
+
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
@@ -33,7 +36,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.TerminationGracePeriodName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -57,7 +60,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.TerminationGracePeriodName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -88,7 +91,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.TerminationGracePeriodName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

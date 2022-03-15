@@ -17,6 +17,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodRecreationName)
+
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
 		err := lifehelper.EnableMasterScheduling(true)
@@ -54,7 +56,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodRecreationName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -94,7 +96,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodRecreationName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -125,7 +127,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodRecreationName))
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -167,7 +169,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.PodRecreationName))
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

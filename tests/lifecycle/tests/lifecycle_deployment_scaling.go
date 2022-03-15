@@ -14,6 +14,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.DeploymentScalingName)
+
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
@@ -35,7 +37,7 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 		By("start lifecycle lifecycle-deployment-scaling")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.DeploymentScalingName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

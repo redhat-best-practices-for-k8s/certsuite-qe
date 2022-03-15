@@ -13,6 +13,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName)
+
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
@@ -34,7 +36,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -58,7 +60,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -85,7 +87,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -120,7 +122,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -147,7 +149,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -175,7 +177,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			globalhelper.GetStringOfSkipTcs(lifeparameters.SkipsTcsSlice, lifeparameters.ShutdownName))
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
