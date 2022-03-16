@@ -2,6 +2,7 @@ package affiliatedcertparameters
 
 import (
 	"fmt"
+	"time"
 )
 
 type (
@@ -15,6 +16,11 @@ type (
 		OperatorPrefix string
 		Namespace      string
 	}
+)
+
+const (
+	Timeout         = 5 * time.Minute
+	PollingInterval = 5 * time.Second
 )
 
 var (

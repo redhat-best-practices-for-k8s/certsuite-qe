@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
@@ -33,12 +31,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
 		By("Create namespace")
-
 		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		By("Deploy OperatorGroup")
-
 		err = affiliatedcerthelper.DeployOperatorGroup(affiliatedcertparameters.TestCertificationNameSpace,
 			utils.DefineOperatorGroup("affiliatedcert-test-operator-group",
 				affiliatedcertparameters.TestCertificationNameSpace,
@@ -120,8 +116,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
 
 			return err == nil
-		}, 5*time.Minute, 5*time.Second).Should(Equal(true), "Operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixPostgres+" is not ready")
+		}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+			"Operator "+affiliatedcertparameters.CertifiedOperatorPrefixPostgres+" is not ready")
 
 		By("Label operator to be certified")
 
@@ -221,8 +217,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				"datadog-operator-manager")
 
 			return err == nil
-		}, 5*time.Minute, 5*time.Second).Should(Equal(true), "Operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixDatadog+" is not ready")
+		}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+			"Operator "+affiliatedcertparameters.CertifiedOperatorPrefixDatadog+" is not ready")
 
 		By("Label operators to be certified")
 
