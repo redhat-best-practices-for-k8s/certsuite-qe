@@ -32,7 +32,7 @@ func TestLifecycle(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
-	_, err := lifehelper.ValidateClusterIsStable()
+	err := lifehelper.WaitUntilClusterIsStable()
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Create namespace")

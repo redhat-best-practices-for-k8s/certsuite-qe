@@ -28,7 +28,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	BeforeEach(func() {
-		_, err := lifehelper.ValidateClusterIsStable()
+		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
