@@ -20,14 +20,12 @@ func IsClusterStable(clients *testclient.ClientSet) (bool, error) {
 
 	for _, node := range nodes.Items {
 		if node.Spec.Unschedulable {
-			fmt.Println("node", node.Name, "is cordoned, uncordoning it")
+			glog.V(5).Info(fmt.Sprintf("node %s is in unschedulable state, trying to uncordon it", node.Name))
 			err := nodesutils.UnCordon(clients, node.Name)
 
 			if err != nil {
 				return false, err
 			}
-
-			glog.V(5).Info(fmt.Sprintf("node %s is in unschedulable state", node.Name))
 		}
 	}
 
