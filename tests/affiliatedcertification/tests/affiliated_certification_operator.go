@@ -274,10 +274,23 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46698
-	It("certifiedoperatorinfo field exists in tnf_config but has no value [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{""}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
+	It("no operators are labeled for testing [skip]", func() {
+		// no operators labeled to be tested, just need to run the test
+		By("Start test")
+
+		err := globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+
+		err = globalhelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46700
