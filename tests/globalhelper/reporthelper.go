@@ -141,7 +141,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 	claimReport claim.Root,
 	expectedStatus string) (bool, error) {
 	for testCaseClaim := range claimReport.Claim.Results {
-		if formatTestCaseName(testCaseName) == formatTestCaseName(testCaseClaim) {
+		if strings.Contains(formatTestCaseName(testCaseClaim), formatTestCaseName(testCaseName)) {
 			var testCaseResult []*claim.Result
 
 			encodedTestResult, err := json.Marshal(claimReport.Claim.Results[testCaseClaim])

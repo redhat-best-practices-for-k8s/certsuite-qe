@@ -14,6 +14,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodOwnerTypeTcName)
+
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
@@ -31,12 +33,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -56,12 +58,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -76,12 +78,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -98,12 +100,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -130,12 +132,12 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodOwnerTypeRegex)
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodOwnerTypeDefaultName,
+			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

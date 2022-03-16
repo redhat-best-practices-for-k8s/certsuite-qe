@@ -14,6 +14,9 @@ import (
 
 var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
+		lifeparameters.TnfTerminationGracePeriodTcName)
+
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
@@ -33,12 +36,12 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButTerminationGracePeriodRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodDefaultName,
+			lifeparameters.TnfTerminationGracePeriodTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -57,12 +60,12 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButTerminationGracePeriodRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodDefaultName,
+			lifeparameters.TnfTerminationGracePeriodTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -88,12 +91,12 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		By("Start lifecycle lifecycle-pod-termination-grace-period test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButTerminationGracePeriodRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TerminationGracePeriodDefaultName,
+			lifeparameters.TnfTerminationGracePeriodTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
