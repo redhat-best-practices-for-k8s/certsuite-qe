@@ -50,10 +50,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48328
-	specName1 := "custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
-
+	It("custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		By("Define and create Network-attachment-definition")
 		err := nethelper.DefineAndCreateNadOnCluster(
 			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
@@ -68,7 +65,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -81,10 +78,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48330
-	specName2 := "2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
-
+	It("2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		By("Define and create Network-attachment-definition")
 		err := nethelper.DefineAndCreateNadOnCluster(
 			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
@@ -104,7 +98,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -118,10 +112,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48331
-	specName3 := "custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces"
-	It(specName3, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
-
+	It("custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces", func() {
 		By("Define and create Network-attachment-definition")
 		err := nethelper.DefineAndCreateNadOnCluster(
 			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
@@ -145,7 +136,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -158,10 +149,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48334
-	specName4 := "custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]"
-	It(specName4, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
-
+	It("custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]", func() {
 		By("Define and create Network-attachment-definition")
 		err := nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameA, multusInterfaces[0], "")
 		Expect(err).ToNot(HaveOccurred())
@@ -175,7 +163,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -188,9 +176,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48338
-	specName5 := "custom deployments 3 pods and 1 pod, standalone IP, connectivity via Multus secondary interface[skip]"
-	It(specName5, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
+	It("custom deployments 3 pods and 1 pod, standalone IP, connectivity via Multus secondary interface[skip]", func() {
 
 		if len(multusInterfaces) < 2 {
 			Skip("There is not enough secondary network interfaces to run the test case")
@@ -218,7 +204,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -231,10 +217,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48343
-	specName6 := "custom deployment and daemonset 3 pods, daemonset missing ip, 2 NADs, connectivity via Multus " +
-		"secondary interface"
-	It(specName6, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName6)
+	It("custom deployment and daemonset 3 pods, daemonset missing ip, 2 NADs, connectivity via Multus "+
+		"secondary interface", func() {
 
 		if len(multusInterfaces) < 2 {
 			Skip("There is not enough secondary network interfaces to run the test case")
@@ -262,7 +246,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -275,9 +259,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48580
-	specName7 := "custom daemonset 3 pods with skip label [skip]"
-	It(specName7, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName7)
+	It("custom daemonset 3 pods with skip label [skip]", func() {
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -292,7 +274,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -305,9 +287,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48582
-	specName8 := "custom deployment and daemonset 3 pods with skip label[skip]"
 	It("custom deployment and daemonset 3 pods with skip label[skip]", func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName8)
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -327,7 +307,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -340,9 +320,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48582
-	specName9 := "custom deployment and daemonSet 3 pods, daemonSet has skip label"
 	It("custom deployment and daemonSet 3 pods, daemonSet has skip label", func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName9)
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -362,7 +340,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -375,9 +353,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48582
-	specName10 := "custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment"
-	It(specName10, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName10)
+	It("custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment", func() {
 
 		By("Define and create network-attachment-definitions")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -397,7 +373,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -411,9 +387,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48346
-	specName11 := "custom deployment 3 pods,1 NAD,no connectivity via Multus secondary interface[negative]"
-	It(specName11, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName11)
+	It("custom deployment 3 pods,1 NAD,no connectivity via Multus secondary interface[negative]", func() {
 
 		By("Define and create Network-attachment-definition")
 		err := nethelper.DefineAndCreateNadOnCluster(
@@ -433,7 +407,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())
@@ -446,10 +420,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48347
-	specName12 := "custom deployment and daemonset 3 pods, 2 NADs, No connectivity on daemonset via Multus secondary " +
-		"interface[negative]"
-	It(specName12, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName12)
+	It("custom deployment and daemonset 3 pods, 2 NADs, No connectivity on daemonset via Multus secondary "+
+		"interface[negative]", func() {
 
 		if len(multusInterfaces) < 2 {
 			Skip("There is not enough secondary network interfaces to run the test case")
@@ -480,7 +452,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())
@@ -493,10 +465,8 @@ var _ = Describe("Networking custom namespace, ", func() {
 	})
 
 	// 48590
-	specName13 := "custom deployment and daemonset 3 pods, 2 NADs, multiple Multus interfaces on deployment no " +
-		"connectivity via secondary interface[negative]"
-	It(specName13, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName13)
+	It("custom deployment and daemonset 3 pods, 2 NADs, multiple Multus interfaces on deployment no "+
+		"connectivity via secondary interface[negative]", func() {
 
 		if len(multusInterfaces) < 2 {
 			Skip("There is no enough Multus interfaces available")
@@ -528,7 +498,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseMultusConnectivityName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())

@@ -44,9 +44,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45440
-	specName1 := "3 custom pods on Default network networking-icmpv4-connectivity"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
+	It("3 custom pods on Default network networking-icmpv4-connectivity", func() {
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
 		Expect(err).ToNot(HaveOccurred())
@@ -55,7 +53,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseDefaultNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -68,9 +66,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45441
-	specName2 := "custom daemonset, 4 custom pods on Default network"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
+	It("custom daemonset, 4 custom pods on Default network", func() {
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -90,7 +86,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseDefaultNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -103,10 +99,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45442
-	specName3 := "3 custom pods on Default network networking-icmpv4-connectivity fail when " +
-		"one pod is disconnected [negative]"
-	It(specName3, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
+	It("3 custom pods on Default network networking-icmpv4-connectivity fail when "+
+		"one pod is disconnected [negative]", func() {
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -127,7 +121,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseDefaultNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())
@@ -140,10 +134,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45444
-	specName4 := "2 custom pods on Default network networking-icmpv4-connectivity skip when label " +
-		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]"
-	It(specName4, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
+	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
+		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -157,7 +149,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseDefaultNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -170,10 +162,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45445
-	specName5 := "custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label " +
-		"test-network-function.com/skip_connectivity_tests is set in deployment only"
-	It(specName5, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
+	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
+		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -199,7 +189,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseDefaultNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())

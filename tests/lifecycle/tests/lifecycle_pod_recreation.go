@@ -34,9 +34,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	// 47405
-	specName1 := "One deployment with PodAntiAffinity, replicas are less than schedulable nodes"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
+	It("One deployment with PodAntiAffinity, replicas are less than schedulable nodes", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -57,7 +55,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodRecreationDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodRecreationRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -70,9 +68,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	// 47406
-	specName2 := "Two deployments with PodAntiAffinity, replicas are less than schedulable nodes"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
+	It("Two deployments with PodAntiAffinity, replicas are less than schedulable nodes", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,7 +97,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodRecreationDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodRecreationRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -114,9 +110,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	// 47407
-	specName3 := "One deployment with PodAntiAffinity, replicas are equal to schedulable nodes [negative]"
-	It(specName3, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
+	It("One deployment with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -136,7 +130,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodRecreationDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodRecreationRegex)
 		Expect(err).To(HaveOccurred())
 
@@ -149,9 +143,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 	})
 
 	// 47408
-	specName4 := "Two deployments with PodAntiAffinity, replicas are equal to schedulable nodes [negative]"
-	It(specName4, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
+	It("Two deployments with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -182,7 +174,7 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodRecreationDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodRecreationRegex)
 		Expect(err).To(HaveOccurred())
 

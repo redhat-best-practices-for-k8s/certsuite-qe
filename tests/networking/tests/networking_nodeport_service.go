@@ -37,9 +37,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45447
-	specName1 := "2 custom pods, no service installed, service Should not have type of nodePort"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
+	It("2 custom pods, no service installed, service Should not have type of nodePort", func() {
 
 		By("Define deployment and create it on cluster")
 		err := nethelper.DefineAndCreateDeploymentOnCluster(3)
@@ -49,7 +47,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseNodePortNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -63,9 +61,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45481
-	specName2 := "2 custom pods, service installed without NodePort, service Should not have type of nodePort"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
+	It("2 custom pods, service installed without NodePort, service Should not have type of nodePort", func() {
 
 		By("Define Service")
 		err := nethelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false)
@@ -79,7 +75,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseNodePortNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -93,9 +89,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45482
-	specName3 := "2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort"
-	It(specName3, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
+	It("2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort", func() {
 
 		By("Define multiple Services")
 		err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false)
@@ -112,7 +106,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseNodePortNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -125,9 +119,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45483
-	specName4 := "2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]"
-	It(specName4, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
+	It("2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]", func() {
 
 		By("Define Services with NodePort")
 		err := nethelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
@@ -141,7 +133,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseNodePortNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())
@@ -155,10 +147,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45484
-	specName5 := "2 custom pods, multiple services installed and one has NodePort, service Should not have type of " +
-		"nodePort [negative]"
-	It(specName5, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
+	It("2 custom pods, multiple services installed and one has NodePort, service Should not have type of "+
+		"nodePort [negative]", func() {
 
 		By("Define Services")
 		err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 30022, 3022, true)
@@ -174,7 +164,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{netparameters.NetworkingTestSuiteName},
 			netparameters.TestCaseNodePortNetworkName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())

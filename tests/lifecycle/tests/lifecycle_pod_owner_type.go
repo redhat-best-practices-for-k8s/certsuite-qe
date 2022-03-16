@@ -21,9 +21,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47409
-	specName1 := "1 ReplicaSet, several pods"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
+	It("1 ReplicaSet, several pods", func() {
 		By("Define ReplicaSet with replica number")
 		replicaStruct := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
 
@@ -34,7 +32,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodOwnerTypeDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodOwnerTypeRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -47,9 +45,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47424
-	specName2 := "2 deployments, several pods"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
+	It("2 deployments, several pods", func() {
 		By("Define deployments")
 		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
@@ -63,7 +59,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodOwnerTypeDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodOwnerTypeRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -75,9 +71,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47426
-	specName3 := "StatefulSet pod"
-	It(specName3, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
+	It("StatefulSet pod", func() {
 		By("Define statefulSet")
 		statefulSetStruct := lifehelper.DefineStatefulSet("lifecyclesf")
 		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulSetStruct, lifeparameters.WaitingTime)
@@ -87,7 +81,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodOwnerTypeDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodOwnerTypeRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -100,9 +94,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47429
-	specName4 := "1 pod, not part of any workload resource [negative]"
-	It(specName4, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName4)
+	It("1 pod, not part of any workload resource [negative]", func() {
 		By("Define pod")
 		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
@@ -113,7 +105,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodOwnerTypeDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodOwnerTypeRegex)
 		Expect(err).To(HaveOccurred())
 
@@ -126,9 +118,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47430
-	specName5 := "Two deployments, 1 pod not related to any resource [negative]"
-	It(specName5, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName5)
+	It("Two deployments, 1 pod not related to any resource [negative]", func() {
 		By("Define deployments")
 		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
@@ -148,7 +138,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.PodOwnerTypeDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButPodOwnerTypeRegex)
 		Expect(err).To(HaveOccurred())
 

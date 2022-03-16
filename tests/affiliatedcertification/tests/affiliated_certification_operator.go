@@ -60,10 +60,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46699
-	specName1 := "one operator to test, operator does not belong to certified-operators organization " +
-		"in Red Hat catalog [skip]"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
+	It("one operator to test, operator does not belong to certified-operators organization "+
+		"in Red Hat catalog [skip]", func() {
 
 		// operator is already installed
 		// add csv to list to be deleted after test case
@@ -86,7 +84,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -101,10 +99,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46582
-	specName2 := "one operator to test, operator belongs to certified-operators organization in Red Hat catalog" +
-		" and its version is certified"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
+	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
+		" and its version is certified", func() {
 
 		By("Deploy operators to test")
 
@@ -149,7 +145,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		err = globalhelper.LaunchTests(
 			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+

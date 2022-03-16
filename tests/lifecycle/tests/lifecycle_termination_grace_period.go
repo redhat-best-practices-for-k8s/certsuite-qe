@@ -21,10 +21,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 	})
 
 	// 47399
-	specName1 := "One deployment, one pod, terminationGracePeriodSeconds is not set"
-	It(specName1, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName1)
-
+	It("One deployment, one pod, terminationGracePeriodSeconds is not set", func() {
 		By("Define deployment without terminationGracePeriodSeconds")
 		deploymentStruct := lifehelper.RemoveterminationGracePeriod(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"))
@@ -36,7 +33,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.TerminationGracePeriodDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButTerminationGracePeriodRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -49,10 +46,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 	})
 
 	// 47400
-	specName2 := "One deployment, one pod, terminationGracePeriodSeconds is set"
-	It(specName2, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName2)
-
+	It("One deployment, one pod, terminationGracePeriodSeconds is set", func() {
 		By("Define deployment with terminationGracePeriodSeconds specified")
 		deploymentStruct := deployment.RedefineWithTerminationGracePeriod(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"), pointer.Int64Ptr(45))
@@ -64,7 +58,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.TerminationGracePeriodDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButTerminationGracePeriodRegex)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -77,10 +71,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 	})
 
 	// 47401
-	specName3 := "Two deployments, replicas are more than 1, terminationGracePeriodSeconds is set on one deployment"
-	It(specName3, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName3)
-
+	It("Two deployments, replicas are more than 1, terminationGracePeriodSeconds is set on one deployment", func() {
 		By("Define first deployment with terminationGracePeriodSeconds specified")
 		firstDeployment := deployment.RedefineWithTerminationGracePeriod(
 			lifehelper.DefineDeployment(3, 1, "lifecycleputone"), pointer.Int64Ptr(45))
@@ -99,7 +90,7 @@ var _ = Describe("lifecycle lifecycle-termination-grace-period", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.TerminationGracePeriodDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButTerminationGracePeriodRegex)
 		Expect(err).ToNot(HaveOccurred())
 

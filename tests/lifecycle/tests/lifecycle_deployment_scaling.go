@@ -25,9 +25,7 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 	})
 
 	// 47398
-	specName := "One deployment, one pod, one container, scale in and out"
-	It(specName, func() {
-		tcNameForReport := globalhelper.ConvertSpecNameToFileName(specName)
+	It("One deployment, one pod, one container, scale in and out", func() {
 		By("Define Deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(lifehelper.DefineDeployment(1, 1, "lifecycleput"),
 			lifeparameters.WaitingTime)
@@ -37,7 +35,7 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.DeploymentScalingDefaultName,
-			tcNameForReport,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			lifeparameters.SkipAllButScalingRegex)
 		Expect(err).ToNot(HaveOccurred())
 
