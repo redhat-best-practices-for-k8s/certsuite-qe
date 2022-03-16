@@ -15,7 +15,7 @@ import (
 var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 
 	BeforeEach(func() {
-		_, err := lifehelper.ValidateClusterIsStable()
+		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")

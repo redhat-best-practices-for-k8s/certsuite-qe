@@ -207,8 +207,8 @@ func EnableMasterScheduling(scheduleable bool) error {
 	return err
 }
 
-// ValidateClusterIsStable validates that all nodes are schedulable, and in ready state.
-func ValidateClusterIsStable() error {
+// WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
+func WaitUntilClusterIsStable() error {
 	Eventually(func() bool {
 		isClusterReady, err := cluster.IsClusterStable(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
