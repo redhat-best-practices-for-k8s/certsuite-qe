@@ -300,18 +300,4 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 46702
-	It("name field in certifiedoperatorinfo field is populated but organization field is not [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{affiliatedcertparameters.OperatorNameOnlyKubeturbo}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	// 46704
-	It("organization field in certifiedoperatorinfo field is populated but name field is not [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{affiliatedcertparameters.OperatorOrgOnlyCertifiedOperators}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 })
