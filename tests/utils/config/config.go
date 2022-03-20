@@ -28,6 +28,7 @@ type Config struct {
 		WorkerNodeLabel     string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
 		TestImage           string `yaml:"test_image" envconfig:"TEST_IMAGE"`
 		LogLevel            string `yaml:"log_level" envconfig:"LOG_LEVEL"`
+		DebugTnf            string `envconfig:"DEBUG_TNF"`
 		TnfConfigDir        string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
 		TnfRepoPath         string `envconfig:"TNF_REPO_PATH"`
 		TnfEntryPointScript string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`

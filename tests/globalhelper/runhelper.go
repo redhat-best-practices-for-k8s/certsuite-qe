@@ -48,7 +48,7 @@ func LaunchTests(testSuites []string, tcNameForFolder string, tcNameForReport st
 	cmd.Args = append(cmd.Args, testArgs...)
 	cmd.Dir = Configuration.General.TnfRepoPath
 
-	if os.Getenv("DEBUG_TNF") == "true" {
+	if Configuration.General.TnfImageTag == "true" {
 		os.Setenv("LOG_LEVEL", "trace")
 
 		buildNumber, present := os.LookupEnv("BUILD_NUMBER")
