@@ -13,7 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-type patchStringValue struct {
+type resourceSpecs struct {
 	Operation string `json:"op"`
 	Path      string `json:"path"`
 	Value     bool   `json:"value"`
@@ -72,12 +72,12 @@ func UnCordon(clients *client.ClientSet, nodeName string) error {
 
 // setUnSchedulableValue cordones/uncordones a node by a given node name.
 func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedulable bool) error {
-	cordonPatch := []patchStringValue{{
-		Operation: "replace",
-		Path:      "/spec/unschedulable",
-		Value:     unSchedulable,
-	}}
-	cordonPatchBytes, err := json.Marshal(cordonPatch)
+	cordonPatchBytes, err := json.Marshal(
+		[]resourceSpecs{{
+			Operation: "replace",
+			Path:      "/spec/unschedulable",
+			Value:     unSchedulable,
+		}})
 
 	if err != nil {
 		return err
