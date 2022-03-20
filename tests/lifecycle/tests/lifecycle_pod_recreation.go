@@ -17,6 +17,8 @@ import (
 
 var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 
+	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodRecreationTcName)
+
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
 		err := lifehelper.EnableMasterScheduling(true)
@@ -57,12 +59,12 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodRecreationRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationDefaultName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -97,12 +99,12 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodRecreationRegex)
+			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationDefaultName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -128,12 +130,12 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodRecreationRegex)
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationDefaultName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -170,12 +172,12 @@ var _ = Describe("lifecycle lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			[]string{lifeparameters.LifecycleTestSuiteName},
-			lifeparameters.SkipAllButPodRecreationRegex)
+			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.PodRecreationDefaultName,
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 

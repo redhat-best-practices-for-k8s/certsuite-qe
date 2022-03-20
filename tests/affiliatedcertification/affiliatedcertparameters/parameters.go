@@ -2,6 +2,7 @@ package affiliatedcertparameters
 
 import (
 	"fmt"
+	"time"
 )
 
 type (
@@ -15,6 +16,11 @@ type (
 		OperatorPrefix string
 		Namespace      string
 	}
+)
+
+const (
+	Timeout         = 5 * time.Minute
+	PollingInterval = 5 * time.Second
 )
 
 var (
@@ -42,7 +48,7 @@ var (
 	UncertifiedOperatorPrefixNginx     = "nginx-operator"
 	ExistingOperatorNamespace          = "tnf"
 	CertifiedOperatorPrefixPostgres    = "postgresoperator"
-	CertifiedOperatorApicast           = "apicast-operator/redhat-operators"
+	CertifiedOperatorPrefixDatadog     = "datadog-operator"
 	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
 	UncertifiedOperatorBarFoo          = "bar/foo"
 	OperatorNameOnlyKubeturbo          = "kubeturbo-certified"
