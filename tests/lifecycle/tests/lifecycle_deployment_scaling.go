@@ -18,8 +18,11 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 		lifeparameters.TnfDeploymentScalingTcName)
 
 	BeforeEach(func() {
+		err := lifehelper.WaitUntilClusterIsStable()
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Clean namespace before each test")
-		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")

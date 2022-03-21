@@ -6,7 +6,6 @@ import (
 	"os"
 	"runtime"
 	"testing"
-	"time"
 
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
@@ -14,9 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -35,17 +32,7 @@ func TestLifecycle(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
-	By("Validate that the cluster is stable")
-	Eventually(func() bool {
-		isClusterReady, err := cluster.IsClusterStable(globalhelper.APIClient)
-		Expect(err).ToNot(HaveOccurred())
-
-		return isClusterReady
-	}, lifeparameters.WaitingTime, lifeparameters.RetryInterval*time.Second).Should(BeTrue())
-
-	By("Validate that all nodes are ready")
-	err := nodes.WaitForNodesReady(globalhelper.APIClient,
-		lifeparameters.WaitingTime, lifeparameters.RetryInterval)
+	err := lifehelper.WaitUntilClusterIsStable()
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Create namespace")

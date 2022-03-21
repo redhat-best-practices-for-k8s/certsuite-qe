@@ -17,8 +17,11 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodOwnerTypeTcName)
 
 	BeforeEach(func() {
+		err := lifehelper.WaitUntilClusterIsStable()
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Clean namespace before each test")
-		err := namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
