@@ -36,7 +36,8 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 			[]string{lifeparameters.LifecycleTestSuiteName},
 			lifeparameters.DeploymentScalingDefaultName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
-			lifeparameters.SkipAllButScalingRegex)
+			lifeparameters.SkipAllButScalingRegex,
+		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

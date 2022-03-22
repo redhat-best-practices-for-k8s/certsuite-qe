@@ -27,7 +27,7 @@ type Config struct {
 		CnfNodeLabel        string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
 		WorkerNodeLabel     string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
 		TestImage           string `yaml:"test_image" envconfig:"TEST_IMAGE"`
-		LogLevel            string `yaml:"log_level" envconfig:"LOG_LEVEL"`
+		TnfLogLevel         string `yaml:"tnf_log_level" envconfig:"TNF_LOG_LEVEL"`
 		DebugTnf            string `envconfig:"DEBUG_TNF"`
 		TnfConfigDir        string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
 		TnfRepoPath         string `envconfig:"TNF_REPO_PATH"`
@@ -81,6 +81,43 @@ func NewConfig() (*Config, error) {
 	}
 
 	return &conf, nil
+}
+
+func (conf *Config) DebugTnf() (bool, error) {
+	if conf.General.DebugTnf == "true" {
+		os.Setenv("LOG_LEVEL", "trace")
+		debugFolder := "Debug"
+		//TODO fix folder structure, a suite that will hold all its relevant tcs
+
+		// remove all the content from the Debug folder
+		debugDir, err := os.Open(filepath.Join(conf.General.ReportDirAbsPath, debugFolder))
+		if err != nil {
+			return false, err
+		}
+		defer debugDir.Close()
+
+		names, err := debugDir.Readdirnames(-1)
+
+		if err != nil {
+			return false, err
+		}
+
+		for _, name := range names {
+			err = os.RemoveAll(filepath.Join(conf.General.ReportDirAbsPath, debugFolder, name))
+			if err != nil {
+				return false, err
+			}
+		}
+
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (conf *Config) DefineLogFile() (os.File, error) {
+	folderPath := filepath.Join(conf.General.ReportDirAbsPath, "Debug", tcNameForFolder)
+
 }
 
 func readFile(cfg *Config, cfgFile string) error {

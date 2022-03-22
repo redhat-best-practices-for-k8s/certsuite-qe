@@ -48,8 +48,8 @@ func LaunchTests(testSuites []string, tcNameForFolder string, tcNameForReport st
 	cmd.Args = append(cmd.Args, testArgs...)
 	cmd.Dir = Configuration.General.TnfRepoPath
 
-	if Configuration.General.TnfImageTag == "true" {
-		os.Setenv("LOG_LEVEL", "trace")
+	debug_tnf, err := Configuration.DebugTnf()
+	if debug_tnf && err != nil {
 
 		buildNumber, present := os.LookupEnv("BUILD_NUMBER")
 
@@ -62,8 +62,9 @@ func LaunchTests(testSuites []string, tcNameForFolder string, tcNameForReport st
 
 		}
 
+		// TODO add another func in config.go DefineLogFile returns os.file/err
 		folderPath := filepath.Join(Configuration.General.ReportDirAbsPath, debugFolderName, tcNameForFolder)
-		_, err := VerifyFolderExists(folderPath, 0755)
+		_, err := CreateFolder(folderPath, 0755)
 
 		if err != nil {
 			panic(err)
