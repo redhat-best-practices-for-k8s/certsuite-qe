@@ -275,7 +275,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	// 46698
 	It("no operators are labeled for testing [skip]", func() {
-		// no operators labeled to be tested, just need to run the test
 		By("Start test")
 
 		err := globalhelper.LaunchTests(
