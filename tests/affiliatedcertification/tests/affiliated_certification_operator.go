@@ -67,7 +67,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46699
 	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]",
 		func() {
-			// operator is already installed
+			// operator is already installed.
 			// not deleting csv yet because it is also used in the next test case
 
 			By("Label operator to be certified")
