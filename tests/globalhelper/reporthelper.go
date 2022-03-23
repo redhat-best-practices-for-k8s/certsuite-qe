@@ -141,7 +141,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 	claimReport claim.Root,
 	expectedStatus string) (bool, error) {
 	for testCaseClaim := range claimReport.Claim.Results {
-		if formatTestCaseName(testCaseName) == formatTestCaseName(testCaseClaim) {
+		if strings.Contains(formatTestCaseName(testCaseClaim), formatTestCaseName(testCaseName)) {
 			var testCaseResult []*claim.Result
 
 			encodedTestResult, err := json.Marshal(claimReport.Claim.Results[testCaseClaim])
@@ -190,8 +190,8 @@ func formatTestCaseName(tcName string) string {
 }
 
 func ConvertSpecNameToFileName(specName string) string {
-	formatString := strings.ReplaceAll(specName, " ", "_")
-	formatString = removeCharactersFromString(formatString, []string{","})
+	formatString := removeCharactersFromString(specName, []string{",", "-"})
+	formatString = strings.ReplaceAll(formatString, " ", "_")
 
 	return strings.ToLower(formatString)
 }

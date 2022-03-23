@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"path"
 	"strings"
@@ -266,17 +265,16 @@ func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, 
 	return deployment
 }
 
-// CreateFolder verifies if a given folder exists, and creates it if it doesn't.
-func CreateFolder(folderPath string, perm fs.FileMode) (bool, error) {
-	_, err := os.Stat(folderPath)
-	if !os.IsNotExist(err) {
-		return false, err
+// GetStringOfSkipTcs get a slice and a string, removes the string from the slice
+// and returns a joined string.
+func GetStringOfSkipTcs(tcSlice []string, stringToRemove string) string {
+	result := []string{}
+
+	for _, value := range tcSlice {
+		if value != stringToRemove {
+			result = append(result, value)
+		}
 	}
 
-	err = os.MkdirAll(folderPath, perm)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return strings.Join(result, " ")
 }

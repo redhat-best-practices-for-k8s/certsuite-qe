@@ -8,7 +8,9 @@ import (
 	"github.com/golang/glog"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
@@ -20,7 +22,7 @@ import (
 )
 
 // DefineDeployment defines a deployment.
-func DefineDeployment(replica int32, containers int, name string) *v1.Deployment {
+func DefineDeployment(replica int32, containersToAppend int, name string) *v1.Deployment {
 	deploymentStruct := globalhelper.AppendContainersToDeployment(
 		deployment.RedefineWithReplicaNumber(
 			deployment.DefineDeployment(
@@ -28,7 +30,7 @@ func DefineDeployment(replica int32, containers int, name string) *v1.Deployment
 				lifeparameters.LifecycleNamespace,
 				globalhelper.Configuration.General.TnfImage,
 				lifeparameters.TestDeploymentLabels), replica),
-		containers,
+		containersToAppend,
 		globalhelper.Configuration.General.TnfImage)
 
 	return deploymentStruct
@@ -201,6 +203,21 @@ func EnableMasterScheduling(scheduleable bool) error {
 	scheduler.Spec.MastersSchedulable = scheduleable
 	_, err = globalhelper.APIClient.ConfigV1Interface.Schedulers().Update(context.TODO(),
 		scheduler, metav1.UpdateOptions{})
+
+	return err
+}
+
+// WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
+func WaitUntilClusterIsStable() error {
+	Eventually(func() bool {
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		return isClusterReady
+	}, lifeparameters.WaitingTime, lifeparameters.RetryInterval*time.Second).Should(BeTrue())
+
+	err := nodes.WaitForNodesReady(globalhelper.APIClient,
+		lifeparameters.WaitingTime, lifeparameters.RetryInterval)
 
 	return err
 }

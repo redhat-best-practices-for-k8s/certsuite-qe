@@ -63,7 +63,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -96,7 +96,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -134,7 +134,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -161,7 +161,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -202,7 +202,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -244,7 +244,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -272,7 +272,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -305,7 +305,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -338,7 +338,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -371,7 +371,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -405,7 +405,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -450,7 +450,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,
@@ -496,7 +496,7 @@ var _ = Describe("Networking custom namespace, ", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseMultusConnectivityName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseMultusSkipRegEx,

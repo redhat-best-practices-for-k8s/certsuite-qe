@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/golang/glog"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
-func LaunchTests(testSuites []string, tcNameForFolder string, tcNameForReport string, skipRegEx string) error {
+func LaunchTests(testSuite string, tcName string, tcNameForReport string, skipRegEx string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
 		return err
@@ -36,52 +35,30 @@ func LaunchTests(testSuites []string, tcNameForFolder string, tcNameForReport st
 		glog.V(5).Info(fmt.Sprintf("set skip regex to %s", skipRegEx))
 	}
 
-	if len(testSuites) > 0 {
+	if len(testSuite) > 0 {
 		testArgs = append(testArgs, "-f")
-		for _, testSuite := range testSuites {
-			testArgs = append(testArgs, testSuite)
-			glog.V(5).Info(fmt.Sprintf("add test suite %s", testSuite))
-		}
+		testArgs = append(testArgs, testSuite)
+		glog.V(5).Info(fmt.Sprintf("add test suite %s", testSuite))
 	}
 
 	cmd := exec.Command(fmt.Sprintf("./%s", Configuration.General.TnfEntryPointScript))
 	cmd.Args = append(cmd.Args, testArgs...)
 	cmd.Dir = Configuration.General.TnfRepoPath
 
-	debug_tnf, err := Configuration.DebugTnf()
-	if debug_tnf && err != nil {
+	debugTnf, err := Configuration.DebugTnf()
 
-		buildNumber, present := os.LookupEnv("BUILD_NUMBER")
+	if err != nil {
+		return err
+	}
 
-		var debugFolderName string
-
-		if present {
-			debugFolderName = "Debug-" + buildNumber
-		} else {
-			debugFolderName = "Debug-Manual"
-
-		}
-
-		// TODO add another func in config.go DefineLogFile returns os.file/err
-		folderPath := filepath.Join(Configuration.General.ReportDirAbsPath, debugFolderName, tcNameForFolder)
-		_, err := CreateFolder(folderPath, 0755)
-
-		if err != nil {
-			panic(err)
-		}
-
-		tcFile := filepath.Join(folderPath, tcNameForReport+".log")
-		outfile, err := os.OpenFile(tcFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
-
-		if err != nil {
-			panic(err)
-		}
+	if debugTnf {
+		outfile := Configuration.DefineLogFile(testSuite, tcNameForReport)
 
 		defer outfile.Close()
-		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
+		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s-%s\n", tcName, tcNameForReport))
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		cmd.Stdout = outfile

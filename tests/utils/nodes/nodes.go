@@ -2,19 +2,27 @@ package nodes
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/golang/glog"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-// WaitForNodesReady waits for all nodes become ready.
-func WaitForNodesReady(cs *client.ClientSet, timeout, interval time.Duration) error {
+type resourceSpecs struct {
+	Operation string `json:"op"`
+	Path      string `json:"path"`
+	Value     bool   `json:"value"`
+}
+
+// WaitForNodesReady waits for all the nodes to become ready.
+func WaitForNodesReady(clients *client.ClientSet, timeout, interval time.Duration) error {
 	return wait.PollImmediate(interval, timeout, func() (bool, error) {
-		nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
+		nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
 		if err != nil {
 			return false, nil
 		}
@@ -41,8 +49,8 @@ func IsNodeInCondition(node *corev1.Node, condition corev1.NodeConditionType) bo
 }
 
 // GetNumOfReadyNodesInCluster gets the number of ready nodes in the cluster.
-func GetNumOfReadyNodesInCluster(cs *client.ClientSet) (int32, error) {
-	nodesList, err := cs.Nodes().List(context.Background(), metav1.ListOptions{})
+func GetNumOfReadyNodesInCluster(clients *client.ClientSet) (int32, error) {
+	nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return 0, err
 	}
@@ -56,4 +64,27 @@ func GetNumOfReadyNodesInCluster(cs *client.ClientSet) (int32, error) {
 	}
 
 	return int32(numOfNodesExistsInCluster), nil
+}
+
+func UnCordon(clients *client.ClientSet, nodeName string) error {
+	return setUnSchedulableValue(clients, nodeName, false)
+}
+
+// setUnSchedulableValue cordones/uncordones a node by a given node name.
+func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedulable bool) error {
+	cordonPatchBytes, err := json.Marshal(
+		[]resourceSpecs{{
+			Operation: "replace",
+			Path:      "/spec/unschedulable",
+			Value:     unSchedulable,
+		}})
+
+	if err != nil {
+		return err
+	}
+
+	_, err = clients.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
+		cordonPatchBytes, metav1.PatchOptions{})
+
+	return err
 }

@@ -51,7 +51,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseDefaultNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
@@ -84,7 +84,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseDefaultNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
@@ -119,7 +119,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseDefaultNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
@@ -147,7 +147,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseDefaultNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,
@@ -187,7 +187,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseDefaultNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseDefaultSkipRegEx,

@@ -32,7 +32,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
-		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 		"SetUpAndRunContainerCertTest",
 		affiliatedcertparameters.TestCaseContainerSkipRegEx,
@@ -77,7 +77,7 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
-		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
 		affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 		"SetUpAndRunOperatorCertTest",
 		affiliatedcertparameters.TestCaseOperatorSkipRegEx,

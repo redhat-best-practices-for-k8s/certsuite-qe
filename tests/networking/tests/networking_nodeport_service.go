@@ -45,7 +45,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseNodePortNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
@@ -73,7 +73,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseNodePortNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
@@ -104,7 +104,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseNodePortNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
@@ -131,7 +131,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseNodePortNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,
@@ -162,7 +162,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
 			netparameters.TestCaseNodePortNetworkName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			netparameters.TestCaseNodePortSkipRegEx,

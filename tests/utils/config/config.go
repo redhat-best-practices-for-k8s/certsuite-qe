@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -83,31 +84,9 @@ func NewConfig() (*Config, error) {
 	return &conf, nil
 }
 
-func (conf *Config) DebugTnf() (bool, error) {
-	if conf.General.DebugTnf == "true" {
+func (c *Config) DebugTnf() (bool, error) {
+	if c.General.DebugTnf == "true" {
 		os.Setenv("LOG_LEVEL", "trace")
-		debugFolder := "Debug"
-		//TODO fix folder structure, a suite that will hold all its relevant tcs
-
-		// remove all the content from the Debug folder
-		debugDir, err := os.Open(filepath.Join(conf.General.ReportDirAbsPath, debugFolder))
-		if err != nil {
-			return false, err
-		}
-		defer debugDir.Close()
-
-		names, err := debugDir.Readdirnames(-1)
-
-		if err != nil {
-			return false, err
-		}
-
-		for _, name := range names {
-			err = os.RemoveAll(filepath.Join(conf.General.ReportDirAbsPath, debugFolder, name))
-			if err != nil {
-				return false, err
-			}
-		}
 
 		return true, nil
 	}
@@ -115,9 +94,38 @@ func (conf *Config) DebugTnf() (bool, error) {
 	return false, nil
 }
 
-func (conf *Config) DefineLogFile() (os.File, error) {
-	folderPath := filepath.Join(conf.General.ReportDirAbsPath, "Debug", tcNameForFolder)
+// CreateFolder verifies if a given folder exists, and creates it if it doesn't.
+func CreateFolder(folderPath string, perm fs.FileMode) (bool, error) {
+	_, err := os.Stat(folderPath)
+	if !os.IsNotExist(err) {
+		return false, err
+	}
 
+	err = os.MkdirAll(folderPath, perm)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (c *Config) DefineLogFile(testSuite string, tcName string) *os.File {
+	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite)
+
+	_, err := CreateFolder(folderPath, 0755)
+
+	if err != nil {
+		panic(err)
+	}
+
+	tcFile := filepath.Join(folderPath, tcName+".log")
+	outfile, err := os.OpenFile(tcFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return outfile
 }
 
 func readFile(cfg *Config, cfgFile string) error {
