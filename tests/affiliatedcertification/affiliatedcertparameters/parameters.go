@@ -49,8 +49,5 @@ var (
 	ExistingOperatorNamespace          = "tnf"
 	CertifiedOperatorPrefixPostgres    = "postgresoperator"
 	CertifiedOperatorPrefixDatadog     = "datadog-operator"
-	CertifiedOperatorKubeturbo         = "kubeturbo-certified/certified-operators"
 	UncertifiedOperatorBarFoo          = "bar/foo"
-	OperatorNameOnlyKubeturbo          = "kubeturbo-certified"
-	OperatorOrgOnlyCertifiedOperators  = "certified-operators"
 )
