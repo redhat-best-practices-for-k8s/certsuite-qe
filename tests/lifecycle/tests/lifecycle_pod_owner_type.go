@@ -50,7 +50,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	})
 
 	// 47424
-	It("2 deployments, several pods", func() {
+	It("Two deployments, several pods", func() {
 		By("Define deployments")
 		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
@@ -99,7 +99,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	})
 
 	// 47429
-	It("1 pod, not part of any workload resource [negative]", func() {
+	It("One pod, not part of any workload resource [negative]", func() {
 		By("Define pod")
 		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
