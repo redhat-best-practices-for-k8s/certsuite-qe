@@ -39,6 +39,8 @@ func LaunchTests(testSuite string, tcName string, tcNameForReport string, skipRe
 		testArgs = append(testArgs, "-f")
 		testArgs = append(testArgs, testSuite)
 		glog.V(5).Info(fmt.Sprintf("add test suite %s", testSuite))
+	} else {
+		panic("No test suite name provided.")
 	}
 
 	cmd := exec.Command(fmt.Sprintf("./%s", Configuration.General.TnfEntryPointScript))
@@ -52,7 +54,7 @@ func LaunchTests(testSuite string, tcName string, tcNameForReport string, skipRe
 	}
 
 	if debugTnf {
-		outfile := Configuration.DefineLogFile(testSuite, tcNameForReport)
+		outfile := Configuration.CreateLogFile(testSuite, tcNameForReport)
 
 		defer outfile.Close()
 		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s-%s\n", tcName, tcNameForReport))

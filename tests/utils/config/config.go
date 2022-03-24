@@ -109,7 +109,7 @@ func CreateFolder(folderPath string, perm fs.FileMode) (bool, error) {
 	return true, nil
 }
 
-func (c *Config) DefineLogFile(testSuite string, tcName string) *os.File {
+func (c *Config) CreateLogFile(testSuite string, tcName string) *os.File {
 	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite)
 
 	_, err := CreateFolder(folderPath, 0755)
@@ -123,7 +123,6 @@ func (c *Config) DefineLogFile(testSuite string, tcName string) *os.File {
 	// if the log file already exists, remove it and create a new one.
 	if _, err := os.Stat(tcFile); err == nil {
 		err = os.Remove(tcFile)
-
 		if err != nil {
 			panic(err)
 		}
