@@ -67,7 +67,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46699
 	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]",
 		func() {
-			// operator is already installed
+			// operator is already installed.
 			// not deleting csv yet because it is also used in the next test case
 
 			By("Label operator to be certified")
@@ -282,30 +282,28 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46698
-	It("certifiedoperatorinfo field exists in tnf_config but has no value [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{""}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
+	It("no operators are labeled for testing [skip]", func() {
+		By("Start test")
+
+		err := globalhelper.LaunchTests(
+			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+
+		By("Verify test case status in Junit and Claim reports")
+
+		err = globalhelper.ValidateIfReportsAreValid(
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
 	// 46700
 	It("name and organization fields exist in certifiedoperatorinfo but are empty [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
 			[]string{affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	// 46702
-	It("name field in certifiedoperatorinfo field is populated but organization field is not [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{affiliatedcertparameters.OperatorNameOnlyKubeturbo}, globalparameters.TestCaseSkipped)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	// 46704
-	It("organization field in certifiedoperatorinfo field is populated but name field is not [skip]", func() {
-		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
-			[]string{affiliatedcertparameters.OperatorOrgOnlyCertifiedOperators}, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
