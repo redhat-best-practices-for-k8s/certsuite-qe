@@ -119,7 +119,18 @@ func (c *Config) DefineLogFile(testSuite string, tcName string) *os.File {
 	}
 
 	tcFile := filepath.Join(folderPath, tcName+".log")
-	outfile, err := os.OpenFile(tcFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+
+	// if the log file already exists, remove it and create a new one.
+	if _, err := os.Stat(tcFile); err == nil {
+		err = os.Remove(tcFile)
+
+		if err != nil {
+			panic(err)
+		}
+
+	}
+
+	outfile, err := os.OpenFile(tcFile, os.O_WRONLY|os.O_CREATE, 0755)
 
 	if err != nil {
 		panic(err)

@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 )
 
-var _ = Describe(lifeparameters.TnfPodHighAvailabilityTcName, func() {
+var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
 		lifeparameters.TnfPodHighAvailabilityTcName)

@@ -6,13 +6,8 @@ export ACK_GINKGO_DEPRECATIONS=1.16.5
 export ACK_GINKGO_RC=true
 EXCLUDED_FOLDERS=""
 ALL_TESTS_FOLDERS=$(ls -d ./tests/*/)
-REPORTS_FOLDER="./reports/Debug"
 
 function run_tests {
-    if [ -d "$REPORTS_FOLDER" ]; then
-        echo "removing reports folder:${REPORTS_FOLDER}/*"
-        rm -rf ${REPORTS_FOLDER}/*
-    fi
     case $1 in
         all)
             echo "#### Run all tests ####"
