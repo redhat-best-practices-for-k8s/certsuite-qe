@@ -286,7 +286,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err := globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+

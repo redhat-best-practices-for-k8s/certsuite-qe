@@ -127,7 +127,6 @@ func (c *Config) DefineLogFile(testSuite string, tcName string) *os.File {
 		if err != nil {
 			panic(err)
 		}
-
 	}
 
 	outfile, err := os.OpenFile(tcFile, os.O_WRONLY|os.O_CREATE, 0755)
