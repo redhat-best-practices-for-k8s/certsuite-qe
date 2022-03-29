@@ -36,8 +36,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodOwnerTypeTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -63,8 +62,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodOwnerTypeTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -85,8 +83,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodOwnerTypeTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -109,8 +106,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodOwnerTypeTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -142,8 +138,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodOwnerTypeTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 

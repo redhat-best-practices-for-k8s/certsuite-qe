@@ -59,8 +59,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,8 +100,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -134,8 +132,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -178,8 +175,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		By("Start lifecycle lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 

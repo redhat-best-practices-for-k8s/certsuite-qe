@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
-func LaunchTests(testSuite string, tcName string, tcNameForReport string, skipRegEx string) error {
+func LaunchTests(testSuite string, tcNameForReport string, skipRegEx string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func LaunchTests(testSuite string, tcName string, tcNameForReport string, skipRe
 		outfile := Configuration.CreateLogFile(testSuite, tcNameForReport)
 
 		defer outfile.Close()
-		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s-%s\n", tcName, tcNameForReport))
+		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
 
 		if err != nil {
 			return err

@@ -40,8 +40,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 		By("start lifecycle lifecycle-deployment-scaling")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfDeploymentScalingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 

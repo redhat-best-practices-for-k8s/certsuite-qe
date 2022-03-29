@@ -53,8 +53,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodHighAvailabilityTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -94,8 +93,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodHighAvailabilityTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -125,8 +123,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodHighAvailabilityTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -162,8 +159,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodHighAvailabilityTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -194,8 +190,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfPodHighAvailabilityTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 

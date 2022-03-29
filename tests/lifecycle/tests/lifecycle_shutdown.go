@@ -37,8 +37,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -61,8 +60,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -88,8 +86,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -123,8 +120,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -150,8 +146,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -178,8 +173,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
-			lifeparameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().TestText),
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
