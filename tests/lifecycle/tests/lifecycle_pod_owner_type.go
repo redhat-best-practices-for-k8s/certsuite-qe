@@ -26,7 +26,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	})
 
 	// 47409
-	It("1 ReplicaSet, several pods", func() {
+	It("One ReplicaSet, several pods", func() {
 		By("Define ReplicaSet with replica number")
 		replicaStruct := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
 
@@ -119,7 +119,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	})
 
 	// 47430
-	It("Two deployments, 1 pod not related to any resource [negative]", func() {
+	It("Two deployments, one pod not related to any resource [negative]", func() {
 		By("Define deployments")
 		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)

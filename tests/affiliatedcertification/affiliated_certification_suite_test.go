@@ -21,7 +21,7 @@ func TestAffiliatedCertification(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	configSuite, err := config.NewConfig()
 	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.TnfLogLevel)
+	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)
 
 	if err != nil {
 		fmt.Print(err)

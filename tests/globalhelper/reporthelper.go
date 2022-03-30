@@ -190,10 +190,12 @@ func formatTestCaseName(tcName string) string {
 }
 
 func ConvertSpecNameToFileName(specName string) string {
-	formatString := strings.ReplaceAll(specName, " ", "_")
+	formatString := specName
+	for _, symbol := range []string{" ", ", ", "-"} {
+		formatString = strings.ReplaceAll(formatString, symbol, "_")
+	}
+
 	formatString = removeCharactersFromString(formatString, []string{","})
-	formatString = strings.ReplaceAll(formatString, ", ", "_")
-	formatString = strings.ReplaceAll(formatString, "-", "_")
 
 	return strings.ToLower(formatString)
 }

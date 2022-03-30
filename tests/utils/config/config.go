@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -24,18 +23,18 @@ const (
 // Config type keeps general configuration.
 type Config struct {
 	General struct {
-		ReportDirAbsPath    string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
-		CnfNodeLabel        string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
-		WorkerNodeLabel     string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
-		TestImage           string `yaml:"test_image" envconfig:"TEST_IMAGE"`
-		TnfLogLevel         string `yaml:"tnf_log_level" envconfig:"TNF_LOG_LEVEL"`
-		DebugTnf            string `envconfig:"DEBUG_TNF"`
-		TnfConfigDir        string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
-		TnfRepoPath         string `envconfig:"TNF_REPO_PATH"`
-		TnfEntryPointScript string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
-		TnfReportDir        string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
-		TnfImage            string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
-		TnfImageTag         string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
+		ReportDirAbsPath     string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
+		CnfNodeLabel         string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
+		WorkerNodeLabel      string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
+		TestImage            string `yaml:"test_image" envconfig:"TEST_IMAGE"`
+		VerificationLogLevel string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
+		DebugTnf             string `envconfig:"DEBUG_TNF"`
+		TnfConfigDir         string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
+		TnfRepoPath          string `envconfig:"TNF_REPO_PATH"`
+		TnfEntryPointScript  string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
+		TnfReportDir         string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
+		TnfImage             string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
+		TnfImageTag          string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
 	} `yaml:"general"`
 }
 
@@ -86,7 +85,11 @@ func NewConfig() (*Config, error) {
 
 func (c *Config) DebugTnf() (bool, error) {
 	if c.General.DebugTnf == "true" {
-		os.Setenv("LOG_LEVEL", "trace")
+		err := os.Setenv("LOG_LEVEL", "trace")
+
+		if err != nil {
+			return false, err
+		}
 
 		return true, nil
 	}
@@ -94,27 +97,12 @@ func (c *Config) DebugTnf() (bool, error) {
 	return false, nil
 }
 
-// CreateFolder verifies if a given folder exists, and creates it if it doesn't.
-func CreateFolder(folderPath string, perm fs.FileMode) (bool, error) {
-	_, err := os.Stat(folderPath)
-	if !os.IsNotExist(err) {
-		return false, err
-	}
-
-	err = os.MkdirAll(folderPath, perm)
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
 func (c *Config) CreateLogFile(testSuite string, tcName string) *os.File {
 	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite)
 
-	_, err := CreateFolder(folderPath, 0755)
-
-	if err != nil {
+	err := os.MkdirAll(folderPath, 0755)
+	if err != nil && !os.IsExist(err) {
+		// we only panic in case the error is different than "folder already exists".
 		panic(err)
 	}
 
