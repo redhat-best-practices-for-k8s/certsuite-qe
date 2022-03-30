@@ -26,7 +26,7 @@ import (
 func TestNetworking(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.LogLevel)
+	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)
 	junitPath := globalhelper.Configuration.GetReportPath(currentFile)
 
 	RegisterFailHandler(Fail)

@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 )
 
-var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
+var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
 		lifeparameters.TnfPodHighAvailabilityTcName)
@@ -34,7 +34,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48492
-	It("One deployment, replica > 1, podAntiAffinity is set", func() {
+	It("One deployment, replicas are more than 1, podAntiAffinity is set", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -52,7 +52,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -65,7 +66,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48495
-	It("Two deployments, replica > 1, podAntiAffinity is set", func() {
+	It("Two deployments, replicas are more than 1, podAntiAffinity is set", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -91,7 +92,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -104,7 +106,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48499
-	It("One deployment, replica > 1, podAntiAffinity is not set [negative]", func() {
+	It("One deployment, replicas are more than 1, podAntiAffinity is not set [negative]", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -120,7 +122,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -133,7 +136,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48500
-	It("Two deployments, replica > 1, podAntiAffinity is not set [negative]", func() {
+	It("Two deployments, replicas are more than 1, podAntiAffinity is not set [negative]", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -155,7 +158,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -167,7 +171,7 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 	})
 
 	// 48869
-	It("One deployment, replica = 1, podAntiAffinity is set [negative]", func() {
+	It("One deployment, replicas equal to 1, podAntiAffinity is set [negative]", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -185,7 +189,8 @@ var _ = Describe("lifecycle lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 

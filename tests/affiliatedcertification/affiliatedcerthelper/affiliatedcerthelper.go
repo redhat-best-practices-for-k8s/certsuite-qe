@@ -14,7 +14,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 )
 
-func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string) error {
+func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expectedResult string) error {
 	var err error
 
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
@@ -32,7 +32,8 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
-		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+		tcName,
 		affiliatedcertparameters.TestCaseContainerSkipRegEx,
 	)
 
@@ -60,7 +61,7 @@ func SetUpAndRunContainerCertTest(containersInfo []string, expectedResult string
 	return nil
 }
 
-func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) error {
+func SetUpAndRunOperatorCertTest(tcName string, operatorsInfo []string, expectedResult string) error {
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
 	err := globalhelper.DefineTnfConfig(
@@ -75,7 +76,8 @@ func SetUpAndRunOperatorCertTest(operatorsInfo []string, expectedResult string) 
 	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
-		[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+		tcName,
 		affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 	)
 

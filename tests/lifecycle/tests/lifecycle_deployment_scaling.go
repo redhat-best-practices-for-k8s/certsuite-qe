@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
+var _ = Describe("lifecycle-deployment-scaling", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
 		lifeparameters.TnfDeploymentScalingTcName)
@@ -31,8 +31,7 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 	})
 
 	// 47398
-	It("One deployment, one pod, one container, scale in & out", func() {
-
+	It("One deployment, one pod, one container, scale in and out", func() {
 		By("Define Deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(lifehelper.DefineDeployment(1, 1, "lifecycleput"),
 			lifeparameters.WaitingTime)
@@ -40,7 +39,8 @@ var _ = Describe("lifecycle lifecycle-deployment-scaling", func() {
 
 		By("start lifecycle lifecycle-deployment-scaling")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 

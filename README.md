@@ -33,8 +33,9 @@ Optional:
 * `TNF_REPO_PATH` - absolute path to  [test-network-function](https://github.com/test-network-function/test-network-function) on your machine
 * `TNF_IMAGE` - link to tnf image. Default is quay.io/testnetworkfunction/test-network-function
 * `TNF_IMAGE_TAG` - image tag that is going to be tested. Default is latest
-* `LOG_LEVEL` - Log level. Default is 4
+* `TNF_LOG_LEVEL` - Log level. Default is 4
 * `TEST_IMAGE` - Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
+* `DEBUG_TNF` - Generate `Debug` folder that will contain TNF suites folders with TNF logs for each test.
 
 #### Available features
 The list of available features:
@@ -69,6 +70,12 @@ Below is an e2e flow example:
 5. OPTIONAL: Set test-network-function container tag that you are going to test. Default is latest. `export TNF_IMAGE_TAG=unstable` 
 
 6. Run all tests - `make test-all`
+
+# How to debug
+
+1. export `DEBUG_TNF`=true.
+2. run `make test-all` / `make test-features`.
+3. under reports folder, a `Debug` folder will be generated, containing suites folders with TNF logs for each of the tests. 
 
 
 # cnfcert-tests-verification - How to contribute

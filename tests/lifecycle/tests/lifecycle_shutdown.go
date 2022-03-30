@@ -11,7 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
+var _ = Describe("lifecycle-container-shutdown", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfShutdownTcName)
 
@@ -25,9 +25,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47311
-	It("One deployment, one pod with one container that "+
-		"has preStop field configured", func() {
-
+	It("One deployment, one pod, with one container that has preStop field configured", func() {
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"), lifeparameters.PreStopCommand)
@@ -38,7 +36,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -51,9 +50,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47315
-	It("One deployment, one pod with one container that does not "+
-		"have preStop field configured [negative]", func() {
-
+	It("One deployment, one pod, with one container that does not have preStop field configured [negative]", func() {
 		By("Define deployment without prestop field configured")
 		deploymentStructWithOutPreStop := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 
@@ -62,7 +59,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -75,9 +73,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47382
-	It("One deployment, several pods, several containers that "+
-		"have preStop field configured", func() {
-
+	It("One deployment, several pods, several containers that have preStop field configured", func() {
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
@@ -89,7 +85,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,9 +98,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47383
-	It("Several deployments, several pods, several containers "+
-		"that have preStop field configured", func() {
-
+	It("Two deployments, several pods, several containers that have preStop field configured", func() {
 		By("Define first deployment with preStop field configured")
 		preStopDeploymentStructA, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.PreStopCommand)
@@ -124,7 +119,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -137,9 +133,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47384
-	It("One deployment, several pods, several containers, one without preStop "+
-		"field configured [negative]", func() {
-
+	It("One deployment, several pods, several containers one without preStop field configured [negative]", func() {
 		By("Define deployment with preStop field configured")
 		preStopDeploymentStruct, err := deployment.RedefineFirstContainerWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
@@ -151,7 +145,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -163,9 +158,7 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 	})
 
 	// 47385
-	It("Several deployments, several pods, several containers "+
-		"that don't have preStop field configured [negative]", func() {
-
+	It("Two deployments, several pods, several containers that don't have preStop field configured [negative]", func() {
 		By("Define first deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.WaitingTime)
@@ -179,7 +172,8 @@ var _ = Describe("lifecycle lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 

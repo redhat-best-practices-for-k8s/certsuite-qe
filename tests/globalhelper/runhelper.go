@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
-func LaunchTests(testSuites []string, skipRegEx string) error {
+func LaunchTests(testSuite string, tcNameForReport string, skipRegEx string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
 		return err
@@ -35,17 +35,37 @@ func LaunchTests(testSuites []string, skipRegEx string) error {
 		glog.V(5).Info(fmt.Sprintf("set skip regex to %s", skipRegEx))
 	}
 
-	if len(testSuites) > 0 {
+	if len(testSuite) > 0 {
 		testArgs = append(testArgs, "-f")
-		for _, testSuite := range testSuites {
-			testArgs = append(testArgs, testSuite)
-			glog.V(5).Info(fmt.Sprintf("add test suite %s", testSuite))
-		}
+		testArgs = append(testArgs, testSuite)
+		glog.V(5).Info(fmt.Sprintf("add test suite %s", testSuite))
+	} else {
+		panic("No test suite name provided.")
 	}
 
 	cmd := exec.Command(fmt.Sprintf("./%s", Configuration.General.TnfEntryPointScript))
 	cmd.Args = append(cmd.Args, testArgs...)
 	cmd.Dir = Configuration.General.TnfRepoPath
+
+	debugTnf, err := Configuration.DebugTnf()
+
+	if err != nil {
+		return err
+	}
+
+	if debugTnf {
+		outfile := Configuration.CreateLogFile(testSuite, tcNameForReport)
+
+		defer outfile.Close()
+		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
+
+		if err != nil {
+			return err
+		}
+
+		cmd.Stdout = outfile
+		cmd.Stderr = outfile
+	}
 
 	return cmd.Run()
 }

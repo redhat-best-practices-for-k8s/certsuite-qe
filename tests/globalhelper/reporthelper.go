@@ -188,3 +188,12 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " "})
 }
+
+func ConvertSpecNameToFileName(specName string) string {
+	formatString := specName
+	for _, symbol := range []string{" ", ", ", "-"} {
+		formatString = strings.ReplaceAll(formatString, symbol, "_")
+	}
+
+	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
+}

@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 )
 
-var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
+var _ = Describe("lifecycle-pod-owner-type", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodOwnerTypeTcName)
 
@@ -26,7 +26,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47409
-	It("1 ReplicaSet, several pods", func() {
+	It("One ReplicaSet, several pods", func() {
 		By("Define ReplicaSet with replica number")
 		replicaStruct := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
 
@@ -35,7 +35,8 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -48,7 +49,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47424
-	It("Multiple deployments, replica  > 1", func() {
+	It("Two deployments, several pods", func() {
 		By("Define deployments")
 		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
@@ -60,7 +61,8 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -80,7 +82,8 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -93,7 +96,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47429
-	It("1 pod, not part of any workload resource [negative]", func() {
+	It("One pod, not part of any workload resource [negative]", func() {
 		By("Define pod")
 		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
@@ -102,7 +105,8 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 
@@ -115,8 +119,7 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 	})
 
 	// 47430
-	It("Multiple deployments, 1 pod not related to any resource [negative]", func() {
-
+	It("Two deployments, one pod not related to any resource [negative]", func() {
 		By("Define deployments")
 		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
@@ -134,7 +137,8 @@ var _ = Describe("lifecycle lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			[]string{lifeparameters.LifecycleTestSuiteName},
+			lifeparameters.LifecycleTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			stringOfSkipTc)
 		Expect(err).To(HaveOccurred())
 

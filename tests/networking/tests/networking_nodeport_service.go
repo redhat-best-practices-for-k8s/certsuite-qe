@@ -45,7 +45,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -71,7 +72,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -85,59 +87,60 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45482
-	It("2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort",
-		func() {
-			By("Define multiple Services")
-			err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false)
-			Expect(err).ToNot(HaveOccurred())
+	It("2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort", func() {
 
-			err = nethelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define multiple Services")
+		err := nethelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentOnCluster(3)
-			Expect(err).ToNot(HaveOccurred())
+		err = nethelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseNodePortSkipRegEx,
-			)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseNodePortNetworkName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
-		})
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
+			netparameters.TestCaseNodePortSkipRegEx,
+		)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseNodePortNetworkName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
 	// 45483
-	It("2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]",
-		func() {
+	It("2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]", func() {
 
-			By("Define Services with NodePort")
-			err := nethelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define Services with NodePort")
+		err := nethelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Define deployment and create it on cluster")
-			err = nethelper.DefineAndCreateDeploymentOnCluster(3)
-			Expect(err).ToNot(HaveOccurred())
+		By("Define deployment and create it on cluster")
+		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
+		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				[]string{netparameters.NetworkingTestSuiteName},
-				netparameters.TestCaseNodePortSkipRegEx,
-			)
-			Expect(err).To(HaveOccurred())
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
+			netparameters.TestCaseNodePortSkipRegEx,
+		)
+		Expect(err).To(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				netparameters.TestCaseNodePortNetworkName,
-				globalparameters.TestCaseFailed)
-			Expect(err).ToNot(HaveOccurred())
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			netparameters.TestCaseNodePortNetworkName,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 
-		})
+	})
 
 	// 45484
 	It("2 custom pods, multiple services installed and one has NodePort, service Should not have type of "+
@@ -155,7 +158,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseNodePortSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())

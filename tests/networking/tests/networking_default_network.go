@@ -45,14 +45,14 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 	// 45440
 	It("3 custom pods on Default network networking-icmpv4-connectivity", func() {
-
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -66,7 +66,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 	// 45441
 	It("custom daemonset, 4 custom pods on Default network", func() {
-
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -84,7 +83,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -97,9 +97,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	})
 
 	// 45442
-	It("3 custom pods on Default network networking-icmpv4-connectivity fail when one pod is "+
-		"disconnected [negative]", func() {
-
+	It("3 custom pods on Default network networking-icmpv4-connectivity fail when "+
+		"one pod is disconnected [negative]", func() {
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -118,7 +117,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).To(HaveOccurred())
@@ -133,7 +133,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	// 45444
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
-
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -145,7 +144,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())
@@ -160,7 +160,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	// 45445
 	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
-
 		By("Define deployment and create it on cluster")
 		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
@@ -184,7 +183,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			[]string{netparameters.NetworkingTestSuiteName},
+			netparameters.NetworkingTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			netparameters.TestCaseDefaultSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred())

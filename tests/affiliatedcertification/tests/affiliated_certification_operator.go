@@ -82,7 +82,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			By("Start test")
 
 			err = globalhelper.LaunchTests(
-				[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+				affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+				globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 				affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -145,7 +146,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -182,7 +184,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -252,7 +255,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -269,6 +273,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46695
 	It("one operator to test, operator is not certified [negative]", func() {
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			[]string{affiliatedcertparameters.UncertifiedOperatorBarFoo}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -278,7 +283,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err := globalhelper.LaunchTests(
-			[]string{affiliatedcertparameters.AffiliatedCertificationTestSuiteName},
+			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -295,6 +301,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46700
 	It("name and organization fields exist in certifiedoperatorinfo but are empty [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunOperatorCertTest(
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			[]string{affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
