@@ -195,7 +195,5 @@ func ConvertSpecNameToFileName(specName string) string {
 		formatString = strings.ReplaceAll(formatString, symbol, "_")
 	}
 
-	formatString = removeCharactersFromString(formatString, []string{","})
-
-	return strings.ToLower(formatString)
+	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
 }
