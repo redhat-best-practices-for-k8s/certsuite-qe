@@ -43,9 +43,10 @@ var (
 	TestCaseOperatorSkipRegEx          = "container-is-certified helmchart-is-certified"
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
 	CertifiedOperatorGroup             = "certified-operators"
+	CommunityOperatorGroup             = "community-operators"
 	OperatorSourceNamespace            = "openshift-marketplace"
 	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
-	UncertifiedOperatorPrefixNginx     = "nginx-operator"
+	UncertifiedOperatorPrefixFalcon    = "falcon-operator"
 	ExistingOperatorNamespace          = "tnf"
 	CertifiedOperatorPrefixPostgres    = "postgresoperator"
 	CertifiedOperatorPrefixDatadog     = "datadog-operator"

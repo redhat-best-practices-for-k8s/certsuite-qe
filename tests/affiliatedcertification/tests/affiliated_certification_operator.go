@@ -16,7 +16,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 	var (
 		installedLabeledOperators []affiliatedcertparameters.OperatorLabelInfo
-		csvsToDelete              []affiliatedcertparameters.CsvInfo
 	)
 
 	execute.BeforeAll(func() {
@@ -54,30 +53,48 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator "+info.OperatorPrefix)
 		}
 		installedLabeledOperators = nil
-
-		By("Delete csvs marked for deletion")
-		for _, csv := range csvsToDelete {
-			err := affiliatedcerthelper.DeleteCsv(csv.OperatorPrefix, csv.Namespace)
-			Expect(err).ToNot(HaveOccurred(), "Error deleting csv "+csv.OperatorPrefix)
-		}
-		csvsToDelete = nil
-
 	})
 
 	// 46699
-	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [skip]",
+	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [negative]",
 		func() {
-			// operator is already installed.
-			// not deleting csv yet because it is also used in the next test case
+
+			By("Deploy operator to test")
+
+			unCertifiedOperatorFalconSubscription := utils.DefineSubscription("falcon-operator-subscription",
+				affiliatedcertparameters.TestCertificationNameSpace, "alpha", "falcon-operator",
+				affiliatedcertparameters.CommunityOperatorGroup, affiliatedcertparameters.OperatorSourceNamespace)
+
+			err := affiliatedcerthelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
+				unCertifiedOperatorFalconSubscription)
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+
+			By("Confirm that operator is installed and ready")
+
+			Eventually(func() bool {
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+					"falcon-operator-controller-manager")
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				"Operator "+affiliatedcertparameters.UncertifiedOperatorPrefixFalcon+" is not ready")
 
 			By("Label operator to be certified")
 
-			err := affiliatedcerthelper.AddLabelToInstalledCSV(
-				affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
-				affiliatedcertparameters.ExistingOperatorNamespace,
+			err = affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.OperatorLabel)
 			Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixNginx)
+				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+
+			// add falcon operator info to array for cleanup in AfterEach
+			installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
+				OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+				Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
+				Label:          affiliatedcertparameters.OperatorLabel,
+			})
 
 			By("Start test")
 
@@ -93,14 +110,14 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 			err = globalhelper.ValidateIfReportsAreValid(
 				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-				globalparameters.TestCaseSkipped)
+				globalparameters.TestCaseFailed)
 			Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 		})
 
 	// 46697
 	It("two operators to test, one belongs to certified-operators organization and its version is certified,"+
-		" one does not belong to certified-operators organization in Red Hat catalog [skip]", func() {
-		By("Deploy operator to test")
+		" one does not belong to certified-operators organization in Red Hat catalog [negative]", func() {
+		By("Deploy additional operator to test")
 
 		certifiedOperatorPostgresSubscription := utils.DefineSubscription("crunchy-postgres-operator-subscription",
 			affiliatedcertparameters.TestCertificationNameSpace, "v5", "crunchy-postgres-operator",
@@ -120,7 +137,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 			"Operator "+affiliatedcertparameters.CertifiedOperatorPrefixPostgres+" is not ready")
 
-		By("Label operator to be certified")
+		By("Label operators to be certified")
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
@@ -129,16 +146,22 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
 
-		// add nginx csv to list to be deleted after test case
-		// (only needed for nginx because label removal is not working for this csv)
-		csvsToDelete = append(csvsToDelete, affiliatedcertparameters.CsvInfo{
-			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixNginx,
-			Namespace:      affiliatedcertparameters.ExistingOperatorNamespace,
-		})
+		err = affiliatedcerthelper.AddLabelToInstalledCSV(
+			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
+			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 
-		// add postgres operator info to array for cleanup in AfterEach
+		// add postgres and falcon operators info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
 			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
+			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
+			Label:          affiliatedcertparameters.OperatorLabel,
+		})
+
+		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
+			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
@@ -157,7 +180,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
