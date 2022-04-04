@@ -9,9 +9,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/onsi/ginkgo"
+	"github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
 func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expectedResult string) error {
@@ -183,18 +185,32 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 	return nil
 }
 
-func DeleteCsv(prefixCsvName string, namespace string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+// Deploys an operator and returns when its deployment is confirmed to exist.
+func DeployAndVerifyOperatorSubscription(operatorPackage, chanel, namespace, group,
+	sourceNamespace, deploymentName string) error {
+	operatorSubscription := utils.DefineSubscription(
+		operatorPackage+"-subscription",
+		namespace,
+		chanel,
+		operatorPackage,
+		group,
+		sourceNamespace)
+
+	err := DeployOperator(namespace, operatorSubscription)
+
 	if err != nil {
-		return err
+		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
 	}
 
-	err = globalhelper.APIClient.ClusterServiceVersions(namespace).Delete(
-		context.TODO(), csv.GetName(), metav1.DeleteOptions{},
-	)
+	// confirm that operator is installed and ready
+	gomega.Eventually(func() bool {
+		err = IsOperatorInstalled(namespace, deploymentName)
+
+		return err == nil
+	}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(gomega.Equal(true))
 
 	if err != nil {
-		return fmt.Errorf("fail to delete CSV due to %w", err)
+		return fmt.Errorf("Operator "+operatorPackage+" is not ready: %w", err)
 	}
 
 	return nil

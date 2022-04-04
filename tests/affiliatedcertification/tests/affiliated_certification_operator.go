@@ -41,6 +41,42 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
 
+		By("Deploy operators for testing")
+		// falcon-operator: not in certified-operators group in catalog, for negative test cases
+		err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			"falcon-operator",
+			"alpha",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CommunityOperatorGroup,
+			affiliatedcertparameters.OperatorSourceNamespace,
+			"falcon-operator-controller-manager",
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+
+		// crunchy-postgres-operator: in certified-operators group and version is certified
+		err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			"crunchy-postgres-operator",
+			"v5",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CertifiedOperatorGroup,
+			affiliatedcertparameters.OperatorSourceNamespace,
+			"pgo",
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
+
+		// datadog-operator-certified: in certified-operatos group and version is certified
+		err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			"datadog-operator-certified",
+			"alpha",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CertifiedOperatorGroup,
+			affiliatedcertparameters.OperatorSourceNamespace,
+			"datadog-operator-manager",
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
 	})
 
 	AfterEach(func() {
@@ -58,31 +94,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46699
 	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [negative]",
 		func() {
-
-			By("Deploy operator to test")
-
-			unCertifiedOperatorFalconSubscription := utils.DefineSubscription("falcon-operator-subscription",
-				affiliatedcertparameters.TestCertificationNameSpace, "alpha", "falcon-operator",
-				affiliatedcertparameters.CommunityOperatorGroup, affiliatedcertparameters.OperatorSourceNamespace)
-
-			err := affiliatedcerthelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
-				unCertifiedOperatorFalconSubscription)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
-
-			By("Confirm that operator is installed and ready")
-
-			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					"falcon-operator-controller-manager")
-
-				return err == nil
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				"Operator "+affiliatedcertparameters.UncertifiedOperatorPrefixFalcon+" is not ready")
-
 			By("Label operator to be certified")
 
-			err = affiliatedcerthelper.AddLabelToInstalledCSV(
+			err := affiliatedcerthelper.AddLabelToInstalledCSV(
 				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.OperatorLabel)
@@ -117,29 +131,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46697
 	It("two operators to test, one belongs to certified-operators organization and its version is certified,"+
 		" one does not belong to certified-operators organization in Red Hat catalog [negative]", func() {
-		By("Deploy additional operator to test")
-
-		certifiedOperatorPostgresSubscription := utils.DefineSubscription("crunchy-postgres-operator-subscription",
-			affiliatedcertparameters.TestCertificationNameSpace, "v5", "crunchy-postgres-operator",
-			affiliatedcertparameters.CertifiedOperatorGroup, affiliatedcertparameters.OperatorSourceNamespace)
-
-		err := affiliatedcerthelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
-			certifiedOperatorPostgresSubscription)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
-
-		By("Confirm that operator is installed and ready")
-
-		Eventually(func() bool {
-			err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace, "pgo")
-
-			return err == nil
-		}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-			"Operator "+affiliatedcertparameters.CertifiedOperatorPrefixPostgres+" is not ready")
-
 		By("Label operators to be certified")
 
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
+		err := affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
@@ -187,7 +181,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46582
 	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
 		" and its version is certified", func() {
-		// postgres operator is already installed
 		By("Label operator to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
@@ -225,30 +218,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	// 46696
 	It("two operators to test, both belong to certified-operators organization in Red Hat catalog and their"+
 		" versions are certified", func() {
-		By("Deploy additional operator to test")
-
-		certifiedOperatorDatadogSubscription := utils.DefineSubscription("datadog-operator-subscription",
-			affiliatedcertparameters.TestCertificationNameSpace, "alpha", "datadog-operator-certified",
-			affiliatedcertparameters.CertifiedOperatorGroup, affiliatedcertparameters.OperatorSourceNamespace)
-
-		err := affiliatedcerthelper.DeployOperator(affiliatedcertparameters.TestCertificationNameSpace,
-			certifiedOperatorDatadogSubscription)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
-
-		By("Confirm that operator is installed and ready")
-
-		Eventually(func() bool {
-			err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-				"datadog-operator-manager")
-
-			return err == nil
-		}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-			"Operator "+affiliatedcertparameters.CertifiedOperatorPrefixDatadog+" is not ready")
-
 		By("Label operators to be certified")
 
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
+		err := affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.CertifiedOperatorPrefixDatadog,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
