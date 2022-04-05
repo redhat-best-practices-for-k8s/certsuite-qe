@@ -34,49 +34,61 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		By("Deploy OperatorGroup")
-		err = affiliatedcerthelper.DeployOperatorGroup(affiliatedcertparameters.TestCertificationNameSpace,
-			utils.DefineOperatorGroup("affiliatedcert-test-operator-group",
-				affiliatedcertparameters.TestCertificationNameSpace,
-				[]string{affiliatedcertparameters.TestCertificationNameSpace}),
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
+		if affiliatedcerthelper.IsOperatorGroupInstalled(affiliatedcertparameters.OperatorGroupName,
+			affiliatedcertparameters.TestCertificationNameSpace) != nil {
+			err = affiliatedcerthelper.DeployOperatorGroup(affiliatedcertparameters.TestCertificationNameSpace,
+				utils.DefineOperatorGroup(affiliatedcertparameters.OperatorGroupName,
+					affiliatedcertparameters.TestCertificationNameSpace,
+					[]string{affiliatedcertparameters.TestCertificationNameSpace}),
+			)
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
+		}
 
 		By("Deploy operators for testing")
 		// falcon-operator: not in certified-operators group in catalog, for negative test cases
-		err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
-			"falcon-operator",
-			"alpha",
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CommunityOperatorGroup,
-			affiliatedcertparameters.OperatorSourceNamespace,
-			"falcon-operator-controller-manager",
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon) != nil {
+			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+				"falcon-operator",
+				"alpha",
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.CommunityOperatorGroup,
+				affiliatedcertparameters.OperatorSourceNamespace,
+				affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon,
+			)
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+		}
 
 		// crunchy-postgres-operator: in certified-operators group and version is certified
-		err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
-			"crunchy-postgres-operator",
-			"v5",
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorGroup,
-			affiliatedcertparameters.OperatorSourceNamespace,
-			"pgo",
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
+		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CertifiedOperatorDeploymentPostgres) != nil {
+			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+				"crunchy-postgres-operator",
+				"v5",
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.CertifiedOperatorGroup,
+				affiliatedcertparameters.OperatorSourceNamespace,
+				affiliatedcertparameters.CertifiedOperatorDeploymentPostgres,
+			)
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+				affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
+		}
 
 		// datadog-operator-certified: in certified-operatos group and version is certified
-		err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
-			"datadog-operator-certified",
-			"alpha",
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorGroup,
-			affiliatedcertparameters.OperatorSourceNamespace,
-			"datadog-operator-manager",
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
+		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CertifiedOperatorDeploymentDatadog) != nil {
+			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+				"datadog-operator-certified",
+				"alpha",
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.CertifiedOperatorGroup,
+				affiliatedcertparameters.OperatorSourceNamespace,
+				affiliatedcertparameters.CertifiedOperatorDeploymentDatadog,
+			)
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+				affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
+		}
 	})
 
 	AfterEach(func() {
