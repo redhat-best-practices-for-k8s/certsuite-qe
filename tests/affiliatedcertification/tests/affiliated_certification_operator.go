@@ -54,10 +54,17 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CommunityOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
-				affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+			// confirm that operator is installed and ready
+			Eventually(func() bool {
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.OperatorSourceNamespace,
+					affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon+" is not ready.")
 		}
 		// add falcon operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
@@ -75,10 +82,17 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
-				affiliatedcertparameters.CertifiedOperatorDeploymentPostgres,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
+			// confirm that operator is installed and ready
+			Eventually(func() bool {
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.OperatorSourceNamespace,
+					affiliatedcertparameters.CertifiedOperatorDeploymentPostgres)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.CertifiedOperatorPrefixPostgres+" is not ready.")
 		}
 		// add postgres operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
@@ -96,10 +110,17 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
-				affiliatedcertparameters.CertifiedOperatorDeploymentDatadog,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
+			// confirm that operator is installed and ready
+			Eventually(func() bool {
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.OperatorSourceNamespace,
+					affiliatedcertparameters.CertifiedOperatorDeploymentDatadog)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.CertifiedOperatorPrefixDatadog+" is not ready.")
 		}
 		// add datadog operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{

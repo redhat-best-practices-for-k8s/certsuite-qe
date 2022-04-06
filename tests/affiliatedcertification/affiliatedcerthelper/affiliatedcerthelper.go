@@ -9,7 +9,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/onsi/ginkgo"
-	"github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -187,7 +186,7 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 
 // Deploys an operator and returns when its deployment is confirmed to exist.
 func DeployAndVerifyOperatorSubscription(operatorPackage, chanel, namespace, group,
-	sourceNamespace, deploymentName string) error {
+	sourceNamespace string) error {
 	operatorSubscription := utils.DefineSubscription(
 		operatorPackage+"-subscription",
 		namespace,
@@ -201,17 +200,5 @@ func DeployAndVerifyOperatorSubscription(operatorPackage, chanel, namespace, gro
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
 	}
-
-	// confirm that operator is installed and ready
-	gomega.Eventually(func() bool {
-		err = IsOperatorInstalled(namespace, deploymentName)
-
-		return err == nil
-	}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(gomega.Equal(true))
-
-	if err != nil {
-		return fmt.Errorf("Operator "+operatorPackage+" is not ready: %w", err)
-	}
-
 	return nil
 }
