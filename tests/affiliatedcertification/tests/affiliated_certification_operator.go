@@ -104,7 +104,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46699
-	It("one operator to test, operator does not belong to certified-operators organization in Red Hat catalog [negative]",
+	It("one operator to test, operator is not in certified-operators organization [negative]",
 		func() {
 			By("Label operator to be certified")
 
@@ -141,8 +141,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		})
 
 	// 46697
-	It("two operators to test, one belongs to certified-operators organization and its version is certified,"+
-		" one does not belong to certified-operators organization in Red Hat catalog [negative]", func() {
+	It("two operators to test, one is in certified-operators organization and its version is certified,"+
+		" one is not in certified-operators organization [negative]", func() {
 		By("Label operators to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
@@ -191,7 +191,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46582
-	It("one operator to test, operator belongs to certified-operators organization in Red Hat catalog"+
+	It("one operator to test, operator is in certified-operators organization"+
 		" and its version is certified", func() {
 		By("Label operator to be certified")
 
@@ -228,7 +228,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	// 46696
-	It("two operators to test, both belong to certified-operators organization in Red Hat catalog and their"+
+	It("two operators to test, both are in certified-operators organization and their"+
 		" versions are certified", func() {
 		By("Label operators to be certified")
 
