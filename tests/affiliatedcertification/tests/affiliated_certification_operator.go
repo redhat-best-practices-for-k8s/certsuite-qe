@@ -59,6 +59,12 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 		}
+		// add falcon operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
+			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
+			Label:          affiliatedcertparameters.OperatorLabel,
+		})
 
 		// crunchy-postgres-operator: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
@@ -74,6 +80,12 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
 		}
+		// add postgres operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
+			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
+			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
+			Label:          affiliatedcertparameters.OperatorLabel,
+		})
 
 		// datadog-operator-certified: in certified-operatos group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
@@ -89,6 +101,12 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
 		}
+		// add datadog operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
+			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixDatadog,
+			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
+			Label:          affiliatedcertparameters.OperatorLabel,
+		})
 	})
 
 	AfterEach(func() {
@@ -100,7 +118,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				info.Label)
 			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator "+info.OperatorPrefix)
 		}
-		installedLabeledOperators = nil
 	})
 
 	// 46699
@@ -115,13 +132,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 
-			// add falcon operator info to array for cleanup in AfterEach
-			installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-				OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
-				Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-				Label:          affiliatedcertparameters.OperatorLabel,
-			})
-
 			By("Start test")
 
 			err = globalhelper.LaunchTests(
@@ -129,7 +139,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 				affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 			)
-			Expect(err).ToNot(HaveOccurred(), "Error running "+
+			Expect(err).To(HaveOccurred(), "Error running "+
 				affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
 			By("Verify test case status in Junit and Claim reports")
@@ -159,19 +169,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
 			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 
-		// add postgres and falcon operators info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
-
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
-
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
@@ -179,7 +176,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
 			affiliatedcertparameters.TestCaseOperatorSkipRegEx,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
+		Expect(err).To(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
@@ -201,13 +198,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
-
-		// add postgres operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
 
 		By("Start test")
 
@@ -245,19 +235,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
-
-		// add datadog and postgres operators info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixDatadog,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
-
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixPostgres,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
 
 		By("Start test")
 
