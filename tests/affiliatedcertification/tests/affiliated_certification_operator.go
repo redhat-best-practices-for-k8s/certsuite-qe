@@ -33,7 +33,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
-		By("Deploy OperatorGroup")
+		By("Deploy OperatorGroup if not already deployed")
 		if affiliatedcerthelper.IsOperatorGroupInstalled(affiliatedcertparameters.OperatorGroupName,
 			affiliatedcertparameters.TestCertificationNameSpace) != nil {
 			err = affiliatedcerthelper.DeployOperatorGroup(affiliatedcertparameters.TestCertificationNameSpace,
@@ -44,7 +44,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
 		}
 
-		By("Deploy operators for testing")
+		By("Deploy operators for testing if not already deployed")
 		// falcon-operator: not in certified-operators group in catalog, for negative test cases
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon) != nil {
