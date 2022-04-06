@@ -9,6 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
@@ -17,6 +18,7 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/pointer"
 
 	. "github.com/onsi/gomega"
 )
@@ -205,6 +207,37 @@ func EnableMasterScheduling(scheduleable bool) error {
 		scheduler, metav1.UpdateOptions{})
 
 	return err
+}
+
+func DefineDaemonSet(namespace string, image string, label map[string]string, name string) *v1.DaemonSet {
+	return &v1.DaemonSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace},
+		Spec: v1.DaemonSetSpec{
+			Selector: &metav1.LabelSelector{
+				MatchLabels: label,
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:   "testpod-",
+					Labels: label,
+				},
+				Spec: corev1.PodSpec{
+					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+					Containers: []corev1.Container{
+						{
+							Name:    "test",
+							Image:   image,
+							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
+}
+
+func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
+	daemonSet := daemonset.RedefineWithImagePullPolicy(
+		DefineDaemonSet(lifeparameters.LifecycleNamespace, image,
+			lifeparameters.TestDeploymentLabels, name), pullPolicy)
+
+	return daemonSet
 }
 
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.

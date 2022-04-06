@@ -74,11 +74,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.DefineDaemonSet(
 			netparameters.TestNetworkingNameSpace,
 			configSuite.General.TestImage,
-			netparameters.TestDeploymentLabels,
+			netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
 		), map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
-		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -174,11 +174,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			daemonset.DefineDaemonSet(
 				netparameters.TestNetworkingNameSpace,
 				configSuite.General.TestImage,
-				netparameters.TestDeploymentLabels,
+				netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
 			), map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
-		err = nethelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")

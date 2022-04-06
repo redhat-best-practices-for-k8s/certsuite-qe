@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nad"
 
@@ -20,30 +19,10 @@ import (
 
 	"github.com/golang/glog"
 
-	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
-
-func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, error) {
-	daemonSet, err := globalhelper.APIClient.DaemonSets(operatorNamespace).Get(
-		context.Background(),
-		daemonSetName,
-		metav1.GetOptions{},
-	)
-	if err != nil {
-		return false, err
-	}
-
-	if daemonSet.Status.NumberReady > 0 {
-		if daemonSet.Status.NumberUnavailable == 0 {
-			return true, nil
-		}
-	}
-
-	return false, nil
-}
 
 func defineDeploymentBasedOnArgs(
 	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *v1.Deployment {
@@ -67,31 +46,6 @@ func defineDeploymentBasedOnArgs(
 	}
 
 	return deploymentStruct
-}
-
-// CreateAndWaitUntilDaemonSetIsReady creates daemonSet and wait until all deployment replicas are up and running.
-func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Duration) error {
-	runningDaemonSet, err := globalhelper.APIClient.DaemonSets(daemonSet.Namespace).Create(
-		context.Background(),
-		daemonSet,
-		metav1.CreateOptions{})
-	if err != nil {
-		return err
-	}
-
-	Eventually(func() bool {
-		status, err := isDaemonSetReady(runningDaemonSet.Namespace, runningDaemonSet.Name)
-		if err != nil {
-			glog.Fatal(fmt.Sprintf(
-				"daemonset %s is not ready, retry in 5 seconds", runningDaemonSet.Name))
-
-			return false
-		}
-
-		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "DaemonSet is not ready")
-
-	return nil
 }
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
@@ -154,7 +108,7 @@ func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error 
 		daemonset.DefineDaemonSet(
 			netparameters.TestNetworkingNameSpace,
 			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels),
+			netparameters.TestDeploymentLabels, "daemonsetnetworkingput"),
 		nadName,
 	), map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
 
@@ -162,7 +116,7 @@ func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error 
 		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
 	}
 
-	return CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
 }
 
 func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
@@ -178,9 +132,9 @@ func defineAndCreatePrivilegedDaemonset() error {
 		daemonset.DefineDaemonSet(
 			netparameters.TestNetworkingNameSpace,
 			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels,
+			netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
 		), map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""}))
-	err := CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
 
 	if err != nil {
 		return err
