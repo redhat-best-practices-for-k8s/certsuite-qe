@@ -11,6 +11,7 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	goclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) error {
@@ -31,6 +32,19 @@ func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) e
 
 	if err != nil {
 		return fmt.Errorf("can not deploy operatorGroup %w", err)
+	}
+
+	return nil
+}
+
+func IsOperatorGroupInstalled(operatorGroupName, namespace string) error {
+	var operatorGroup olmv1.OperatorGroup
+	err := globalhelper.APIClient.Get(context.TODO(),
+		goclient.ObjectKey{Name: operatorGroupName, Namespace: namespace},
+		&operatorGroup)
+
+	if err != nil {
+		return fmt.Errorf(operatorGroupName+" operatorGroup resource not found: %w", err)
 	}
 
 	return nil
