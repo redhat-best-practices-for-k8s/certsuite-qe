@@ -200,5 +200,6 @@ func DeployAndVerifyOperatorSubscription(operatorPackage, chanel, namespace, gro
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
 	}
+
 	return nil
 }
