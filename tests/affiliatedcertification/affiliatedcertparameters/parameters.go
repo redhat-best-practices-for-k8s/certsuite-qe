@@ -19,7 +19,7 @@ type (
 )
 
 const (
-	Timeout         = 5 * time.Minute
+	Timeout         = 10 * time.Minute
 	PollingInterval = 5 * time.Second
 )
 
