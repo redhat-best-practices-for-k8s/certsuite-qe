@@ -26,10 +26,10 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 	It("One deployment with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentStruct := deployment.RedefineWithImagePullPolicy(
+		deployment := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"), v1.PullIfNotPresent)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-image-pull-policy test")
@@ -51,22 +51,22 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 	It("Several deployments with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployments with ifNotPresent as ImagePullPolicy")
-		deploymentStructa := deployment.RedefineWithImagePullPolicy(
+		deploymenta := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleputa"), v1.PullIfNotPresent)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructa, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentStructb := deployment.RedefineWithImagePullPolicy(
+		deploymentb := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleputb"), v1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentStructc := deployment.RedefineWithImagePullPolicy(
+		deploymentc := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleputc"), v1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructc, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentc, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-image-pull-policy test")
@@ -146,7 +146,7 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 
 	})
 
-	// // 48480
+	// 48480
 	It("One DaemonSet without ImagePullPolicy, image tag is not specified [negative]", func() {
 		// if you omit the imagePullPolicy field,
 		// and you don't specify the tag for the container image,
@@ -180,12 +180,12 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 		// and the tag for the container image is :latest,
 		// imagePullPolicy is automatically set to Always;
 		By("Define deployment without ImagePullPolicy")
-		deploymentStruct := deployment.DefineDeployment("lifecycleput",
+		deployment := deployment.DefineDeployment("lifecycleput",
 			lifeparameters.LifecycleNamespace,
 			"registry.access.redhat.com/ubi8/ubi:latest",
 			lifeparameters.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-image-pull-policy test")
@@ -206,10 +206,10 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 	It("One deployment with Always as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with 'Always' as ImagePullPolicy")
-		deploymentStruct := deployment.RedefineWithImagePullPolicy(
+		deployment := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"), v1.PullAlways)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-image-pull-policy test")
@@ -230,19 +230,19 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 	It("Two deployments one with Never other with ifNotPresent as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with Never as ImagePullPolicy")
-		deploymentStruct := deployment.RedefineWithImagePullPolicy(
+		deploymenta := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"),
 			v1.PullNever)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentStructb := deployment.RedefineWithImagePullPolicy(
+		deploymentb := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleputb"),
 			v1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-image-pull-policy test")
@@ -270,11 +270,11 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentStructb := deployment.RedefineWithImagePullPolicy(
+		deploymentb := deployment.RedefineWithImagePullPolicy(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"),
 			v1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle lifecycle-image-pull-policy test")

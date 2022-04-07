@@ -75,10 +75,8 @@ func RedefineWithMultus(daemonSet *v1.DaemonSet, nadName string) *v1.DaemonSet {
 }
 
 func RedefineWithImagePullPolicy(daemonSet *v1.DaemonSet, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
-	if len(daemonSet.Spec.Template.Spec.Containers) > 0 {
-		for index := range daemonSet.Spec.Template.Spec.Containers {
-			daemonSet.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
-		}
+	for index := range daemonSet.Spec.Template.Spec.Containers {
+		daemonSet.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
 	}
 
 	return daemonSet

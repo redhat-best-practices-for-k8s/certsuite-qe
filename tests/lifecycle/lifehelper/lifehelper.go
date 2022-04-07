@@ -233,11 +233,9 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 }
 
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
-	daemonSet := daemonset.RedefineWithImagePullPolicy(
+	return daemonset.RedefineWithImagePullPolicy(
 		DefineDaemonSet(lifeparameters.LifecycleNamespace, image,
 			lifeparameters.TestDeploymentLabels, name), pullPolicy)
-
-	return daemonSet
 }
 
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.

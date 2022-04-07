@@ -12,20 +12,20 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, error) {
-	daemonSet, err := APIClient.DaemonSets(operatorNamespace).Get(
+const daemonSetReadyRetryInterval = 5 * time.Second
+
+func isDaemonSetReady(namespace string, name string) (bool, error) {
+	daemonSet, err := APIClient.DaemonSets(namespace).Get(
 		context.Background(),
-		daemonSetName,
+		name,
 		metav1.GetOptions{},
 	)
 	if err != nil {
 		return false, err
 	}
 
-	if daemonSet.Status.NumberReady > 0 {
-		if daemonSet.Status.NumberUnavailable == 0 {
-			return true, nil
-		}
+	if daemonSet.Status.NumberReady > 0 && daemonSet.Status.NumberUnavailable == 0 {
+		return true, nil
 	}
 
 	return false, nil
@@ -34,10 +34,7 @@ func isDaemonSetReady(operatorNamespace string, daemonSetName string) (bool, err
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and wait until all  replicas are up and running.
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := APIClient.DaemonSets(daemonSet.Namespace).Create(
-		context.Background(),
-		daemonSet,
-		metav1.CreateOptions{})
-
+		context.Background(), daemonSet, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
@@ -52,7 +49,7 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 		}
 
 		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "DaemonSet is not ready")
+	}, timeout, daemonSetReadyRetryInterval).Should(Equal(true), "DaemonSet is not ready")
 
 	return nil
 }

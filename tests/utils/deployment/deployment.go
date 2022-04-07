@@ -159,10 +159,8 @@ func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]str
 }
 
 func RedefineWithImagePullPolicy(deployment *v1.Deployment, pullPolicy corev1.PullPolicy) *v1.Deployment {
-	if len(deployment.Spec.Template.Spec.Containers) > 0 {
-		for index := range deployment.Spec.Template.Spec.Containers {
-			deployment.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
-		}
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
 	}
 
 	return deployment
