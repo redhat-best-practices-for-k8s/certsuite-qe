@@ -40,14 +40,18 @@ var (
 	ContainerNameOnlyRhel7OpenJdk       = "openjdk-11-rhel7/"
 	ContainerRepoOnlyOpenJdk            = "/openjdk"
 
-	TestCaseOperatorSkipRegEx          = "container-is-certified helmchart-is-certified"
-	TestCaseOperatorAffiliatedCertName = "affiliated-certification affiliated-certification-operator-is-certified"
-	CertifiedOperatorGroup             = "certified-operators"
-	OperatorSourceNamespace            = "openshift-marketplace"
-	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
-	UncertifiedOperatorPrefixNginx     = "nginx-operator"
-	ExistingOperatorNamespace          = "tnf"
-	CertifiedOperatorPrefixPostgres    = "postgresoperator"
-	CertifiedOperatorPrefixDatadog     = "datadog-operator"
-	UncertifiedOperatorBarFoo          = "bar/foo"
+	TestCaseOperatorSkipRegEx           = "container-is-certified helmchart-is-certified"
+	TestCaseOperatorAffiliatedCertName  = "affiliated-certification affiliated-certification-operator-is-certified"
+	OperatorGroupName                   = "affiliatedcert-test-operator-group"
+	CertifiedOperatorGroup              = "certified-operators"
+	CommunityOperatorGroup              = "community-operators"
+	OperatorSourceNamespace             = "openshift-marketplace"
+	OperatorLabel                       = map[string]string{"test-network-function.com/operator": "target"}
+	UncertifiedOperatorPrefixFalcon     = "falcon-operator"
+	UncertifiedOperatorDeploymentFalcon = "falcon-operator-controller-manager"
+	CertifiedOperatorPrefixPostgres     = "postgresoperator"
+	CertifiedOperatorDeploymentPostgres = "pgo"
+	CertifiedOperatorPrefixDatadog      = "datadog-operator"
+	CertifiedOperatorDeploymentDatadog  = "datadog-operator-manager"
+	UncertifiedOperatorBarFoo           = "bar/foo"
 )
