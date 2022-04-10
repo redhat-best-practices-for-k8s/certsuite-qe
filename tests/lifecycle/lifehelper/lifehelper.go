@@ -18,7 +18,6 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
 
 	. "github.com/onsi/gomega"
 )
@@ -209,32 +208,9 @@ func EnableMasterScheduling(scheduleable bool) error {
 	return err
 }
 
-func DefineDaemonSet(namespace string, image string, label map[string]string, name string) *v1.DaemonSet {
-	return &v1.DaemonSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace},
-		Spec: v1.DaemonSetSpec{
-			Selector: &metav1.LabelSelector{
-				MatchLabels: label,
-			},
-			Template: corev1.PodTemplateSpec{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:   "testpod-",
-					Labels: label,
-				},
-				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
-					Containers: []corev1.Container{
-						{
-							Name:    "test",
-							Image:   image,
-							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
-}
-
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
 	return daemonset.RedefineWithImagePullPolicy(
-		DefineDaemonSet(lifeparameters.LifecycleNamespace, image,
+		daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace, image,
 			lifeparameters.TestDeploymentLabels, name), pullPolicy)
 }
 

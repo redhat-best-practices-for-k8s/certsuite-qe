@@ -24,7 +24,6 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					NodeSelector:                  label,
 					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
 					Containers: []corev1.Container{
 						{

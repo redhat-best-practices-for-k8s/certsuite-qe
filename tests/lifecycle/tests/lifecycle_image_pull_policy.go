@@ -7,6 +7,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	v1 "k8s.io/api/core/v1"
@@ -152,7 +153,7 @@ var _ = Describe("lifecycle lifecycle-image-pull-policy", func() {
 		// and you don't specify the tag for the container image,
 		// imagePullPolicy is automatically set to Always;
 		By("Define DaemonSet without ImagePullPolicy")
-		daemonSet := lifehelper.DefineDaemonSet(
+		daemonSet := daemonset.DefineDaemonSet(
 			lifeparameters.LifecycleNamespace,
 			"registry.access.redhat.com/ubi8/ubi",
 			lifeparameters.TestDeploymentLabels, "lifecycleds")
