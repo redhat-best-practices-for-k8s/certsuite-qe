@@ -59,7 +59,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.OperatorSourceNamespace,
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon)
 
 				return err == nil
@@ -87,7 +87,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.CertifiedOperatorPrefixPostgres)
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.OperatorSourceNamespace,
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorDeploymentPostgres)
 
 				return err == nil
@@ -115,7 +115,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.CertifiedOperatorPrefixDatadog)
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.OperatorSourceNamespace,
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorDeploymentDatadog)
 
 				return err == nil
