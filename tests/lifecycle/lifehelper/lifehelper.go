@@ -9,6 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
@@ -205,6 +206,12 @@ func EnableMasterScheduling(scheduleable bool) error {
 		scheduler, metav1.UpdateOptions{})
 
 	return err
+}
+
+func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
+	return daemonset.RedefineWithImagePullPolicy(
+		daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace, image,
+			lifeparameters.TestDeploymentLabels, name), pullPolicy)
 }
 
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.

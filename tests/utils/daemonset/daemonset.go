@@ -9,10 +9,10 @@ import (
 	"k8s.io/utils/pointer"
 )
 
-func DefineDaemonSet(namespace string, image string, label map[string]string) *v1.DaemonSet {
+func DefineDaemonSet(namespace string, image string, label map[string]string, name string) *v1.DaemonSet {
 	return &v1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "daemonsetnetworkingput",
+			Name:      name,
 			Namespace: namespace},
 		Spec: v1.DaemonSetSpec{
 			Selector: &metav1.LabelSelector{
@@ -24,7 +24,6 @@ func DefineDaemonSet(namespace string, image string, label map[string]string) *v
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					NodeSelector:                  label,
 					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
 					Containers: []corev1.Container{
 						{
@@ -69,6 +68,14 @@ func RedefineWithPrivilegeAndHostNetwork(daemonSet *v1.DaemonSet) *v1.DaemonSet 
 func RedefineWithMultus(daemonSet *v1.DaemonSet, nadName string) *v1.DaemonSet {
 	daemonSet.Spec.Template.Annotations = map[string]string{
 		"k8s.v1.cni.cncf.io/networks": fmt.Sprintf(`[ { "name": "%s" } ]`, nadName),
+	}
+
+	return daemonSet
+}
+
+func RedefineWithImagePullPolicy(daemonSet *v1.DaemonSet, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
+	for index := range daemonSet.Spec.Template.Spec.Containers {
+		daemonSet.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
 	}
 
 	return daemonSet
