@@ -35,7 +35,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	})
 
 	// 48120
-	It("One deployment, one daemonSet, no nodeselector nor node affinity", func() {
+	It("One deployment, one daemonSet, no nodeSelector nor nodeAffinity", func() {
 
 		By("Define Deployment")
 		deployment := lifehelper.DefineDeployment(1, 1, "lifecycledp")
@@ -143,7 +143,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	})
 
 	// 48472
-	It("One deployment, one daemonSet, one pod with nodeAffinity [negative]", func() {
+	It("One deployment, one daemonSet with nodeSelector [negative]", func() {
 
 		By("Define Deployment without nodeAffinity/ nodeSelector")
 		deployment := lifehelper.DefineDeployment(1, 1, "lifecycledp")
