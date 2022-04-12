@@ -165,3 +165,29 @@ func RedefineWithImagePullPolicy(deployment *v1.Deployment, pullPolicy corev1.Pu
 
 	return deployment
 }
+
+func RedefineWithNodeSelector(deployment *v1.Deployment, nodeSelector map[string]string) *v1.Deployment {
+	deployment.Spec.Template.Spec.NodeSelector = nodeSelector
+
+	return deployment
+}
+
+func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deployment {
+	deployment.Spec.Template.Spec.Affinity = &corev1.Affinity{
+		NodeAffinity: &corev1.NodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+				NodeSelectorTerms: []corev1.NodeSelectorTerm{
+					{
+						MatchExpressions: []corev1.NodeSelectorRequirement{
+							{
+								Key:      key,
+								Operator: corev1.NodeSelectorOpExists,
+							},
+						},
+					},
+				},
+			},
+		}}
+
+	return deployment
+}
