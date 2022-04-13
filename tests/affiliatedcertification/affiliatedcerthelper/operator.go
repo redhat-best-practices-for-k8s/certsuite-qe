@@ -3,11 +3,13 @@ package affiliatedcerthelper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/golang/glog"
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -105,4 +107,91 @@ func IsOperatorInstalled(namespace string, operatorDeploymentName string) error 
 	}
 
 	return nil
+}
+
+func DeployRHCertifiedOperatorSource(ocpVersion string) error {
+	err := globalhelper.APIClient.Create(context.TODO(),
+		&v1alpha1.CatalogSource{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "certified-operators",
+				Namespace: "openshift-marketplace",
+			},
+			Spec: v1alpha1.CatalogSourceSpec{
+				SourceType:  "grpc",
+				Image:       "registry.redhat.io/redhat/certified-operator-index:v" + ocpVersion,
+				DisplayName: "redhat-certified",
+				Publisher:   "Redhat",
+				Secrets:     []string{"redhat-registry-secret", "redhat-connect-registry-secret"},
+				UpdateStrategy: &v1alpha1.UpdateStrategy{
+					RegistryPoll: &v1alpha1.RegistryPoll{
+						Interval: &metav1.Duration{
+							Duration: 30 * time.Minute}},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("can not deploy catalog source %w", err)
+	}
+
+	return nil
+}
+
+func DisableCatalogSource(name string) error {
+	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
+		"cluster",
+		types.MergePatchType,
+		[]byte("{\"spec\":{\"sources\":[{\"disabled\": true,\"name\": \""+name+"\"}]}}"),
+		metav1.PatchOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("unable to disable catalog source: %w", err)
+	}
+
+	return nil
+}
+
+func DisableDefaultCatalogSources() error {
+	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
+		"cluster",
+		types.JSONPatchType,
+		[]byte("[{\"op\": \"add\", \"path\": \"/spec/disableAllDefaultSources\", \"value\": true}]"),
+		metav1.PatchOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("unable to disable default catalog sources: %w", err)
+	}
+
+	return nil
+}
+
+func EnableDefaultCatalogSources() error {
+	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
+		"cluster",
+		types.JSONPatchType,
+		[]byte("[{\"op\": \"add\", \"path\": \"/spec/disableAllDefaultSources\", \"value\": false}]"),
+		metav1.PatchOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("unable to disable default catalog sources: %w", err)
+	}
+
+	return nil
+}
+
+func IsCatalogSourceEnabled(name string) bool {
+	_, err := globalhelper.APIClient.CatalogSources("openshift-marketplace").Get(context.TODO(), name, metav1.GetOptions{})
+
+	return err == nil
+}
+
+func DeleteCatalogSource(name string) error {
+	return globalhelper.APIClient.CatalogSources("openshift-marketplace").Delete(
+		context.TODO(),
+		name,
+		metav1.DeleteOptions{},
+	)
 }
