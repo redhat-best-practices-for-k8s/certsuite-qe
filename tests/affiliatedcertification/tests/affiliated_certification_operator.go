@@ -129,17 +129,20 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
+		By("Deploy operator with uncertified version if not already deployed")
 		// k10-kasten-operator: in certified-operators group, version is not certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.UncertifiedOperatorDeploymentK10) != nil {
 
 			By("Deploy alternate operator catalog source")
 
-			err = affiliatedcerthelper.DisableDefaultCatalogSources()
+			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
 			Expect(err).ToNot(HaveOccurred(), "Error disabling "+
 				affiliatedcertparameters.CertifiedOperatorGroup+" catalog source")
 			Eventually(func() bool {
-				stillEnabled := affiliatedcerthelper.IsCatalogSourceEnabled(affiliatedcertparameters.CertifiedOperatorGroup)
+				stillEnabled := affiliatedcerthelper.IsCatalogSourceEnabled(
+					affiliatedcertparameters.CertifiedOperatorGroup,
+					"openshift-marketplace")
 
 				return !stillEnabled
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
@@ -147,11 +150,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 			err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
 			Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
-
-			// By("Sleep")
-			// time.Sleep(2 * time.Minute)
-
-			By("Deploy" + affiliatedcertparameters.UncertifiedOperatorPrefixK10 + " operator")
 
 			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
 				"k10-kasten-operator",
@@ -172,9 +170,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.UncertifiedOperatorPrefixK10+" is not ready.")
 
 			By("Re-enable default catalog sources")
-
-			err = affiliatedcerthelper.EnableDefaultCatalogSources()
-			Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog sources")
+			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			Expect(err).ToNot(HaveOccurred(), "Error disabling catalog source "+affiliatedcertparameters.CertifiedOperatorGroup)
+			err = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
 		}
 		// add kasten-k10 operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{

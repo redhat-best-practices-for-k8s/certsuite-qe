@@ -152,46 +152,23 @@ func DisableCatalogSource(name string) error {
 	return nil
 }
 
-func DisableDefaultCatalogSources() error {
+func EnableCatalogSource(name string) error {
 	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
 		"cluster",
-		types.JSONPatchType,
-		[]byte("[{\"op\": \"add\", \"path\": \"/spec/disableAllDefaultSources\", \"value\": true}]"),
+		types.MergePatchType,
+		[]byte("{\"spec\":{\"sources\":[{\"disabled\": false,\"name\": \""+name+"\"}]}}"),
 		metav1.PatchOptions{},
 	)
 
 	if err != nil {
-		return fmt.Errorf("unable to disable default catalog sources: %w", err)
+		return fmt.Errorf("unable to enable catalog source: %w", err)
 	}
 
 	return nil
 }
 
-func EnableDefaultCatalogSources() error {
-	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
-		"cluster",
-		types.JSONPatchType,
-		[]byte("[{\"op\": \"add\", \"path\": \"/spec/disableAllDefaultSources\", \"value\": false}]"),
-		metav1.PatchOptions{},
-	)
-
-	if err != nil {
-		return fmt.Errorf("unable to disable default catalog sources: %w", err)
-	}
-
-	return nil
-}
-
-func IsCatalogSourceEnabled(name string) bool {
-	_, err := globalhelper.APIClient.CatalogSources("openshift-marketplace").Get(context.TODO(), name, metav1.GetOptions{})
+func IsCatalogSourceEnabled(name, namespace string) bool {
+	_, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 
 	return err == nil
-}
-
-func DeleteCatalogSource(name string) error {
-	return globalhelper.APIClient.CatalogSources("openshift-marketplace").Delete(
-		context.TODO(),
-		name,
-		metav1.DeleteOptions{},
-	)
 }
