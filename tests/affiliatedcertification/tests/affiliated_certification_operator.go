@@ -169,7 +169,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.UncertifiedOperatorPrefixK10+" is not ready.")
 
-			By("Re-enable default catalog sources")
+			By("Re-enable default catalog source")
 			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
 			Expect(err).ToNot(HaveOccurred(), "Error disabling catalog source "+affiliatedcertparameters.CertifiedOperatorGroup)
 			err = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
