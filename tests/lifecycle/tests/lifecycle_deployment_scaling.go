@@ -39,7 +39,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 			lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-deployment-scaling")
+		By("Start lifecycle-deployment-scaling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
