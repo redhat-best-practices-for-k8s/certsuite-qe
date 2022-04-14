@@ -43,14 +43,14 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deployment := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(2, 1, "lifecycleput"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-high-availability test")
+		By("Start lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -62,7 +62,6 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 48495
@@ -75,22 +74,22 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create first deployment")
-		lifecycleputone := deployment.RedefineWithPodAntiAffinity(
+		deploymenta := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(2, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(lifecycleputone, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		lifecycleputtwo := deployment.RedefineWithPodAntiAffinity(
+		deploymentb := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(2, 1, "lifecycleputtwo"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(lifecycleputtwo, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-high-availability test")
+		By("Start lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -102,7 +101,6 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 48499
@@ -115,12 +113,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		lifecycleputone := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		deployment := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(lifecycleputone, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-high-availability test")
+		By("Start lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -132,7 +130,6 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 48500
@@ -145,18 +142,18 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create first deployment")
-		lifecycleputone := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		deploymenta := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(lifecycleputone, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		lifecycleputtwo := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		deploymentb := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(lifecycleputtwo, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-high-availability test")
+		By("Start lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -180,14 +177,14 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		lifecycleputone := deployment.RedefineWithPodAntiAffinity(
+		deployment := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(1, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(lifecycleputone, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-high-availability test")
+		By("Start lifecycle-high-availability test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -199,6 +196,5 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			lifeparameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })

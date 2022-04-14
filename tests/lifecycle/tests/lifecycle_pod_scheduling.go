@@ -50,7 +50,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-scheduling test")
+		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -74,7 +74,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-scheduling test")
+		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -98,7 +98,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-scheduling test")
+		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -128,7 +128,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-scheduling test")
+		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -159,7 +159,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-scheduling test")
+		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),

@@ -68,5 +68,4 @@ var _ = AfterSuite(func() {
 
 	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
 	Expect(err).ToNot(HaveOccurred())
-
 })
