@@ -48,7 +48,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		// falcon-operator: not in certified-operators group in catalog, for negative test cases
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.UncertifiedOperatorDeploymentFalcon) != nil {
-			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			err = affiliatedcerthelper.DeployOperatorSubscription(
 				"falcon-operator",
 				"alpha",
 				affiliatedcertparameters.TestCertificationNameSpace,
@@ -76,7 +76,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		// kubeturbo-certified: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.CertifiedOperatorDeploymentKubeturbo) != nil {
-			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			err = affiliatedcerthelper.DeployOperatorSubscription(
 				"kubeturbo-certified",
 				"stable",
 				affiliatedcertparameters.TestCertificationNameSpace,
@@ -104,7 +104,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.CertifiedOperatorDeploymentArtifactoryHa) != nil {
-			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			err = affiliatedcerthelper.DeployOperatorSubscription(
 				"openshiftartifactoryha-operator",
 				"alpha",
 				affiliatedcertparameters.TestCertificationNameSpace,
@@ -151,7 +151,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
 			Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
-			err = affiliatedcerthelper.DeployAndVerifyOperatorSubscription(
+			err = affiliatedcerthelper.DeployOperatorSubscription(
 				"k10-kasten-operator",
 				"stable",
 				affiliatedcertparameters.TestCertificationNameSpace,

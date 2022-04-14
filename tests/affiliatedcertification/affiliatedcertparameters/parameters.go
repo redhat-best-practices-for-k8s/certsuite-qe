@@ -55,5 +55,4 @@ var (
 	CertifiedOperatorDeploymentArtifactoryHa = "artifactory-ha-operatorvi"
 	UncertifiedOperatorPrefixK10             = "k10-kasten-operator"
 	UncertifiedOperatorDeploymentK10         = "k10-kasten-operator-controller-manager"
-	UncertifiedOperatorBarFoo                = "bar/foo"
 )

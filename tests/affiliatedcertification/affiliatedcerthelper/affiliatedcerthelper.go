@@ -184,8 +184,7 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 	return nil
 }
 
-// Deploys an operator and returns when its deployment is confirmed to exist.
-func DeployAndVerifyOperatorSubscription(operatorPackage, chanel, namespace, group,
+func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
 	sourceNamespace string) error {
 	operatorSubscription := utils.DefineSubscription(
 		operatorPackage+"-subscription",
