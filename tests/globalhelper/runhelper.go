@@ -6,7 +6,6 @@ import (
 	"os/exec"
 
 	"github.com/golang/glog"
-
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 

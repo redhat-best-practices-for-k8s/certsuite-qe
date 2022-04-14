@@ -291,6 +291,24 @@ func GetClusterMultusInterfaces() ([]string, error) {
 	return lastMatch, nil
 }
 
+func WaitUntilDebugPodsAreRemovedFromDefaultNamespace() int {
+	var debugPodList []string
+
+	podList, err := globalhelper.APIClient.Pods("default").List(context.Background(), metav1.ListOptions{})
+
+	if err == nil {
+		for _, podFromList := range podList.Items {
+			if strings.HasPrefix(podFromList.Name, "debug-") {
+				debugPodList = append(debugPodList, podFromList.Name)
+			}
+		}
+
+		return len(debugPodList)
+	}
+
+	return 1
+}
+
 func findListIntersections(listA []string, listB []string) []string {
 	var overlap []string
 
