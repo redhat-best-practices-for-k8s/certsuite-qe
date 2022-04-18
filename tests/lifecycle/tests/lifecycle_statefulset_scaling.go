@@ -12,10 +12,10 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("lifecycle-deployment-scaling", func() {
+var _ = Describe("lifecycle-statefulset-scaling", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfDeploymentScalingTcName)
+		lifeparameters.TnfStatefulSetScalingTcName)
 
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
@@ -30,14 +30,14 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 47398
-	It("One deployment, one pod", func() {
-		By("Define Deployment")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(lifehelper.DefineDeployment(1, 1, "lifecycleput"),
-			lifeparameters.WaitingTime)
+	// 45439
+	It("One statefulSet, one pod", func() {
+		By("Define statefulSet")
+		statefulset := lifehelper.DefineStatefulSet("lifecyclesf")
+		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("start lifecycle lifecycle-deployment-scaling")
+		By("start lifecycle-statefulset-scaling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -46,9 +46,8 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfDeploymentScalingTcName,
+			lifeparameters.TnfStatefulSetScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })
