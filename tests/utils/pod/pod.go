@@ -3,6 +3,7 @@ package pod
 import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
 )
 
@@ -22,6 +23,25 @@ func DefinePod(podName string, namespace string, image string) *corev1.Pod {
 
 func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod {
 	pod.ObjectMeta.Labels = label
+
+	return pod
+}
+
+func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
+	if len(pod.Spec.Containers) > 0 {
+		for index := range pod.Spec.Containers {
+			pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+				Handler: corev1.Handler{
+					TCPSocket: &corev1.TCPSocketAction{
+						Port: intstr.IntOrString{
+							IntVal: 8080,
+						},
+					},
+				},
+				InitialDelaySeconds: 60,
+			}
+		}
+	}
 
 	return pod
 }

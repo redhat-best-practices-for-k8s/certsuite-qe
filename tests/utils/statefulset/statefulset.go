@@ -4,6 +4,7 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
 )
 
@@ -36,6 +37,25 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 // RedefineWithReplicaNumber redefines statefulSet with requested replica number.
 func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) *v1.StatefulSet {
 	statefulSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+
+	return statefulSet
+}
+
+func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+	if len(statefulSet.Spec.Template.Spec.Containers) > 0 {
+		for index := range statefulSet.Spec.Template.Spec.Containers {
+			statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+				Handler: corev1.Handler{
+					TCPSocket: &corev1.TCPSocketAction{
+						Port: intstr.IntOrString{
+							IntVal: 8080,
+						},
+					},
+				},
+				InitialDelaySeconds: 60,
+			}
+		}
+	}
 
 	return statefulSet
 }

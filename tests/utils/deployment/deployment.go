@@ -7,6 +7,7 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/pointer"
 )
 
@@ -188,6 +189,25 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 				},
 			},
 		}}
+
+	return deployment
+}
+
+func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
+	if len(deployment.Spec.Template.Spec.Containers) > 0 {
+		for index := range deployment.Spec.Template.Spec.Containers {
+			deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+				Handler: corev1.Handler{
+					TCPSocket: &corev1.TCPSocketAction{
+						Port: intstr.IntOrString{
+							IntVal: 8080,
+						},
+					},
+				},
+				InitialDelaySeconds: 60,
+			}
+		}
+	}
 
 	return deployment
 }
