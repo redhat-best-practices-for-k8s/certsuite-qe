@@ -31,13 +31,15 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 	})
 
 	// 47398
-	It("One deployment, one pod", func() {
+	It("One deployment, one pod, one container, scale in and out", func() {
+
 		By("Define Deployment")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(lifehelper.DefineDeployment(1, 1, "lifecycleput"),
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
+			lifehelper.DefineDeployment(1, 1, "lifecycleput"),
 			lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("start lifecycle lifecycle-deployment-scaling")
+		By("Start lifecycle-deployment-scaling test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -49,6 +51,5 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 			lifeparameters.TnfDeploymentScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })

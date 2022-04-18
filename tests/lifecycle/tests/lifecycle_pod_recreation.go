@@ -49,14 +49,14 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
 		By("Define & create deployment")
-		deploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deployment := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-recreation test")
+		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -68,7 +68,6 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47406
@@ -82,22 +81,22 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
 		By("Define & create first deployment")
-		firstDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deploymenta := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		secondDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deploymentb := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputtwo"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(secondDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-recreation test")
+		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -109,7 +108,6 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47407
@@ -122,14 +120,14 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		}
 
 		By("Define & create deployment")
-		deploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deployment := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(schedulableNodes, 1, "lifecycleput"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-recreation test")
+		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -141,7 +139,6 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47408
@@ -157,22 +154,22 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment
 
 		By("Define & create first deployment")
-		firstDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deploymenta := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputone"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		secondDeploymentStruct := deployment.RedefineWithPodAntiAffinity(
+		deploymentb := deployment.RedefineWithPodAntiAffinity(
 			lifehelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputtwo"),
 			lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(secondDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-recreation test")
+		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -184,6 +181,5 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })

@@ -26,15 +26,16 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 	// 47311
 	It("One deployment, one pod, with one container that has preStop field configured", func() {
+
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
+		deployment, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(1, 1, "lifecycleput"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(preStopDeploymentStruct, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-container-shutdown test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -46,18 +47,18 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47315
 	It("One deployment, one pod, with one container that does not have preStop field configured [negative]", func() {
-		By("Define deployment without prestop field configured")
-		deploymentStructWithOutPreStop := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentStructWithOutPreStop, lifeparameters.WaitingTime)
+		By("Define deployment without prestop field configured")
+		deployment := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-container-shutdown test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -69,21 +70,21 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47382
 	It("One deployment, several pods, several containers that have preStop field configured", func() {
+
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct, err := deployment.RedefineAllContainersWithPreStopSpec(
+		deployment, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			preStopDeploymentStruct, lifeparameters.WaitingTime)
+			deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-container-shutdown test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -99,25 +100,26 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 	// 47383
 	It("Two deployments, several pods, several containers that have preStop field configured", func() {
+
 		By("Define first deployment with preStop field configured")
-		preStopDeploymentStructA, err := deployment.RedefineAllContainersWithPreStopSpec(
+		deploymenta, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			preStopDeploymentStructA, lifeparameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with preStop field configured")
-		preStopDeploymentStructB, err := deployment.RedefineAllContainersWithPreStopSpec(
+		deploymentb, err := deployment.RedefineAllContainersWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleputtwo"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			preStopDeploymentStructB, lifeparameters.WaitingTime)
+			deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-container-shutdown test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -129,21 +131,21 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47384
 	It("One deployment, several pods, several containers one without preStop field configured [negative]", func() {
+
 		By("Define deployment with preStop field configured")
-		preStopDeploymentStruct, err := deployment.RedefineFirstContainerWithPreStopSpec(
+		deployment, err := deployment.RedefineFirstContainerWithPreStopSpec(
 			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			preStopDeploymentStruct, lifeparameters.WaitingTime)
+			deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-container-shutdown test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -159,18 +161,18 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 	// 47385
 	It("Two deployments, several pods, several containers that don't have preStop field configured [negative]", func() {
-		By("Define first deployment")
+
+		By("Define & create first deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define second deployment")
-
+		By("Define & create second deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			lifehelper.DefineDeployment(3, 2, "lifecycleputtwo"), lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-container-shutdown test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),

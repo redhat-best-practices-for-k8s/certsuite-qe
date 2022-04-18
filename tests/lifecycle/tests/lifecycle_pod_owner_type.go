@@ -27,13 +27,14 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 	// 47409
 	It("One ReplicaSet, several pods", func() {
-		By("Define ReplicaSet with replica number")
-		replicaStruct := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
 
-		err := lifehelper.CreateAndWaitUntilReplicaSetIsReady(replicaStruct, lifeparameters.WaitingTime)
+		By("Define ReplicaSet with replica number")
+		replicaSet := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
+
+		err := lifehelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-owner-type test")
+		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -45,21 +46,21 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47424
 	It("Two deployments, several pods", func() {
+
 		By("Define deployments")
-		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
+		deploymenta := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		secondDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(secondDeploymentStruct, lifeparameters.WaitingTime)
+		deploymentb := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-owner-type test")
+		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -75,12 +76,13 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 	// 47426
 	It("StatefulSet pod", func() {
+
 		By("Define statefulSet")
-		statefulSetStruct := lifehelper.DefineStatefulSet("lifecyclesf")
-		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulSetStruct, lifeparameters.WaitingTime)
+		statefulSet := lifehelper.DefineStatefulSet("lifecyclesf")
+		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-owner-type test")
+		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -92,18 +94,18 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47429
 	It("One pod, not part of any workload resource [negative]", func() {
+
 		By("Define pod")
-		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
+		pod := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
-		err := lifehelper.CreateAndWaitUntilPodIsReady(podStruct, lifeparameters.WaitingTime)
+		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-owner-type test")
+		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -115,27 +117,27 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 			lifeparameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 47430
 	It("Two deployments, one pod not related to any resource [negative]", func() {
+
 		By("Define deployments")
-		firstDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(firstDeploymentStruct, lifeparameters.WaitingTime)
+		deploymenta := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		secondDeploymentStruct := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(secondDeploymentStruct, lifeparameters.WaitingTime)
+		deploymentb := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		podStruct := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
+		pod := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
-		err = lifehelper.CreateAndWaitUntilPodIsReady(podStruct, lifeparameters.WaitingTime)
+		err = lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle lifecycle-pod-owner-type test")
+		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
