@@ -28,18 +28,16 @@ func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod 
 }
 
 func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
-	if len(pod.Spec.Containers) > 0 {
-		for index := range pod.Spec.Containers {
-			pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-				Handler: corev1.Handler{
-					TCPSocket: &corev1.TCPSocketAction{
-						Port: intstr.IntOrString{
-							IntVal: 8080,
-						},
+	for index := range pod.Spec.Containers {
+		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				TCPSocket: &corev1.TCPSocketAction{
+					Port: intstr.IntOrString{
+						IntVal: 8080,
 					},
 				},
-				InitialDelaySeconds: 60,
-			}
+			},
+			InitialDelaySeconds: 60,
 		}
 	}
 

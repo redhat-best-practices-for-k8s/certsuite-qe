@@ -42,18 +42,16 @@ func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32
 }
 
 func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
-	if len(statefulSet.Spec.Template.Spec.Containers) > 0 {
-		for index := range statefulSet.Spec.Template.Spec.Containers {
-			statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-				Handler: corev1.Handler{
-					TCPSocket: &corev1.TCPSocketAction{
-						Port: intstr.IntOrString{
-							IntVal: 8080,
-						},
+	for index := range statefulSet.Spec.Template.Spec.Containers {
+		statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				TCPSocket: &corev1.TCPSocketAction{
+					Port: intstr.IntOrString{
+						IntVal: 8080,
 					},
 				},
-				InitialDelaySeconds: 60,
-			}
+			},
+			InitialDelaySeconds: 60,
 		}
 	}
 

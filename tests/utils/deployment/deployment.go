@@ -194,18 +194,16 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 }
 
 func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
-	if len(deployment.Spec.Template.Spec.Containers) > 0 {
-		for index := range deployment.Spec.Template.Spec.Containers {
-			deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-				Handler: corev1.Handler{
-					TCPSocket: &corev1.TCPSocketAction{
-						Port: intstr.IntOrString{
-							IntVal: 8080,
-						},
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				TCPSocket: &corev1.TCPSocketAction{
+					Port: intstr.IntOrString{
+						IntVal: 8080,
 					},
 				},
-				InitialDelaySeconds: 60,
-			}
+			},
+			InitialDelaySeconds: 60,
 		}
 	}
 
