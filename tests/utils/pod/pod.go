@@ -25,3 +25,17 @@ func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod 
 
 	return pod
 }
+
+func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
+	for index := range pod.Spec.Containers {
+		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+
+	return pod
+}

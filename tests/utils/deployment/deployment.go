@@ -47,15 +47,13 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 
 // RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
 func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
-	if len(deployment.Spec.Template.Spec.Containers) > 0 {
-		for index := range deployment.Spec.Template.Spec.Containers {
-			deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
-				PreStop: &corev1.Handler{
-					Exec: &corev1.ExecAction{
-						Command: command,
-					},
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PreStop: &corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: command,
 				},
-			}
+			},
 		}
 
 		return deployment, nil
@@ -188,6 +186,20 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 				},
 			},
 		}}
+
+	return deployment
+}
+
+func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
 
 	return deployment
 }
