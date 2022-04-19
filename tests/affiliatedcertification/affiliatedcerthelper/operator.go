@@ -3,6 +3,7 @@ package affiliatedcerthelper
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/golang/glog"
@@ -137,34 +138,27 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	return nil
 }
 
-func DisableCatalogSource(name string) error {
+func setCatalogSource(disable bool, name string) error {
 	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
 		"cluster",
 		types.MergePatchType,
-		[]byte("{\"spec\":{\"sources\":[{\"disabled\": true,\"name\": \""+name+"\"}]}}"),
+		[]byte("{\"spec\":{\"sources\":[{\"disabled\": "+strconv.FormatBool(disable)+",\"name\": \""+name+"\"}]}}"),
 		metav1.PatchOptions{},
 	)
 
 	if err != nil {
-		return fmt.Errorf("unable to disable catalog source: %w", err)
+		return fmt.Errorf("unable to alter catalog source: %w", err)
 	}
 
 	return nil
 }
 
+func DisableCatalogSource(name string) error {
+	return setCatalogSource(true, name)
+}
+
 func EnableCatalogSource(name string) error {
-	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
-		"cluster",
-		types.MergePatchType,
-		[]byte("{\"spec\":{\"sources\":[{\"disabled\": false,\"name\": \""+name+"\"}]}}"),
-		metav1.PatchOptions{},
-	)
-
-	if err != nil {
-		return fmt.Errorf("unable to enable catalog source: %w", err)
-	}
-
-	return nil
+	return setCatalogSource(false, name)
 }
 
 func IsCatalogSourceEnabled(name, namespace string) bool {

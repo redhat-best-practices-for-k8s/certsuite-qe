@@ -75,7 +75,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		// kubeturbo-certified: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorDeploymentKubeturbo) != nil {
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo) != nil {
 			err = affiliatedcerthelper.DeployOperatorSubscription(
 				"kubeturbo-certified",
 				"stable",
@@ -84,19 +84,19 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.OperatorSourceNamespace,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+				affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo)
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorDeploymentKubeturbo)
+					affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo)
 
 				return err == nil
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo+" is not ready.")
+				affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo+" is not ready.")
 		}
 		// add kubeturbo operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
@@ -152,7 +152,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
 			err = affiliatedcerthelper.DeployOperatorSubscription(
-				"k10-kasten-operator",
+				affiliatedcertparameters.UncertifiedOperatorPrefixK10,
 				"stable",
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
@@ -230,11 +230,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operators to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
@@ -267,11 +267,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operator to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo)
 
 		By("Start test")
 
@@ -304,11 +304,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+			affiliatedcertparameters.CertifiedOperatorPrefixDeploymentKubeturbo)
 
 		By("Start test")
 
