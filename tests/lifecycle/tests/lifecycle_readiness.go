@@ -104,7 +104,7 @@ var _ = Describe("lifecycle-readiness", func() {
 	It("One pod with a readiness probe", func() {
 		By("Define pod with a readiness probe")
 		pod := pod.RedefineWithReadinessProbe(pod.RedefinePodWithLabel(
-			lifehelper.DefindPod("lifecycleput"), lifeparameters.TestDeploymentLabels))
+			lifehelper.DefinePod("lifecycleput"), lifeparameters.TestDeploymentLabels))
 		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

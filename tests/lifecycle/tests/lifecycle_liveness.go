@@ -104,7 +104,7 @@ var _ = Describe("lifecycle-liveness", func() {
 	It("One pod with a liveness probe", func() {
 		By("Define pod with a liveness probe")
 		pod := pod.RedefineWithLivenessProbe(pod.RedefinePodWithLabel(
-			lifehelper.DefindPod("lifecycleput"), lifeparameters.TestDeploymentLabels))
+			lifehelper.DefinePod("lifecycleput"), lifeparameters.TestDeploymentLabels))
 		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

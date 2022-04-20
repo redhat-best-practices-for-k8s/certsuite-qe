@@ -56,7 +56,7 @@ func DefineStatefulSet(name string) *v1.StatefulSet {
 		lifeparameters.TestDeploymentLabels)
 }
 
-func DefindPod(name string) *corev1.Pod {
+func DefinePod(name string) *corev1.Pod {
 	return pod.DefinePod(name, lifeparameters.LifecycleNamespace,
 		globalhelper.Configuration.General.TnfImage)
 }
