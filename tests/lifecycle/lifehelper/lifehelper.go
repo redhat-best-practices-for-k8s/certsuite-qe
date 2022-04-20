@@ -2,6 +2,7 @@ package lifehelper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -23,7 +24,11 @@ import (
 )
 
 // DefineDeployment defines a deployment.
-func DefineDeployment(replica int32, containersToAppend int, name string) *v1.Deployment {
+func DefineDeployment(replica int32, containers int, name string) (*v1.Deployment, error) {
+	if containers < 1 {
+		return nil, errors.New("invalid containers number")
+	}
+
 	deploymentStruct := globalhelper.AppendContainersToDeployment(
 		deployment.RedefineWithReplicaNumber(
 			deployment.DefineDeployment(
@@ -31,10 +36,10 @@ func DefineDeployment(replica int32, containersToAppend int, name string) *v1.De
 				lifeparameters.LifecycleNamespace,
 				globalhelper.Configuration.General.TnfImage,
 				lifeparameters.TestDeploymentLabels), replica),
-		containersToAppend,
+		containers-1,
 		globalhelper.Configuration.General.TnfImage)
 
-	return deploymentStruct
+	return deploymentStruct, nil
 }
 
 // RemoveterminationGracePeriod removes terminationGracePeriodSeconds field in a deployment.

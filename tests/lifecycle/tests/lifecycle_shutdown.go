@@ -25,14 +25,17 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	})
 
 	// 47311
-	It("One deployment, one pod, with one container that has preStop field configured", func() {
+	It("One deployment, one pod with preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		deployment, err := deployment.RedefineAllContainersWithPreStopSpec(
-			lifehelper.DefineDeployment(1, 1, "lifecycleput"), lifeparameters.PreStopCommand)
+
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
+			deploymenta, lifeparameters.PreStopCommand)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
@@ -50,12 +53,13 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	})
 
 	// 47315
-	It("One deployment, one pod, with one container that does not have preStop field configured [negative]", func() {
+	It("One deployment, one pod without preStop field configured [negative]", func() {
 
 		By("Define deployment without prestop field configured")
-		deployment := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		deployment, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
@@ -76,12 +80,14 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, several pods, several containers that have preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		deployment, err := deployment.RedefineAllContainersWithPreStopSpec(
-			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
+		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
+			deploymenta, lifeparameters.PreStopCommand)
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deployment, lifeparameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
@@ -102,18 +108,22 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("Two deployments, several pods, several containers that have preStop field configured", func() {
 
 		By("Define first deployment with preStop field configured")
-		deploymenta, err := deployment.RedefineAllContainersWithPreStopSpec(
-			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.PreStopCommand)
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
+			deploymenta, lifeparameters.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with preStop field configured")
-		deploymentb, err := deployment.RedefineAllContainersWithPreStopSpec(
-			lifehelper.DefineDeployment(3, 2, "lifecycleputtwo"), lifeparameters.PreStopCommand)
+		deploymentb, err := lifehelper.DefineDeployment(3, 2, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineAllContainersWithPreStopSpec(
+			deploymentb, lifeparameters.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			deploymentb, lifeparameters.WaitingTime)
@@ -137,12 +147,15 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, several pods, several containers one without preStop field configured [negative]", func() {
 
 		By("Define deployment with preStop field configured")
-		deployment, err := deployment.RedefineFirstContainerWithPreStopSpec(
-			lifehelper.DefineDeployment(3, 2, "lifecycleput"), lifeparameters.PreStopCommand)
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta, err = deployment.RedefineFirstContainerWithPreStopSpec(
+			deploymenta, lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deployment, lifeparameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
@@ -163,13 +176,19 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("Two deployments, several pods, several containers that don't have preStop field configured [negative]", func() {
 
 		By("Define & create first deployment")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			lifehelper.DefineDeployment(3, 2, "lifecycleputone"), lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleputa")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
+		deploymentb, err := lifehelper.DefineDeployment(3, 2, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			lifehelper.DefineDeployment(3, 2, "lifecycleputtwo"), lifeparameters.WaitingTime)
+			deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")

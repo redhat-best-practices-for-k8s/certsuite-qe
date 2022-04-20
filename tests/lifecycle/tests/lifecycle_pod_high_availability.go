@@ -43,11 +43,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deployment := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(2, 1, "lifecycleput"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
@@ -74,17 +75,19 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create first deployment")
-		deploymenta := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(2, 1, "lifecycleputone"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputa")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(2, 1, "lifecycleputtwo"),
-			lifeparameters.TestDeploymentLabels)
+		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -113,7 +116,8 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deployment := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		deployment, err := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -142,13 +146,15 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create first deployment")
-		deploymenta := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -177,11 +183,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deployment := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(1, 1, "lifecycleputone"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleputone")
+		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")

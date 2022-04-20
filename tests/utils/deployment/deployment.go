@@ -46,7 +46,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 }
 
 // RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
-func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
+func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
 			PreStop: &corev1.Handler{
@@ -55,11 +55,9 @@ func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []s
 				},
 			},
 		}
-
-		return deployment, nil
 	}
 
-	return nil, fmt.Errorf("deployment %s does not have any containers", deployment.Name)
+	return deployment
 }
 
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.

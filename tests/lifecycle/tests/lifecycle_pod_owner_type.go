@@ -52,11 +52,15 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("Two deployments, several pods", func() {
 
 		By("Define deployments")
-		deploymenta := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -123,11 +127,15 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("Two deployments, one pod not related to any resource [negative]", func() {
 
 		By("Define deployments")
-		deploymenta := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
