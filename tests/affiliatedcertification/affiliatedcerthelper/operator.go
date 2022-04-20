@@ -3,11 +3,14 @@ package affiliatedcerthelper
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/golang/glog"
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -105,4 +108,61 @@ func IsOperatorInstalled(namespace string, operatorDeploymentName string) error 
 	}
 
 	return nil
+}
+
+func DeployRHCertifiedOperatorSource(ocpVersion string) error {
+	err := globalhelper.APIClient.Create(context.TODO(),
+		&v1alpha1.CatalogSource{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "certified-operators",
+				Namespace: "openshift-marketplace",
+			},
+			Spec: v1alpha1.CatalogSourceSpec{
+				SourceType:  "grpc",
+				Image:       "registry.redhat.io/redhat/certified-operator-index:v" + ocpVersion,
+				DisplayName: "redhat-certified",
+				Publisher:   "Redhat",
+				Secrets:     []string{"redhat-registry-secret", "redhat-connect-registry-secret"},
+				UpdateStrategy: &v1alpha1.UpdateStrategy{
+					RegistryPoll: &v1alpha1.RegistryPoll{
+						Interval: &metav1.Duration{
+							Duration: 30 * time.Minute}},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("can not deploy catalog source %w", err)
+	}
+
+	return nil
+}
+
+func setCatalogSource(disable bool, name string) error {
+	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
+		"cluster",
+		types.MergePatchType,
+		[]byte("{\"spec\":{\"sources\":[{\"disabled\": "+strconv.FormatBool(disable)+",\"name\": \""+name+"\"}]}}"),
+		metav1.PatchOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("unable to alter catalog source: %w", err)
+	}
+
+	return nil
+}
+
+func DisableCatalogSource(name string) error {
+	return setCatalogSource(true, name)
+}
+
+func EnableCatalogSource(name string) error {
+	return setCatalogSource(false, name)
+}
+
+func IsCatalogSourceEnabled(name, namespace string) bool {
+	_, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+
+	return err == nil
 }

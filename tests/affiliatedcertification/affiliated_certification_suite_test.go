@@ -12,9 +12,11 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func TestAffiliatedCertification(t *testing.T) {
@@ -42,7 +44,15 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 
+	By(fmt.Sprintf("Remove %s namespace", affiliatedcertparameters.TestCertificationNameSpace))
+	err := namespaces.DeleteAndWait(
+		globalhelper.APIClient,
+		affiliatedcertparameters.TestCertificationNameSpace,
+		affiliatedcertparameters.Timeout,
+	)
+	Expect(err).ToNot(HaveOccurred())
+
 	By("Remove reports from report directory")
-	err := globalhelper.RemoveContentsFromReportDir()
+	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
 })
