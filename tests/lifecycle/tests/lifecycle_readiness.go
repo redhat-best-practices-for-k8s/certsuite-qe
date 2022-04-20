@@ -31,9 +31,11 @@ var _ = Describe("lifecycle-readiness", func() {
 	// 50145
 	It("One deployment, one pod with a readiness probe", func() {
 		By("Define deployment with a readiness probe")
-		deployment := deployment.RedefineWithReadinessProbe(
-			lifehelper.DefineDeployment(1, 1, "lifecycledp"))
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineWithReadinessProbe(deploymenta)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
@@ -53,14 +55,18 @@ var _ = Describe("lifecycle-readiness", func() {
 	// 50146
 	It("Two deployments, multiple pods each, all have a readiness probe", func() {
 		By("Define first deployment with a readiness probe")
-		deploymenta := deployment.RedefineWithReadinessProbe(
-			lifehelper.DefineDeployment(3, 1, "lifecycledpa"))
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(3, 1, "lifecycledpa")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineWithReadinessProbe(deploymenta)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with a readiness probe")
-		deploymentb := deployment.RedefineWithReadinessProbe(
-			lifehelper.DefineDeployment(3, 1, "lifecycledpb"))
+		deploymentb, err := lifehelper.DefineDeployment(3, 1, "lifecycledpb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithReadinessProbe(deploymentb)
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -148,13 +154,17 @@ var _ = Describe("lifecycle-readiness", func() {
 	// 50150
 	It("Two deployments, one pod each, one without a readiness probe [negative]", func() {
 		By("Define first deployment with a readiness probe")
-		deploymenta := deployment.RedefineWithReadinessProbe(
-			lifehelper.DefineDeployment(1, 1, "lifecycledpa"))
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledpa")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineWithReadinessProbe(deploymenta)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment without a readiness probe")
-		deploymentb := lifehelper.DefineDeployment(1, 1, "lifecycledpb")
+		deploymentb, err := lifehelper.DefineDeployment(1, 1, "lifecycledpb")
+		Expect(err).ToNot(HaveOccurred())
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

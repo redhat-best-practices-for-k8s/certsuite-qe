@@ -27,10 +27,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("One deployment with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deployment := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleput"), v1.PullIfNotPresent)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -51,20 +53,26 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("Several deployments with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployments with ifNotPresent as ImagePullPolicy")
-		deploymenta := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleputa"), v1.PullIfNotPresent)
-
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleputb"), v1.PullIfNotPresent)
+		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb, err := lifehelper.DefineDeployment(1, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithImagePullPolicy(deploymentb, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentc := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleputc"), v1.PullIfNotPresent)
+		deploymentc, err := lifehelper.DefineDeployment(1, 1, "lifecycleputc")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentc = deployment.RedefineWithImagePullPolicy(deploymentc, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentc, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -203,10 +211,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("One deployment with Always as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with 'Always' as ImagePullPolicy")
-		deployment := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleput"), v1.PullAlways)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullAlways)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -227,17 +237,19 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("Two deployments one with Never other with ifNotPresent as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with Never as ImagePullPolicy")
-		deploymenta := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleput"),
-			v1.PullNever)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullNever)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentb := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleputb"),
-			v1.PullIfNotPresent)
+		deploymentb, err := lifehelper.DefineDeployment(1, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithImagePullPolicy(deploymentb, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -267,11 +279,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentb := deployment.RedefineWithImagePullPolicy(
-			lifehelper.DefineDeployment(1, 1, "lifecycleput"),
-			v1.PullIfNotPresent)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")

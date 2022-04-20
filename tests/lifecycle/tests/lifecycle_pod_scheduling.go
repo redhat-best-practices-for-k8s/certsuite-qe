@@ -35,19 +35,13 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	})
 
 	// 48120
-	It("One deployment, one daemonSet, no nodeSelector nor nodeAffinity", func() {
+	It("One deployment, no nodeSelector nor nodeAffinity", func() {
 
 		By("Define Deployment")
-		deployment := lifehelper.DefineDeployment(1, 1, "lifecycledp")
-
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deployment, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define DaemonSet")
-		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace, globalhelper.Configuration.General.TnfImage,
-			lifeparameters.TestDeploymentLabels, "lifecycleds")
-
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
@@ -68,10 +62,14 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment with nodeSelector [negative]", func() {
 
 		By("Define Deployment with nodeSelector")
-		deployment := deployment.RedefineWithNodeSelector(lifehelper.DefineDeployment(1, 1, "lifecycledp"),
-			map[string]string{configSuite.General.CnfNodeLabel: ""})
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithNodeSelector(deploymenta,
+			map[string]string{configSuite.General.CnfNodeLabel: ""})
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
@@ -92,10 +90,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment with nodeAffinity [negative]", func() {
 
 		By("Define Deployment with nodeAffinity")
-		deployment := deployment.RedefineWithNodeAffinity(lifehelper.DefineDeployment(1, 1, "lifecycledp"),
-			configSuite.General.CnfNodeLabel)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithNodeAffinity(deploymenta, configSuite.General.CnfNodeLabel)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
@@ -116,13 +116,17 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("Two deployments, one pod each, one pod with nodeAffinity [negative]", func() {
 
 		By("Define Deployment without nodeAffinity")
-		deploymenta := lifehelper.DefineDeployment(1, 1, "lifecycledpa")
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledpa")
+		Expect(err).ToNot(HaveOccurred())
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define Deployment with nodeAffinity")
-		deploymentb := deployment.RedefineWithNodeAffinity(lifehelper.DefineDeployment(1, 1, "lifecycledpb"),
+		deploymentb, err := lifehelper.DefineDeployment(1, 1, "lifecycledpb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithNodeAffinity(deploymentb,
 			configSuite.General.CnfNodeLabel)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
@@ -143,18 +147,18 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	})
 
 	// 48472
-	It("One deployment, one daemonSet with nodeSelector [negative]", func() {
+	It("One deployment, one daemonSet [negative]", func() {
 
 		By("Define Deployment without nodeAffinity/ nodeSelector")
-		deployment := lifehelper.DefineDeployment(1, 1, "lifecycledp")
-
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deployment, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define daemonSet with nodeSelector")
-		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(
-			daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace, globalhelper.Configuration.General.TnfImage,
-				lifeparameters.TestDeploymentLabels, "lifecycleds"), map[string]string{configSuite.General.CnfNodeLabel: ""})
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Define daemonSet")
+		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace, globalhelper.Configuration.General.TnfImage,
+			lifeparameters.TestDeploymentLabels, "lifecycleds")
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

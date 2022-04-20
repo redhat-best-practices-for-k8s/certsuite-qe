@@ -34,9 +34,11 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 	It("One deployment, one pod, one container, scale in and out", func() {
 
 		By("Define Deployment")
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			lifehelper.DefineDeployment(1, 1, "lifecycleput"),
-			lifeparameters.WaitingTime)
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-deployment-scaling test")

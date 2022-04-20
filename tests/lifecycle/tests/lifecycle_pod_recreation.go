@@ -49,11 +49,12 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
 		By("Define & create deployment")
-		deployment := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
@@ -81,17 +82,19 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
 		By("Define & create first deployment")
-		deploymenta := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputone"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputa")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputtwo"),
-			lifeparameters.TestDeploymentLabels)
+		deploymentb, err := lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -120,11 +123,12 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		}
 
 		By("Define & create deployment")
-		deployment := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(schedulableNodes, 1, "lifecycleput"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(schedulableNodes, 1, "lifecycleput")
+		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
@@ -154,17 +158,19 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment
 
 		By("Define & create first deployment")
-		deploymenta := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputone"),
-			lifeparameters.TestDeploymentLabels)
+		deploymenta, err := lifehelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputa")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb := deployment.RedefineWithPodAntiAffinity(
-			lifehelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputtwo"),
-			lifeparameters.TestDeploymentLabels)
+		deploymentb, err := lifehelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputb")
+		Expect(err).ToNot(HaveOccurred())
+
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, lifeparameters.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
