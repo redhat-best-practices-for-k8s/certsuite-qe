@@ -40,6 +40,20 @@ func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32
 	return statefulSet
 }
 
+func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+	for index := range statefulSet.Spec.Template.Spec.Containers {
+		statefulSet.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+
+	return statefulSet
+}
+
 func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{

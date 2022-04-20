@@ -190,6 +190,20 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 	return deployment
 }
 
+func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+
+	return deployment
+}
+
 func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{

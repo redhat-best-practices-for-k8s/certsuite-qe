@@ -100,7 +100,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One pod, not part of any workload resource [negative]", func() {
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
+		pod := pod.RedefinePodWithLabel(lifehelper.DefinePod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
 		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -132,7 +132,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(lifehelper.DefindPod("lifecyclepod"),
+		pod := pod.RedefinePodWithLabel(lifehelper.DefinePod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
 		err = lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

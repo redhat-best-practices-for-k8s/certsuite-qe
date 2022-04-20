@@ -14,10 +14,10 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
-var _ = Describe("lifecycle-liveness", func() {
+var _ = Describe("lifecycle-readiness", func() {
 
 	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfLivenessTcName)
+		lifeparameters.TnfReadinessTcName)
 
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
@@ -28,15 +28,15 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 50053
-	It("One deployment, one pod with a liveness probe", func() {
-		By("Define deployment with a liveness probe")
-		deployment := deployment.RedefineWithLivenessProbe(
+	// 50145
+	It("One deployment, one pod with a readiness probe", func() {
+		By("Define deployment with a readiness probe")
+		deployment := deployment.RedefineWithReadinessProbe(
 			lifehelper.DefineDeployment(1, 1, "lifecycledp"))
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-liveness test")
+		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -45,26 +45,26 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfLivenessTcName,
+			lifeparameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 50054
-	It("Two deployments, multiple pods each, all have a liveness probe", func() {
-		By("Define first deployment with a liveness probe")
-		deploymenta := deployment.RedefineWithLivenessProbe(
+	// 50146
+	It("Two deployments, multiple pods each, all have a readiness probe", func() {
+		By("Define first deployment with a readiness probe")
+		deploymenta := deployment.RedefineWithReadinessProbe(
 			lifehelper.DefineDeployment(3, 1, "lifecycledpa"))
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define second deployment with a liveness probe")
-		deploymentb := deployment.RedefineWithLivenessProbe(
+		By("Define second deployment with a readiness probe")
+		deploymentb := deployment.RedefineWithReadinessProbe(
 			lifehelper.DefineDeployment(3, 1, "lifecycledpb"))
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-liveness test")
+		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -73,20 +73,20 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfLivenessTcName,
+			lifeparameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 50055
-	It("One statefulSet, one pod with a liveness probe", func() {
-		By("Define statefulSet with a liveness probe")
-		statefulset := statefulset.RedefineWithLivenessProbe(
+	// 50147
+	It("One statefulSet, one pod with a readiness probe", func() {
+		By("Define statefulSet with a readiness probe")
+		statefulset := statefulset.RedefineWithReadinessProbe(
 			lifehelper.DefineStatefulSet("lifecycle-sf"))
 		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-liveness test")
+		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -95,20 +95,20 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfLivenessTcName,
+			lifeparameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 50056
-	It("One pod with a liveness probe", func() {
-		By("Define pod with a liveness probe")
-		pod := pod.RedefineWithLivenessProbe(pod.RedefinePodWithLabel(
+	// 50148
+	It("One pod with a readiness probe", func() {
+		By("Define pod with a readiness probe")
+		pod := pod.RedefineWithReadinessProbe(pod.RedefinePodWithLabel(
 			lifehelper.DefinePod("lifecycleput"), lifeparameters.TestDeploymentLabels))
 		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-liveness test")
+		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -117,21 +117,21 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfLivenessTcName,
+			lifeparameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 50057
-	It("One daemonSet without a liveness probe [negative]", func() {
-		By("Define daemonSet without a liveness probe")
+	// 50149
+	It("One daemonSet without a readiness probe [negative]", func() {
+		By("Define daemonSet without a readiness probe")
 		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace,
 			globalhelper.Configuration.General.TnfImage,
-			lifeparameters.TestDeploymentLabels, "lifecyclesds")
+			lifeparameters.TestDeploymentLabels, "lifecycleds")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-liveness test")
+		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -140,25 +140,25 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfLivenessTcName,
+			lifeparameters.TnfReadinessTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 50058
-	It("Two deployments, one pod each, one without a liveness probe [negative]", func() {
-		By("Define first deployment with a liveness probe")
-		deploymenta := deployment.RedefineWithLivenessProbe(
+	// 50150
+	It("Two deployments, one pod each, one without a readiness probe [negative]", func() {
+		By("Define first deployment with a readiness probe")
+		deploymenta := deployment.RedefineWithReadinessProbe(
 			lifehelper.DefineDeployment(1, 1, "lifecycledpa"))
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define second deployment without a liveness probe")
+		By("Define second deployment without a readiness probe")
 		deploymentb := lifehelper.DefineDeployment(1, 1, "lifecycledpb")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-liveness test")
+		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
 			lifeparameters.LifecycleTestSuiteName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
@@ -167,7 +167,7 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfLivenessTcName,
+			lifeparameters.TnfReadinessTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
