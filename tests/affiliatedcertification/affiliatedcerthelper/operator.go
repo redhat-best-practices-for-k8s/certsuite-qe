@@ -76,17 +76,6 @@ func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error
 	return nil
 }
 
-// IsDeploymentInstalled checks if deployment is installed.
-func IsDeploymentInstalled(operatorNamespace string, operatorDeploymentName string) (bool, error) {
-	_, err := globalhelper.APIClient.Deployments(operatorNamespace).Get(context.Background(),
-		operatorDeploymentName, metav1.GetOptions{})
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
-
 // IsOperatorInstalled validates if the given operator is deployed on the given cluster.
 func IsOperatorInstalled(namespace string, csvPrefix string) error {
 	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))
