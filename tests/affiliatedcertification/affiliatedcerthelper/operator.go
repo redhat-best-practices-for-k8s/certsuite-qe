@@ -88,7 +88,7 @@ func IsDeploymentInstalled(operatorNamespace string, operatorDeploymentName stri
 }
 
 // IsOperatorInstalled validates if the given operator is deployed on the given cluster.
-func IsOperatorInstalled(namespace string, operatorDeploymentName string) error {
+func IsOperatorInstalled(namespace string, csvPrefix string) error {
 	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))
 
 	namespaceExists, err := namespaces.Exists(namespace, globalhelper.APIClient)
@@ -96,15 +96,11 @@ func IsOperatorInstalled(namespace string, operatorDeploymentName string) error 
 		return fmt.Errorf("operator namespace %s doesn't exist", namespace)
 	}
 
-	glog.V(5).Info(fmt.Sprintf("Validate that operator's deployment %s exists", operatorDeploymentName))
-	operatorInstalled, err := IsDeploymentInstalled(namespace, operatorDeploymentName)
+	glog.V(5).Info(fmt.Sprintf("Validate that operator's csv %s exists", csvPrefix))
+	_, err = getCsvByPrefix(csvPrefix, namespace)
 
 	if err != nil {
-		return err
-	}
-
-	if !operatorInstalled {
-		return fmt.Errorf("%s operator's deployment is not installed", operatorDeploymentName)
+		return fmt.Errorf("%s operator's CSV is not installed", csvPrefix)
 	}
 
 	return nil
