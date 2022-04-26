@@ -8,5 +8,5 @@ general:
   tnf_entry_point_script: "run-tnf-container.sh"
   tnf_config_dir: "/tmp/tnf_config"
   tnf_report_dir: "/tmp/tnf_report"
-  tnf_image: "quay.io/testnetworkfunction/test-network-function"
+  tnf_image: "quay.io/testnetworkfunction/cnf-certification-test"
   tnf_image_tag: "latest"

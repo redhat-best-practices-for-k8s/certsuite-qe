@@ -15,9 +15,6 @@ import (
 
 var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(netparameters.TnfNetworkTestCases,
-		netparameters.TnfNodePortTcName)
-
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
@@ -38,11 +35,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.RemoveContentsFromReportDir()
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Wait until default namespace is empty")
-		Eventually(nethelper.WaitUntilDebugPodsAreRemovedFromDefaultNamespace,
-			netparameters.WaitingTime,
-			netparameters.RetryInterval).Should(Equal(0))
-
 	})
 
 	// 45447
@@ -54,15 +46,15 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfNodePortTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseNodePortNetworkName,
+			netparameters.TnfNodePortTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -81,15 +73,15 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfNodePortTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseNodePortNetworkName,
+			netparameters.TnfNodePortTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -111,15 +103,15 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfNodePortTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseNodePortNetworkName,
+			netparameters.TnfNodePortTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -137,15 +129,15 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfNodePortTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseNodePortNetworkName,
+			netparameters.TnfNodePortTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -167,15 +159,15 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfNodePortTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseNodePortNetworkName,
+			netparameters.TnfNodePortTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
