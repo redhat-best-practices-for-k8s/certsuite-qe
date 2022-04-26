@@ -32,7 +32,7 @@ var (
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
 	TestCaseContainerSkipRegEx          = "operator-is-certified helmchart-is-certified"
-	TestCaseContainerAffiliatedCertName = "affiliated-certification affiliated-certification-container-is-certified"
+	TestCaseContainerAffiliatedCertName = "affiliated-certification-container-is-certified"
 	CertifiedContainerNodeJsUbi         = "nodejs-12/ubi8"
 	CertifiedContainerRhel7OpenJdk      = "openjdk-11-rhel7/openjdk"
 	UncertifiedContainerFooBar          = "foo/bar"
@@ -41,7 +41,7 @@ var (
 	ContainerRepoOnlyOpenJdk            = "/openjdk"
 
 	TestCaseOperatorSkipRegEx            = "container-is-certified helmchart-is-certified"
-	TestCaseOperatorAffiliatedCertName   = "affiliated-certification affiliated-certification-operator-is-certified"
+	TestCaseOperatorAffiliatedCertName   = "affiliated-certification-operator-is-certified"
 	OperatorGroupName                    = "affiliatedcert-test-operator-group"
 	CertifiedOperatorGroup               = "certified-operators"
 	CommunityOperatorGroup               = "community-operators"
