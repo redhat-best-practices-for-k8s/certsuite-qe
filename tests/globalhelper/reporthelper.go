@@ -126,7 +126,7 @@ func isTestCaseInRequiredStatusInJunitReport(
 	testCaseName string,
 	status string) bool {
 	for _, tc := range report.Suites[0].Testcases {
-		if strings.Contains(formatTestCaseName(tc.Name), formatTestCaseName(testCaseName)) {
+		if strings.Contains(formatTestCaseName(tc.Name), fmt.Sprintf("[%s]", formatTestCaseName(testCaseName))) {
 			glog.V(5).Info(fmt.Sprintf("test case status %s", tc.Status))
 
 			return tc.Status == status
@@ -141,7 +141,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 	claimReport claim.Root,
 	expectedStatus string) (bool, error) {
 	for testCaseClaim := range claimReport.Claim.Results {
-		if strings.Contains(formatTestCaseName(testCaseClaim), formatTestCaseName(testCaseName)) {
+		if formatTestCaseName(testCaseClaim) == formatTestCaseName(testCaseName) {
 			var testCaseResult []*claim.Result
 
 			encodedTestResult, err := json.Marshal(claimReport.Claim.Results[testCaseClaim])

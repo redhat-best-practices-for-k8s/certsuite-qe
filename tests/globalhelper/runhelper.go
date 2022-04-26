@@ -9,7 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
-func LaunchTests(testSuite string, tcNameForReport string, skipRegEx string) error {
+func LaunchTests(testCaseName string, tcNameForReport string, skipRegEx string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
 		return err
@@ -34,10 +34,10 @@ func LaunchTests(testSuite string, tcNameForReport string, skipRegEx string) err
 		glog.V(5).Info(fmt.Sprintf("set skip regex to %s", skipRegEx))
 	}
 
-	if len(testSuite) > 0 {
+	if len(testCaseName) > 0 {
 		testArgs = append(testArgs, "-f")
-		testArgs = append(testArgs, testSuite)
-		glog.V(5).Info(fmt.Sprintf("add test suite %s", testSuite))
+		testArgs = append(testArgs, testCaseName)
+		glog.V(5).Info(fmt.Sprintf("add test suite %s", testCaseName))
 	} else {
 		panic("No test suite name provided.")
 	}
@@ -53,7 +53,7 @@ func LaunchTests(testSuite string, tcNameForReport string, skipRegEx string) err
 	}
 
 	if debugTnf {
-		outfile := Configuration.CreateLogFile(testSuite, tcNameForReport)
+		outfile := Configuration.CreateLogFile(testCaseName, tcNameForReport)
 
 		defer outfile.Close()
 		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))

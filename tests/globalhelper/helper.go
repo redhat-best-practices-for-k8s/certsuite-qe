@@ -272,7 +272,7 @@ func GetStringOfSkipTcs(tcSlice []string, stringToRemove string) string {
 
 	for _, value := range tcSlice {
 		if value != stringToRemove {
-			result = append(result, value)
+			result = append(result, fmt.Sprintf("[%s]", value))
 		}
 	}
 

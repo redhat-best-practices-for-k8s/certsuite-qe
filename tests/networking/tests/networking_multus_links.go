@@ -16,9 +16,6 @@ import (
 
 var _ = Describe("Networking custom namespace,", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(netparameters.TnfNetworkTestCases,
-		netparameters.TnfMultusIpv4TcName)
-
 	var multusInterfaces []string
 
 	execute.BeforeAll(func() {
@@ -50,10 +47,6 @@ var _ = Describe("Networking custom namespace,", func() {
 		if len(multusInterfaces) < 1 {
 			Skip("There is no enough Multus interfaces available")
 		}
-		By("Wait until default namespace is empty")
-		Eventually(nethelper.WaitUntilDebugPodsAreRemovedFromDefaultNamespace,
-			netparameters.WaitingTime,
-			netparameters.RetryInterval).Should(Equal(0))
 
 	})
 
@@ -71,15 +64,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -103,15 +96,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 		time.Sleep(30 * time.Second)
@@ -140,15 +133,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -166,15 +159,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -206,15 +199,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -247,15 +240,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -274,15 +267,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -306,15 +299,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -338,15 +331,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -370,15 +363,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -403,15 +396,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -447,15 +440,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -492,15 +485,15 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.NetworkingTestSuiteName,
+			netparameters.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc,
+			"",
 		)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TestCaseMultusConnectivityName,
+			netparameters.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
