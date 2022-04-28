@@ -19,8 +19,7 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	PreStopCommand         = []string{"/bin/sh", "-c", "killall -0 tail"}
-	LifecycleTestSuiteName = "lifecycle"
+	PreStopCommand = []string{"/bin/sh", "-c", "killall -0 tail"}
 
 	TnfShutdownTcName               = "lifecycle-container-shutdown"
 	TnfDeploymentScalingTcName      = "lifecycle-deployment-scaling"
@@ -33,10 +32,4 @@ var (
 	TnfReadinessTcName              = "lifecycle-readiness"
 	TnfStatefulSetScalingTcName     = "lifecycle-statefulset-scaling"
 	TnfImagePullPolicyTcName        = "lifecycle-image-pull-policy"
-
-	TnfTestCases = []string{TnfPodRecreationTcName, TnfPodSchedulingTcName,
-		TnfDeploymentScalingTcName, TnfTerminationGracePeriodTcName,
-		TnfPodOwnerTypeTcName, TnfShutdownTcName, TnfImagePullPolicyTcName,
-		TnfLivenessTcName, TnfReadinessTcName, TnfStatefulSetScalingTcName,
-		TnfPodHighAvailabilityTcName}
 )

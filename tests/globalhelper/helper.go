@@ -264,17 +264,3 @@ func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, 
 
 	return deployment
 }
-
-// GetStringOfSkipTcs get a slice and a string, removes the string from the slice
-// and returns a joined string.
-func GetStringOfSkipTcs(tcSlice []string, stringToRemove string) string {
-	result := []string{}
-
-	for _, value := range tcSlice {
-		if value != stringToRemove {
-			result = append(result, fmt.Sprintf("[%s]", value))
-		}
-	}
-
-	return strings.Join(result, " ")
-}
