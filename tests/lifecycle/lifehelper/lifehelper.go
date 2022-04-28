@@ -34,10 +34,10 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 			deployment.DefineDeployment(
 				name,
 				lifeparameters.LifecycleNamespace,
-				globalhelper.Configuration.General.TnfImage,
+				globalhelper.Configuration.General.TestImage,
 				lifeparameters.TestDeploymentLabels), replica),
 		containers-1,
-		globalhelper.Configuration.General.TnfImage)
+		globalhelper.Configuration.General.TestImage)
 
 	return deploymentStruct, nil
 }
@@ -50,20 +50,20 @@ func RemoveterminationGracePeriod(deploymentStruct *v1.Deployment) *v1.Deploymen
 func DefineReplicaSet(name string) *v1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
 		lifeparameters.LifecycleNamespace,
-		globalhelper.Configuration.General.TnfImage,
+		globalhelper.Configuration.General.TestImage,
 		lifeparameters.TestDeploymentLabels)
 }
 
 func DefineStatefulSet(name string) *v1.StatefulSet {
 	return statefulset.DefineStatefulSet(name,
 		lifeparameters.LifecycleNamespace,
-		globalhelper.Configuration.General.TnfImage,
+		globalhelper.Configuration.General.TestImage,
 		lifeparameters.TestDeploymentLabels)
 }
 
 func DefinePod(name string) *corev1.Pod {
 	return pod.DefinePod(name, lifeparameters.LifecycleNamespace,
-		globalhelper.Configuration.General.TnfImage)
+		globalhelper.Configuration.General.TestImage)
 }
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and wait until all replicas are ready.

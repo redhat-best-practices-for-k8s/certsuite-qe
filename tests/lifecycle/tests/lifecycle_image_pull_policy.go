@@ -14,8 +14,6 @@ import (
 )
 
 var _ = Describe("lifecycle-image-pull-policy", func() {
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfImagePullPolicyTcName)
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
@@ -37,9 +35,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -79,9 +76,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -96,16 +92,15 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSet with ifNotPresent as ImagePullPolicy")
 		daemonSet := lifehelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycleds", globalhelper.Configuration.General.TnfImage, v1.PullIfNotPresent)
+			"lifecycleds", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -120,28 +115,27 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSets with ifNotPresent as ImagePullPolicy")
 		daemonSeta := lifehelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycledsa", globalhelper.Configuration.General.TnfImage, v1.PullIfNotPresent)
+			"lifecycledsa", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSeta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetb := lifehelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycledsb", globalhelper.Configuration.General.TnfImage, v1.PullIfNotPresent)
+			"lifecycledsb", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetc := lifehelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycledsc", globalhelper.Configuration.General.TnfImage, v1.PullIfNotPresent)
+			"lifecycledsc", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetc, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -167,9 +161,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -195,9 +188,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -221,9 +213,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -256,9 +247,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -273,7 +263,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSet with Never as ImagePullPolicy")
 		daemonSet := lifehelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycleds", globalhelper.Configuration.General.TnfImage, v1.PullNever)
+			"lifecycleds", globalhelper.Configuration.General.TestImage, v1.PullNever)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -289,9 +279,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfImagePullPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

@@ -54,9 +54,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			netparameters.TnfDefaultNetworkTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			"",
-		)
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -86,9 +84,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			netparameters.TnfDefaultNetworkTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			"",
-		)
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -120,9 +116,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			netparameters.TnfDefaultNetworkTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			"",
-		)
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -147,9 +141,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			netparameters.TnfDefaultNetworkTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			"",
-		)
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -186,9 +178,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			netparameters.TnfDefaultNetworkTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			"",
-		)
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

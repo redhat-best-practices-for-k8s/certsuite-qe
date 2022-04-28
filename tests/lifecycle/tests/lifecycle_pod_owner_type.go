@@ -14,8 +14,6 @@ import (
 
 var _ = Describe("lifecycle-pod-owner-type", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodOwnerTypeTcName)
-
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
@@ -36,9 +34,8 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -66,9 +63,8 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -88,9 +84,8 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -111,9 +106,8 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -147,9 +141,8 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

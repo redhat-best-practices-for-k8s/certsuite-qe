@@ -15,9 +15,6 @@ import (
 
 var _ = Describe("lifecycle-pod-high-availability", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfPodHighAvailabilityTcName)
-
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
 		err := lifehelper.EnableMasterScheduling(true)
@@ -53,9 +50,8 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -94,9 +90,8 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -124,9 +119,8 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -161,9 +155,8 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -193,9 +186,8 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
