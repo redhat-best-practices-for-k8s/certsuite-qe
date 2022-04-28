@@ -34,9 +34,7 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 
 	err = globalhelper.LaunchTests(
 		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
-		tcName,
-		affiliatedcertparameters.TestCaseContainerSkipRegEx,
-	)
+		tcName)
 
 	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
 		return fmt.Errorf("error running %s test",
@@ -78,9 +76,7 @@ func SetUpAndRunOperatorCertTest(tcName string, operatorsInfo []string, expected
 
 	err = globalhelper.LaunchTests(
 		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
-		tcName,
-		affiliatedcertparameters.TestCaseOperatorSkipRegEx,
-	)
+		tcName)
 
 	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
 		return fmt.Errorf("error running %s test",

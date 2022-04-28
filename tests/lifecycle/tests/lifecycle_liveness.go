@@ -16,9 +16,6 @@ import (
 
 var _ = Describe("lifecycle-liveness", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfLivenessTcName)
-
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
@@ -40,9 +37,8 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -72,9 +68,8 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -94,9 +89,8 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -116,9 +110,8 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -132,16 +125,15 @@ var _ = Describe("lifecycle-liveness", func() {
 	It("One daemonSet without a liveness probe [negative]", func() {
 		By("Define daemonSet without a liveness probe")
 		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace,
-			globalhelper.Configuration.General.TnfImage,
+			globalhelper.Configuration.General.TestImage,
 			lifeparameters.TestDeploymentLabels, "lifecyclesds")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -170,9 +162,8 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

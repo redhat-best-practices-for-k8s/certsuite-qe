@@ -14,9 +14,6 @@ import (
 
 var _ = Describe("lifecycle-deployment-scaling", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfDeploymentScalingTcName)
-
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
@@ -43,9 +40,8 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 
 		By("Start lifecycle-deployment-scaling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfDeploymentScalingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

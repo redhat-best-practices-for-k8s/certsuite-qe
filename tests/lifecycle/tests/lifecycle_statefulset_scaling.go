@@ -14,9 +14,6 @@ import (
 
 var _ = Describe("lifecycle-statefulset-scaling", func() {
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases,
-		lifeparameters.TnfStatefulSetScalingTcName)
-
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
@@ -39,9 +36,8 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 
 		By("start lifecycle-statefulset-scaling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfStatefulSetScalingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

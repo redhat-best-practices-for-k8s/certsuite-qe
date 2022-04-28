@@ -23,8 +23,6 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		glog.Fatal(fmt.Errorf("can not load config file"))
 	}
 
-	stringOfSkipTc := globalhelper.GetStringOfSkipTcs(lifeparameters.TnfTestCases, lifeparameters.TnfPodSchedulingTcName)
-
 	BeforeEach(func() {
 		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
@@ -46,9 +44,8 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -74,9 +71,8 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -100,9 +96,8 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -134,9 +129,8 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -157,7 +151,8 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace, globalhelper.Configuration.General.TnfImage,
+		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace,
+			globalhelper.Configuration.General.TestImage,
 			lifeparameters.TestDeploymentLabels, "lifecycleds")
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
@@ -165,9 +160,8 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.LifecycleTestSuiteName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			stringOfSkipTc)
+			lifeparameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

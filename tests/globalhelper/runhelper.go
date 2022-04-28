@@ -9,7 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
-func LaunchTests(testCaseName string, tcNameForReport string, skipRegEx string) error {
+func LaunchTests(testCaseName string, tcNameForReport string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
 		return err
@@ -27,11 +27,6 @@ func LaunchTests(testCaseName string, tcNameForReport string, skipRegEx string) 
 		"-t", Configuration.General.TnfConfigDir,
 		"-o", Configuration.General.TnfReportDir,
 		"-i", fmt.Sprintf("%s:%s", Configuration.General.TnfImage, Configuration.General.TnfImageTag),
-	}
-
-	if skipRegEx != "" {
-		testArgs = append(testArgs, []string{"-s", skipRegEx}...)
-		glog.V(5).Info(fmt.Sprintf("set skip regex to %s", skipRegEx))
 	}
 
 	if len(testCaseName) > 0 {
