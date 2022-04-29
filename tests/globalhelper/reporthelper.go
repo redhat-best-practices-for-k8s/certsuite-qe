@@ -186,7 +186,7 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 }
 
 func formatTestCaseName(tcName string) string {
-	return removeCharactersFromString(tcName, []string{"-", "_", " "})
+	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
 }
 
 func ConvertSpecNameToFileName(specName string) string {

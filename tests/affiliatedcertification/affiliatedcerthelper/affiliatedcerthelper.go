@@ -33,66 +33,24 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
-		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
 		tcName)
 
 	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
 		return fmt.Errorf("error running %s test",
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
+			affiliatedcertparameters.TestCaseContainerAffiliatedCertName)
 	}
 
 	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
 		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
 		return fmt.Errorf("error running %s test: %w",
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
+			affiliatedcertparameters.TestCaseContainerAffiliatedCertName, err)
 	}
 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
 
 	err = globalhelper.ValidateIfReportsAreValid(
 		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
-		expectedResult)
-
-	if err != nil {
-		return fmt.Errorf("error validating test reports: %w", err)
-	}
-
-	return nil
-}
-
-func SetUpAndRunOperatorCertTest(tcName string, operatorsInfo []string, expectedResult string) error {
-	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
-
-	err := globalhelper.DefineTnfConfig(
-		[]string{affiliatedcertparameters.TestCertificationNameSpace},
-		[]string{affiliatedcertparameters.TestPodLabel},
-		[]string{},
-		operatorsInfo)
-	if err != nil {
-		return fmt.Errorf("error defining tnf config file: %w", err)
-	}
-
-	ginkgo.By("Start test")
-
-	err = globalhelper.LaunchTests(
-		affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
-		tcName)
-
-	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
-		return fmt.Errorf("error running %s test",
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName)
-	}
-
-	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
-		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
-		return fmt.Errorf("error running %s test: %w",
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName, err)
-	}
-
-	ginkgo.By("Verify test case status in Junit and Claim reports")
-
-	err = globalhelper.ValidateIfReportsAreValid(
-		affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 		expectedResult)
 
 	if err != nil {

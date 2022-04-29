@@ -24,14 +24,11 @@ const (
 )
 
 var (
-	AffiliatedCertificationTestSuiteName = "affiliated-certification"
-
 	TestCertificationNameSpace = "affiliatedcert-tests"
 	testPodLabelPrefixName     = "affiliatedcert-test/test"
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
-	TestCaseContainerSkipRegEx          = "operator-is-certified helmchart-is-certified"
 	TestCaseContainerAffiliatedCertName = "affiliated-certification-container-is-certified"
 	CertifiedContainerNodeJsUbi         = "nodejs-12/ubi8"
 	CertifiedContainerRhel7OpenJdk      = "openjdk-11-rhel7/openjdk"
@@ -40,7 +37,6 @@ var (
 	ContainerNameOnlyRhel7OpenJdk       = "openjdk-11-rhel7/"
 	ContainerRepoOnlyOpenJdk            = "/openjdk"
 
-	TestCaseOperatorSkipRegEx            = "container-is-certified helmchart-is-certified"
 	TestCaseOperatorAffiliatedCertName   = "affiliated-certification-operator-is-certified"
 	OperatorGroupName                    = "affiliatedcert-test-operator-group"
 	CertifiedOperatorGroup               = "certified-operators"

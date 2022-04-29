@@ -39,7 +39,9 @@ func TestAffiliatedCertification(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-
+	By("Create namespace")
+	err := namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
+	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 })
 
 var _ = AfterSuite(func() {
