@@ -21,15 +21,14 @@ var (
 	}
 	PreStopCommand = []string{"/bin/sh", "-c", "killall -0 tail"}
 
-	TnfShutdownTcName               = "lifecycle-container-shutdown"
-	TnfDeploymentScalingTcName      = "lifecycle-deployment-scaling"
-	TnfTerminationGracePeriodTcName = "lifecycle-pod-termination-grace-period"
-	TnfPodOwnerTypeTcName           = "lifecycle-pod-owner-type"
-	TnfPodRecreationTcName          = "lifecycle-pod-recreation"
-	TnfPodHighAvailabilityTcName    = "lifecycle-pod-high-availability"
-	TnfPodSchedulingTcName          = "lifecycle-pod-scheduling"
-	TnfLivenessTcName               = "lifecycle-liveness"
-	TnfReadinessTcName              = "lifecycle-readiness"
-	TnfStatefulSetScalingTcName     = "lifecycle-statefulset-scaling"
-	TnfImagePullPolicyTcName        = "lifecycle-image-pull-policy"
+	TnfShutdownTcName            = "lifecycle-container-shutdown"
+	TnfDeploymentScalingTcName   = "lifecycle-deployment-scaling"
+	TnfPodOwnerTypeTcName        = "lifecycle-pod-owner-type"
+	TnfPodRecreationTcName       = "lifecycle-pod-recreation"
+	TnfPodHighAvailabilityTcName = "lifecycle-pod-high-availability"
+	TnfPodSchedulingTcName       = "lifecycle-pod-scheduling"
+	TnfLivenessTcName            = "lifecycle-liveness"
+	TnfReadinessTcName           = "lifecycle-readiness"
+	TnfStatefulSetScalingTcName  = "lifecycle-statefulset-scaling"
+	TnfImagePullPolicyTcName     = "lifecycle-image-pull-policy"
 )

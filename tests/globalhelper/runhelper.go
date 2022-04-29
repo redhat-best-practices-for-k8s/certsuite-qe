@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 
 	"github.com/golang/glog"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
@@ -48,7 +51,7 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	}
 
 	if debugTnf {
-		outfile := Configuration.CreateLogFile(testCaseName, tcNameForReport)
+		outfile := Configuration.CreateLogFile(getTestSuteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
 		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
@@ -62,4 +65,20 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	}
 
 	return cmd.Run()
+}
+
+func getTestSuteName(testCaseName string) string {
+	if strings.Contains(testCaseName, globalparameters.NetworkSuiteName) {
+		return globalparameters.NetworkSuiteName
+	}
+
+	if strings.Contains(testCaseName, globalparameters.AffiliatedCertificationSuiteName) {
+		return globalparameters.AffiliatedCertificationSuiteName
+	}
+
+	if strings.Contains(testCaseName, globalparameters.LifecycleSuiteName) {
+		return globalparameters.LifecycleSuiteName
+	}
+
+	panic(fmt.Sprintf("can't grap test suite name from test case name %s", testCaseName))
 }

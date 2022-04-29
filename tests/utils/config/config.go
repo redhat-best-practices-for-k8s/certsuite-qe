@@ -85,7 +85,7 @@ func NewConfig() (*Config, error) {
 
 func (c *Config) DebugTnf() (bool, error) {
 	if c.General.DebugTnf == "true" {
-		err := os.Setenv("LOG_LEVEL", "trace")
+		err := os.Setenv("TNF_LOG_LEVEL", "trace")
 
 		if err != nil {
 			return false, err

@@ -8,7 +8,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
@@ -28,10 +27,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			[]string{})
 
 		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
-
-		By("Create namespace")
-		err = namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
-		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		By("Deploy OperatorGroup if not already deployed")
 		if affiliatedcerthelper.IsOperatorGroupInstalled(affiliatedcertparameters.OperatorGroupName,
@@ -209,10 +204,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			By("Start test")
 
 			err = globalhelper.LaunchTests(
-				affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 				globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 			Expect(err).To(HaveOccurred(), "Error running "+
-				affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 			By("Verify test case status in Junit and Claim reports")
 
@@ -244,10 +239,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 
@@ -272,10 +267,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 
@@ -307,10 +302,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 
@@ -336,10 +331,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 
@@ -371,10 +366,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 
@@ -390,10 +385,10 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 
 		err := globalhelper.LaunchTests(
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName,
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.AffiliatedCertificationTestSuiteName+" test")
+			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 
