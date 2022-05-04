@@ -23,6 +23,8 @@ type (
 	CertifiedContainerRepoInfo struct {
 		Name       string `yaml:"name" json:"name"`
 		Repository string `yaml:"repository" json:"repository"`
+		Tag        string `yaml:"tag" json:"tag"`
+		Digest     string `yaml:"digest" json:"digest"`
 	}
 
 	CertifiedOperatorRepoInfo struct {

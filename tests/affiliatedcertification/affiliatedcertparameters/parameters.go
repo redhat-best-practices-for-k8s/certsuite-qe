@@ -30,12 +30,13 @@ var (
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
 	TestCaseContainerAffiliatedCertName = "affiliated-certification-container-is-certified"
-	CertifiedContainerNodeJsUbi         = "nodejs-12/ubi8"
-	CertifiedContainerRhel7OpenJdk      = "openjdk-11-rhel7/openjdk"
-	UncertifiedContainerFooBar          = "foo/bar"
-	EmptyFieldsContainerOrOperator      = "/"
-	ContainerNameOnlyRhel7OpenJdk       = "openjdk-11-rhel7/"
-	ContainerRepoOnlyOpenJdk            = "/openjdk"
+	CertifiedContainerCockroachDB       = "cockroachdb/cockroach;registry.connect.redhat.com;latest;" +
+		"sha256:5d7061441ac5f16153301346fd3cfd645d976983edd2457a32c4f914407b9957"
+	CertifiedContainer5gc           = "5gc/vru-sig-mp;artnj.zte.com.cn;2021010510011609815594;"
+	UncertifiedContainerNodeJs12    = "nodejs-12/ubi8;registry.connect.redhat.com;latest;"
+	EmptyFieldsContainer            = ";;;"
+	ContainerNameOnlyCockroachDB    = "cockroachdb/cockroach;;;"
+	ContainerRepoOnlyRedHatRegistry = ";registry.connect.redhat.com;;"
 
 	TestCaseOperatorAffiliatedCertName   = "affiliated-certification-operator-is-certified"
 	OperatorGroupName                    = "affiliatedcert-test-operator-group"

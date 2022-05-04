@@ -124,9 +124,9 @@ func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certified
 	}
 
 	for _, certifiedContainerFields := range certifiedContainerInfo {
-		nameRepository := strings.Split(certifiedContainerFields, "/")
+		nameRepositoryTagDigest := strings.Split(certifiedContainerFields, ";")
 
-		if len(nameRepository) == 1 {
+		if len(nameRepositoryTagDigest) == 1 {
 			// certifiedContainerInfo item does not contain separation character
 			// use this to add only the Certifiedcontainerinfo field with no sub fields
 			var emptyInfo globalparameters.CertifiedContainerRepoInfo
@@ -135,18 +135,22 @@ func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certified
 			return nil
 		}
 
-		if len(nameRepository) != 2 {
+		if len(nameRepositoryTagDigest) != 4 {
 			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
 		}
 
-		name := strings.TrimSpace(nameRepository[0])
-		repo := strings.TrimSpace(nameRepository[1])
+		name := strings.TrimSpace(nameRepositoryTagDigest[0])
+		repo := strings.TrimSpace(nameRepositoryTagDigest[1])
+		tag := strings.TrimSpace(nameRepositoryTagDigest[2])
+		digest := strings.TrimSpace(nameRepositoryTagDigest[3])
 
 		glog.V(5).Info(fmt.Sprintf("Adding container name:%s repository:%s to configuration", name, repo))
 
 		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
 			Name:       name,
 			Repository: repo,
+			Tag:        tag,
+			Digest:     digest,
 		})
 	}
 
