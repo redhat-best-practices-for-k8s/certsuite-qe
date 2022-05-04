@@ -80,5 +80,5 @@ func getTestSuteName(testCaseName string) string {
 		return globalparameters.LifecycleSuiteName
 	}
 
-	panic(fmt.Sprintf("can't grap test suite name from test case name %s", testCaseName))
+	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
 }

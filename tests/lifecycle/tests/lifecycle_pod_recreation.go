@@ -42,7 +42,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
@@ -74,7 +74,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
@@ -115,7 +115,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
 		By("Define & create deployment")
@@ -147,7 +147,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 
 		// all nodes will be scheduled with a pod.
 		if schedulableNodes < 2 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 		maxPodsPerDeploymentPerFirstDeployment := (schedulableNodes / 2)
 		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment

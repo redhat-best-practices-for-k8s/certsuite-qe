@@ -100,10 +100,10 @@ func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deploy
 		nadAnnotations = append(nadAnnotations, MultusAnnotation{Name: nadName})
 	}
 
-	bSrting, _ := json.Marshal(nadAnnotations)
+	bString, _ := json.Marshal(nadAnnotations)
 
 	deployment.Spec.Template.Annotations = map[string]string{
-		"k8s.v1.cni.cncf.io/networks": string(bSrting),
+		"k8s.v1.cni.cncf.io/networks": string(bString),
 	}
 
 	return deployment

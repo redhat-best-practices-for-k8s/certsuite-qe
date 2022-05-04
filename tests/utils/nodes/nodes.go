@@ -70,7 +70,7 @@ func UnCordon(clients *client.ClientSet, nodeName string) error {
 	return setUnSchedulableValue(clients, nodeName, false)
 }
 
-// setUnSchedulableValue cordones/uncordones a node by a given node name.
+// setUnSchedulableValue cordones/uncordons a node by a given node name.
 func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedulable bool) error {
 	cordonPatchBytes, err := json.Marshal(
 		[]resourceSpecs{{
