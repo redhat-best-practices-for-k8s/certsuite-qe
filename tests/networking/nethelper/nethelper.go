@@ -271,11 +271,11 @@ func GetClusterMultusInterfaces() ([]string, error) {
 	var nodesInterfacesList [][]string
 
 	for _, runningPod := range podsList.Items {
-		nodeIterfaces, err := getInterfacesList(runningPod)
+		nodeInterfaces, err := getInterfacesList(runningPod)
 		if err != nil {
 			return nil, err
 		}
-		nodesInterfacesList = append(nodesInterfacesList, nodeIterfaces)
+		nodesInterfacesList = append(nodesInterfacesList, nodeInterfaces)
 	}
 
 	var lastMatch []string

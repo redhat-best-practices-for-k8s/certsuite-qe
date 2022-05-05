@@ -108,8 +108,8 @@ The project uses a development method - forking workflow
     |   |   ├── affiliatedcertparameters     # Affiliated Certification constants and parameters 
     |   |   └── tests                        # Affiliated Certification test suite directory
     │   ├── platform                   # Platform test cases directory
-    │   │   ├── platformghelper        # Platform common test function
-    │   │   ├── platformparameters     # Platform constans and parameters
+    │   │   ├── platformhelper         # Platform common test function
+    │   │   ├── platformparameters     # Platform constants and parameters
     │   │   └── tests                  # Platform test suite directory
     │   ├── globalhelper                     # Common test test function
     │   ├── globalparameters                 # Common test function

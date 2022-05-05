@@ -36,7 +36,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 2 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
 		By("Define & create deployment")
@@ -67,7 +67,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
 		By("Define & create first deployment")
@@ -107,7 +107,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 2 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
 		By("Define & create deployment")
@@ -136,7 +136,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
 		By("Define & create first deployment")
@@ -172,7 +172,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
-			Skip("The cluster does not have enought schedulable nodes.")
+			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
 		By("Define & create deployment")
