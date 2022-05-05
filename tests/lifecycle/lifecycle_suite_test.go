@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"testing"
 
-	. "github.com/onsi/ginkgo"
-	"github.com/onsi/ginkgo/reporters"
+	. "github.com/onsi/ginkgo/v2"
+	"github.com/onsi/ginkgo/v2/reporters"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
@@ -27,7 +27,7 @@ func TestLifecycle(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
-	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert lifecycle tests", rr)
+	RunSpecs(t, "CNFCert lifecycle tests", rr)
 }
 
 var _ = BeforeSuite(func() {

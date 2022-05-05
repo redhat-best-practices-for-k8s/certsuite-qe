@@ -6,8 +6,8 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
 
-	. "github.com/onsi/ginkgo"
-	"github.com/onsi/ginkgo/reporters"
+	. "github.com/onsi/ginkgo/v2"
+	"github.com/onsi/ginkgo/v2/reporters"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
@@ -31,7 +31,7 @@ func TestNetworking(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
-	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert networking tests", rr)
+	RunSpecs(t, "CNFCert networking tests", rr)
 }
 
 var _ = BeforeSuite(func() {

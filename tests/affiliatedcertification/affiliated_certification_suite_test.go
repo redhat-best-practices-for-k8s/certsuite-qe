@@ -3,8 +3,8 @@ package affiliatedcertification
 import (
 	"flag"
 
-	. "github.com/onsi/ginkgo"
-	"github.com/onsi/ginkgo/reporters"
+	. "github.com/onsi/ginkgo/v2"
+	"github.com/onsi/ginkgo/v2/reporters"
 	. "github.com/onsi/gomega"
 
 	"fmt"
@@ -35,7 +35,7 @@ func TestAffiliatedCertification(t *testing.T) {
 
 	RegisterFailHandler(Fail)
 	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
-	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert affiliated-certification tests", rr)
+	RunSpecs(t, "CNFCert affiliated-certification tests", rr)
 }
 
 var _ = BeforeSuite(func() {
