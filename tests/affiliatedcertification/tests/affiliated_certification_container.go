@@ -24,7 +24,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("one container to test, container is certified", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.CertifiedContainerNodeJsUbi}, globalparameters.TestCasePassed)
+			[]string{affiliatedcertparameters.CertifiedContainerCockroachDB}, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -32,7 +32,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("one container to test, container is not certified [negative]", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.UncertifiedContainerFooBar}, globalparameters.TestCaseFailed)
+			[]string{affiliatedcertparameters.UncertifiedContainerNodeJs12}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -40,8 +40,8 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("two containers to test, both are certified", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.CertifiedContainerNodeJsUbi,
-				affiliatedcertparameters.CertifiedContainerRhel7OpenJdk}, globalparameters.TestCasePassed)
+			[]string{affiliatedcertparameters.CertifiedContainerCockroachDB,
+				affiliatedcertparameters.CertifiedContainer5gc}, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -49,8 +49,8 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("two containers to test, one is certified, one is not [negative]", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.UncertifiedContainerFooBar,
-				affiliatedcertparameters.CertifiedContainerNodeJsUbi}, globalparameters.TestCaseFailed)
+			[]string{affiliatedcertparameters.UncertifiedContainerNodeJs12,
+				affiliatedcertparameters.CertifiedContainerCockroachDB}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -74,7 +74,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("name and repository fields exist in certifiedcontainerinfo field but are empty [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCaseSkipped)
+			[]string{affiliatedcertparameters.EmptyFieldsContainer}, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -82,7 +82,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("name field in certifiedcontainerinfo field is populated but repository field is not [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.ContainerNameOnlyRhel7OpenJdk}, globalparameters.TestCaseSkipped)
+			[]string{affiliatedcertparameters.ContainerNameOnlyCockroachDB}, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -90,7 +90,7 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	It("repository field in certifiedcontainerinfo field is populated but name field is not [skip]", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.ContainerRepoOnlyOpenJdk}, globalparameters.TestCaseSkipped)
+			[]string{affiliatedcertparameters.ContainerRepoOnlyRedHatRegistry}, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -99,8 +99,8 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 		"repository fields", func() {
 		err := affiliatedcerthelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText),
-			[]string{affiliatedcertparameters.CertifiedContainerNodeJsUbi,
-				affiliatedcertparameters.EmptyFieldsContainerOrOperator}, globalparameters.TestCasePassed)
+			[]string{affiliatedcertparameters.CertifiedContainer5gc,
+				affiliatedcertparameters.EmptyFieldsContainer}, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
