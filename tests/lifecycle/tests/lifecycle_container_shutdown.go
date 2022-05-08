@@ -165,8 +165,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 47385
-	It("Two deployments, several pods, several containers that don't have preStop field configured [negative]", func() {
+	// 50761
+	It("Two deployments, several pods, several containers that do not have preStop field configured [negative]", func() {
 
 		By("Define & create first deployment")
 		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleputa")
