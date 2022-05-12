@@ -21,7 +21,6 @@ type (
 const (
 	Timeout         = 10 * time.Minute
 	PollingInterval = 5 * time.Second
-	DeploymentWait  = 30 * time.Second
 )
 
 var (

@@ -79,7 +79,7 @@ func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error
 	return nil
 }
 
-func getInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPlan, error) {
+func GetInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPlan, error) {
 	installPlans, err := globalhelper.APIClient.InstallPlans(namespace).List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
@@ -106,7 +106,7 @@ func getInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPla
 }
 
 func ApproveInstallPlan(namespace string, csvPrefix string) error {
-	plan, err := getInstallPlanByCSV(namespace, csvPrefix)
+	plan, err := GetInstallPlanByCSV(namespace, csvPrefix)
 
 	if err != nil {
 		return err

@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -89,7 +87,13 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
-			time.Sleep(affiliatedcertparameters.DeploymentWait)
+			Eventually(func() bool {
+				_, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" install plan is not ready.")
 
 			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
@@ -127,7 +131,13 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-			time.Sleep(affiliatedcertparameters.DeploymentWait)
+			Eventually(func() bool {
+				_, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
 
 			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
