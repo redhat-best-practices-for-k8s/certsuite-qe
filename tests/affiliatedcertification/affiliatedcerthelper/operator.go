@@ -92,6 +92,7 @@ func getInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPla
 		for _, csv := range plan.Spec.ClusterServiceVersionNames {
 			if strings.Contains(csv, csvName) {
 				matchingPlan = plan
+
 				break
 			}
 		}
