@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang/glog"
@@ -65,12 +66,63 @@ func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error
 				Package:                subscription.Spec.Package,
 				CatalogSource:          subscription.Spec.CatalogSource,
 				CatalogSourceNamespace: subscription.Spec.CatalogSourceNamespace,
+				StartingCSV:            subscription.Spec.StartingCSV,
+				InstallPlanApproval:    subscription.Spec.InstallPlanApproval,
 			},
 		},
 	)
 
 	if err != nil {
 		return fmt.Errorf("can not install Subscription %w", err)
+	}
+
+	return nil
+}
+
+func getInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPlan, error) {
+	installPlans, err := globalhelper.APIClient.InstallPlans(namespace).List(context.TODO(), metav1.ListOptions{})
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to get InstallPlans: %w", err)
+	}
+
+	var matchingPlan v1alpha1.InstallPlan
+
+	for _, plan := range installPlans.Items {
+		for _, csv := range plan.Spec.ClusterServiceVersionNames {
+			if strings.Contains(csv, csvName) {
+				matchingPlan = plan
+				break
+			}
+		}
+	}
+
+	if matchingPlan.Name == "" {
+		return nil, fmt.Errorf("failed to detect InstallPlan")
+	}
+
+	return &matchingPlan, nil
+}
+
+func ApproveInstallPlan(namespace string, csvPrefix string) error {
+	plan, err := getInstallPlanByCSV(namespace, csvPrefix)
+
+	if err != nil {
+		return err
+	}
+
+	plan.Spec.Approved = true
+
+	return updateInstallPlan(namespace, plan)
+}
+
+func updateInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
+	_, err := globalhelper.APIClient.InstallPlans(namespace).Update(
+		context.TODO(), plan, metav1.UpdateOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to update InstallPlan: %w", err)
 	}
 
 	return nil
