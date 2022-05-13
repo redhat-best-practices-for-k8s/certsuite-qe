@@ -3,6 +3,7 @@ package tests
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -49,9 +50,12 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CommunityOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
+				"",
+				v1alpha1.ApprovalAutomatic,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
@@ -68,30 +72,47 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
-		// kubeturbo-certified: in certified-operators group and version is certified
+		// dell-csi-operator-certified: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo) != nil {
+			affiliatedcertparameters.CertifiedOperatorPrefixDellCSI) != nil {
 			err = affiliatedcerthelper.DeployOperatorSubscription(
-				"kubeturbo-certified",
+				"dell-csi-operator-certified",
 				"stable",
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
+				"dell-csi-operator-certified.v1.2.0",
+				v1alpha1.ApprovalManual,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
-			// confirm that operator is installed and ready
+				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+
+			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
 				return err == nil
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo+" is not ready.")
+				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" install plan is not ready.")
+
+			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan)
+
+			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
+				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+			// confirm that operator is installed and ready
+			Eventually(func() bool {
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" is not ready.")
 		}
-		// add kubeturbo operator info to array for cleanup in AfterEach
+		// add dell-csi operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixDellCSI,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
@@ -105,9 +126,27 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
+				"artifactory-ha-operator.v1.1.20",
+				v1alpha1.ApprovalManual,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+
+			var installPlan *v1alpha1.InstallPlan
+			Eventually(func() bool {
+				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
+
+			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan)
+
+			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
+				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
@@ -152,6 +191,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
+				"",
+				v1alpha1.ApprovalAutomatic,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixK10)
@@ -223,11 +264,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operators to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			affiliatedcertparameters.CertifiedOperatorPrefixDellCSI,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+			affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
@@ -258,11 +299,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operator to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		By("Start test")
 
@@ -293,11 +334,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			affiliatedcertparameters.CertifiedOperatorPrefixDellCSI,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+			affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
 		By("Start test")
 

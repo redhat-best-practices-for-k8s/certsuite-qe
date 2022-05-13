@@ -139,14 +139,16 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 }
 
 func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
-	sourceNamespace string) error {
+	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval) error {
 	operatorSubscription := utils.DefineSubscription(
 		operatorPackage+"-subscription",
 		namespace,
 		chanel,
 		operatorPackage,
 		group,
-		sourceNamespace)
+		sourceNamespace,
+		startingCSV,
+		installApproval)
 
 	err := DeployOperator(namespace, operatorSubscription)
 
