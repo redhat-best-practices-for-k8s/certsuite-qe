@@ -123,6 +123,20 @@ func updateInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
 	return nil
 }
 
+func IsSubscriptionSuccessful(namespace string, csvName string) (bool, error) {
+	plan, err := GetInstallPlanByCSV(namespace, csvName)
+
+	if err != nil {
+		return false, fmt.Errorf("failed to get InstallPlan: %w", err)
+	}
+
+	if plan.Status.Phase == "Complete" {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("subscription installation not successful, current status: %s", plan.Status.Phase)
+}
+
 // IsOperatorInstalled validates if the given operator is deployed on the given cluster.
 func IsOperatorInstalled(namespace string, csvPrefix string) error {
 	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))

@@ -91,8 +91,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Eventually(func() bool {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+				if err == nil {
+					return installPlan.Status.Phase == "RequiresApproval"
+				}
 
-				return err == nil
+				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" install plan is not ready.")
 
@@ -106,7 +109,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
-				return err == nil
+				subscriptionSuccess, _ := affiliatedcerthelper.IsSubscriptionSuccessful(
+					affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+
+				return err == nil && subscriptionSuccess
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" is not ready.")
 		}
@@ -137,7 +144,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-				return err == nil
+				if err == nil {
+					return installPlan.Status.Phase == "RequiresApproval"
+				}
+
+				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
 
@@ -152,7 +163,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-				return err == nil
+				subscriptionSuccess, _ := affiliatedcerthelper.IsSubscriptionSuccessful(
+					affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+
+				return err == nil && subscriptionSuccess
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" is not ready.")
 		}
