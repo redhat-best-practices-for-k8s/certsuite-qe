@@ -87,8 +87,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
+			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				_, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 
 				return err == nil
@@ -96,7 +97,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" install plan is not ready.")
 
 			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
@@ -131,8 +132,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
+			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				_, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 				return err == nil
@@ -140,7 +142,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
 
 			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)

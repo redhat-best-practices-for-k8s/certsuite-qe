@@ -105,13 +105,7 @@ func GetInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPla
 	return &matchingPlan, nil
 }
 
-func ApproveInstallPlan(namespace string, csvPrefix string) error {
-	plan, err := GetInstallPlanByCSV(namespace, csvPrefix)
-
-	if err != nil {
-		return err
-	}
-
+func ApproveInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
 	plan.Spec.Approved = true
 
 	return updateInstallPlan(namespace, plan)
