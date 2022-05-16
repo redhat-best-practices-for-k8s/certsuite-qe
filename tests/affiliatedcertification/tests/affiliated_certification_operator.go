@@ -81,7 +81,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
-				"dell-csi-operator-certified.v1.2.0",
+				affiliatedcertparameters.CertifiedOperatorFullDellCSI,
 				v1alpha1.ApprovalManual,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
@@ -90,9 +90,14 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
+					affiliatedcertparameters.CertifiedOperatorFullDellCSI)
+				if err == nil {
+					return installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling &&
+						installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+				}
 
-				return err == nil
+				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixDellCSI+" install plan is not ready.")
 
@@ -126,7 +131,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
-				"artifactory-ha-operator.v1.1.20",
+				affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
 				v1alpha1.ApprovalManual,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
@@ -135,9 +140,15 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+					affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa)
 
-				return err == nil
+				if err == nil {
+					return installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling &&
+						installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+				}
+
+				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
 
@@ -196,6 +207,27 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixK10)
+
+			var installPlan *v1alpha1.InstallPlan
+			Eventually(func() bool {
+				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.UncertifiedOperatorPrefixK10)
+				if err == nil {
+					return installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling &&
+						installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+				}
+
+				return false
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.UncertifiedOperatorPrefixK10+" install plan is not ready.")
+
+			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan)
+
+			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
+				affiliatedcertparameters.UncertifiedOperatorPrefixK10)
+
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
