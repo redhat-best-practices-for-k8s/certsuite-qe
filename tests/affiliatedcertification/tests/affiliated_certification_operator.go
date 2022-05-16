@@ -92,9 +92,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorFullDellCSI)
 				if err == nil {
-					return installPlan.Status.Phase != "Planning" &&
+					return installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling &&
 						installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != "Installing"
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
 				}
 
 				return false
@@ -143,9 +143,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 					affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa)
 
 				if err == nil {
-					return installPlan.Status.Phase != "Planning" &&
+					return installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling &&
 						installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != "Installing"
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
 				}
 
 				return false
@@ -213,9 +213,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.UncertifiedOperatorPrefixK10)
 				if err == nil {
-					return installPlan.Status.Phase != "Planning" &&
+					return installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling &&
 						installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != "Installing"
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
 				}
 
 				return false
