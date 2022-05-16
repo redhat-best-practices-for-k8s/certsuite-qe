@@ -45,7 +45,9 @@ var (
 	OperatorSourceNamespace              = "openshift-marketplace"
 	OperatorLabel                        = map[string]string{"test-network-function.com/operator": "target"}
 	UncertifiedOperatorPrefixFalcon      = "falcon-operator"
-	CertifiedOperatorPrefixDellCSI       = "dell-csi-operator-certified.v1.2.0"
-	CertifiedOperatorPrefixArtifactoryHa = "artifactory-ha-operator.v1.1.20"
+	CertifiedOperatorPrefixDellCSI       = "dell-csi-operator-certified"
+	CertifiedOperatorFullDellCSI         = "dell-csi-operator-certified.v1.2.0"
+	CertifiedOperatorPrefixArtifactoryHa = "artifactory-ha-operator"
+	CertifiedOperatorFullArtifactoryHa   = "artifactory-ha-operator.v1.1.20"
 	UncertifiedOperatorPrefixK10         = "k10-kasten-operator"
 )
