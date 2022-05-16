@@ -92,7 +92,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorPrefixDellCSI)
 				if err == nil {
-					return installPlan.Status.Phase != "Planning" && installPlan.Status.Phase != ""
+					return installPlan.Status.Phase != "Planning" &&
+						installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != "Installing"
 				}
 
 				return false
@@ -141,7 +143,9 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 				if err == nil {
-					return installPlan.Status.Phase != "Planning" && installPlan.Status.Phase != ""
+					return installPlan.Status.Phase != "Planning" &&
+						installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != "Installing"
 				}
 
 				return false
