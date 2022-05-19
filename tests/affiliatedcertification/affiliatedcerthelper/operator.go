@@ -193,8 +193,11 @@ func EnableCatalogSource(name string) error {
 	return setCatalogSource(false, name)
 }
 
-func IsCatalogSourceEnabled(name, namespace string) bool {
-	_, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+func IsCatalogSourceEnabled(name, namespace, publisher string) bool {
+	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return false
+	}
 
-	return err == nil
+	return source.Spec.Publisher == publisher
 }

@@ -157,45 +157,8 @@ func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certified
 	return nil
 }
 
-func defineCertifiedOperatorsInfo(config *globalparameters.TnfConfig, certifiedOperatorInfo []string) error {
-	if len(certifiedOperatorInfo) < 1 {
-		// do not add certifiedoperatorinfo to tnf_config at all in this case
-		return nil
-	}
-
-	for _, certifiedOperatorFields := range certifiedOperatorInfo {
-		nameOrganization := strings.Split(certifiedOperatorFields, "/")
-
-		if len(nameOrganization) == 1 {
-			// certifiedOperatorInfo item does not contain separation character
-			// use this to add only the Certifiedoperatorinfo field with no sub fields
-			var emptyInfo globalparameters.CertifiedOperatorRepoInfo
-			config.Certifiedoperatorinfo = append(config.Certifiedoperatorinfo, emptyInfo)
-
-			return nil
-		}
-
-		if len(nameOrganization) != 2 {
-			return fmt.Errorf(fmt.Sprintf("certified operator info %s is invalid", certifiedOperatorFields))
-		}
-
-		name := strings.TrimSpace(nameOrganization[0])
-		org := strings.TrimSpace(nameOrganization[1])
-
-		glog.V(5).Info(fmt.Sprintf("Adding operator name:%s organization:%s to configuration", name, org))
-
-		config.Certifiedoperatorinfo = append(config.Certifiedoperatorinfo, globalparameters.CertifiedOperatorRepoInfo{
-			Name:         name,
-			Organization: org,
-		})
-	}
-
-	return nil
-}
-
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string,
-	certifiedOperatorsInfo []string) error {
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string) error {
 	configFile, err := os.OpenFile(
 		path.Join(
 			Configuration.General.TnfConfigDir,
@@ -219,11 +182,6 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedCon
 	}
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
-	if err != nil {
-		return err
-	}
-
-	err = defineCertifiedOperatorsInfo(&tnfConfig, certifiedOperatorsInfo)
 	if err != nil {
 		return err
 	}
