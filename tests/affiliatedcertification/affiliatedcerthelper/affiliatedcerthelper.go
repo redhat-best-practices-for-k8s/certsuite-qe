@@ -61,7 +61,7 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
 func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 
 // DeleteLabelFromInstalledCSV removes given label from existing csv object.
 func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 	return updateCsv(namespace, csv)
 }
 
-func getCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
+func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
 	csvs, err := globalhelper.APIClient.ClusterServiceVersions(namespace).List(
 		context.TODO(), metav1.ListOptions{},
 	)

@@ -29,8 +29,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Ensure default catalog source is enabled")
 		Expect(affiliatedcerthelper.IsCatalogSourceEnabled(affiliatedcertparameters.CertifiedOperatorGroup,
 			"openshift-marketplace",
-			"Red Hat")).To(BeTrue(), "Default catalog source "+
-			affiliatedcertparameters.CertifiedOperatorGroup+"is not enabled")
+			"Certified Operators")).To(BeTrue(), "Default catalog source "+
+			affiliatedcertparameters.CertifiedOperatorGroup+" is not enabled")
 
 		By("Define config file " + globalparameters.DefaultTnfConfigFileName)
 		err = globalhelper.DefineTnfConfig(
@@ -82,25 +82,25 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
-		// aikit-operator: in certified-operators group and version is certified
+		// infinibox-operator: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorPrefixAiKit) != nil {
+			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox) != nil {
 			err = affiliatedcerthelper.DeployOperatorSubscription(
-				affiliatedcertparameters.CertifiedOperatorPrefixAiKit,
-				"alpha",
+				"infinibox-operator-certified",
+				"stable",
 				affiliatedcertparameters.TestCertificationNameSpace,
 				affiliatedcertparameters.CertifiedOperatorGroup,
 				affiliatedcertparameters.OperatorSourceNamespace,
-				affiliatedcertparameters.CertifiedOperatorFullAiKit,
+				affiliatedcertparameters.CertifiedOperatorFullInfinibox,
 				v1alpha1.ApprovalManual,
 			)
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.CertifiedOperatorPrefixAiKit)
+				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
 			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
 				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorFullAiKit)
+					affiliatedcertparameters.CertifiedOperatorFullInfinibox)
 				if err == nil {
 					return installPlan.Status.Phase != "" &&
 						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
@@ -108,25 +108,25 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.CertifiedOperatorPrefixAiKit+" install plan is not ready.")
+				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox+" install plan is not ready.")
 
 			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
 				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
-				affiliatedcertparameters.CertifiedOperatorPrefixAiKit)
+				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 			// confirm that operator is installed and ready
 			Eventually(func() bool {
 				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorPrefixAiKit)
+					affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
 				return err == nil
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.CertifiedOperatorPrefixAiKit+" is not ready.")
+				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox+" is not ready.")
 		}
-		// add aikit operator info to array for cleanup in AfterEach
+		// add infinibox operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixAiKit,
+			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
@@ -228,11 +228,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operators to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixAiKit,
+			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixAiKit)
+			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
@@ -298,11 +298,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixAiKit,
+			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixAiKit)
+			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
 		By("Start test")
 

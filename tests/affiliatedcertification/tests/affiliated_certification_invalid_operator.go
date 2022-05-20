@@ -28,8 +28,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		By("Ensure default catalog source is enabled")
 		Expect(affiliatedcerthelper.IsCatalogSourceEnabled(affiliatedcertparameters.CertifiedOperatorGroup,
 			"openshift-marketplace",
-			"Red Hat")).To(BeTrue(), "Default catalog source "+
-			affiliatedcertparameters.CertifiedOperatorGroup+"is not enabled")
+			"Certified Operators")).To(BeTrue(), "Default catalog source "+
+			affiliatedcertparameters.CertifiedOperatorGroup+" is not enabled")
 
 		By("Define config file  " + globalparameters.DefaultTnfConfigFileName)
 
@@ -51,82 +51,6 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		}
 
 		By("Deploy operators for testing")
-
-		By("Deploy operator with uncertified version if not already deployed")
-		// k10-kasten-operator: in certified-operators group, version is not certified
-		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10) != nil {
-
-			By("Deploy alternate operator catalog source")
-
-			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			Expect(err).ToNot(HaveOccurred(), "Error disabling "+
-				affiliatedcertparameters.CertifiedOperatorGroup+" catalog source")
-			Eventually(func() bool {
-				stillEnabled := affiliatedcerthelper.IsCatalogSourceEnabled(
-					affiliatedcertparameters.CertifiedOperatorGroup,
-					"openshift-marketplace",
-					"Red Hat")
-
-				return !stillEnabled
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				"Default catalog source is still enabled")
-
-			err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
-			Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
-
-			err = affiliatedcerthelper.DeployOperatorSubscription(
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10,
-				"stable",
-				affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CertifiedOperatorGroup,
-				affiliatedcertparameters.OperatorSourceNamespace,
-				"",
-				v1alpha1.ApprovalAutomatic,
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-
-			var installPlan *v1alpha1.InstallPlan
-			Eventually(func() bool {
-				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-				if err == nil {
-					return installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
-				}
-
-				return false
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10+" install plan is not ready.")
-
-			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				installPlan)
-
-			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-
-			// confirm that operator is installed and ready
-			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-
-				return err == nil
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10+" is not ready.")
-
-			By("Re-enable default catalog source")
-			// err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			// Expect(err).ToNot(HaveOccurred(), "Error disabling catalog source "+affiliatedcertparameters.CertifiedOperatorGroup)
-			err = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
-		}
-		// add kasten-k10 operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixK10,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
 
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
 		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
@@ -179,6 +103,82 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
+		By("Deploy operator with uncertified version if not already deployed")
+		// sriov-fec.v1.1.0 operator : in certified-operators group, version is not certified
+		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.UncertifiedOperatorPrefixSriov) != nil {
+
+			By("Deploy alternate operator catalog source")
+
+			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			Expect(err).ToNot(HaveOccurred(), "Error disabling "+
+				affiliatedcertparameters.CertifiedOperatorGroup+" catalog source")
+			Eventually(func() bool {
+				stillEnabled := affiliatedcerthelper.IsCatalogSourceEnabled(
+					affiliatedcertparameters.CertifiedOperatorGroup,
+					"openshift-marketplace",
+					"Certified Operators")
+
+				return !stillEnabled
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				"Default catalog source is still enabled")
+
+			err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
+			Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
+
+			err = affiliatedcerthelper.DeployOperatorSubscription(
+				affiliatedcertparameters.UncertifiedOperatorPrefixSriov,
+				"stable",
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.CertifiedOperatorGroup,
+				affiliatedcertparameters.OperatorSourceNamespace,
+				affiliatedcertparameters.UncertifiedOperatorFullSriov,
+				v1alpha1.ApprovalManual,
+			)
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+				affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
+
+			var installPlan *v1alpha1.InstallPlan
+			Eventually(func() bool {
+				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.UncertifiedOperatorFullSriov)
+				if err == nil {
+					return installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+				}
+
+				return false
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.UncertifiedOperatorPrefixSriov+" install plan is not ready.")
+
+			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan)
+
+			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
+				affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
+
+			// confirm that operator is installed and ready
+			Eventually(func() bool {
+				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
+
+				return err == nil
+			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+				affiliatedcertparameters.UncertifiedOperatorPrefixSriov+" is not ready.")
+
+			By("Re-enable default catalog source")
+			_ = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			_ = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			err = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
+		}
+		// add sriov-fec operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
+			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixSriov,
+			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
+			Label:          affiliatedcertparameters.OperatorLabel,
+		})
+
 	})
 
 	AfterEach(func() {
@@ -199,11 +199,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		By("Label operator to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10,
+			affiliatedcertparameters.UncertifiedOperatorPrefixSriov,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10)
+			affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
 
 		By("Start test")
 
@@ -227,11 +227,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		By("Label operators to be certified")
 
 		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10,
+			affiliatedcertparameters.UncertifiedOperatorPrefixSriov,
 			affiliatedcertparameters.TestCertificationNameSpace,
 			affiliatedcertparameters.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10)
+			affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
 
 		err = affiliatedcerthelper.AddLabelToInstalledCSV(
 			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,

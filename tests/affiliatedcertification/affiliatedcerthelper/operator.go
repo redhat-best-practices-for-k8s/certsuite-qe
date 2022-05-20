@@ -133,7 +133,7 @@ func IsOperatorInstalled(namespace string, csvPrefix string) error {
 	}
 
 	glog.V(5).Info(fmt.Sprintf("Validate that operator's csv %s exists", csvPrefix))
-	_, err = getCsvByPrefix(csvPrefix, namespace)
+	_, err = GetCsvByPrefix(csvPrefix, namespace)
 
 	if err != nil {
 		return fmt.Errorf("%s operator's CSV is not installed", csvPrefix)
@@ -193,11 +193,11 @@ func EnableCatalogSource(name string) error {
 	return setCatalogSource(false, name)
 }
 
-func IsCatalogSourceEnabled(name, namespace, publisher string) bool {
+func IsCatalogSourceEnabled(name, namespace, displayName string) bool {
 	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return false
 	}
 
-	return source.Spec.Publisher == publisher
+	return source.Spec.DisplayName == displayName
 }
