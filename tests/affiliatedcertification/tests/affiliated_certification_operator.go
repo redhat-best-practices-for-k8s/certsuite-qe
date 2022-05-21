@@ -97,21 +97,23 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
-			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan, err := affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorFullInfinibox)
 				if err == nil {
-					return installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+					if installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling {
+						_ = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+							installPlan)
+
+						return true
+					}
 				}
 
 				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox+" install plan is not ready.")
-
-			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
 				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
@@ -146,22 +148,24 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan, err := affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa)
 
 				if err == nil {
-					return installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+					if installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling {
+						_ = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+							installPlan)
+
+						return true
+					}
 				}
 
 				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
-
-			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)

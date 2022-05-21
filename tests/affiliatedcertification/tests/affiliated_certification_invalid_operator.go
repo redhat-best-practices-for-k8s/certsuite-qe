@@ -67,22 +67,24 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan, err := affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa)
 
 				if err == nil {
-					return installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+					if installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling {
+						_ = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+							installPlan)
+
+						return true
+					}
 				}
 
 				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" install plan is not ready.")
-
-			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
 				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
@@ -138,21 +140,23 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
 
-			var installPlan *v1alpha1.InstallPlan
 			Eventually(func() bool {
-				installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan, err := affiliatedcerthelper.GetInstallPlanByCSV(affiliatedcertparameters.TestCertificationNameSpace,
 					affiliatedcertparameters.UncertifiedOperatorFullSriov)
 				if err == nil {
-					return installPlan.Status.Phase != "" &&
-						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning
+					if installPlan.Status.Phase != "" &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning &&
+						installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling {
+						_ = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+							installPlan)
+
+						return true
+					}
 				}
 
 				return false
 			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 				affiliatedcertparameters.UncertifiedOperatorPrefixSriov+" install plan is not ready.")
-
-			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-				installPlan)
 
 			Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
 				affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
@@ -167,8 +171,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 				affiliatedcertparameters.UncertifiedOperatorPrefixSriov+" is not ready.")
 
 			By("Re-enable default catalog source")
-			_ = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			_ = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
+			err = affiliatedcerthelper.DeleteCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup,
+				affiliatedcertparameters.TestCertificationNameSpace,
+				"redhat-certified")
+			Expect(err).ToNot(HaveOccurred(), "Error removing alternate catalog source")
+
 			err = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
 			Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
 		}
