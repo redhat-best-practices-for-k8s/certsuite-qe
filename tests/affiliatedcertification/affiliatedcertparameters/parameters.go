@@ -19,7 +19,8 @@ type (
 )
 
 const (
-	Timeout         = 15 * time.Minute
+	Timeout         = 20 * time.Minute
+	TimeoutLabelCsv = 2 * time.Minute
 	PollingInterval = 5 * time.Second
 )
 
