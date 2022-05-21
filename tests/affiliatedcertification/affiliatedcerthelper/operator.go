@@ -205,7 +205,7 @@ func IsCatalogSourceEnabled(name, namespace, displayName string) bool {
 func DeleteCatalogSource(name, namespace, displayName string) error {
 	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		return err
+		return nil
 	}
 
 	if source.Spec.DisplayName == displayName {
