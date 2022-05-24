@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"os"
+	"time"
 
+	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -56,4 +58,42 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 	}
 
 	return runningPods, nil
+}
+
+// CreateAndWaitUntilPodIsReady creates a pod and waits until all its containers are ready.
+func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
+	_, err := APIClient.Pods(pod.Namespace).Create(
+		context.Background(),
+		pod,
+		metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	numContainers := len(pod.Spec.Containers)
+
+	Eventually(func() bool {
+		runningPod, err := APIClient.Pods(pod.Namespace).Get(
+			context.Background(),
+			pod.Name,
+			metav1.GetOptions{})
+		if err != nil {
+			return false
+		}
+
+		// We need to wait until all the containers have an status entry.
+		if len(runningPod.Status.ContainerStatuses) != numContainers {
+			return false
+		}
+
+		for index := range runningPod.Spec.Containers {
+			if !runningPod.Status.ContainerStatuses[index].Ready {
+				return false
+			}
+		}
+
+		return true
+	}, timeout, 5*time.Second).Should(Equal(true), "Pod is not ready")
+
+	return nil
 }

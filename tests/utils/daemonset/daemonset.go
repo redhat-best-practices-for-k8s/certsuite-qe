@@ -32,6 +32,30 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
 }
 
+// DefineDaemonSetWithContainerSpecs returns k8s statefulset using configurable
+// labels and container specs.
+func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string]string,
+	containerSpecs []corev1.Container) *v1.DaemonSet {
+	return &v1.DaemonSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace},
+		Spec: v1.DaemonSetSpec{
+			Selector: &metav1.LabelSelector{
+				MatchLabels: labels,
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: labels,
+				},
+				Spec: corev1.PodSpec{
+					Containers: containerSpecs,
+				},
+			},
+		},
+	}
+}
+
 func RedefineDaemonSetWithNodeSelector(daemonSet *v1.DaemonSet, nodeSelector map[string]string) *v1.DaemonSet {
 	daemonSet.Spec.Template.Spec.NodeSelector = nodeSelector
 
@@ -77,6 +101,12 @@ func RedefineWithImagePullPolicy(daemonSet *v1.DaemonSet, pullPolicy corev1.Pull
 	for index := range daemonSet.Spec.Template.Spec.Containers {
 		daemonSet.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
 	}
+
+	return daemonSet
+}
+
+func RedefineWithContainerSpecs(daemonSet *v1.DaemonSet, containerSpecs []corev1.Container) *v1.DaemonSet {
+	daemonSet.Spec.Template.Spec.Containers = containerSpecs
 
 	return daemonSet
 }
