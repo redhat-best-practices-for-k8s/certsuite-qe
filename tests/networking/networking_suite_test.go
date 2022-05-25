@@ -55,6 +55,7 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{netparameters.TestNetworkingNameSpace},
 		[]string{netparameters.TestPodLabel},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 

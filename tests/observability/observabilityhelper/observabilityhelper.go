@@ -2,15 +2,18 @@ package observabilityhelper
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
 // For some reason, there's a function that expects labels' key/values separated
@@ -59,6 +62,24 @@ func DefineDeploymentWithoutTargetLabels(name string) *appsv1.Deployment {
 	return deployment.DefineDeployment(name, observabilityparameters.TestNamespace,
 		globalhelper.Configuration.General.TestImage,
 		map[string]string{"fakeLabelKey": "fakeLabelValue"})
+}
+
+func DefineCrdWithStatusSubresource(kind, group string) *apiextv1.CustomResourceDefinition {
+	return crd.DefineCustomResourceDefinition(apiextv1.CustomResourceDefinitionNames{
+		Kind:     kind,
+		Singular: strings.ToLower(kind),
+		Plural:   strings.ToLower(kind) + "s",
+		ListKind: kind + "List",
+	}, group, true)
+}
+
+func DefineCrdWithoutStatusSubresource(kind, group string) *apiextv1.CustomResourceDefinition {
+	return crd.DefineCustomResourceDefinition(apiextv1.CustomResourceDefinitionNames{
+		Kind:     kind,
+		Singular: strings.ToLower(kind),
+		Plural:   strings.ToLower(kind) + "s",
+		ListKind: kind + "List",
+	}, group, false)
 }
 
 // getContainerCommandWithStdout is a helper function that will return the command slice

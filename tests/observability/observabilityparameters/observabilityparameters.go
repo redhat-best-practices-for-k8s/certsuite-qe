@@ -7,6 +7,7 @@ const (
 
 	// TNF test cases names.
 	TnfContainerLoggingTcName = "observability-container-logging"
+	TnfCrdStatusTcName        = "observability-crd-status"
 
 	TestNamespace = "observability-ns"
 
@@ -33,6 +34,14 @@ const (
 	NoLogLines = ""
 )
 
+// observability-crd-status helper params.
+const (
+	CrdSuffix1 = "tnf-qe.suffix1.com"
+	CrdSuffix2 = "tnf-qe.suffix2.com"
+
+	NotConfiguredCrdSuffix = "not-configured-suffix.com"
+)
+
 var (
 	TnfTargetPodLabels = map[string]string{
 		TestPodLabelKey: TestPodLabelValue,
@@ -42,6 +51,7 @@ var (
 	DeploymentDeployTimeoutMins  = 5 * time.Minute
 	StatefulSetDeployTimeoutMins = 5 * time.Minute
 	DaemonSetDeployTimeoutMins   = 5 * time.Minute
+	CrdDeployTimeoutMins         = 1 * time.Minute
 
 	NsResourcesDeleteTimeoutMins = 5 * time.Minute
 )

@@ -36,7 +36,8 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{observabilityparameters.TestNamespace},
 		observabilityhelper.GetTnfTargetPodLabelsSlice(),
-		[]string{})
+		[]string{},
+		[]string{observabilityparameters.CrdSuffix1, observabilityparameters.CrdSuffix2})
 	Expect(err).ToNot(HaveOccurred())
 })
 
