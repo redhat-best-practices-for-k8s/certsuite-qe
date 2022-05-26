@@ -3,13 +3,14 @@ package tests
 import (
 	"fmt"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
@@ -25,8 +26,8 @@ func preConfigureAffiliatedCertificationEnvironment() {
 
 	catalogEnabled, err := affiliatedcerthelper.IsCatalogSourceEnabled(
 		affiliatedcertparameters.CertifiedOperatorGroup,
-		"openshift-marketplace",
-		"Certified Operators")
+		affiliatedcertparameters.OperatorSourceNamespace,
+		affiliatedcertparameters.CertifiedOperatorDisplayName)
 	Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("can not collect catalogSource object due to %s", err))
 
 	if !catalogEnabled {
@@ -36,24 +37,15 @@ func preConfigureAffiliatedCertificationEnvironment() {
 		Eventually(func() bool {
 			catalogEnabled, err = affiliatedcerthelper.IsCatalogSourceEnabled(
 				affiliatedcertparameters.CertifiedOperatorGroup,
-				"openshift-marketplace",
-				"Certified Operators")
+				affiliatedcertparameters.OperatorSourceNamespace,
+				affiliatedcertparameters.CertifiedOperatorDisplayName)
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("can not collect catalogSource object due to %s", err))
 
 			return catalogEnabled
-		}).Should(BeTrue())
+		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(BeTrue(),
+			fmt.Sprintf("Default catalog source %s is not enabled",
+				affiliatedcertparameters.CertifiedOperatorGroup))
 	}
-
-	Expect(catalogEnabled).To(BeTrue(), "Default catalog source "+
-		affiliatedcertparameters.CertifiedOperatorGroup+" is not enabled")
-
-	By("Define config file " + globalparameters.DefaultTnfConfigFileName)
-
-	err = globalhelper.DefineTnfConfig(
-		[]string{affiliatedcertparameters.TestCertificationNameSpace},
-		[]string{affiliatedcertparameters.TestPodLabel},
-		[]string{})
-	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 
 	By("Deploy OperatorGroup if not already deployed")
 
@@ -66,6 +58,14 @@ func preConfigureAffiliatedCertificationEnvironment() {
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
 	}
+
+	By("Define config file " + globalparameters.DefaultTnfConfigFileName)
+
+	err = globalhelper.DefineTnfConfig(
+		[]string{affiliatedcertparameters.TestCertificationNameSpace},
+		[]string{affiliatedcertparameters.TestPodLabel},
+		[]string{})
+	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 }
 
 func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
@@ -89,27 +89,20 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 	return err
 }
 
-func approveInstallPlanWhenReady(csvName, namespace string) error {
-	var err error
-
-	var installPlan *v1alpha1.InstallPlan
-
+func approveInstallPlanWhenReady(csvName, namespace string) {
 	Eventually(func() bool {
-		installPlan, err = affiliatedcerthelper.GetInstallPlanByCSV(namespace, csvName)
-		if err == nil {
-			if installPlan.Status.Phase != "" &&
-				installPlan.Status.Phase != v1alpha1.InstallPlanPhasePlanning &&
-				installPlan.Status.Phase != v1alpha1.InstallPlanPhaseInstalling {
-				_ = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
-					installPlan)
+		installPlan, err := affiliatedcerthelper.GetInstallPlanByCSV(namespace, csvName)
+		if err != nil {
+			return false
+		}
+		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
+			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+				installPlan)
 
-				return true
-			}
+			return err == nil
 		}
 
 		return false
 	}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 		csvName+" install plan is not ready.")
-
-	return err
 }

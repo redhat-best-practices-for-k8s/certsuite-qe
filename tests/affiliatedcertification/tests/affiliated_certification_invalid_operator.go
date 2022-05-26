@@ -36,10 +36,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-		err = approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
+		approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
 			affiliatedcertparameters.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		err = waitUntilOperatorIsReady(affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
 			affiliatedcertparameters.TestCertificationNameSpace)
@@ -61,8 +59,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		Eventually(func() bool {
 			stillEnabled, err := affiliatedcerthelper.IsCatalogSourceEnabled(
 				affiliatedcertparameters.CertifiedOperatorGroup,
-				"openshift-marketplace",
-				"Certified Operators")
+				affiliatedcertparameters.OperatorSourceNamespace,
+				affiliatedcertparameters.CertifiedOperatorDisplayName)
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("can not collect catalogSource object due to %s", err))
 
 			return !stillEnabled
@@ -85,10 +83,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 			affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
 
-		err = approveInstallPlanWhenReady(affiliatedcertparameters.UncertifiedOperatorFullSriov,
+		approveInstallPlanWhenReady(affiliatedcertparameters.UncertifiedOperatorFullSriov,
 			affiliatedcertparameters.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixSriov)
 
 		err = waitUntilOperatorIsReady(affiliatedcertparameters.UncertifiedOperatorPrefixSriov,
 			affiliatedcertparameters.TestCertificationNameSpace)

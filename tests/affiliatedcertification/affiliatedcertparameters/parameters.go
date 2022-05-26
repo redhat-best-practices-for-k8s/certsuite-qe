@@ -42,6 +42,7 @@ var (
 	TestCaseOperatorAffiliatedCertName   = "affiliated-certification-operator-is-certified"
 	OperatorGroupName                    = "affiliatedcert-test-operator-group"
 	CertifiedOperatorGroup               = "certified-operators"
+	CertifiedOperatorDisplayName         = "Certified Operators"
 	CommunityOperatorGroup               = "community-operators"
 	OperatorSourceNamespace              = "openshift-marketplace"
 	OperatorLabel                        = map[string]string{"test-network-function.com/operator": "target"}

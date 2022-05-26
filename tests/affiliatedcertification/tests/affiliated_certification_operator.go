@@ -59,10 +59,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
-		err = approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullInfinibox,
+		approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullInfinibox,
 			affiliatedcertparameters.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
-			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
 		err = waitUntilOperatorIsReady(affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
 			affiliatedcertparameters.TestCertificationNameSpace)
@@ -89,10 +87,8 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-		err = approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
+		approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
 			affiliatedcertparameters.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Error approving installplan for "+
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		err = waitUntilOperatorIsReady(affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
 			affiliatedcertparameters.TestCertificationNameSpace)

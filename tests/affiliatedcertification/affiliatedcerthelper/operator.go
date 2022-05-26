@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
@@ -128,8 +130,8 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "certified-operators",
-				Namespace: "openshift-marketplace",
+				Name:      affiliatedcertparameters.CertifiedOperatorGroup,
+				Namespace: affiliatedcertparameters.OperatorSourceNamespace,
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
@@ -178,10 +180,6 @@ func EnableCatalogSource(name string) error {
 func IsCatalogSourceEnabled(name, namespace, displayName string) (bool, error) {
 	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		if k8serrors.IsNotFound(err) {
-			return false, nil
-		}
-
 		return false, nil
 	}
 
