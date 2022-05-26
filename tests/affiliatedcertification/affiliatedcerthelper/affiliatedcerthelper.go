@@ -23,8 +23,7 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 	err = globalhelper.DefineTnfConfig(
 		[]string{affiliatedcertparameters.TestCertificationNameSpace},
 		[]string{affiliatedcertparameters.TestPodLabel},
-		containersInfo,
-		[]string{})
+		containersInfo)
 
 	if err != nil {
 		return fmt.Errorf("error defining tnf config file: %w", err)
@@ -62,7 +61,7 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
 func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
 	if err != nil {
 		return err
 	}
@@ -83,7 +82,7 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 
 // DeleteLabelFromInstalledCSV removes given label from existing csv object.
 func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
 	if err != nil {
 		return err
 	}
@@ -103,7 +102,8 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 	return updateCsv(namespace, csv)
 }
 
-func getCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
+// GetCsvByPrefix returns csv object based on given prefix.
+func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
 	csvs, err := globalhelper.APIClient.ClusterServiceVersions(namespace).List(
 		context.TODO(), metav1.ListOptions{},
 	)
@@ -126,18 +126,6 @@ func getCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterSe
 	return &neededCSV, nil
 }
 
-func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
-	_, err := globalhelper.APIClient.ClusterServiceVersions(namespace).Update(
-		context.TODO(), csv, metav1.UpdateOptions{},
-	)
-
-	if err != nil {
-		return fmt.Errorf("fail to update CSV due to %w", err)
-	}
-
-	return nil
-}
-
 func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
 	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval) error {
 	operatorSubscription := utils.DefineSubscription(
@@ -154,6 +142,18 @@ func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
 
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
+	}
+
+	return nil
+}
+
+func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
+	_, err := globalhelper.APIClient.ClusterServiceVersions(namespace).Update(
+		context.TODO(), csv, metav1.UpdateOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("fail to update CSV due to %w", err)
 	}
 
 	return nil

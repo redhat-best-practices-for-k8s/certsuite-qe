@@ -43,7 +43,6 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{lifeparameters.LifecycleNamespace},
 		[]string{lifeparameters.TestPodLabel},
-		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })

@@ -7,7 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/glog"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -123,31 +126,12 @@ func updateInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
 	return nil
 }
 
-// IsOperatorInstalled validates if the given operator is deployed on the given cluster.
-func IsOperatorInstalled(namespace string, csvPrefix string) error {
-	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))
-
-	namespaceExists, err := namespaces.Exists(namespace, globalhelper.APIClient)
-	if !namespaceExists && err == nil {
-		return fmt.Errorf("operator namespace %s doesn't exist", namespace)
-	}
-
-	glog.V(5).Info(fmt.Sprintf("Validate that operator's csv %s exists", csvPrefix))
-	_, err = getCsvByPrefix(csvPrefix, namespace)
-
-	if err != nil {
-		return fmt.Errorf("%s operator's CSV is not installed", csvPrefix)
-	}
-
-	return nil
-}
-
 func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "certified-operators",
-				Namespace: "openshift-marketplace",
+				Name:      affiliatedcertparameters.CertifiedOperatorGroup,
+				Namespace: affiliatedcertparameters.OperatorSourceNamespace,
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
@@ -193,8 +177,28 @@ func EnableCatalogSource(name string) error {
 	return setCatalogSource(false, name)
 }
 
-func IsCatalogSourceEnabled(name, namespace string) bool {
-	_, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+func IsCatalogSourceEnabled(name, namespace, displayName string) (bool, error) {
+	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return false, nil
+	}
 
-	return err == nil
+	return source.Spec.DisplayName == displayName, nil
+}
+
+func DeleteCatalogSource(name, namespace, displayName string) error {
+	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return nil
+		}
+
+		return err
+	}
+
+	if source.Spec.DisplayName == displayName {
+		return globalhelper.APIClient.Delete(context.TODO(), source)
+	}
+
+	return nil
 }
