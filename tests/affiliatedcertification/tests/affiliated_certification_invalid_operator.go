@@ -67,6 +67,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
 			"Default catalog source is still enabled")
 
+		// Deploying certified operator with invalid catalog version is necessary in order to cover negative scenarios
 		err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
 		Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
