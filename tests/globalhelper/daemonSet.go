@@ -14,23 +14,6 @@ import (
 
 const daemonSetReadyRetryInterval = 5 * time.Second
 
-func isDaemonSetReady(namespace string, name string) (bool, error) {
-	daemonSet, err := APIClient.DaemonSets(namespace).Get(
-		context.Background(),
-		name,
-		metav1.GetOptions{},
-	)
-	if err != nil {
-		return false, err
-	}
-
-	if daemonSet.Status.NumberReady > 0 && daemonSet.Status.NumberUnavailable == 0 {
-		return true, nil
-	}
-
-	return false, nil
-}
-
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and wait until all  replicas are up and running.
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := APIClient.DaemonSets(daemonSet.Namespace).Create(
@@ -52,4 +35,21 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 	}, timeout, daemonSetReadyRetryInterval).Should(Equal(true), "DaemonSet is not ready")
 
 	return nil
+}
+
+func isDaemonSetReady(namespace string, name string) (bool, error) {
+	daemonSet, err := APIClient.DaemonSets(namespace).Get(
+		context.Background(),
+		name,
+		metav1.GetOptions{},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	if daemonSet.Status.NumberReady > 0 && daemonSet.Status.NumberUnavailable == 0 {
+		return true, nil
+	}
+
+	return false, nil
 }

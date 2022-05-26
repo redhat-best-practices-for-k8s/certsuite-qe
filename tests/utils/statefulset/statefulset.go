@@ -33,13 +33,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
 }
 
-// RedefineWithReplicaNumber redefines statefulSet with requested replica number.
-func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) *v1.StatefulSet {
-	statefulSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
-
-	return statefulSet
-}
-
+// RedefineWithReadinessProbe adds readiness probe to statefulSet manifest.
 func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
@@ -54,6 +48,7 @@ func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	return statefulSet
 }
 
+// RedefineWithLivenessProbe adds liveness probe to statefulSet manifest.
 func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{

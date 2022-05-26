@@ -12,6 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
+// LaunchTests stats tests based on given parameters.
 func LaunchTests(testCaseName string, tcNameForReport string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
