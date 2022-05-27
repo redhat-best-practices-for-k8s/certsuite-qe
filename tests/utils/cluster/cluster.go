@@ -12,6 +12,7 @@ import (
 	nodesutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 )
 
+// IsClusterStable tests if cluster is stable.
 func IsClusterStable(clients *testclient.ClientSet) (bool, error) {
 	nodes, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {

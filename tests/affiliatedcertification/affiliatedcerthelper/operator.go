@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
-
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -57,7 +57,7 @@ func IsOperatorGroupInstalled(operatorGroupName, namespace string) error {
 	return nil
 }
 
-func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error {
+func DeployOperator(subscription *v1alpha1.Subscription) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.Subscription{
 			ObjectMeta: metav1.ObjectMeta{
@@ -114,18 +114,6 @@ func ApproveInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
 	return updateInstallPlan(namespace, plan)
 }
 
-func updateInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
-	_, err := globalhelper.APIClient.InstallPlans(namespace).Update(
-		context.TODO(), plan, metav1.UpdateOptions{},
-	)
-
-	if err != nil {
-		return fmt.Errorf("failed to update InstallPlan: %w", err)
-	}
-
-	return nil
-}
-
 func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.CatalogSource{
@@ -149,21 +137,6 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	)
 	if err != nil {
 		return fmt.Errorf("can not deploy catalog source %w", err)
-	}
-
-	return nil
-}
-
-func setCatalogSource(disable bool, name string) error {
-	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
-		"cluster",
-		types.MergePatchType,
-		[]byte("{\"spec\":{\"sources\":[{\"disabled\": "+strconv.FormatBool(disable)+",\"name\": \""+name+"\"}]}}"),
-		metav1.PatchOptions{},
-	)
-
-	if err != nil {
-		return fmt.Errorf("unable to alter catalog source: %w", err)
 	}
 
 	return nil
@@ -198,6 +171,33 @@ func DeleteCatalogSource(name, namespace, displayName string) error {
 
 	if source.Spec.DisplayName == displayName {
 		return globalhelper.APIClient.Delete(context.TODO(), source)
+	}
+
+	return nil
+}
+
+func setCatalogSource(disable bool, name string) error {
+	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
+		"cluster",
+		types.MergePatchType,
+		[]byte("{\"spec\":{\"sources\":[{\"disabled\": "+strconv.FormatBool(disable)+",\"name\": \""+name+"\"}]}}"),
+		metav1.PatchOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("unable to alter catalog source: %w", err)
+	}
+
+	return nil
+}
+
+func updateInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
+	_, err := globalhelper.APIClient.InstallPlans(namespace).Update(
+		context.TODO(), plan, metav1.UpdateOptions{},
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to update InstallPlan: %w", err)
 	}
 
 	return nil

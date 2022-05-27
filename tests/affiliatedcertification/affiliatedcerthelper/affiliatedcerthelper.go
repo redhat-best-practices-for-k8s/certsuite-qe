@@ -138,7 +138,7 @@ func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
 		startingCSV,
 		installApproval)
 
-	err := DeployOperator(namespace, operatorSubscription)
+	err := DeployOperator(operatorSubscription)
 
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)

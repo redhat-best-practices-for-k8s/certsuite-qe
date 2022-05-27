@@ -14,55 +14,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string) error {
-	if len(namespaces) < 1 {
-		return fmt.Errorf("target namespaces cannot be empty list")
-	}
-
-	if config == nil {
-		return fmt.Errorf("config struct cannot be nil")
-	}
-
-	for _, namespace := range namespaces {
-		config.TargetNameSpaces = append(config.TargetNameSpaces, globalparameters.TargetNameSpace{
-			Name: namespace,
-		})
-	}
-
-	return nil
-}
-
-func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels []string) error {
-	if len(targetPodLabels) < 1 {
-		return fmt.Errorf("target pod labels cannot be empty list")
-	}
-
-	for _, targetPodLabel := range targetPodLabels {
-		prefixNameValue := strings.Split(targetPodLabel, "/")
-		if len(prefixNameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
-		}
-
-		prefix := strings.TrimSpace(prefixNameValue[0])
-		nameValue := strings.Split(prefixNameValue[1], ":")
-
-		if len(nameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
-		}
-
-		name := strings.TrimSpace(nameValue[0])
-		value := strings.TrimSpace(nameValue[1])
-
-		config.TargetPodLabels = append(config.TargetPodLabels, globalparameters.PodLabel{
-			Prefix: prefix,
-			Name:   name,
-			Value:  value,
-		})
-	}
-
-	return nil
-}
-
 // ValidateIfReportsAreValid test if report is valid for given test case.
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 	glog.V(5).Info("Verify test case status in Junit report")
@@ -117,46 +68,6 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 	return nil
 }
 
-func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
-	if len(certifiedContainerInfo) < 1 {
-		// do not add certifiedcontainerinfo to tnf_config at all in this case
-		return nil
-	}
-
-	for _, certifiedContainerFields := range certifiedContainerInfo {
-		nameRepositoryTagDigest := strings.Split(certifiedContainerFields, ";")
-
-		if len(nameRepositoryTagDigest) == 1 {
-			// certifiedContainerInfo item does not contain separation character
-			// use this to add only the Certifiedcontainerinfo field with no sub fields
-			var emptyInfo globalparameters.CertifiedContainerRepoInfo
-			config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, emptyInfo)
-
-			return nil
-		}
-
-		if len(nameRepositoryTagDigest) != 4 {
-			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
-		}
-
-		name := strings.TrimSpace(nameRepositoryTagDigest[0])
-		repo := strings.TrimSpace(nameRepositoryTagDigest[1])
-		tag := strings.TrimSpace(nameRepositoryTagDigest[2])
-		digest := strings.TrimSpace(nameRepositoryTagDigest[3])
-
-		glog.V(5).Info(fmt.Sprintf("Adding container name:%s repository:%s to configuration", name, repo))
-
-		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
-			Name:       name,
-			Repository: repo,
-			Tag:        tag,
-			Digest:     digest,
-		})
-	}
-
-	return nil
-}
-
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
 func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string) error {
 	configFile, err := os.OpenFile(
@@ -201,16 +112,6 @@ func IsExpectedStatusParamValid(status string) error {
 		[]string{globalparameters.TestCaseFailed, globalparameters.TestCasePassed, globalparameters.TestCaseSkipped})
 }
 
-func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []string) error {
-	for _, allowedParameter := range listOfParameters {
-		if allowedParameter == parameter {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
-}
-
 // AppendContainersToDeployment appends containers to a deployment.
 func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, image string) *v1.Deployment {
 	containerList := &deployment.Spec.Template.Spec.Containers
@@ -225,4 +126,103 @@ func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, 
 	}
 
 	return deployment
+}
+
+func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
+	if len(certifiedContainerInfo) < 1 {
+		// do not add certifiedcontainerinfo to tnf_config at all in this case
+		return nil
+	}
+
+	for _, certifiedContainerFields := range certifiedContainerInfo {
+		nameRepositoryTagDigest := strings.Split(certifiedContainerFields, ";")
+
+		if len(nameRepositoryTagDigest) == 1 {
+			// certifiedContainerInfo item does not contain separation character
+			// use this to add only the Certifiedcontainerinfo field with no sub fields
+			var emptyInfo globalparameters.CertifiedContainerRepoInfo
+			config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, emptyInfo)
+
+			return nil
+		}
+
+		if len(nameRepositoryTagDigest) != 4 {
+			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
+		}
+
+		name := strings.TrimSpace(nameRepositoryTagDigest[0])
+		repo := strings.TrimSpace(nameRepositoryTagDigest[1])
+		tag := strings.TrimSpace(nameRepositoryTagDigest[2])
+		digest := strings.TrimSpace(nameRepositoryTagDigest[3])
+
+		glog.V(5).Info(fmt.Sprintf("Adding container name:%s repository:%s to configuration", name, repo))
+
+		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
+			Name:       name,
+			Repository: repo,
+			Tag:        tag,
+			Digest:     digest,
+		})
+	}
+
+	return nil
+}
+
+func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string) error {
+	if len(namespaces) < 1 {
+		return fmt.Errorf("target namespaces cannot be empty list")
+	}
+
+	if config == nil {
+		return fmt.Errorf("config struct cannot be nil")
+	}
+
+	for _, namespace := range namespaces {
+		config.TargetNameSpaces = append(config.TargetNameSpaces, globalparameters.TargetNameSpace{
+			Name: namespace,
+		})
+	}
+
+	return nil
+}
+
+func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels []string) error {
+	if len(targetPodLabels) < 1 {
+		return fmt.Errorf("target pod labels cannot be empty list")
+	}
+
+	for _, targetPodLabel := range targetPodLabels {
+		prefixNameValue := strings.Split(targetPodLabel, "/")
+		if len(prefixNameValue) != 2 {
+			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
+		}
+
+		prefix := strings.TrimSpace(prefixNameValue[0])
+		nameValue := strings.Split(prefixNameValue[1], ":")
+
+		if len(nameValue) != 2 {
+			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
+		}
+
+		name := strings.TrimSpace(nameValue[0])
+		value := strings.TrimSpace(nameValue[1])
+
+		config.TargetPodLabels = append(config.TargetPodLabels, globalparameters.PodLabel{
+			Prefix: prefix,
+			Name:   name,
+			Value:  value,
+		})
+	}
+
+	return nil
+}
+
+func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []string) error {
+	for _, allowedParameter := range listOfParameters {
+		if allowedParameter == parameter {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
 }
