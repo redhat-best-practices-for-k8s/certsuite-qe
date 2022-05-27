@@ -22,7 +22,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 	execute.BeforeAll(func() {
 		preConfigureAffiliatedCertificationEnvironment()
 
-		By("Deploy operators for testing")
+		By("Deploy openshiftartifactoryha-operator for testing")
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
 		err := affiliatedcerthelper.DeployOperatorSubscription(
 			"openshiftartifactoryha-operator",
@@ -71,7 +71,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
 		Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
-		By("Deploy operator with uncertified version")
+		By("Deploy sriov-fec operator with uncertified version")
 		err = affiliatedcerthelper.DeployOperatorSubscription(
 			affiliatedcertparameters.UncertifiedOperatorPrefixSriov,
 			"stable",
