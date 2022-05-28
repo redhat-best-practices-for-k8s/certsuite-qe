@@ -95,6 +95,11 @@ func approveInstallPlanWhenReady(csvName, namespace string) {
 		if err != nil {
 			return false
 		}
+
+		if installPlan.Spec.Approval == v1alpha1.ApprovalAutomatic {
+			return true
+		}
+
 		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
 			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
 				installPlan)

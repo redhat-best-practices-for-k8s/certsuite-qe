@@ -20,7 +20,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	execute.BeforeAll(func() {
 		preConfigureAffiliatedCertificationEnvironment()
 
-		By("Deploy operators for testing")
+		By("Deploy falcon-operator for testing")
 		// falcon-operator: not in certified-operators group in catalog, for negative test cases
 		err := affiliatedcerthelper.DeployOperatorSubscription(
 			"falcon-operator",
@@ -46,6 +46,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
+		By("Deploy infinibox-operator for testing")
 		// infinibox-operator: in certified-operators group and version is certified
 		err = affiliatedcerthelper.DeployOperatorSubscription(
 			"infinibox-operator-certified",
@@ -74,6 +75,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
+		By("Deploy openshiftartifactoryha-operator for testing")
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
 		err = affiliatedcerthelper.DeployOperatorSubscription(
 			"openshiftartifactoryha-operator",
