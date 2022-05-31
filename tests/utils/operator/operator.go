@@ -19,7 +19,7 @@ func DefineOperatorGroup(groupName string, namespace string, targetNamespace []s
 
 // DefineSubscription returns a subscription struct.
 func DefineSubscription(subName, namespace, channel, operatorName, catalogSource,
-	catalogSourceNamespace string) *v1alpha1.Subscription {
+	catalogSourceNamespace, startingCSV string, installPlanApproval v1alpha1.Approval) *v1alpha1.Subscription {
 	return &v1alpha1.Subscription{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      subName,
@@ -30,6 +30,8 @@ func DefineSubscription(subName, namespace, channel, operatorName, catalogSource
 			Package:                operatorName,
 			CatalogSource:          catalogSource,
 			CatalogSourceNamespace: catalogSourceNamespace,
+			StartingCSV:            startingCSV,
+			InstallPlanApproval:    installPlanApproval,
 		},
 	}
 }

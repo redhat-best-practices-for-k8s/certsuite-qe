@@ -8,7 +8,7 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo/v2"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -23,8 +23,7 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 	err = globalhelper.DefineTnfConfig(
 		[]string{affiliatedcertparameters.TestCertificationNameSpace},
 		[]string{affiliatedcertparameters.TestPodLabel},
-		containersInfo,
-		[]string{})
+		containersInfo)
 
 	if err != nil {
 		return fmt.Errorf("error defining tnf config file: %w", err)
@@ -62,7 +61,7 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
 func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
 	if err != nil {
 		return err
 	}
@@ -83,7 +82,7 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 
 // DeleteLabelFromInstalledCSV removes given label from existing csv object.
 func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := getCsvByPrefix(prefixCsvName, namespace)
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
 	if err != nil {
 		return err
 	}
@@ -103,7 +102,8 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 	return updateCsv(namespace, csv)
 }
 
-func getCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
+// GetCsvByPrefix returns csv object based on given prefix.
+func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
 	csvs, err := globalhelper.APIClient.ClusterServiceVersions(namespace).List(
 		context.TODO(), metav1.ListOptions{},
 	)
@@ -126,6 +126,27 @@ func getCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterSe
 	return &neededCSV, nil
 }
 
+func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
+	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval) error {
+	operatorSubscription := utils.DefineSubscription(
+		operatorPackage+"-subscription",
+		namespace,
+		chanel,
+		operatorPackage,
+		group,
+		sourceNamespace,
+		startingCSV,
+		installApproval)
+
+	err := DeployOperator(operatorSubscription)
+
+	if err != nil {
+		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
+	}
+
+	return nil
+}
+
 func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 	_, err := globalhelper.APIClient.ClusterServiceVersions(namespace).Update(
 		context.TODO(), csv, metav1.UpdateOptions{},
@@ -133,25 +154,6 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 
 	if err != nil {
 		return fmt.Errorf("fail to update CSV due to %w", err)
-	}
-
-	return nil
-}
-
-func DeployOperatorSubscription(operatorPackage, chanel, namespace, group,
-	sourceNamespace string) error {
-	operatorSubscription := utils.DefineSubscription(
-		operatorPackage+"-subscription",
-		namespace,
-		chanel,
-		operatorPackage,
-		group,
-		sourceNamespace)
-
-	err := DeployOperator(namespace, operatorSubscription)
-
-	if err != nil {
-		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
 	}
 
 	return nil

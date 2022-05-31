@@ -4,9 +4,13 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/golang/glog"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -53,7 +57,7 @@ func IsOperatorGroupInstalled(operatorGroupName, namespace string) error {
 	return nil
 }
 
-func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error {
+func DeployOperator(subscription *v1alpha1.Subscription) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.Subscription{
 			ObjectMeta: metav1.ObjectMeta{
@@ -65,6 +69,8 @@ func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error
 				Package:                subscription.Spec.Package,
 				CatalogSource:          subscription.Spec.CatalogSource,
 				CatalogSourceNamespace: subscription.Spec.CatalogSourceNamespace,
+				StartingCSV:            subscription.Spec.StartingCSV,
+				InstallPlanApproval:    subscription.Spec.InstallPlanApproval,
 			},
 		},
 	)
@@ -76,31 +82,44 @@ func DeployOperator(namespace string, subscription *v1alpha1.Subscription) error
 	return nil
 }
 
-// IsOperatorInstalled validates if the given operator is deployed on the given cluster.
-func IsOperatorInstalled(namespace string, csvPrefix string) error {
-	glog.V(5).Info(fmt.Sprintf("Validate that operator namespace: %s exists", namespace))
-
-	namespaceExists, err := namespaces.Exists(namespace, globalhelper.APIClient)
-	if !namespaceExists && err == nil {
-		return fmt.Errorf("operator namespace %s doesn't exist", namespace)
-	}
-
-	glog.V(5).Info(fmt.Sprintf("Validate that operator's csv %s exists", csvPrefix))
-	_, err = getCsvByPrefix(csvPrefix, namespace)
+func GetInstallPlanByCSV(namespace string, csvName string) (*v1alpha1.InstallPlan, error) {
+	installPlans, err := globalhelper.APIClient.InstallPlans(namespace).List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
-		return fmt.Errorf("%s operator's CSV is not installed", csvPrefix)
+		return nil, fmt.Errorf("unable to get InstallPlans: %w", err)
 	}
 
-	return nil
+	var matchingPlan v1alpha1.InstallPlan
+
+	for _, plan := range installPlans.Items {
+		for _, csv := range plan.Spec.ClusterServiceVersionNames {
+			if strings.Contains(csv, csvName) {
+				matchingPlan = plan
+
+				break
+			}
+		}
+	}
+
+	if matchingPlan.Name == "" {
+		return nil, fmt.Errorf("failed to detect InstallPlan")
+	}
+
+	return &matchingPlan, nil
+}
+
+func ApproveInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
+	plan.Spec.Approved = true
+
+	return updateInstallPlan(namespace, plan)
 }
 
 func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "certified-operators",
-				Namespace: "openshift-marketplace",
+				Name:      affiliatedcertparameters.CertifiedOperatorGroup,
+				Namespace: affiliatedcertparameters.OperatorSourceNamespace,
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
@@ -123,6 +142,40 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	return nil
 }
 
+func DisableCatalogSource(name string) error {
+	return setCatalogSource(true, name)
+}
+
+func EnableCatalogSource(name string) error {
+	return setCatalogSource(false, name)
+}
+
+func IsCatalogSourceEnabled(name, namespace, displayName string) (bool, error) {
+	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return false, nil
+	}
+
+	return source.Spec.DisplayName == displayName, nil
+}
+
+func DeleteCatalogSource(name, namespace, displayName string) error {
+	source, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return nil
+		}
+
+		return err
+	}
+
+	if source.Spec.DisplayName == displayName {
+		return globalhelper.APIClient.Delete(context.TODO(), source)
+	}
+
+	return nil
+}
+
 func setCatalogSource(disable bool, name string) error {
 	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
 		"cluster",
@@ -138,16 +191,14 @@ func setCatalogSource(disable bool, name string) error {
 	return nil
 }
 
-func DisableCatalogSource(name string) error {
-	return setCatalogSource(true, name)
-}
+func updateInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
+	_, err := globalhelper.APIClient.InstallPlans(namespace).Update(
+		context.TODO(), plan, metav1.UpdateOptions{},
+	)
 
-func EnableCatalogSource(name string) error {
-	return setCatalogSource(false, name)
-}
+	if err != nil {
+		return fmt.Errorf("failed to update InstallPlan: %w", err)
+	}
 
-func IsCatalogSourceEnabled(name, namespace string) bool {
-	_, err := globalhelper.APIClient.CatalogSources(namespace).Get(context.TODO(), name, metav1.GetOptions{})
-
-	return err == nil
+	return nil
 }

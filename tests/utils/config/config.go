@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/golang/glog"
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 
+	"github.com/golang/glog"
 	"github.com/kelseyhightower/envconfig"
 	"gopkg.in/yaml.v2"
 )
@@ -36,6 +36,16 @@ type Config struct {
 		TnfImage             string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
 		TnfImageTag          string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
 	} `yaml:"general"`
+}
+
+// DefineClients sets client and return it's instance.
+func DefineClients() (*testclient.ClientSet, error) {
+	clients := testclient.New("")
+	if clients == nil {
+		return nil, fmt.Errorf("client is not set please check KUBECONFIG env variable")
+	}
+
+	return clients, nil
 }
 
 // NewConfig returns instance Config type.
@@ -83,6 +93,7 @@ func NewConfig() (*Config, error) {
 	return &conf, nil
 }
 
+// DebugTnf activates debug mode.
 func (c *Config) DebugTnf() (bool, error) {
 	if c.General.DebugTnf == "true" {
 		err := os.Setenv("TNF_LOG_LEVEL", "trace")
@@ -97,6 +108,7 @@ func (c *Config) DebugTnf() (bool, error) {
 	return false, nil
 }
 
+// CreateLogFile creates log file for testSuite.
 func (c *Config) CreateLogFile(testSuite string, tcName string) *os.File {
 	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite)
 
@@ -122,6 +134,27 @@ func (c *Config) CreateLogFile(testSuite string, tcName string) *os.File {
 	}
 
 	return outfile
+}
+
+// GetReportPath returns full path to the report file.
+func (c *Config) GetReportPath(file string) string {
+	reportFileName := strings.TrimSuffix(filepath.Base(file), filepath.Ext(filepath.Base(file)))
+
+	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
+}
+
+func (c *Config) defineTnfRepoPath() (string, error) {
+	if c.General.TnfRepoPath == "" {
+		return "", fmt.Errorf("TNF_REPO_PATH env variable is not set. Please export TNF_REPO_PATH")
+	}
+
+	_, err := checkFileExists(c.General.TnfRepoPath, c.General.TnfEntryPointScript)
+
+	if err != nil {
+		return "", err
+	}
+
+	return c.General.TnfRepoPath, nil
 }
 
 func readFile(cfg *Config, cfgFile string) error {
@@ -156,37 +189,6 @@ func (c *Config) deployTnfConfigDir(configFileName string) error {
 
 func (c *Config) deployTnfReportDir(configFileName string) error {
 	return deployTnfDir(configFileName, c.General.TnfReportDir, "tnf_report_dir", "TNF_REPORT_DIR")
-}
-
-// GetReportPath returns full path to the report file.
-func (c *Config) GetReportPath(file string) string {
-	reportFileName := strings.TrimSuffix(filepath.Base(file), filepath.Ext(filepath.Base(file)))
-
-	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
-}
-
-func (c *Config) defineTnfRepoPath() (string, error) {
-	if c.General.TnfRepoPath == "" {
-		return "", fmt.Errorf("TNF_REPO_PATH env variable is not set. Please export TNF_REPO_PATH")
-	}
-
-	_, err := checkFileExists(c.General.TnfRepoPath, c.General.TnfEntryPointScript)
-
-	if err != nil {
-		return "", err
-	}
-
-	return c.General.TnfRepoPath, nil
-}
-
-// DefineClients sets client and return it's instance.
-func DefineClients() (*testclient.ClientSet, error) {
-	clients := testclient.New("")
-	if clients == nil {
-		return nil, fmt.Errorf("client is not set please check KUBECONFIG env variable")
-	}
-
-	return clients, nil
 }
 
 func checkFileExists(filePath, name string) (string, error) {

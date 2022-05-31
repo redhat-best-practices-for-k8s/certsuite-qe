@@ -1,14 +1,14 @@
 package tests
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
 var _ = Describe("Affiliated-certification operator certification,", func() {
@@ -18,49 +18,27 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	)
 
 	execute.BeforeAll(func() {
-		By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
+		preConfigureAffiliatedCertificationEnvironment()
 
-		err := globalhelper.DefineTnfConfig(
-			[]string{affiliatedcertparameters.TestCertificationNameSpace},
-			[]string{affiliatedcertparameters.TestPodLabel},
-			[]string{},
-			[]string{})
-
-		Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
-
-		By("Deploy OperatorGroup if not already deployed")
-		if affiliatedcerthelper.IsOperatorGroupInstalled(affiliatedcertparameters.OperatorGroupName,
-			affiliatedcertparameters.TestCertificationNameSpace) != nil {
-			err = affiliatedcerthelper.DeployOperatorGroup(affiliatedcertparameters.TestCertificationNameSpace,
-				utils.DefineOperatorGroup(affiliatedcertparameters.OperatorGroupName,
-					affiliatedcertparameters.TestCertificationNameSpace,
-					[]string{affiliatedcertparameters.TestCertificationNameSpace}),
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
-		}
-
-		By("Deploy operators for testing if not already deployed")
+		By("Deploy falcon-operator for testing")
 		// falcon-operator: not in certified-operators group in catalog, for negative test cases
-		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon) != nil {
-			err = affiliatedcerthelper.DeployOperatorSubscription(
-				"falcon-operator",
-				"alpha",
-				affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CommunityOperatorGroup,
-				affiliatedcertparameters.OperatorSourceNamespace,
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
-			// confirm that operator is installed and ready
-			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+		err := affiliatedcerthelper.DeployOperatorSubscription(
+			"falcon-operator",
+			"alpha",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CommunityOperatorGroup,
+			affiliatedcertparameters.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 
-				return err == nil
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon+" is not ready.")
-		}
+		err = waitUntilOperatorIsReady(affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+			affiliatedcertparameters.TestCertificationNameSpace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+affiliatedcertparameters.UncertifiedOperatorPrefixFalcon+
+			" is not ready")
+
 		// add falcon operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
 			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
@@ -68,111 +46,60 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
-		// kubeturbo-certified: in certified-operators group and version is certified
-		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo) != nil {
-			err = affiliatedcerthelper.DeployOperatorSubscription(
-				"kubeturbo-certified",
-				"stable",
-				affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CertifiedOperatorGroup,
-				affiliatedcertparameters.OperatorSourceNamespace,
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
-			// confirm that operator is installed and ready
-			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+		By("Deploy infinibox-operator for testing")
+		// infinibox-operator: in certified-operators group and version is certified
+		err = affiliatedcerthelper.DeployOperatorSubscription(
+			"infinibox-operator-certified",
+			"stable",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CertifiedOperatorGroup,
+			affiliatedcertparameters.OperatorSourceNamespace,
+			affiliatedcertparameters.CertifiedOperatorFullInfinibox,
+			v1alpha1.ApprovalManual,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
-				return err == nil
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo+" is not ready.")
-		}
-		// add kubeturbo operator info to array for cleanup in AfterEach
+		approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullInfinibox,
+			affiliatedcertparameters.TestCertificationNameSpace)
+
+		err = waitUntilOperatorIsReady(affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
+			affiliatedcertparameters.TestCertificationNameSpace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+affiliatedcertparameters.CertifiedOperatorPrefixInfinibox+
+			" is not ready")
+
+		// add infinibox operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
+			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
 
+		By("Deploy openshiftartifactoryha-operator for testing")
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
-		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa) != nil {
-			err = affiliatedcerthelper.DeployOperatorSubscription(
-				"openshiftartifactoryha-operator",
-				"alpha",
-				affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CertifiedOperatorGroup,
-				affiliatedcertparameters.OperatorSourceNamespace,
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
-			// confirm that operator is installed and ready
-			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
+		err = affiliatedcerthelper.DeployOperatorSubscription(
+			"openshiftartifactoryha-operator",
+			"alpha",
+			affiliatedcertparameters.TestCertificationNameSpace,
+			affiliatedcertparameters.CertifiedOperatorGroup,
+			affiliatedcertparameters.OperatorSourceNamespace,
+			affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
+			v1alpha1.ApprovalManual,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-				return err == nil
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+" is not ready.")
-		}
+		approveInstallPlanWhenReady(affiliatedcertparameters.CertifiedOperatorFullArtifactoryHa,
+			affiliatedcertparameters.TestCertificationNameSpace)
+
+		err = waitUntilOperatorIsReady(affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
+			affiliatedcertparameters.TestCertificationNameSpace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa+
+			" is not ready")
+
 		// add openshiftartifactoryha operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
 			OperatorPrefix: affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
-			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
-			Label:          affiliatedcertparameters.OperatorLabel,
-		})
-
-		By("Deploy operator with uncertified version if not already deployed")
-		// k10-kasten-operator: in certified-operators group, version is not certified
-		if affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10) != nil {
-
-			By("Deploy alternate operator catalog source")
-
-			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			Expect(err).ToNot(HaveOccurred(), "Error disabling "+
-				affiliatedcertparameters.CertifiedOperatorGroup+" catalog source")
-			Eventually(func() bool {
-				stillEnabled := affiliatedcerthelper.IsCatalogSourceEnabled(
-					affiliatedcertparameters.CertifiedOperatorGroup,
-					"openshift-marketplace")
-
-				return !stillEnabled
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				"Default catalog source is still enabled")
-
-			err = affiliatedcerthelper.DeployRHCertifiedOperatorSource("4.5")
-			Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
-
-			err = affiliatedcerthelper.DeployOperatorSubscription(
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10,
-				"stable",
-				affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.CertifiedOperatorGroup,
-				affiliatedcertparameters.OperatorSourceNamespace,
-			)
-			Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-			// confirm that operator is installed and ready
-			Eventually(func() bool {
-				err = affiliatedcerthelper.IsOperatorInstalled(affiliatedcertparameters.TestCertificationNameSpace,
-					affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-
-				return err == nil
-			}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
-				affiliatedcertparameters.UncertifiedOperatorPrefixK10+" is not ready.")
-
-			By("Re-enable default catalog source")
-			err = affiliatedcerthelper.DisableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			Expect(err).ToNot(HaveOccurred(), "Error disabling catalog source "+affiliatedcertparameters.CertifiedOperatorGroup)
-			err = affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)
-			Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
-		}
-		// add kasten-k10 operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, affiliatedcertparameters.OperatorLabelInfo{
-			OperatorPrefix: affiliatedcertparameters.UncertifiedOperatorPrefixK10,
 			Namespace:      affiliatedcertparameters.TestCertificationNameSpace,
 			Label:          affiliatedcertparameters.OperatorLabel,
 		})
@@ -193,24 +120,22 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	It("one operator to test, operator is not in certified-operators organization [negative]",
 		func() {
 			By("Label operator to be certified")
-
-			err := affiliatedcerthelper.AddLabelToInstalledCSV(
-				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
-				affiliatedcertparameters.TestCertificationNameSpace,
-				affiliatedcertparameters.OperatorLabel)
-			Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+			Eventually(func() error {
+				return affiliatedcerthelper.AddLabelToInstalledCSV(
+					affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+					affiliatedcertparameters.TestCertificationNameSpace,
+					affiliatedcertparameters.OperatorLabel)
+			}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(Not(HaveOccurred()),
+				"Error labeling operator "+affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 
 			By("Start test")
-
-			err = globalhelper.LaunchTests(
+			err := globalhelper.LaunchTests(
 				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-				globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 			Expect(err).To(HaveOccurred(), "Error running "+
 				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 			By("Verify test case status in Junit and Claim reports")
-
 			err = globalhelper.ValidateIfReportsAreValid(
 				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 				globalparameters.TestCaseFailed)
@@ -222,30 +147,30 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		" one is not in certified-operators organization [negative]", func() {
 		By("Label operators to be certified")
 
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+		Eventually(func() error {
+			return affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.OperatorLabel)
+		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
+		Eventually(func() error {
+			return affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.UncertifiedOperatorPrefixFalcon,
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.OperatorLabel)
+		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+affiliatedcertparameters.UncertifiedOperatorPrefixFalcon)
 
 		By("Start test")
-
-		err = globalhelper.LaunchTests(
+		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
-
 		err = globalhelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCaseFailed)
@@ -257,23 +182,22 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		" and its version is certified", func() {
 		By("Label operator to be certified")
 
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+		Eventually(func() error {
+			return affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.OperatorLabel)
+		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
 		By("Start test")
-
-		err = globalhelper.LaunchTests(
+		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
-
 		err = globalhelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCasePassed)
@@ -284,114 +208,46 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	It("two operators to test, both are in certified-operators organization and their"+
 		" versions are certified", func() {
 		By("Label operators to be certified")
+		Eventually(func() error {
+			return affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.OperatorLabel)
+		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
 
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
-
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixKubeturbo)
+		Eventually(func() error {
+			return affiliatedcerthelper.AddLabelToInstalledCSV(
+				affiliatedcertparameters.CertifiedOperatorPrefixInfinibox,
+				affiliatedcertparameters.TestCertificationNameSpace,
+				affiliatedcertparameters.OperatorLabel)
+		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+affiliatedcertparameters.CertifiedOperatorPrefixInfinibox)
 
 		By("Start test")
-
-		err = globalhelper.LaunchTests(
+		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
-
 		err = globalhelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
-	// 46695
-	It("one operator to test, operator is in certified-operators organization but its version"+
-		" is not certified [negative]", func() {
-
-		By("Label operator to be certified")
-
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-
-		By("Start test")
-
-		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
-		Expect(err).To(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
-
-		By("Verify test case status in Junit and Claim reports")
-
-		err = globalhelper.ValidateIfReportsAreValid(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-	})
-
-	// 46700
-	It("two operators to test, both are in certified-operators organization,"+
-		" one’s version is certified, the other’s is not [negative]", func() {
-		By("Label operators to be certified")
-
-		err := affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.UncertifiedOperatorPrefixK10)
-
-		err = affiliatedcerthelper.AddLabelToInstalledCSV(
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa,
-			affiliatedcertparameters.TestCertificationNameSpace,
-			affiliatedcertparameters.OperatorLabel)
-		Expect(err).ToNot(HaveOccurred(), "Error labeling operator "+
-			affiliatedcertparameters.CertifiedOperatorPrefixArtifactoryHa)
-
-		By("Start test")
-
-		err = globalhelper.LaunchTests(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
-		Expect(err).To(HaveOccurred(), "Error running "+
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
-
-		By("Verify test case status in Junit and Claim reports")
-
-		err = globalhelper.ValidateIfReportsAreValid(
-			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-
-	})
-
 	// 46698
 	It("no operators are labeled for testing [skip]", func() {
 		By("Start test")
-
 		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Junit and Claim reports")
-
 		err = globalhelper.ValidateIfReportsAreValid(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCaseSkipped)

@@ -121,6 +121,16 @@ func RemoveContentsFromReportDir() error {
 	return nil
 }
 
+// ConvertSpecNameToFileName converts given spec name to file name.
+func ConvertSpecNameToFileName(specName string) string {
+	formatString := specName
+	for _, symbol := range []string{" ", ", ", "-", "/"} {
+		formatString = strings.ReplaceAll(formatString, symbol, "_")
+	}
+
+	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
+}
+
 func isTestCaseInRequiredStatusInJunitReport(
 	report *globalparameters.JUnitTestSuites,
 	testCaseName string,
@@ -187,13 +197,4 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 
 func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
-}
-
-func ConvertSpecNameToFileName(specName string) string {
-	formatString := specName
-	for _, symbol := range []string{" ", ", ", "-", "/"} {
-		formatString = strings.ReplaceAll(formatString, symbol, "_")
-	}
-
-	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
 }

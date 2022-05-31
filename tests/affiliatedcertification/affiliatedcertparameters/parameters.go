@@ -19,7 +19,8 @@ type (
 )
 
 const (
-	Timeout         = 10 * time.Minute
+	Timeout         = 20 * time.Minute
+	TimeoutLabelCsv = 2 * time.Minute
 	PollingInterval = 5 * time.Second
 )
 
@@ -41,11 +42,15 @@ var (
 	TestCaseOperatorAffiliatedCertName   = "affiliated-certification-operator-is-certified"
 	OperatorGroupName                    = "affiliatedcert-test-operator-group"
 	CertifiedOperatorGroup               = "certified-operators"
+	CertifiedOperatorDisplayName         = "Certified Operators"
 	CommunityOperatorGroup               = "community-operators"
 	OperatorSourceNamespace              = "openshift-marketplace"
 	OperatorLabel                        = map[string]string{"test-network-function.com/operator": "target"}
 	UncertifiedOperatorPrefixFalcon      = "falcon-operator"
-	CertifiedOperatorPrefixKubeturbo     = "kubeturbo-operator"
+	CertifiedOperatorPrefixInfinibox     = "infinibox-operator"
+	CertifiedOperatorFullInfinibox       = "infinibox-operator.v2.1.2"
 	CertifiedOperatorPrefixArtifactoryHa = "artifactory-ha-operator"
-	UncertifiedOperatorPrefixK10         = "k10-kasten-operator"
+	CertifiedOperatorFullArtifactoryHa   = "artifactory-ha-operator.v1.1.20"
+	UncertifiedOperatorPrefixSriov       = "sriov-fec"
+	UncertifiedOperatorFullSriov         = "sriov-fec.v1.1.0"
 )

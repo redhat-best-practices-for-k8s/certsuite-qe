@@ -66,6 +66,7 @@ func GetNumOfReadyNodesInCluster(clients *client.ClientSet) (int32, error) {
 	return int32(numOfNodesExistsInCluster), nil
 }
 
+// UnCordon removes cordon label from the given node.
 func UnCordon(clients *client.ClientSet, nodeName string) error {
 	return setUnSchedulableValue(clients, nodeName, false)
 }

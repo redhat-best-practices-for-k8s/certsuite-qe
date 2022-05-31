@@ -24,30 +24,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func defineDeploymentBasedOnArgs(
-	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *v1.Deployment {
-	deploymentStruct := deployment.RedefineWithReplicaNumber(
-		deployment.DefineDeployment(
-			name,
-			netparameters.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels),
-		replicaNumber)
-	if privileged {
-		deploymentStruct = deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
-	}
-
-	if label != nil {
-		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
-	}
-
-	if len(multus) > 0 {
-		deploymentStruct = deployment.RedefineWithMultus(deploymentStruct, multus)
-	}
-
-	return deploymentStruct
-}
-
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(netparameters.TestDeploymentAName, replicaNumber, false, nil, nil)
@@ -103,44 +79,12 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) err
 	return nil
 }
 
-func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
-	testDaemonset := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.RedefineWithMultus(
-		daemonset.DefineDaemonSet(
-			netparameters.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels, "daemonsetnetworkingput"),
-		nadName,
-	), map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
-
-	if labels != nil {
-		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
-	}
-
-	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
-}
-
 func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, nil)
 }
 
 func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, netparameters.NetworkingTestMultusSkipLabel)
-}
-
-func defineAndCreatePrivilegedDaemonset() error {
-	daemonSet := daemonset.RedefineWithPrivilegeAndHostNetwork(daemonset.RedefineDaemonSetWithNodeSelector(
-		daemonset.DefineDaemonSet(
-			netparameters.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
-		), map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""}))
-	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group.
@@ -177,39 +121,6 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 	glog.V(5).Info("error to query RBAC policy")
 
 	return err
-}
-
-func execCmdOnPodsListInNamespace(command []string, execOn string) error {
-	runningTestPods, err := globalhelper.APIClient.Pods(netparameters.TestNetworkingNameSpace).List(
-		context.Background(),
-		metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	var execOcPods *corev1.PodList
-
-	switch execOn {
-	case "all":
-		execOcPods = runningTestPods
-
-	case "first":
-		execOcPods = &corev1.PodList{
-			TypeMeta: runningTestPods.TypeMeta,
-			ListMeta: runningTestPods.ListMeta,
-			Items:    []corev1.Pod{runningTestPods.Items[0]}}
-	default:
-		return fmt.Errorf("invalid parameter %s", execOn)
-	}
-
-	for _, runningPod := range execOcPods.Items {
-		_, err := globalhelper.ExecCommand(runningPod, command)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace.
@@ -338,4 +249,93 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 	}
 
 	return interfaceList, nil
+}
+
+func defineDeploymentBasedOnArgs(
+	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *v1.Deployment {
+	deploymentStruct := deployment.RedefineWithReplicaNumber(
+		deployment.DefineDeployment(
+			name,
+			netparameters.TestNetworkingNameSpace,
+			globalhelper.Configuration.General.TestImage,
+			netparameters.TestDeploymentLabels),
+		replicaNumber)
+	if privileged {
+		deploymentStruct = deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
+	}
+
+	if label != nil {
+		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
+	}
+
+	if len(multus) > 0 {
+		deploymentStruct = deployment.RedefineWithMultus(deploymentStruct, multus)
+	}
+
+	return deploymentStruct
+}
+
+func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
+	testDaemonset := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.RedefineWithMultus(
+		daemonset.DefineDaemonSet(
+			netparameters.TestNetworkingNameSpace,
+			globalhelper.Configuration.General.TestImage,
+			netparameters.TestDeploymentLabels, "daemonsetnetworkingput"),
+		nadName,
+	), map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
+
+	if labels != nil {
+		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
+	}
+
+	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, netparameters.WaitingTime)
+}
+
+func defineAndCreatePrivilegedDaemonset() error {
+	daemonSet := daemonset.RedefineWithPrivilegeAndHostNetwork(daemonset.RedefineDaemonSetWithNodeSelector(
+		daemonset.DefineDaemonSet(
+			netparameters.TestNetworkingNameSpace,
+			globalhelper.Configuration.General.TestImage,
+			netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
+		), map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""}))
+	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func execCmdOnPodsListInNamespace(command []string, execOn string) error {
+	runningTestPods, err := globalhelper.APIClient.Pods(netparameters.TestNetworkingNameSpace).List(
+		context.Background(),
+		metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	var execOcPods *corev1.PodList
+
+	switch execOn {
+	case "all":
+		execOcPods = runningTestPods
+
+	case "first":
+		execOcPods = &corev1.PodList{
+			TypeMeta: runningTestPods.TypeMeta,
+			ListMeta: runningTestPods.ListMeta,
+			Items:    []corev1.Pod{runningTestPods.Items[0]}}
+	default:
+		return fmt.Errorf("invalid parameter %s", execOn)
+	}
+
+	for _, runningPod := range execOcPods.Items {
+		_, err := globalhelper.ExecCommand(runningPod, command)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
