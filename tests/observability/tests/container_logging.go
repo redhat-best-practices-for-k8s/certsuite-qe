@@ -242,7 +242,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	})
 
 	// Negative #5.
-	It("One deployment and one statefulset both one container each, only deployment one prints "+
+	It("One deployment and one statefulset both one container each, but only deployment prints "+
 		"one log line [negative]", func() {
 
 		By("Create deployment in the cluster")
