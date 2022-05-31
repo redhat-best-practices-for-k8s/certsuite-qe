@@ -1,7 +1,7 @@
 package tests
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
@@ -131,7 +131,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			By("Start test")
 			err := globalhelper.LaunchTests(
 				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-				globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 			Expect(err).To(HaveOccurred(), "Error running "+
 				affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -166,7 +166,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -193,7 +193,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -227,7 +227,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -243,7 +243,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			affiliatedcertparameters.TestCaseOperatorAffiliatedCertName+" test")
 
