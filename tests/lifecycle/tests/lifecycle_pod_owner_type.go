@@ -5,8 +5,9 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
@@ -15,11 +16,11 @@ import (
 var _ = Describe("lifecycle-pod-owner-type", func() {
 
 	BeforeEach(func() {
-		err := lifehelper.WaitUntilClusterIsStable()
+		err := helper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(parameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -27,20 +28,20 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One ReplicaSet, several pods", func() {
 
 		By("Define ReplicaSet with replica number")
-		replicaSet := replicaset.RedefineWithReplicaNumber(lifehelper.DefineReplicaSet("lifecyclers"), 3)
+		replicaSet := replicaset.RedefineWithReplicaNumber(helper.DefineReplicaSet("lifecyclers"), 3)
 
-		err := lifehelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -49,27 +50,27 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("Two deployments, several pods", func() {
 
 		By("Define deployments")
-		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputa")
+		deploymenta, err := helper.DefineDeployment(2, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputb")
+		deploymentb, err := helper.DefineDeployment(2, 1, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -78,19 +79,19 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("StatefulSet pod", func() {
 
 		By("Define statefulSet")
-		statefulSet := lifehelper.DefineStatefulSet("lifecyclesf")
-		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, lifeparameters.WaitingTime)
+		statefulSet := helper.DefineStatefulSet("lifecyclesf")
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -99,20 +100,20 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One pod, not part of any workload resource [negative]", func() {
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(lifehelper.DefinePod("lifecyclepod"),
-			lifeparameters.TestDeploymentLabels)
-		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
+		pod := pod.RedefinePodWithLabel(helper.DefinePod("lifecyclepod"),
+			parameters.TestDeploymentLabels)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -121,33 +122,33 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("Two deployments, one pod not related to any resource [negative]", func() {
 
 		By("Define deployments")
-		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputa")
+		deploymenta, err := helper.DefineDeployment(2, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputb")
+		deploymentb, err := helper.DefineDeployment(2, 1, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(lifehelper.DefinePod("lifecyclepod"),
-			lifeparameters.TestDeploymentLabels)
-		err = lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
+		pod := pod.RedefinePodWithLabel(helper.DefinePod("lifecyclepod"),
+			parameters.TestDeploymentLabels)
+		err = globalhelper.CreateAndWaitUntilPodIsReady(pod, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodOwnerTypeTcName,
+			parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

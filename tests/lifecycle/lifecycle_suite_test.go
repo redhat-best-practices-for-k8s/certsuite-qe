@@ -10,8 +10,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
@@ -32,28 +32,28 @@ func TestLifecycle(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
-	err := lifehelper.WaitUntilClusterIsStable()
+	err := helper.WaitUntilClusterIsStable()
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Create namespace")
-	err = namespaces.Create(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+	err = namespaces.Create(parameters.LifecycleNamespace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
-		[]string{lifeparameters.LifecycleNamespace},
-		[]string{lifeparameters.TestPodLabel},
+		[]string{parameters.LifecycleNamespace},
+		[]string{parameters.TestPodLabel},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", lifeparameters.LifecycleNamespace))
+	By(fmt.Sprintf("Remove %s namespace", parameters.LifecycleNamespace))
 	err := namespaces.DeleteAndWait(
 		globalhelper.APIClient,
-		lifeparameters.LifecycleNamespace,
-		lifeparameters.WaitingTime,
+		parameters.LifecycleNamespace,
+		parameters.WaitingTime,
 	)
 	Expect(err).ToNot(HaveOccurred())
 
@@ -62,7 +62,7 @@ var _ = AfterSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove masters scheduling")
-	err = lifehelper.EnableMasterScheduling(false)
+	err = helper.EnableMasterScheduling(false)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
