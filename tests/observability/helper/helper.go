@@ -77,12 +77,12 @@ func DefineStatefulSetWithStdoutBuffers(name string, replicas int, stdoutBuffers
 	return defineStatefulSetWithContainerSpecs(name, replicas, containerSpecs)
 }
 
-func DefineDaemonSetWithStdBuffers(name string, stdoutBuffers []string) *appsv1.DaemonSet {
+func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *appsv1.DaemonSet {
 	// Get each container spec based on the desired stdout buffer per container.
 	containerSpecs := createContainerSpecsFromStdoutBuffers(stdoutBuffers)
 
 	// Define base daemonset
-	return defineDaemonSetSetWithContainerSpecs(name, containerSpecs)
+	return defineDaemonSetWithContainerSpecs(name, containerSpecs)
 }
 
 func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
@@ -156,7 +156,7 @@ func defineStatefulSetWithContainerSpecs(name string, replicas int,
 	return sts
 }
 
-func defineDaemonSetSetWithContainerSpecs(name string,
+func defineDaemonSetWithContainerSpecs(name string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
 	daemonSet := daemonset.DefineDaemonSet(params.QeTestNamespace,

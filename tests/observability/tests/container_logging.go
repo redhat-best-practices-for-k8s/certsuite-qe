@@ -28,7 +28,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -45,7 +45,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -62,7 +62,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -73,13 +73,13 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
 
 		By("Deploy daemonset in the cluster")
-		daemonSet := tshelper.DefineDaemonSetWithStdBuffers(tsparams.QeTestDaemonSetBaseName,
+		daemonSet := tshelper.DefineDaemonSetWithStdoutBuffers(tsparams.QeTestDaemonSetBaseName,
 			[]string{tsparams.TwoLogLines, tsparams.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -103,7 +103,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -111,7 +111,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	})
 
 	// Positive #6.
-	It("one deployment and one statefulset, both having one pod with one container that prints one log "+
+	It("One deployment and one statefulset, both having one pod with one container that prints one log "+
 		"line each", func() {
 
 		By("Create deployment in the cluster")
@@ -128,7 +128,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -144,7 +144,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -160,7 +160,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -177,7 +177,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -194,7 +194,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -218,7 +218,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -234,7 +234,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -242,7 +242,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	})
 
 	// Negative #5.
-	It("one deployment and one statefulset both one container each, only deployment one prints "+
+	It("One deployment and one statefulset both one container each, only deployment one prints "+
 		"one log line [negative]", func() {
 
 		By("Create deployment in the cluster")
@@ -259,7 +259,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -267,7 +267,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	})
 
 	// Negative #6.
-	It("one deployment one pod one container printing one log line without newline char [negative]", func() {
+	It("One deployment one pod one container printing one log line without newline char [negative]", func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(tsparams.QeTestDeploymentBaseName, 1,
@@ -276,7 +276,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -294,7 +294,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")
@@ -310,7 +310,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case.")
+		By("Start TNF " + tnfTestCaseName + " test case")
 		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
 
 		By("Verify test case status in Junit and Claim reports")

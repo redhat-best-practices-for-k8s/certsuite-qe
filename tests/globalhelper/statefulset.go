@@ -13,7 +13,7 @@ import (
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all its replicas are up and running.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout time.Duration) error {
-	runningDeployment, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
+	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
 		context.Background(),
 		statefulSet,
 		metav1.CreateOptions{})
@@ -28,7 +28,7 @@ func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout t
 			metav1.GetOptions{})
 		if err != nil || *st.Spec.Replicas != st.Status.ReadyReplicas {
 			glog.V(5).Info(fmt.Sprintf(
-				"statefulSet %s is not ready, retry in 5 seconds", runningDeployment.Name))
+				"statefulSet %s is not ready, retry in 5 seconds", runningStatefulSet.Name))
 
 			return false
 		}
