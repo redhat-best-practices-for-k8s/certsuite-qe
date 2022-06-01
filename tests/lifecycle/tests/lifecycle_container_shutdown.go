@@ -1,7 +1,7 @@
 package tests
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -38,8 +38,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+  			parameters.TnfShutdownTcName,
+		  	globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -61,8 +61,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			  parameters.TnfShutdownTcName,
+			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -88,8 +88,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			  parameters.TnfShutdownTcName,
+			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -126,8 +126,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			  parameters.TnfShutdownTcName,
+			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -154,8 +154,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			  parameters.TnfShutdownTcName,
+		  	globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -186,8 +186,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		  	parameters.TnfShutdownTcName,
+			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

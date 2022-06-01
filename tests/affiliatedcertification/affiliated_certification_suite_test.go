@@ -3,8 +3,7 @@ package affiliatedcertification
 import (
 	"flag"
 
-	. "github.com/onsi/ginkgo"
-	"github.com/onsi/ginkgo/reporters"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"fmt"
@@ -15,27 +14,18 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func TestAffiliatedCertification(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
-	configSuite, err := config.NewConfig()
 	_ = flag.Lookup("logtostderr").Value.Set("true")
 	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)
-
-	if err != nil {
-		fmt.Print(err)
-
-		return
-	}
-
-	junitPath := configSuite.GetReportPath(currentFile)
+	_, reporterConfig := GinkgoConfiguration()
+	reporterConfig.JUnitReport = globalhelper.Configuration.GetReportPath(currentFile)
 
 	RegisterFailHandler(Fail)
-	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
-	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert affiliated-certification tests", rr)
+	RunSpecs(t, "CNFCert affiliated-certification tests", reporterConfig)
 }
 
 var _ = BeforeSuite(func() {
