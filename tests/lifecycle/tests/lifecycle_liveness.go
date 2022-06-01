@@ -36,14 +36,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(
-			  parameters.TnfLivenessTcName,
-		  	globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfLivenessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfLivenessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -67,14 +65,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(
-			  parameters.TnfLivenessTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfLivenessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfLivenessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -89,14 +85,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfLivenessTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfLivenessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfLivenessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -111,14 +105,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(
-		  	parameters.TnfLivenessTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfLivenessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfLivenessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -133,14 +125,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfLivenessTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfLivenessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfLivenessTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -163,14 +153,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(
-	  		parameters.TnfLivenessTcName,
-		  	globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfLivenessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfLivenessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfLivenessTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

@@ -35,14 +35,12 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("start lifecycle-statefulset-scaling test")
-		err = globalhelper.LaunchTests(
-			parameters.TnfStatefulSetScalingTcName,
+		err = globalhelper.LaunchTests(parameters.TnfStatefulSetScalingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfStatefulSetScalingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfStatefulSetScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

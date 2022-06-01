@@ -43,14 +43,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfPodSchedulingTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -70,14 +68,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfPodSchedulingTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -95,14 +91,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfPodSchedulingTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -128,14 +122,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfPodSchedulingTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -165,8 +157,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

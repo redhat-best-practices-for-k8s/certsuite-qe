@@ -36,14 +36,12 @@ var _ = Describe("lifecycle-readiness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfReadinessTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfReadinessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfReadinessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -68,13 +66,12 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
-		  	parameters.TnfReadinessTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			parameters.TnfReadinessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfReadinessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -89,13 +86,12 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
-			  parameters.TnfReadinessTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			parameters.TnfReadinessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfReadinessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -110,13 +106,12 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(
-			  parameters.TnfReadinessTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			parameters.TnfReadinessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfReadinessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfReadinessTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -131,14 +126,12 @@ var _ = Describe("lifecycle-readiness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfReadinessTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfReadinessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfReadinessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfReadinessTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -161,14 +154,12 @@ var _ = Describe("lifecycle-readiness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfReadinessTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfReadinessTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfReadinessTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfReadinessTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

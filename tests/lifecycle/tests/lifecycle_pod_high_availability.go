@@ -50,14 +50,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(
-		  	parameters.TnfPodHighAvailabilityTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodHighAvailabilityTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -90,14 +88,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(
-	  		parameters.TnfPodHighAvailabilityTcName,
-		  	globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodHighAvailabilityTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -119,14 +115,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(
-	  		parameters.TnfPodHighAvailabilityTcName,
-		  	globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodHighAvailabilityTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -155,14 +149,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(
-		  	parameters.TnfPodHighAvailabilityTcName,
+		err = globalhelper.LaunchTests(parameters.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodHighAvailabilityTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -186,14 +178,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(
-		  	parameters.TnfPodHighAvailabilityTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodHighAvailabilityTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodHighAvailabilityTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

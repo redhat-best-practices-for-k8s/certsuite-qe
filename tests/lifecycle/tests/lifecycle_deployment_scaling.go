@@ -44,8 +44,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfDeploymentScalingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfDeploymentScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

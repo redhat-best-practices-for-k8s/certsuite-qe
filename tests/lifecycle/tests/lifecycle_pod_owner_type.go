@@ -34,14 +34,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-			parameters.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(parameters.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodOwnerTypeTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -63,14 +61,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfPodOwnerTypeTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodOwnerTypeTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -84,14 +80,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-  			parameters.TnfPodOwnerTypeTcName,
-	  		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodOwnerTypeTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -106,14 +100,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-		  	parameters.TnfPodOwnerTypeTcName,
-        globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodOwnerTypeTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -141,14 +133,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-		  	parameters.TnfPodOwnerTypeTcName,
-			  globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(parameters.TnfPodOwnerTypeTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfPodOwnerTypeTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodOwnerTypeTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
