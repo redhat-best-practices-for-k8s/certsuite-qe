@@ -8,8 +8,8 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -24,11 +24,11 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	}
 
 	BeforeEach(func() {
-		err := lifehelper.WaitUntilClusterIsStable()
+		err := helper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(parameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -36,21 +36,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment, no nodeSelector nor nodeAffinity", func() {
 
 		By("Define Deployment")
-		deployment, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		deployment, err := helper.DefineDeployment(1, 1, "lifecycledp")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodSchedulingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -59,25 +57,23 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment with nodeSelector [negative]", func() {
 
 		By("Define Deployment with nodeSelector")
-		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		deploymenta, err := helper.DefineDeployment(1, 1, "lifecycledp")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithNodeSelector(deploymenta,
 			map[string]string{configSuite.General.CnfNodeLabel: ""})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodSchedulingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -86,23 +82,21 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment with nodeAffinity [negative]", func() {
 
 		By("Define Deployment with nodeAffinity")
-		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		deploymenta, err := helper.DefineDeployment(1, 1, "lifecycledp")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithNodeAffinity(deploymenta, configSuite.General.CnfNodeLabel)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodSchedulingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -111,31 +105,29 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("Two deployments, one pod each, one pod with nodeAffinity [negative]", func() {
 
 		By("Define Deployment without nodeAffinity")
-		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycledpa")
+		deploymenta, err := helper.DefineDeployment(1, 1, "lifecycledpa")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define Deployment with nodeAffinity")
-		deploymentb, err := lifehelper.DefineDeployment(1, 1, "lifecycledpb")
+		deploymentb, err := helper.DefineDeployment(1, 1, "lifecycledpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb = deployment.RedefineWithNodeAffinity(deploymentb,
 			configSuite.General.CnfNodeLabel)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodSchedulingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		err = globalhelper.LaunchTests(parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -144,29 +136,28 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment, one daemonSet [negative]", func() {
 
 		By("Define Deployment without nodeAffinity/ nodeSelector")
-		deployment, err := lifehelper.DefineDeployment(1, 1, "lifecycledp")
+		deployment, err := helper.DefineDeployment(1, 1, "lifecycledp")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(lifeparameters.LifecycleNamespace,
+		daemonSet := daemonset.DefineDaemonSet(parameters.LifecycleNamespace,
 			globalhelper.Configuration.General.TestImage,
-			lifeparameters.TestDeploymentLabels, "lifecycleds")
+			parameters.TestDeploymentLabels, "lifecycleds")
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, parameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodSchedulingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			parameters.TnfPodSchedulingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodSchedulingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodSchedulingTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
