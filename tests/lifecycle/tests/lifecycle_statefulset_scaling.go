@@ -7,19 +7,19 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("lifecycle-statefulset-scaling", func() {
 
 	BeforeEach(func() {
-		err := helper.WaitUntilClusterIsStable()
+		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(parameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
@@ -30,17 +30,19 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 	// 45439
 	It("One statefulSet, one pod", func() {
 		By("Define statefulSet")
-		statefulset := helper.DefineStatefulSet("lifecyclesf")
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, parameters.WaitingTime)
+		statefulset := lifehelper.DefineStatefulSet("lifecyclesf")
+		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("start lifecycle-statefulset-scaling test")
-		err = globalhelper.LaunchTests(parameters.TnfStatefulSetScalingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(
+			lifeparameters.TnfStatefulSetScalingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfStatefulSetScalingTcName,
+		err = globalhelper.ValidateIfReportsAreValid(
+			lifeparameters.TnfStatefulSetScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

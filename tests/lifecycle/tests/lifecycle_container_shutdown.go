@@ -5,8 +5,8 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
@@ -14,11 +14,11 @@ import (
 var _ = Describe("lifecycle-container-shutdown", func() {
 
 	BeforeEach(func() {
-		err := helper.WaitUntilClusterIsStable()
+		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(parameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -27,24 +27,24 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		By("Define deployment with preStop field configured")
 
-		deploymenta, err := helper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymenta, parameters.PreStopCommand)
+			deploymenta, lifeparameters.PreStopCommand)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			lifeparameters.TnfShutdownTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfShutdownTcName,
+			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -53,21 +53,21 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, one pod without preStop field configured [negative]", func() {
 
 		By("Define deployment without prestop field configured")
-		deployment, err := helper.DefineDeployment(1, 1, "lifecycleput")
+		deployment, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			lifeparameters.TnfShutdownTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfShutdownTcName,
+			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -76,24 +76,25 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, several pods, several containers that have preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		deploymenta, err := helper.DefineDeployment(3, 2, "lifecycleput")
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymenta, parameters.PreStopCommand)
+			deploymenta, lifeparameters.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymenta, parameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
-		err = globalhelper.LaunchTests(parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(
+			lifeparameters.TnfShutdownTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfShutdownTcName,
+			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -102,36 +103,36 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("Two deployments, several pods, several containers that have preStop field configured", func() {
 
 		By("Define first deployment with preStop field configured")
-		deploymenta, err := helper.DefineDeployment(3, 2, "lifecycleputa")
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymenta, parameters.PreStopCommand)
+			deploymenta, lifeparameters.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymenta, parameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with preStop field configured")
-		deploymentb, err := helper.DefineDeployment(3, 2, "lifecycleputb")
+		deploymentb, err := lifehelper.DefineDeployment(3, 2, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymentb, parameters.PreStopCommand)
+			deploymentb, lifeparameters.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymentb, parameters.WaitingTime)
+			deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			lifeparameters.TnfShutdownTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfShutdownTcName,
+			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -140,26 +141,26 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, several pods, several containers one without preStop field configured [negative]", func() {
 
 		By("Define deployment with preStop field configured")
-		deploymenta, err := helper.DefineDeployment(3, 2, "lifecycleput")
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta, err = deployment.RedefineFirstContainerWithPreStopSpec(
-			deploymenta, parameters.PreStopCommand)
+			deploymenta, lifeparameters.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymenta, parameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			lifeparameters.TnfShutdownTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfShutdownTcName,
+			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -168,30 +169,30 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("Two deployments, several pods, several containers that do not have preStop field configured [negative]", func() {
 
 		By("Define & create first deployment")
-		deploymenta, err := helper.DefineDeployment(3, 2, "lifecycleputa")
+		deploymenta, err := lifehelper.DefineDeployment(3, 2, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymenta, parameters.WaitingTime)
+			deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := helper.DefineDeployment(3, 2, "lifecycleputb")
+		deploymentb, err := lifehelper.DefineDeployment(3, 2, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymentb, parameters.WaitingTime)
+			deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
-			parameters.TnfShutdownTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			lifeparameters.TnfShutdownTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TnfShutdownTcName,
+			lifeparameters.TnfShutdownTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
