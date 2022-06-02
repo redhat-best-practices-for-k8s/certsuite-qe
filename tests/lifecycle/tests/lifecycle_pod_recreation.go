@@ -7,8 +7,8 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -19,7 +19,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
-		err := helper.EnableMasterScheduling(true)
+		err := lifehelper.EnableMasterScheduling(true)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
@@ -28,11 +28,11 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 	})
 
 	BeforeEach(func() {
-		err := helper.WaitUntilClusterIsStable()
+		err := lifehelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(parameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -47,21 +47,23 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
 		By("Define & create deployment")
-		deploymenta, err := helper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput")
+		deploymenta, err := lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, parameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(parameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(
+			lifeparameters.TnfPodRecreationTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodRecreationTcName,
+		err = globalhelper.ValidateIfReportsAreValid(
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -77,30 +79,32 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
 		By("Define & create first deployment")
-		deploymenta, err := helper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputa")
+		deploymenta, err := lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, parameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := helper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputb")
+		deploymentb, err := lifehelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, parameters.TestDeploymentLabels)
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(parameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(
+			lifeparameters.TnfPodRecreationTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodRecreationTcName,
+		err = globalhelper.ValidateIfReportsAreValid(
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -115,21 +119,23 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		}
 
 		By("Define & create deployment")
-		deploymenta, err := helper.DefineDeployment(schedulableNodes, 1, "lifecycleput")
+		deploymenta, err := lifehelper.DefineDeployment(schedulableNodes, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, parameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(parameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(
+			lifeparameters.TnfPodRecreationTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodRecreationTcName,
+		err = globalhelper.ValidateIfReportsAreValid(
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -147,30 +153,32 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment
 
 		By("Define & create first deployment")
-		deploymenta, err := helper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputa")
+		deploymenta, err := lifehelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, parameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := helper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputb")
+		deploymentb, err := lifehelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, parameters.TestDeploymentLabels)
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, lifeparameters.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, parameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(parameters.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+		err = globalhelper.LaunchTests(
+			lifeparameters.TnfPodRecreationTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(parameters.TnfPodRecreationTcName,
+		err = globalhelper.ValidateIfReportsAreValid(
+			lifeparameters.TnfPodRecreationTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
