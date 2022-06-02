@@ -47,10 +47,8 @@ func isReplicaSetReady(namespace string, replicaSetName string) (bool, error) {
 		return false, err
 	}
 
-	if testReplicaSet.Status.ReadyReplicas > 0 {
-		if testReplicaSet.Status.Replicas == testReplicaSet.Status.ReadyReplicas {
-			return true, nil
-		}
+	if *testReplicaSet.Spec.Replicas == testReplicaSet.Status.ReadyReplicas {
+		return true, nil
 	}
 
 	return false, nil

@@ -99,9 +99,17 @@ func isPodReady(namespace string, podName string) (bool, error) {
 		return false, err
 	}
 
-	if podObject.Status.Phase == "Running" {
-		return true, nil
+	numContainers := len(podObject.Spec.Containers)
+
+	if len(podObject.Status.ContainerStatuses) != numContainers {
+		return false, nil
 	}
 
-	return false, nil
+	for index := range podObject.Spec.Containers {
+		if !podObject.Status.ContainerStatuses[index].Ready {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }
