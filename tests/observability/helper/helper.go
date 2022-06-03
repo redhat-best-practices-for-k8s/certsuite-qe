@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	params "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -12,46 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 )
-
-// RunXXX/ValidateXXX helpers to ease the reading of the TC.
-func RunTnfPassingTestCase(tnfTcName string) {
-	err := globalhelper.LaunchTests(
-		tnfTcName,
-		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
-	Expect(err).ToNot(HaveOccurred())
-}
-
-func RunTnfFailingTestCase(tnfTcName string) {
-	err := globalhelper.LaunchTests(
-		tnfTcName,
-		globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
-	Expect(err).To(HaveOccurred())
-}
-
-func ValidateTnfTcAsPassed(tnfTcName string) {
-	err := globalhelper.ValidateIfReportsAreValid(
-		tnfTcName,
-		globalparameters.TestCasePassed)
-	Expect(err).ToNot(HaveOccurred())
-}
-
-func ValidateTnfTcAsFailed(tnfTcName string) {
-	err := globalhelper.ValidateIfReportsAreValid(
-		tnfTcName,
-		globalparameters.TestCaseFailed)
-	Expect(err).ToNot(HaveOccurred())
-}
-
-func ValidateTnfTcAsSkipped(tnfTcName string) {
-	err := globalhelper.ValidateIfReportsAreValid(
-		tnfTcName,
-		globalparameters.TestCaseSkipped)
-	Expect(err).ToNot(HaveOccurred())
-}
 
 // For some reason, there's a function that expects labels' key/values separated
 // by colon instead of the equal char.

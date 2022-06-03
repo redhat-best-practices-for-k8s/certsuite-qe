@@ -81,7 +81,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 			return false
 		}
 
-		// We need to wait until all the containers have an status entry.
+		// We need to wait until all the containers have a status entry.
 		if len(runningPod.Status.ContainerStatuses) != numContainers {
 			return false
 		}

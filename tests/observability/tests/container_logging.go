@@ -1,9 +1,10 @@
 package tests
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -11,6 +12,7 @@ import (
 
 var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	const tnfTestCaseName = tsparams.TnfContainerLoggingTcName
+	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 	BeforeEach(func() {
 		By("Clean namespace " + tsparams.QeTestNamespace + " before each test")
@@ -29,10 +31,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #2.
@@ -46,10 +50,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #3.
@@ -63,10 +69,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #4.
@@ -80,10 +88,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #5.
@@ -104,10 +114,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #6.
@@ -129,10 +141,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #7.
@@ -145,10 +159,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Positive #8.
@@ -161,10 +177,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsPassed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #1.
@@ -178,10 +196,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #2.
@@ -195,10 +215,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #3.
@@ -219,10 +241,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #4.
@@ -235,10 +259,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #5.
@@ -260,10 +286,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #6.
@@ -277,10 +305,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Negative #7.
@@ -295,10 +325,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfFailingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsFailed(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Skip #1.
@@ -311,9 +343,11 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
-		tshelper.RunTnfPassingTestCase(tnfTestCaseName)
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		tshelper.ValidateTnfTcAsSkipped(tnfTestCaseName)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseSkipped)
+		Expect(err).ToNot(HaveOccurred())
 	})
 })
