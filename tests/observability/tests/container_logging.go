@@ -20,7 +20,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #1.
+	// 51747
 	It("One deployment one pod one container that prints two log lines", func() {
 
 		By("Create deployment in the cluster")
@@ -39,7 +39,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #2.
+	// 51753
 	It("One deployment one pod one container that prints one log line", func() {
 
 		By("Create deployment in the cluster")
@@ -58,7 +58,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #3.
+	// 51754
 	It("One deployment one pod with two containers, both containers print two log lines to stdout", func() {
 
 		By("Create deployment in the cluster")
@@ -77,7 +77,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #4.
+	// 51755
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
 
 		By("Deploy daemonset in the cluster")
@@ -96,7 +96,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #5.
+	// 51756
 	It("Two deployments, two pods with two containers each, all printing 1 log line", func() {
 
 		By("Create deployment1 in the cluster")
@@ -122,7 +122,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #6.
+	// 51757
 	It("One deployment and one statefulset, both having one pod with one container that prints one log "+
 		"line each", func() {
 
@@ -149,7 +149,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #7.
+	// 51758
 	It("One pod with one container that prints one log line to stdout", func() {
 
 		By("Create pod in the cluster")
@@ -167,7 +167,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #8.
+	// 51759
 	It("One pod with one container that prints to stdout one log line starting with a tab char", func() {
 
 		By("Create pod in the cluster")
@@ -185,7 +185,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #1.
+	// 51760
 	It("One deployment one pod one container without any log line to stdout [negative]", func() {
 
 		By("Create deployment in the cluster")
@@ -204,7 +204,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #2.
+	// 51761
 	It("One deployment one pod two containers but only one printing one log line [negative]", func() {
 
 		By("Create deployment in the cluster")
@@ -223,7 +223,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #3.
+	// 51762
 	It("Two deployments one pod two containers each, first deployment passing but second fails [negative]", func() {
 
 		By("Create deployment1 in the cluster whose containers print one line to stdout each")
@@ -249,7 +249,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #4.
+	// 51763
 	It("One pod one container without any log line to stdout [negative]", func() {
 
 		By("Create pod in the cluster")
@@ -267,7 +267,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #5.
+	// 51764
 	It("One deployment and one statefulset both one container each, but only deployment prints "+
 		"one log line [negative]", func() {
 
@@ -294,7 +294,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #6.
+	// 51765
 	It("One deployment one pod one container printing one log line without newline char [negative]", func() {
 
 		By("Create deployment in the cluster")
@@ -313,7 +313,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #7.
+	// 51767
 	It("One deployment one pod two containers, first prints one line, second prints "+
 		"one line without newline [negative]", func() {
 
@@ -333,7 +333,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Skip #1.
+	// 51768
 	It("One deployment with one pod and one container without TNF target labels [skip]", func() {
 
 		By("Create deployment without TNF target labels in the cluster")
