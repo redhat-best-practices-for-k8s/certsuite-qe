@@ -3,8 +3,13 @@ package globalhelper
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
+	"time"
 
+	. "github.com/onsi/gomega"
+
+	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -56,4 +61,57 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 	}
 
 	return runningPods, nil
+}
+
+// CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
+func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
+	createdPod, err := APIClient.Pods(pod.Namespace).Create(
+		context.Background(),
+		pod,
+		metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	Eventually(func() bool {
+		status, err := isPodReady(createdPod.Namespace, createdPod.Name)
+		if err != nil {
+
+			glog.V(5).Info(fmt.Sprintf(
+				"Pod %s is not ready, retry in %d seconds", createdPod.Name, retryInterval))
+
+			return false
+		}
+
+		return status
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "Pod is not ready")
+
+	return nil
+}
+
+// isPodReady checks if a pod is ready.
+func isPodReady(namespace string, podName string) (bool, error) {
+	podObject, err := APIClient.Pods(namespace).Get(
+		context.Background(),
+		podName,
+		metav1.GetOptions{},
+	)
+
+	if err != nil {
+		return false, err
+	}
+
+	numContainers := len(podObject.Spec.Containers)
+
+	if len(podObject.Status.ContainerStatuses) != numContainers {
+		return false, nil
+	}
+
+	for index := range podObject.Spec.Containers {
+		if !podObject.Status.ContainerStatuses[index].Ready {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }

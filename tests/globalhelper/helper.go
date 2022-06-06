@@ -14,6 +14,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+const retryInterval = 5
+
 // ValidateIfReportsAreValid test if report is valid for given test case.
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 	glog.V(5).Info("Verify test case status in Junit report")

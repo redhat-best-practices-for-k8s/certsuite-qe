@@ -52,7 +52,7 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time
 		}
 
 		return status
-	}, timeout, 5*time.Second).Should(Equal(true), "Deployment is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "Deployment is not ready")
 
 	return nil
 }

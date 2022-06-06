@@ -80,6 +80,9 @@ func getTestSuteName(testCaseName string) string {
 	if strings.Contains(testCaseName, globalparameters.LifecycleSuiteName) {
 		return globalparameters.LifecycleSuiteName
 	}
+	if strings.Contains(testCaseName, globalparameters.PlatformAlterationSuiteName) {
+		return globalparameters.PlatformAlterationSuiteName
+	}
 
 	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
 }
