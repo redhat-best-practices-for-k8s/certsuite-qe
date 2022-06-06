@@ -31,7 +31,7 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 	It("One statefulSet, one pod", func() {
 		By("Define statefulSet")
 		statefulset := lifehelper.DefineStatefulSet("lifecyclesf")
-		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("start lifecycle-statefulset-scaling test")

@@ -84,7 +84,7 @@ var _ = Describe("lifecycle-readiness", func() {
 		By("Define statefulSet with a readiness probe")
 		statefulset := statefulset.RedefineWithReadinessProbe(
 			lifehelper.DefineStatefulSet("lifecycle-sf"))
-		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
@@ -105,7 +105,7 @@ var _ = Describe("lifecycle-readiness", func() {
 		By("Define pod with a readiness probe")
 		pod := pod.RedefineWithReadinessProbe(pod.RedefinePodWithLabel(
 			lifehelper.DefinePod("lifecycleput"), lifeparameters.TestDeploymentLabels))
-		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
