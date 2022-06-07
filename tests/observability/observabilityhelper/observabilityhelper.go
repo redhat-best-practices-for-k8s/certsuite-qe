@@ -1,10 +1,10 @@
-package helper
+package observabilityhelper
 
 import (
 	"fmt"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	params "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
@@ -16,7 +16,7 @@ import (
 // For some reason, there's a function that expects labels' key/values separated
 // by colon instead of the equal char.
 func GetTnfTargetPodLabelsSlice() []string {
-	return []string{params.QeTestPodLabelKey + ":" + params.QeTestPodLabelValue}
+	return []string{observabilityparameters.QeTestPodLabelKey + ":" + observabilityparameters.QeTestPodLabelValue}
 }
 
 // DefineDeploymentWithStdoutBuffers defines a deployment with a given name and replicas number, creating
@@ -46,9 +46,9 @@ func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *apps
 }
 
 func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, params.QeTestNamespace, globalhelper.Configuration.General.TestImage)
+	newPod := pod.DefinePod(name, observabilityparameters.QeTestNamespace, globalhelper.Configuration.General.TestImage)
 	// Add labels.
-	newPod = pod.RedefinePodWithLabel(newPod, params.TnfTargetPodLabels)
+	newPod = pod.RedefinePodWithLabel(newPod, observabilityparameters.TnfTargetPodLabels)
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
 
@@ -56,7 +56,7 @@ func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
 }
 
 func DefineDeploymentWithoutTargetLabels(name string) *appsv1.Deployment {
-	return deployment.DefineDeployment(name, params.QeTestNamespace,
+	return deployment.DefineDeployment(name, observabilityparameters.QeTestNamespace,
 		globalhelper.Configuration.General.TestImage,
 		map[string]string{"fakeLabelKey": "fakeLabelValue"})
 }
@@ -80,7 +80,7 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 
 		containerSpecs = append(containerSpecs,
 			corev1.Container{
-				Name:    fmt.Sprintf("%s-%d", params.QeTestContainerBaseName, index),
+				Name:    fmt.Sprintf("%s-%d", observabilityparameters.QeTestContainerBaseName, index),
 				Image:   globalhelper.Configuration.General.TestImage,
 				Command: getContainerCommandWithStdout(stdoutLines),
 			},
@@ -93,8 +93,8 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 func defineDeploymentWithContainerSpecs(name string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.Deployment {
 	// Define base deployment
-	dep := deployment.DefineDeployment(name, params.QeTestNamespace,
-		globalhelper.Configuration.General.TestImage, params.TnfTargetPodLabels)
+	dep := deployment.DefineDeployment(name, observabilityparameters.QeTestNamespace,
+		globalhelper.Configuration.General.TestImage, observabilityparameters.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	dep = deployment.RedefineWithReplicaNumber(dep, int32(replicas))
@@ -106,8 +106,8 @@ func defineDeploymentWithContainerSpecs(name string, replicas int,
 func defineStatefulSetWithContainerSpecs(name string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.StatefulSet {
 	// Define base statefulSet
-	sts := statefulset.DefineStatefulSet(name, params.QeTestNamespace,
-		globalhelper.Configuration.General.TestImage, params.TnfTargetPodLabels)
+	sts := statefulset.DefineStatefulSet(name, observabilityparameters.QeTestNamespace,
+		globalhelper.Configuration.General.TestImage, observabilityparameters.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	sts = statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
@@ -119,8 +119,8 @@ func defineStatefulSetWithContainerSpecs(name string, replicas int,
 func defineDaemonSetWithContainerSpecs(name string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
-	daemonSet := daemonset.DefineDaemonSet(params.QeTestNamespace,
-		globalhelper.Configuration.General.TestImage, params.TnfTargetPodLabels, name)
+	daemonSet := daemonset.DefineDaemonSet(observabilityparameters.QeTestNamespace,
+		globalhelper.Configuration.General.TestImage, observabilityparameters.TnfTargetPodLabels, name)
 
 	// Customize its container specs.
 	return daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)
