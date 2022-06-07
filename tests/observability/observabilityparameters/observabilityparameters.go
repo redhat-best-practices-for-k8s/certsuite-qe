@@ -8,18 +8,18 @@ const (
 	// TNF test cases names.
 	TnfContainerLoggingTcName = "observability-container-logging"
 
-	QeTestNamespace = "observability-ns"
+	TestNamespace = "observability-ns"
 
 	// Resources base names. In case a TC creates more than one of them,
 	// an index will be appended: observability-dp1, observability-dp2...
-	QeTestDeploymentBaseName  = "observability-dp"
-	QeTestStatefulSetBaseName = "observability-st"
-	QeTestDaemonSetBaseName   = "observability-ds"
-	QeTestPodBaseName         = "observability-pod"
-	QeTestContainerBaseName   = "qe-observability-container"
+	TestDeploymentBaseName  = "observability-dp"
+	TestStatefulSetBaseName = "observability-st"
+	TestDaemonSetBaseName   = "observability-ds"
+	TestPodBaseName         = "observability-pod"
+	TestContainerBaseName   = "qe-observability-container"
 
-	QeTestPodLabelKey   = "tnf-qe/observability"
-	QeTestPodLabelValue = "container-logging-tc"
+	TestPodLabelKey   = "tnf-qe/observability"
+	TestPodLabelValue = "container-logging-tc"
 )
 
 // observability-container-logging helper params.
@@ -35,7 +35,7 @@ const (
 
 var (
 	TnfTargetPodLabels = map[string]string{
-		QeTestPodLabelKey: QeTestPodLabelValue,
+		TestPodLabelKey: TestPodLabelValue,
 	}
 
 	PodDeployTimeoutMins         = 5 * time.Minute

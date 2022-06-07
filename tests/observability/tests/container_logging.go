@@ -15,8 +15,8 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 	BeforeEach(func() {
-		By("Clean namespace " + observabilityparameters.QeTestNamespace + " before each test")
-		err := namespaces.Clean(observabilityparameters.QeTestNamespace, globalhelper.APIClient)
+		By("Clean namespace " + observabilityparameters.TestNamespace + " before each test")
+		err := namespaces.Clean(observabilityparameters.TestNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -25,7 +25,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.TwoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -46,7 +46,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -67,7 +67,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.TwoLogLines, observabilityparameters.TwoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -88,7 +88,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Deploy daemonset in the cluster")
 		daemonSet := observabilityhelper.DefineDaemonSetWithStdoutBuffers(
-			observabilityparameters.QeTestDaemonSetBaseName,
+			observabilityparameters.TestDaemonSetBaseName,
 			[]string{observabilityparameters.TwoLogLines, observabilityparameters.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet,
@@ -109,7 +109,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment1 in the cluster")
 		deployment1 := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName+"1", 2,
+			observabilityparameters.TestDeploymentBaseName+"1", 2,
 			[]string{observabilityparameters.OneLogLine, observabilityparameters.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
@@ -118,7 +118,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment2 in the cluster")
 		deployment2 := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName+"2", 2,
+			observabilityparameters.TestDeploymentBaseName+"2", 2,
 			[]string{observabilityparameters.OneLogLine, observabilityparameters.OneLogLine})
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
@@ -140,7 +140,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -149,7 +149,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create statefulset in the cluster")
 		statefulset := observabilityhelper.DefineStatefulSetWithStdoutBuffers(
-			observabilityparameters.QeTestStatefulSetBaseName, 1,
+			observabilityparameters.TestStatefulSetBaseName, 1,
 			[]string{observabilityparameters.OneLogLine})
 
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset,
@@ -170,7 +170,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create pod in the cluster")
 		pod := observabilityhelper.DefinePodWithStdoutBuffer(
-			observabilityparameters.QeTestPodBaseName, observabilityparameters.OneLogLine)
+			observabilityparameters.TestPodBaseName, observabilityparameters.OneLogLine)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, observabilityparameters.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
@@ -188,7 +188,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 	It("One pod with one container that prints to stdout one log line starting with a tab char", func() {
 
 		By("Create pod in the cluster")
-		pod := observabilityhelper.DefinePodWithStdoutBuffer(observabilityparameters.QeTestPodBaseName,
+		pod := observabilityhelper.DefinePodWithStdoutBuffer(observabilityparameters.TestPodBaseName,
 			"\t"+observabilityparameters.OneLogLine)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, observabilityparameters.PodDeployTimeoutMins)
@@ -208,7 +208,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.NoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -229,7 +229,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.OneLogLine, observabilityparameters.NoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -250,7 +250,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment1 in the cluster whose containers print one line to stdout each")
 		deployment1 := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName+"1", 1,
+			observabilityparameters.TestDeploymentBaseName+"1", 1,
 			[]string{observabilityparameters.OneLogLine, observabilityparameters.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
@@ -259,7 +259,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment2 in the cluster but only the first of its containers prints a line to stdout")
 		deployment2 := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName+"2", 1,
+			observabilityparameters.TestDeploymentBaseName+"2", 1,
 			[]string{observabilityparameters.OneLogLine, observabilityparameters.NoLogLines})
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
@@ -279,7 +279,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 	It("One pod one container without any log line to stdout [negative]", func() {
 
 		By("Create pod in the cluster")
-		pod := observabilityhelper.DefinePodWithStdoutBuffer(observabilityparameters.QeTestPodBaseName,
+		pod := observabilityhelper.DefinePodWithStdoutBuffer(observabilityparameters.TestPodBaseName,
 			observabilityparameters.NoLogLines)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, observabilityparameters.PodDeployTimeoutMins)
@@ -300,7 +300,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -309,7 +309,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Deploy statefulset in the cluster")
 		statefulset := observabilityhelper.DefineStatefulSetWithStdoutBuffers(
-			observabilityparameters.QeTestStatefulSetBaseName, 1,
+			observabilityparameters.TestStatefulSetBaseName, 1,
 			[]string{observabilityparameters.NoLogLines})
 
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset,
@@ -330,7 +330,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.OneLogLineWithoutNewLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -352,7 +352,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithStdoutBuffers(
-			observabilityparameters.QeTestDeploymentBaseName, 1,
+			observabilityparameters.TestDeploymentBaseName, 1,
 			[]string{observabilityparameters.OneLogLine, observabilityparameters.OneLogLineWithoutNewLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -373,7 +373,7 @@ var _ = Describe(observabilityparameters.TnfContainerLoggingTcName, func() {
 
 		By("Create deployment without TNF target labels in the cluster")
 		deployment := observabilityhelper.DefineDeploymentWithoutTargetLabels(
-			observabilityparameters.QeTestDeploymentBaseName)
+			observabilityparameters.TestDeploymentBaseName)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			observabilityparameters.DeploymentDeployTimeoutMins)

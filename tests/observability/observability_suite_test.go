@@ -28,13 +28,13 @@ func TestObservability(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
-	By(fmt.Sprintf("Create %s namespace", observabilityparameters.QeTestNamespace))
-	err := namespaces.Create(observabilityparameters.QeTestNamespace, globalhelper.APIClient)
+	By(fmt.Sprintf("Create %s namespace", observabilityparameters.TestNamespace))
+	err := namespaces.Create(observabilityparameters.TestNamespace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
-		[]string{observabilityparameters.QeTestNamespace},
+		[]string{observabilityparameters.TestNamespace},
 		observabilityhelper.GetTnfTargetPodLabelsSlice(),
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
@@ -42,10 +42,10 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", observabilityparameters.QeTestNamespace))
+	By(fmt.Sprintf("Remove %s namespace", observabilityparameters.TestNamespace))
 	err := namespaces.DeleteAndWait(
 		globalhelper.APIClient,
-		observabilityparameters.QeTestNamespace,
+		observabilityparameters.TestNamespace,
 		observabilityparameters.NsResourcesDeleteTimeoutMins,
 	)
 	Expect(err).ToNot(HaveOccurred())
