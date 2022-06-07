@@ -42,6 +42,7 @@ The list of available features:
 * *networking*
 * *affiliated-certification*
 * *lifecycle*
+* *observability*
 
 
 #### Running the tests
@@ -111,8 +112,12 @@ The project uses a development method - forking workflow
     │   │   ├── platformhelper         # Platform common test function
     │   │   ├── platformparameters     # Platform constants and parameters
     │   │   └── tests                  # Platform test suite directory
-    │   ├── globalhelper                     # Common test test function
-    │   ├── globalparameters                 # Common test function
+    │   ├── observability                    # Observability test cases directory
+    │   │   ├── observabilityhelper          # Observability common test function
+    │   │   ├── observabilityparameters      # Observability constant and parameters
+    │   │   └── tests                        # Observability test suite directory
+    │   ├── globalhelper               # Common test test function
+    │   ├── globalparameters           # Common test function
     │   └── utils                      # Common utils functions. These utils are based on Kubernetes api calls
     │       ├── client
     │       ├── config
