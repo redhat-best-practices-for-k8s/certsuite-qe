@@ -11,9 +11,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all its replicas are up and running.
+const (
+	replicaSetRetryIntervalSecs = 5
+)
+
+// CreateAndWaitUntilStatefulSetIsReady creates statefulset and wait until all replicas are ready.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout time.Duration) error {
-	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
+	runningReplica, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
 		context.Background(),
 		statefulSet,
 		metav1.CreateOptions{})
@@ -22,19 +26,35 @@ func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout t
 	}
 
 	Eventually(func() bool {
-		st, err := APIClient.StatefulSets(statefulSet.Namespace).Get(
-			context.Background(),
-			statefulSet.Name,
-			metav1.GetOptions{})
-		if err != nil || *st.Spec.Replicas != st.Status.ReadyReplicas {
+		status, err := isStatefulSetReady(runningReplica.Namespace, runningReplica.Name)
+		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"statefulSet %s is not ready, retry in 5 seconds", runningStatefulSet.Name))
+				"statefulSet %s is not ready, retry in %d seconds", runningReplica.Name, replicaSetRetryIntervalSecs))
 
 			return false
 		}
 
-		return true
-	}, timeout, 5*time.Second).Should(Equal(true), "statefulSet is not ready")
+		return status
+	}, timeout, replicaSetRetryIntervalSecs*time.Second).Should(Equal(true), "statefulSet is not ready")
 
 	return nil
+}
+
+func isStatefulSetReady(namespace string, statefulSetName string) (bool, error) {
+	testStatefulSet, err := APIClient.StatefulSets(namespace).Get(
+		context.Background(),
+		statefulSetName,
+		metav1.GetOptions{},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	if testStatefulSet.Status.ReadyReplicas > 0 {
+		if testStatefulSet.Status.Replicas == testStatefulSet.Status.ReadyReplicas {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

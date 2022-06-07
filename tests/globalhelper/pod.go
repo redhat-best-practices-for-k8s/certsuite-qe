@@ -3,14 +3,20 @@ package globalhelper
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"time"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
+)
+
+const (
+	podRetryIntervalSecs = 5
 )
 
 // ExecCommand runs command in the pod and returns buffer output.
@@ -60,9 +66,9 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 	return runningPods, nil
 }
 
-// CreateAndWaitUntilPodIsReady creates a pod and waits until all its containers are ready.
+// CreateAndWaitUntilPodIsReady create and wait until pod is in a "Running" phase.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
-	_, err := APIClient.Pods(pod.Namespace).Create(
+	createdPod, err := APIClient.Pods(pod.Namespace).Create(
 		context.Background(),
 		pod,
 		metav1.CreateOptions{})
@@ -70,30 +76,36 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		return err
 	}
 
-	numContainers := len(pod.Spec.Containers)
-
 	Eventually(func() bool {
-		runningPod, err := APIClient.Pods(pod.Namespace).Get(
-			context.Background(),
-			pod.Name,
-			metav1.GetOptions{})
+		status, err := isPodReady(createdPod.Namespace, createdPod.Name)
 		if err != nil {
+
+			glog.V(5).Info(fmt.Sprintf(
+				"deployment %s is not ready, retry in %d seconds", createdPod.Name, podRetryIntervalSecs))
+
 			return false
 		}
 
-		// We need to wait until all the containers have a status entry.
-		if len(runningPod.Status.ContainerStatuses) != numContainers {
-			return false
-		}
-
-		for index := range runningPod.Spec.Containers {
-			if !runningPod.Status.ContainerStatuses[index].Ready {
-				return false
-			}
-		}
-
-		return true
-	}, timeout, 5*time.Second).Should(Equal(true), "Pod is not ready")
+		return status
+	}, timeout, podRetryIntervalSecs*time.Second).Should(Equal(true), "Deployment is not ready")
 
 	return nil
+}
+
+func isPodReady(namespace string, podName string) (bool, error) {
+	podObject, err := APIClient.Pods(namespace).Get(
+		context.Background(),
+		podName,
+		metav1.GetOptions{},
+	)
+
+	if err != nil {
+		return false, err
+	}
+
+	if podObject.Status.Phase == "Running" {
+		return true, nil
+	}
+
+	return false, nil
 }

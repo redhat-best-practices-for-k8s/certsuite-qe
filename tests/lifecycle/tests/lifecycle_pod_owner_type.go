@@ -79,7 +79,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Define statefulSet")
 		statefulSet := lifehelper.DefineStatefulSet("lifecyclesf")
-		err := lifehelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
@@ -101,7 +101,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Define pod")
 		pod := pod.RedefinePodWithLabel(lifehelper.DefinePod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
-		err := lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
@@ -136,7 +136,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Define pod")
 		pod := pod.RedefinePodWithLabel(lifehelper.DefinePod("lifecyclepod"),
 			lifeparameters.TestDeploymentLabels)
-		err = lifehelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilPodIsReady(pod, lifeparameters.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
