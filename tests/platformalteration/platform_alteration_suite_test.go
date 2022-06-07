@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
-	"github.com/onsi/ginkgo/v2/reporters"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/platformalterationparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/tests"
@@ -22,11 +21,11 @@ func TestPlatformAlteration(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	_ = flag.Lookup("logtostderr").Value.Set("true")
 	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)
-	junitPath := globalhelper.Configuration.GetReportPath(currentFile)
+	_, reporterConfig := GinkgoConfiguration()
+	reporterConfig.JUnitReport = globalhelper.Configuration.GetReportPath(currentFile)
 
 	RegisterFailHandler(Fail)
-	rr := append([]Reporter{}, reporters.NewJUnitReporter(junitPath))
-	RunSpecsWithDefaultAndCustomReporters(t, "CNFCert platform-alteration tests", rr)
+	RunSpecs(t, "CNFCert platform-alteration tests", reporterConfig)
 }
 
 var _ = BeforeSuite(func() {
