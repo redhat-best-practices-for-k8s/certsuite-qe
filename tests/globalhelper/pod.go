@@ -3,12 +3,20 @@ package globalhelper
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
+	"time"
 
+	"github.com/golang/glog"
+	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
+)
+
+const (
+	podRetryIntervalSecs = 5
 )
 
 // ExecCommand runs command in the pod and returns buffer output.
@@ -56,4 +64,48 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 	}
 
 	return runningPods, nil
+}
+
+// CreateAndWaitUntilPodIsReady create and wait until pod is in a "Running" phase.
+func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
+	createdPod, err := APIClient.Pods(pod.Namespace).Create(
+		context.Background(),
+		pod,
+		metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	Eventually(func() bool {
+		status, err := isPodReady(createdPod.Namespace, createdPod.Name)
+		if err != nil {
+
+			glog.V(5).Info(fmt.Sprintf(
+				"deployment %s is not ready, retry in %d seconds", createdPod.Name, podRetryIntervalSecs))
+
+			return false
+		}
+
+		return status
+	}, timeout, podRetryIntervalSecs*time.Second).Should(Equal(true), "Deployment is not ready")
+
+	return nil
+}
+
+func isPodReady(namespace string, podName string) (bool, error) {
+	podObject, err := APIClient.Pods(namespace).Get(
+		context.Background(),
+		podName,
+		metav1.GetOptions{},
+	)
+
+	if err != nil {
+		return false, err
+	}
+
+	if podObject.Status.Phase == "Running" {
+		return true, nil
+	}
+
+	return false, nil
 }

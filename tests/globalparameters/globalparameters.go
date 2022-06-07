@@ -84,4 +84,5 @@ var (
 	NetworkSuiteName                 = "networking"
 	AffiliatedCertificationSuiteName = "affiliated-certification"
 	LifecycleSuiteName               = "lifecycle"
+	ObservabilitySuiteName           = "observability"
 )

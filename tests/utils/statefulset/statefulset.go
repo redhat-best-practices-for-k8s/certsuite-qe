@@ -62,3 +62,15 @@ func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 
 	return statefulSet
 }
+
+func RedefineWithContainerSpecs(statefulSet *v1.StatefulSet, containerSpecs []corev1.Container) *v1.StatefulSet {
+	statefulSet.Spec.Template.Spec.Containers = containerSpecs
+
+	return statefulSet
+}
+
+func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) *v1.StatefulSet {
+	statefulSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+
+	return statefulSet
+}
