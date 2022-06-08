@@ -5,21 +5,23 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 var _ = Describe("lifecycle-deployment-scaling", func() {
 
 	BeforeEach(func() {
-		err := lifehelper.WaitUntilClusterIsStable()
+		err := tshelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
@@ -31,22 +33,22 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 	It("One deployment, one pod, one container, scale in and out", func() {
 
 		By("Define Deployment")
-		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
-			deploymenta, lifeparameters.WaitingTime)
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-deployment-scaling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfDeploymentScalingTcName,
+			tsparams.TnfDeploymentScalingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfDeploymentScalingTcName,
+			tsparams.TnfDeploymentScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

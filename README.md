@@ -101,21 +101,21 @@ The project uses a development method - forking workflow
     ├── scripts                        # Makefile Scripts 
     ├── tests                          # Test cases directory
     │   ├── networking                 # Networking test cases directory
-    │   │   ├── nethelper       # Networking common test function
-    │   │   ├── netparameters   # Networking constants and parameters 
+    │   │   ├── helper                 # Networking common test function
+    │   │   ├── parameters             # Networking constants and parameters 
     │   │   └── tests                  # Networking test suite directory
     |   ├── affiliatedcertification    # Affiliated Certification test cases directory   
-    |   |   ├── affiliatedcerthelper         # Affiliated Certification common test function
-    |   |   ├── affiliatedcertparameters     # Affiliated Certification constants and parameters 
-    |   |   └── tests                        # Affiliated Certification test suite directory
+    |   |   ├── helper                 # Affiliated Certification common test function
+    |   |   ├── parameters             # Affiliated Certification constants and parameters 
+    |   |   └── tests                  # Affiliated Certification test suite directory
     │   ├── platform                   # Platform test cases directory
-    │   │   ├── platformhelper         # Platform common test function
-    │   │   ├── platformparameters     # Platform constants and parameters
+    │   │   ├── helper                 # Platform common test function
+    │   │   ├── parameters             # Platform constants and parameters
     │   │   └── tests                  # Platform test suite directory
-    │   ├── observability                    # Observability test cases directory
-    │   │   ├── observabilityhelper          # Observability common test function
-    │   │   ├── observabilityparameters      # Observability constant and parameters
-    │   │   └── tests                        # Observability test suite directory
+    │   ├── observability              # Observability test cases directory
+    │   │   ├── helper                 # Observability common test function
+    │   │   ├── parameters             # Observability constant and parameters
+    │   │   └── tests                  # Observability test suite directory
     │   ├── globalhelper               # Common test test function
     │   ├── globalparameters           # Common test function
     │   └── utils                      # Common utils functions. These utils are based on Kubernetes api calls

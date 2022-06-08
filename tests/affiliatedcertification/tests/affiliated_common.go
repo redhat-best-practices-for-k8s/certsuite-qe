@@ -7,54 +7,56 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcerthelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
 func preConfigureAffiliatedCertificationEnvironment() {
 	By("Clean test namespace")
 
-	err := namespaces.Clean(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
+	err := namespaces.Clean(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(),
-		"Error cleaning namespace "+affiliatedcertparameters.TestCertificationNameSpace)
+		"Error cleaning namespace "+tsparams.TestCertificationNameSpace)
 
 	By("Ensure default catalog source is enabled")
 
-	catalogEnabled, err := affiliatedcerthelper.IsCatalogSourceEnabled(
-		affiliatedcertparameters.CertifiedOperatorGroup,
-		affiliatedcertparameters.OperatorSourceNamespace,
-		affiliatedcertparameters.CertifiedOperatorDisplayName)
+	catalogEnabled, err := tshelper.IsCatalogSourceEnabled(
+		tsparams.CertifiedOperatorGroup,
+		tsparams.OperatorSourceNamespace,
+		tsparams.CertifiedOperatorDisplayName)
 	Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("can not collect catalogSource object due to %s", err))
 
 	if !catalogEnabled {
 		Expect(
-			affiliatedcerthelper.EnableCatalogSource(affiliatedcertparameters.CertifiedOperatorGroup)).ToNot(
+			tshelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)).ToNot(
 			HaveOccurred())
 		Eventually(func() bool {
-			catalogEnabled, err = affiliatedcerthelper.IsCatalogSourceEnabled(
-				affiliatedcertparameters.CertifiedOperatorGroup,
-				affiliatedcertparameters.OperatorSourceNamespace,
-				affiliatedcertparameters.CertifiedOperatorDisplayName)
+			catalogEnabled, err = tshelper.IsCatalogSourceEnabled(
+				tsparams.CertifiedOperatorGroup,
+				tsparams.OperatorSourceNamespace,
+				tsparams.CertifiedOperatorDisplayName)
 			Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("can not collect catalogSource object due to %s", err))
 
 			return catalogEnabled
-		}, affiliatedcertparameters.TimeoutLabelCsv, affiliatedcertparameters.PollingInterval).Should(BeTrue(),
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(BeTrue(),
 			fmt.Sprintf("Default catalog source %s is not enabled",
-				affiliatedcertparameters.CertifiedOperatorGroup))
+				tsparams.CertifiedOperatorGroup))
 	}
 
 	By("Deploy OperatorGroup if not already deployed")
 
-	if affiliatedcerthelper.IsOperatorGroupInstalled(affiliatedcertparameters.OperatorGroupName,
-		affiliatedcertparameters.TestCertificationNameSpace) != nil {
-		err = affiliatedcerthelper.DeployOperatorGroup(affiliatedcertparameters.TestCertificationNameSpace,
-			utils.DefineOperatorGroup(affiliatedcertparameters.OperatorGroupName,
-				affiliatedcertparameters.TestCertificationNameSpace,
-				[]string{affiliatedcertparameters.TestCertificationNameSpace}),
+	if tshelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
+		tsparams.TestCertificationNameSpace) != nil {
+		err = tshelper.DeployOperatorGroup(tsparams.TestCertificationNameSpace,
+			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
+				tsparams.TestCertificationNameSpace,
+				[]string{tsparams.TestCertificationNameSpace}),
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
 	}
@@ -62,8 +64,8 @@ func preConfigureAffiliatedCertificationEnvironment() {
 	By("Define config file " + globalparameters.DefaultTnfConfigFileName)
 
 	err = globalhelper.DefineTnfConfig(
-		[]string{affiliatedcertparameters.TestCertificationNameSpace},
-		[]string{affiliatedcertparameters.TestPodLabel},
+		[]string{tsparams.TestCertificationNameSpace},
+		[]string{tsparams.TestPodLabel},
 		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
@@ -75,7 +77,7 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 	var csv *v1alpha1.ClusterServiceVersion
 
 	Eventually(func() bool {
-		csv, err = affiliatedcerthelper.GetCsvByPrefix(csvPrefix, namespace)
+		csv, err = tshelper.GetCsvByPrefix(csvPrefix, namespace)
 		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
 			return csv.Status.Phase != "InstallReady" &&
 				csv.Status.Phase != "Deleting" &&
@@ -84,7 +86,7 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 		}
 
 		return false
-	}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
 		csvPrefix+" is not ready.")
 
 	return err
@@ -92,7 +94,7 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 
 func approveInstallPlanWhenReady(csvName, namespace string) {
 	Eventually(func() bool {
-		installPlan, err := affiliatedcerthelper.GetInstallPlanByCSV(namespace, csvName)
+		installPlan, err := tshelper.GetInstallPlanByCSV(namespace, csvName)
 		if err != nil {
 			return false
 		}
@@ -102,13 +104,13 @@ func approveInstallPlanWhenReady(csvName, namespace string) {
 		}
 
 		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
-			err = affiliatedcerthelper.ApproveInstallPlan(affiliatedcertparameters.TestCertificationNameSpace,
+			err = tshelper.ApproveInstallPlan(tsparams.TestCertificationNameSpace,
 				installPlan)
 
 			return err == nil
 		}
 
 		return false
-	}, affiliatedcertparameters.Timeout, affiliatedcertparameters.PollingInterval).Should(Equal(true),
+	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
 		csvName+" install plan is not ready.")
 }

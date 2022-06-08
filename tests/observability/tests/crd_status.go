@@ -7,8 +7,9 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityparameters"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
 var (
@@ -17,8 +18,8 @@ var (
 	crdNames = []string{}
 )
 
-var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
-	const tnfTestCaseName = observabilityparameters.TnfCrdStatusTcName
+var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
+	const tnfTestCaseName = tsparams.TnfCrdStatusTcName
 	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 	AfterEach(func() {
@@ -34,10 +35,10 @@ var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
 	// Positive #1
 	It("One CRD created with status subresource", func() {
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix1)
-		crd1 := observabilityhelper.DefineCrdWithStatusSubresource("TestCrd", observabilityparameters.CrdSuffix1)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, observabilityparameters.CrdDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRD to be removed after the TC has finished.
@@ -55,16 +56,16 @@ var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
 	// Positive #2
 	It("Two CRDs created, both with status subresource", func() {
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix1)
-		crd1 := observabilityhelper.DefineCrdWithStatusSubresource("TestCrdOne", observabilityparameters.CrdSuffix1)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, observabilityparameters.CrdDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix2)
-		crd2 := observabilityhelper.DefineCrdWithStatusSubresource("TestCrdTwo", observabilityparameters.CrdSuffix2)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
+		crd2 := tshelper.DefineCrdWithStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
-		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, observabilityparameters.CrdDeployTimeoutMins)
+		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRDs to be removed after the TC has finished.
@@ -83,10 +84,10 @@ var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
 	// Negative #1
 	It("One CRD created without status subresource [negative]", func() {
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix1)
-		crd1 := observabilityhelper.DefineCrdWithoutStatusSubresource("TestCrd", observabilityparameters.CrdSuffix1)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, observabilityparameters.CrdDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRD to be removed after the TC has finished.
@@ -104,16 +105,16 @@ var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
 	// Negative #2
 	It("Two CRDs created, one with and the other without status subresource [negative]", func() {
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix1)
-		crd1 := observabilityhelper.DefineCrdWithStatusSubresource("TestCrdOne", observabilityparameters.CrdSuffix1)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, observabilityparameters.CrdDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix2)
-		crd2 := observabilityhelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", observabilityparameters.CrdSuffix2)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
+		crd2 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
-		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, observabilityparameters.CrdDeployTimeoutMins)
+		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRDs to be removed after the TC has finished.
@@ -131,16 +132,16 @@ var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
 
 	It("Two CRDs created, both without status subresource [negative]", func() {
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix1)
-		crd1 := observabilityhelper.DefineCrdWithoutStatusSubresource("TestCrdOne", observabilityparameters.CrdSuffix1)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, observabilityparameters.CrdDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.CrdSuffix2)
-		crd2 := observabilityhelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", observabilityparameters.CrdSuffix2)
+		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
+		crd2 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
-		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, observabilityparameters.CrdDeployTimeoutMins)
+		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRDs to be removed after the TC has finished.
@@ -158,11 +159,11 @@ var _ = Describe(observabilityparameters.TnfCrdStatusTcName, func() {
 
 	It("One CRD deployed not having any of the configured suffixes [skip]", func() {
 
-		By("Create CRD in the cluster with suffix " + observabilityparameters.NotConfiguredCrdSuffix)
-		crd1 := observabilityhelper.DefineCrdWithoutStatusSubresource("TestCrdOne",
-			observabilityparameters.NotConfiguredCrdSuffix)
+		By("Create CRD in the cluster with suffix " + tsparams.NotConfiguredCrdSuffix)
+		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne",
+			tsparams.NotConfiguredCrdSuffix)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, observabilityparameters.CrdDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRD to be removed after the TC has finished.

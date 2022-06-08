@@ -3,30 +3,32 @@ package tests
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
-		err := lifehelper.EnableMasterScheduling(true)
+		err := tshelper.EnableMasterScheduling(true)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
-		err := lifehelper.WaitUntilClusterIsStable()
+		err := tshelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -40,23 +42,23 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(2, 1, "lifecycleput")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -71,32 +73,32 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create first deployment")
-		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(2, 1, "lifecycleputa")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycleputb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, lifeparameters.TestDeploymentLabels)
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -111,21 +113,21 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deployment, err := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		deployment, err := tshelper.DefineDeployment(2, 1, "lifecycleputone")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -140,28 +142,28 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create first deployment")
-		deploymenta, err := lifehelper.DefineDeployment(2, 1, "lifecycleputone")
+		deploymenta, err := tshelper.DefineDeployment(2, 1, "lifecycleputone")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := lifehelper.DefineDeployment(2, 1, "lifecycleputtwo")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycleputtwo")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -176,23 +178,23 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		}
 
 		By("Define & create deployment")
-		deploymenta, err := lifehelper.DefineDeployment(1, 1, "lifecycleputone")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleputone")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, lifeparameters.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, lifeparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfPodHighAvailabilityTcName,
+			tsparams.TnfPodHighAvailabilityTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

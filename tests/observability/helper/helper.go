@@ -1,11 +1,11 @@
-package observabilityhelper
+package helper
 
 import (
 	"fmt"
 	"strings"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityparameters"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -14,12 +14,14 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
 // For some reason, there's a function that expects labels' key/values separated
 // by colon instead of the equal char.
 func GetTnfTargetPodLabelsSlice() []string {
-	return []string{observabilityparameters.TestPodLabelKey + ":" + observabilityparameters.TestPodLabelValue}
+	return []string{tsparams.TestPodLabelKey + ":" + tsparams.TestPodLabelValue}
 }
 
 // DefineDeploymentWithStdoutBuffers defines a deployment with a given name and replicas number, creating
@@ -49,9 +51,9 @@ func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *apps
 }
 
 func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, observabilityparameters.TestNamespace, globalhelper.Configuration.General.TestImage)
+	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.Configuration.General.TestImage)
 	// Add labels.
-	newPod = pod.RedefinePodWithLabel(newPod, observabilityparameters.TnfTargetPodLabels)
+	newPod = pod.RedefinePodWithLabel(newPod, tsparams.TnfTargetPodLabels)
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
 
@@ -59,7 +61,7 @@ func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
 }
 
 func DefineDeploymentWithoutTargetLabels(name string) *appsv1.Deployment {
-	return deployment.DefineDeployment(name, observabilityparameters.TestNamespace,
+	return deployment.DefineDeployment(name, tsparams.TestNamespace,
 		globalhelper.Configuration.General.TestImage,
 		map[string]string{"fakeLabelKey": "fakeLabelValue"})
 }
@@ -101,7 +103,7 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 
 		containerSpecs = append(containerSpecs,
 			corev1.Container{
-				Name:    fmt.Sprintf("%s-%d", observabilityparameters.TestContainerBaseName, index),
+				Name:    fmt.Sprintf("%s-%d", tsparams.TestContainerBaseName, index),
 				Image:   globalhelper.Configuration.General.TestImage,
 				Command: getContainerCommandWithStdout(stdoutLines),
 			},
@@ -114,8 +116,8 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 func defineDeploymentWithContainerSpecs(name string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.Deployment {
 	// Define base deployment
-	dep := deployment.DefineDeployment(name, observabilityparameters.TestNamespace,
-		globalhelper.Configuration.General.TestImage, observabilityparameters.TnfTargetPodLabels)
+	dep := deployment.DefineDeployment(name, tsparams.TestNamespace,
+		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	dep = deployment.RedefineWithReplicaNumber(dep, int32(replicas))
@@ -127,8 +129,8 @@ func defineDeploymentWithContainerSpecs(name string, replicas int,
 func defineStatefulSetWithContainerSpecs(name string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.StatefulSet {
 	// Define base statefulSet
-	sts := statefulset.DefineStatefulSet(name, observabilityparameters.TestNamespace,
-		globalhelper.Configuration.General.TestImage, observabilityparameters.TnfTargetPodLabels)
+	sts := statefulset.DefineStatefulSet(name, tsparams.TestNamespace,
+		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	sts = statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
@@ -140,8 +142,8 @@ func defineStatefulSetWithContainerSpecs(name string, replicas int,
 func defineDaemonSetWithContainerSpecs(name string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
-	daemonSet := daemonset.DefineDaemonSet(observabilityparameters.TestNamespace,
-		globalhelper.Configuration.General.TestImage, observabilityparameters.TnfTargetPodLabels, name)
+	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNamespace,
+		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels, name)
 
 	// Customize its container specs.
 	return daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)
