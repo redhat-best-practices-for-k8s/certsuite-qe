@@ -215,3 +215,9 @@ func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
 
 	return deployment
 }
+
+func RedefineWithContainerSpecs(deployment *v1.Deployment, containerSpecs []corev1.Container) *v1.Deployment {
+	deployment.Spec.Template.Spec.Containers = containerSpecs
+
+	return deployment
+}

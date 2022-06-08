@@ -85,5 +85,9 @@ func getTestSuteName(testCaseName string) string {
 		return globalparameters.PlatformAlterationSuiteName
 	}
 
+	if strings.Contains(testCaseName, globalparameters.ObservabilitySuiteName) {
+		return globalparameters.ObservabilitySuiteName
+	}
+
 	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
 }
