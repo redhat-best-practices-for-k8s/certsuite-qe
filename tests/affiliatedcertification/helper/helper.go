@@ -1,4 +1,4 @@
-package affiliatedcerthelper
+package helper
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/onsi/ginkgo/v2"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
@@ -21,8 +21,8 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
 	err = globalhelper.DefineTnfConfig(
-		[]string{affiliatedcertparameters.TestCertificationNameSpace},
-		[]string{affiliatedcertparameters.TestPodLabel},
+		[]string{tsparams.TestCertificationNameSpace},
+		[]string{tsparams.TestPodLabel},
 		containersInfo)
 
 	if err != nil {
@@ -32,24 +32,24 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 	ginkgo.By("Start test")
 
 	err = globalhelper.LaunchTests(
-		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
+		tsparams.TestCaseContainerAffiliatedCertName,
 		tcName)
 
 	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
 		return fmt.Errorf("error running %s test",
-			affiliatedcertparameters.TestCaseContainerAffiliatedCertName)
+			tsparams.TestCaseContainerAffiliatedCertName)
 	}
 
 	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
 		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
 		return fmt.Errorf("error running %s test: %w",
-			affiliatedcertparameters.TestCaseContainerAffiliatedCertName, err)
+			tsparams.TestCaseContainerAffiliatedCertName, err)
 	}
 
 	ginkgo.By("Verify test case status in Junit and Claim reports")
 
 	err = globalhelper.ValidateIfReportsAreValid(
-		affiliatedcertparameters.TestCaseContainerAffiliatedCertName,
+		tsparams.TestCaseContainerAffiliatedCertName,
 		expectedResult)
 
 	if err != nil {

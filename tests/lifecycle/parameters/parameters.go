@@ -1,4 +1,4 @@
-package lifeparameters
+package parameters
 
 import (
 	"fmt"

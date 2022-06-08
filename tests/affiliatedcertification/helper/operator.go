@@ -1,4 +1,4 @@
-package affiliatedcerthelper
+package helper
 
 import (
 	"context"
@@ -9,8 +9,6 @@ import (
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
-
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -19,6 +17,8 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	goclient "sigs.k8s.io/controller-runtime/pkg/client"
+
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
 func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) error {
@@ -118,8 +118,8 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	err := globalhelper.APIClient.Create(context.TODO(),
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      affiliatedcertparameters.CertifiedOperatorGroup,
-				Namespace: affiliatedcertparameters.OperatorSourceNamespace,
+				Name:      tsparams.CertifiedOperatorGroup,
+				Namespace: tsparams.OperatorSourceNamespace,
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
