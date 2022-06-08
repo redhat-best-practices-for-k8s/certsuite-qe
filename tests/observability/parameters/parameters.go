@@ -1,4 +1,4 @@
-package observabilityparameters
+package parameters
 
 import "time"
 

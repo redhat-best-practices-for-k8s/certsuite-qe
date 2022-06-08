@@ -8,14 +8,14 @@ import (
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
-
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 func TestLifecycle(t *testing.T) {
@@ -31,28 +31,28 @@ func TestLifecycle(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
-	err := lifehelper.WaitUntilClusterIsStable()
+	err := tshelper.WaitUntilClusterIsStable()
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Create namespace")
-	err = namespaces.Create(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+	err = namespaces.Create(tsparams.LifecycleNamespace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
-		[]string{lifeparameters.LifecycleNamespace},
-		[]string{lifeparameters.TestPodLabel},
+		[]string{tsparams.LifecycleNamespace},
+		[]string{tsparams.TestPodLabel},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", lifeparameters.LifecycleNamespace))
+	By(fmt.Sprintf("Remove %s namespace", tsparams.LifecycleNamespace))
 	err := namespaces.DeleteAndWait(
 		globalhelper.APIClient,
-		lifeparameters.LifecycleNamespace,
-		lifeparameters.WaitingTime,
+		tsparams.LifecycleNamespace,
+		tsparams.WaitingTime,
 	)
 	Expect(err).ToNot(HaveOccurred())
 
@@ -61,7 +61,7 @@ var _ = AfterSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove masters scheduling")
-	err = lifehelper.EnableMasterScheduling(false)
+	err = tshelper.EnableMasterScheduling(false)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")

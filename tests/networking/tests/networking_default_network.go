@@ -9,12 +9,13 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
 var _ = Describe("Networking custom namespace, custom deployment,", func() {
@@ -27,16 +28,16 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
-		err = namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
 
 		By("Clean namespace before each test")
-		err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -48,18 +49,18 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	// 45440
 	It("3 custom pods on Default network networking-icmpv4-connectivity", func() {
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentOnCluster(3)
+		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -67,29 +68,29 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	// 45441
 	It("custom daemonset, 4 custom pods on Default network", func() {
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentOnCluster(2)
+		err = tshelper.DefineAndCreateDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
 		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.DefineDaemonSet(
-			netparameters.TestNetworkingNameSpace,
+			tsparams.TestNetworkingNameSpace,
 			configSuite.General.TestImage,
-			netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
+			tsparams.TestDeploymentLabels, "daemonsetnetworkingput",
 		), map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -98,11 +99,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("3 custom pods on Default network networking-icmpv4-connectivity fail when "+
 		"one pod is disconnected [negative]", func() {
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
+		err = tshelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Close communication between deployment pods")
-		podsList, err := globalhelper.GetListOfPodsInNamespace(netparameters.TestNetworkingNameSpace)
+		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 
 		for index := range podsList.Items {
@@ -115,13 +116,13 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -130,23 +131,23 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
+		err = tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
-		err = nethelper.ExecCmdOnOnePodInNamespace(
+		err = tshelper.ExecCmdOnOnePodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -155,35 +156,35 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
+		err = tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
-		err = nethelper.ExecCmdOnAllPodInNamespace(
+		err = tshelper.ExecCmdOnAllPodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
 		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(
 			daemonset.DefineDaemonSet(
-				netparameters.TestNetworkingNameSpace,
+				tsparams.TestNetworkingNameSpace,
 				configSuite.General.TestImage,
-				netparameters.TestDeploymentLabels, "daemonsetnetworkingput",
+				tsparams.TestDeploymentLabels, "daemonsetnetworkingput",
 			), map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, netparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfDefaultNetworkTcName,
+			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

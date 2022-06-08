@@ -8,10 +8,11 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
 var _ = Describe("Networking custom namespace,", func() {
@@ -21,23 +22,23 @@ var _ = Describe("Networking custom namespace,", func() {
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
-		err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Collect list of available interfaces from the cluster")
-		multusInterfaces, err = nethelper.GetClusterMultusInterfaces()
+		multusInterfaces, err = tshelper.GetClusterMultusInterfaces()
 		Expect(err).ToNot(HaveOccurred())
 
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, netparameters.TestNetworkingNameSpace)
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
 
 		By("Clean namespace before each test")
-		err := namespaces.Clean(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -53,24 +54,24 @@ var _ = Describe("Networking custom namespace,", func() {
 	// 48328
 	It("custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		By("Define and create Network-attachment-definition")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -78,29 +79,29 @@ var _ = Describe("Networking custom namespace,", func() {
 	// 48330
 	It("2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		By("Define and create Network-attachment-definition")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentBName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentBName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 		time.Sleep(30 * time.Second)
@@ -109,33 +110,33 @@ var _ = Describe("Networking custom namespace,", func() {
 	// 48331
 	It("custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces", func() {
 		By("Define and create Network-attachment-definition")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameB, multusInterfaces[0], netparameters.TestIPamIPNetworkB)
+		err = tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameB, multusInterfaces[0], tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentBName, []string{tsparams.TestNadNameB}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -143,23 +144,23 @@ var _ = Describe("Networking custom namespace,", func() {
 	// 48334
 	It("custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]", func() {
 		By("Define and create Network-attachment-definition")
-		err := nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameA, multusInterfaces[0], "")
+		err := tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameA, multusInterfaces[0], "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -172,32 +173,32 @@ var _ = Describe("Networking custom namespace,", func() {
 		}
 
 		By("Define and create Network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameB, multusInterfaces[1], "")
+		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, multusInterfaces[1], "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment-a and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 1)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 1)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment-b and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentBName, []string{netparameters.TestNadNameB}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentBName, []string{tsparams.TestNadNameB}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -211,32 +212,32 @@ var _ = Describe("Networking custom namespace,", func() {
 		}
 
 		By("Define and create network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = nethelper.DefineAndCreateNadOnCluster(netparameters.TestNadNameB, multusInterfaces[1], "")
+		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, multusInterfaces[1], "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
 
-		err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameB)
+		err = tshelper.DefineAndCreateDeamonsetWithMultusOnCluster(tsparams.TestNadNameB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -245,23 +246,23 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom daemonset 3 pods with skip label [skip]", func() {
 
 		By("Define and create network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = nethelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(netparameters.TestNadNameA)
+		err = tshelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -270,28 +271,28 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment and daemonset 3 pods with skip label[skip]", func() {
 
 		By("Define and create network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = nethelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(netparameters.TestNadNameA)
+		err = tshelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -300,28 +301,28 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment and daemonSet 3 pods, daemonSet has skip label", func() {
 
 		By("Define and create network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = nethelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(netparameters.TestNadNameA)
+		err = tshelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -330,28 +331,28 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment", func() {
 
 		By("Define and create network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameB, multusInterfaces[0], netparameters.TestIPamIPNetworkB)
+		err = tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameB, multusInterfaces[0], tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA, netparameters.TestNadNameB}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA, tsparams.TestNadNameB}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -361,28 +362,28 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment 3 pods,1 NAD,no connectivity via Multus secondary interface[negative]", func() {
 
 		By("Define and create Network-attachment-definition")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Put one deployment's pod  interface down")
-		err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -395,36 +396,36 @@ var _ = Describe("Networking custom namespace,", func() {
 			Skip("There is not enough secondary network interfaces to run the test case")
 		}
 
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameB, multusInterfaces[1], netparameters.TestIPamIPNetworkB)
+		err = tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameB, multusInterfaces[1], tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Put one deployment's pod interface down")
-		err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameB)
+		err = tshelper.DefineAndCreateDeamonsetWithMultusOnCluster(tsparams.TestNadNameB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -438,36 +439,36 @@ var _ = Describe("Networking custom namespace,", func() {
 		}
 
 		By("Define and create network-attachment-definitions")
-		err := nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameA, multusInterfaces[0], netparameters.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = nethelper.DefineAndCreateNadOnCluster(
-			netparameters.TestNadNameB, multusInterfaces[1], netparameters.TestIPamIPNetworkB)
+		err = tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameB, multusInterfaces[1], tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = nethelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			netparameters.TestDeploymentAName, []string{netparameters.TestNadNameB, netparameters.TestNadNameA}, 3)
+		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
+			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameB, tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Put one deployment's pod interface down")
-		err = nethelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = nethelper.DefineAndCreateDeamonsetWithMultusOnCluster(netparameters.TestNadNameB)
+		err = tshelper.DefineAndCreateDeamonsetWithMultusOnCluster(tsparams.TestNadNameB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			netparameters.TnfMultusIpv4TcName,
+			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

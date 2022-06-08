@@ -1,4 +1,4 @@
-package netparameters
+package parameters
 
 import (
 	"fmt"
