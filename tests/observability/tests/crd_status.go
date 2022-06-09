@@ -20,7 +20,6 @@ var (
 
 var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 	const tnfTestCaseName = tsparams.TnfCrdStatusTcName
-	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 	AfterEach(func() {
 		By("Removing all CRDs created by previous test case.")
@@ -34,6 +33,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 
 	// Positive #1
 	It("One CRD created with status subresource", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrd", tsparams.CrdSuffix1)
@@ -55,6 +55,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 
 	// Positive #2
 	It("Two CRDs created, both with status subresource", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
@@ -83,6 +84,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 
 	// Negative #1
 	It("One CRD created without status subresource [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrd", tsparams.CrdSuffix1)
@@ -104,6 +106,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 
 	// Negative #2
 	It("Two CRDs created, one with and the other without status subresource [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
@@ -131,6 +134,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 	})
 
 	It("Two CRDs created, both without status subresource [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
@@ -158,6 +162,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 	})
 
 	It("One CRD deployed not having any of the configured suffixes [skip]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create CRD in the cluster with suffix " + tsparams.NotConfiguredCrdSuffix)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne",
