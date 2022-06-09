@@ -8,11 +8,13 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/observability/observabilityparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/observability/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
 func TestObservability(t *testing.T) {
@@ -28,25 +30,25 @@ func TestObservability(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
-	By(fmt.Sprintf("Create %s namespace", observabilityparameters.TestNamespace))
-	err := namespaces.Create(observabilityparameters.TestNamespace, globalhelper.APIClient)
+	By(fmt.Sprintf("Create %s namespace", tsparams.TestNamespace))
+	err := namespaces.Create(tsparams.TestNamespace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
-		[]string{observabilityparameters.TestNamespace},
-		observabilityhelper.GetTnfTargetPodLabelsSlice(),
+		[]string{tsparams.TestNamespace},
+		tshelper.GetTnfTargetPodLabelsSlice(),
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", observabilityparameters.TestNamespace))
+	By(fmt.Sprintf("Remove %s namespace", tsparams.TestNamespace))
 	err := namespaces.DeleteAndWait(
 		globalhelper.APIClient,
-		observabilityparameters.TestNamespace,
-		observabilityparameters.NsResourcesDeleteTimeoutMins,
+		tsparams.TestNamespace,
+		tsparams.NsResourcesDeleteTimeoutMins,
 	)
 	Expect(err).ToNot(HaveOccurred())
 

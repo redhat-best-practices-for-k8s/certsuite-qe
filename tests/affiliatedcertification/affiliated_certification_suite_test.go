@@ -11,10 +11,11 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/affiliatedcertparameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
 func TestAffiliatedCertification(t *testing.T) {
@@ -30,17 +31,17 @@ func TestAffiliatedCertification(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	By("Create namespace")
-	err := namespaces.Create(affiliatedcertparameters.TestCertificationNameSpace, globalhelper.APIClient)
+	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 })
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", affiliatedcertparameters.TestCertificationNameSpace))
+	By(fmt.Sprintf("Remove %s namespace", tsparams.TestCertificationNameSpace))
 	err := namespaces.DeleteAndWait(
 		globalhelper.APIClient,
-		affiliatedcertparameters.TestCertificationNameSpace,
-		affiliatedcertparameters.Timeout,
+		tsparams.TestCertificationNameSpace,
+		tsparams.Timeout,
 	)
 	Expect(err).ToNot(HaveOccurred())
 

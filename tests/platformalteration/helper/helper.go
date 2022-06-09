@@ -1,4 +1,4 @@
-package platformalterationhelper
+package helper
 
 import (
 	"time"

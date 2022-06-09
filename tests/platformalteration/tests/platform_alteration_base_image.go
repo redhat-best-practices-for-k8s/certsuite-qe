@@ -6,8 +6,8 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/platformalterationhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/platformalterationparameters"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -17,7 +17,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(platformalterationparameters.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -25,23 +25,23 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("One deployment, one pod, running test image", func() {
 
 		By("Define deployment")
-		deployment := deployment.DefineDeployment(platformalterationparameters.TestDeploymentName,
-			platformalterationparameters.PlatformAlterationNamespace,
+		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName,
+			tsparams.PlatformAlterationNamespace,
 			globalhelper.Configuration.General.TestImage,
-			platformalterationparameters.TnfTargetPodLabels)
+			tsparams.TnfTargetPodLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, platformalterationparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -50,22 +50,22 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("One daemonSet, running test image", func() {
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(platformalterationparameters.PlatformAlterationNamespace,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace,
 			globalhelper.Configuration.General.TestImage,
-			platformalterationparameters.TnfTargetPodLabels, platformalterationparameters.TestDaemonSetName)
+			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, platformalterationparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -74,15 +74,15 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("Two deployments, one pod each, change container base image by creating a file [negative]", func() {
 
 		By("Define first deployment")
-		deploymenta := platformalterationhelper.DefineDeploymentWithPriviledgedContainer(
-			platformalterationparameters.TestDeploymentName,
-			platformalterationparameters.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, platformalterationparameters.TnfTargetPodLabels)
+		deploymenta := tshelper.DefineDeploymentWithPriviledgedContainer(
+			tsparams.TestDeploymentName,
+			tsparams.PlatformAlterationNamespace,
+			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, platformalterationparameters.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		podsList, err := globalhelper.GetListOfPodsInNamespace(platformalterationparameters.PlatformAlterationNamespace)
+		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Change container base image")
@@ -91,21 +91,21 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Define second deployment")
 		deploymentb := deployment.DefineDeployment("platform-alteration-dpb",
-			platformalterationparameters.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, platformalterationparameters.TnfTargetPodLabels)
+			tsparams.PlatformAlterationNamespace,
+			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, platformalterationparameters.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -113,15 +113,15 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("One statefulSet, one pod, change container base image by creating a file [negative]", func() {
 
 		By("Define statefulSet")
-		statefulSet := platformalterationhelper.DefineStatefulSetWithPriviledgedContainer(
-			platformalterationparameters.TestStatefulSetName,
-			platformalterationparameters.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, platformalterationparameters.TnfTargetPodLabels)
+		statefulSet := tshelper.DefineStatefulSetWithPriviledgedContainer(
+			tsparams.TestStatefulSetName,
+			tsparams.PlatformAlterationNamespace,
+			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, platformalterationhelper.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		podsList, err := globalhelper.GetListOfPodsInNamespace(platformalterationparameters.PlatformAlterationNamespace)
+		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Change container base image")
@@ -130,13 +130,13 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			platformalterationparameters.TnfBaseImageName,
+			tsparams.TnfBaseImageName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

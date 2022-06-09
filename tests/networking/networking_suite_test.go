@@ -2,24 +2,22 @@ package networking
 
 import (
 	"flag"
-	"runtime"
-	"time"
-
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/nethelper"
-
 	"fmt"
+	"runtime"
+	"testing"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/netparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
-
-	"testing"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/networking/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
 func TestNetworking(t *testing.T) {
@@ -41,35 +39,35 @@ var _ = BeforeSuite(func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		return isClusterReady
-	}, netparameters.WaitingTime, netparameters.RetryInterval*time.Second).Should(BeTrue())
+	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err := nodes.WaitForNodesReady(globalhelper.APIClient, netparameters.WaitingTime, netparameters.RetryInterval)
+	err := nodes.WaitForNodesReady(globalhelper.APIClient, tsparams.WaitingTime, tsparams.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
-	By(fmt.Sprintf("Create %s namespace", netparameters.TestNetworkingNameSpace))
-	err = namespaces.Create(netparameters.TestNetworkingNameSpace, globalhelper.APIClient)
+	By(fmt.Sprintf("Create %s namespace", tsparams.TestNetworkingNameSpace))
+	err = namespaces.Create(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
-		[]string{netparameters.TestNetworkingNameSpace},
-		[]string{netparameters.TestPodLabel},
+		[]string{tsparams.TestNetworkingNameSpace},
+		[]string{tsparams.TestPodLabel},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Set rbac policy which allows authenticated users to run privileged containers")
-	err = nethelper.AllowAuthenticatedUsersRunPrivilegedContainers()
+	err = tshelper.AllowAuthenticatedUsersRunPrivilegedContainers()
 	Expect(err).ToNot(HaveOccurred())
 
 })
 
 var _ = AfterSuite(func() {
-	By(fmt.Sprintf("Remove %s namespace", netparameters.TestNetworkingNameSpace))
+	By(fmt.Sprintf("Remove %s namespace", tsparams.TestNetworkingNameSpace))
 	err := namespaces.DeleteAndWait(
 		globalhelper.APIClient,
-		netparameters.TestNetworkingNameSpace,
-		netparameters.WaitingTime,
+		tsparams.TestNetworkingNameSpace,
+		tsparams.WaitingTime,
 	)
 	Expect(err).ToNot(HaveOccurred())
 

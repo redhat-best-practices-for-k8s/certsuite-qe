@@ -1,4 +1,4 @@
-package platformalterationparameters
+package parameters
 
 import (
 	"fmt"

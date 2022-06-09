@@ -5,21 +5,23 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifehelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/lifeparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 var _ = Describe("lifecycle-statefulset-scaling", func() {
 
 	BeforeEach(func() {
-		err := lifehelper.WaitUntilClusterIsStable()
+		err := tshelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(lifeparameters.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
@@ -30,19 +32,19 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 	// 45439
 	It("One statefulSet, one pod", func() {
 		By("Define statefulSet")
-		statefulset := lifehelper.DefineStatefulSet("lifecyclesf")
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, lifeparameters.WaitingTime)
+		statefulset := tshelper.DefineStatefulSet("lifecyclesf")
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("start lifecycle-statefulset-scaling test")
 		err = globalhelper.LaunchTests(
-			lifeparameters.TnfStatefulSetScalingTcName,
+			tsparams.TnfStatefulSetScalingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			lifeparameters.TnfStatefulSetScalingTcName,
+			tsparams.TnfStatefulSetScalingTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})

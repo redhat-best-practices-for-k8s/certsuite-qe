@@ -1,4 +1,4 @@
-package affiliatedcertparameters
+package parameters
 
 import (
 	"fmt"
