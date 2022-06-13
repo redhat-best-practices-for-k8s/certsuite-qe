@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	crdRetryIntervalSecs = 5
+	crdRetryInterval = 5 * time.Second
 )
 
 func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeout time.Duration) error {
@@ -46,7 +46,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		}
 
 		return false
-	}, timeout, crdRetryIntervalSecs*time.Second).Should(Equal(true), "CRD is not ready")
+	}, timeout, crdRetryInterval).Should(Equal(true), "CRD is not ready")
 
 	return nil
 }
@@ -66,5 +66,5 @@ func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
 
 		// If the CRD was already removed, we'll get an error.
 		return err != nil
-	}, timeout, crdRetryIntervalSecs*time.Second).Should(Equal(true), "CRD is not removed yet")
+	}, timeout, crdRetryInterval).Should(Equal(true), "CRD is not removed yet")
 }
