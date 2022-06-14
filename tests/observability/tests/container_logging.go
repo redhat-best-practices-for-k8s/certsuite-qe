@@ -14,7 +14,6 @@ import (
 
 var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	const tnfTestCaseName = tsparams.TnfContainerLoggingTcName
-	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 	BeforeEach(func() {
 		By("Clean namespace " + tsparams.TestNamespace + " before each test")
@@ -24,6 +23,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51747
 	It("One deployment one pod one container that prints two log lines", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -45,6 +45,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51753
 	It("One deployment one pod one container that prints one log line", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -66,6 +67,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51754
 	It("One deployment one pod with two containers, both containers print two log lines to stdout", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -87,6 +89,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51755
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Deploy daemonset in the cluster")
 		daemonSet := tshelper.DefineDaemonSetWithStdoutBuffers(
@@ -108,6 +111,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51756
 	It("Two deployments, two pods with two containers each, all printing 1 log line", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment1 in the cluster")
 		deployment1 := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -139,6 +143,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51757
 	It("One deployment and one statefulset, both having one pod with one container that prints one log "+
 		"line each", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -169,6 +174,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51758
 	It("One pod with one container that prints one log line to stdout", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(
@@ -188,6 +194,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51759
 	It("One pod with one container that prints to stdout one log line starting with a tab char", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName,
@@ -207,6 +214,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51760
 	It("One deployment one pod one container without any log line to stdout [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -228,6 +236,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51761
 	It("One deployment one pod two containers but only one printing one log line [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -249,6 +258,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51762
 	It("Two deployments one pod two containers each, first deployment passing but second fails [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment1 in the cluster whose containers print one line to stdout each")
 		deployment1 := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -279,6 +289,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51763
 	It("One pod one container without any log line to stdout [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName,
@@ -299,6 +310,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51764
 	It("One deployment and one statefulset both one container each, but only deployment prints "+
 		"one log line [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -328,7 +340,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	})
 
 	// 51765
-	It("One deployment one pod one container printing one log line without newline char [negative]", func() {
+	It("One deployment one pod one container printing one log line without newline char", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -341,16 +354,17 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 		By("Start TNF " + tnfTestCaseName + " test case")
 		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51767
 	It("One deployment one pod two containers, first prints one line, second prints "+
-		"one line without newline [negative]", func() {
+		"one line without newline", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
@@ -363,15 +377,16 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 		By("Start TNF " + tnfTestCaseName + " test case")
 		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51768
 	It("One deployment with one pod and one container without TNF target labels [skip]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create deployment without TNF target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(
