@@ -31,8 +31,8 @@ var (
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
 	TestCaseContainerAffiliatedCertName = "affiliated-certification-container-is-certified"
-	CertifiedContainerCockroachDB       = "cockroachdb/cockroach;registry.connect.redhat.com;latest;" +
-		"sha256:5d7061441ac5f16153301346fd3cfd645d976983edd2457a32c4f914407b9957"
+	CertifiedContainerCockroachDB       = "cockroachdb/cockroach;registry.connect.redhat.com;v20.1.8;" +
+		"sha256:6667919a41d304d5d4ade3ded4f11b42d722a995a4283e11e15320529f7f9abf"
 	CertifiedContainer5gc           = "5gc/vru-sig-mp;artnj.zte.com.cn;2021010510011609815594;"
 	UncertifiedContainerNodeJs12    = "nodejs-12/ubi8;registry.connect.redhat.com;latest;"
 	EmptyFieldsContainer            = ";;;"
