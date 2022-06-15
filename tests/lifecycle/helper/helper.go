@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
 
-	"github.com/golang/glog"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
@@ -25,6 +25,8 @@ import (
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
+
+const retryInterval = 5
 
 // DefineDeployment defines a deployment.
 func DefineDeployment(replica int32, containers int, name string) (*v1.Deployment, error) {
@@ -64,31 +66,6 @@ func DefinePod(name string) *corev1.Pod {
 		globalhelper.Configuration.General.TestImage)
 }
 
-// CreateAndWaitUntilReplicaSetIsReady creates replicaSet and wait until all replicas are ready.
-func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time.Duration) error {
-	runningReplica, err := globalhelper.APIClient.ReplicaSets(replicaSet.Namespace).Create(
-		context.Background(),
-		replicaSet,
-		metav1.CreateOptions{})
-	if err != nil {
-		return err
-	}
-
-	Eventually(func() bool {
-		status, err := isReplicaSetReady(runningReplica.Namespace, runningReplica.Name)
-		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
-				"replicaSet %s is not ready, retry in %d seconds", runningReplica.Name, tsparams.RetryInterval))
-
-			return false
-		}
-
-		return status
-	}, timeout, tsparams.RetryInterval*time.Second).Should(Equal(true), "replicaSet is not ready")
-
-	return nil
-}
-
 // EnableMasterScheduling enables/disables master nodes scheduling.
 func EnableMasterScheduling(scheduleable bool) error {
 	scheduler, err := globalhelper.APIClient.ConfigV1Interface.Schedulers().Get(
@@ -125,6 +102,32 @@ func WaitUntilClusterIsStable() error {
 	return err
 }
 
+// CreateAndWaitUntilReplicaSetIsReady creates replicaSet and waits until all it's replicas are ready.
+func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time.Duration) error {
+	runningReplica, err := globalhelper.APIClient.ReplicaSets(replicaSet.Namespace).Create(
+		context.Background(),
+		replicaSet,
+		metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	Eventually(func() bool {
+		status, err := isReplicaSetReady(runningReplica.Namespace, runningReplica.Name)
+		if err != nil {
+			glog.V(5).Info(fmt.Sprintf(
+				"replicaSet %s is not ready, retry in %d seconds", runningReplica.Name, retryInterval))
+
+			return false
+		}
+
+		return status
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "replicaSet is not ready")
+
+	return nil
+}
+
+// isReplicaSetReady checks if a replicaset is ready.
 func isReplicaSetReady(namespace string, replicaSetName string) (bool, error) {
 	testReplicaSet, err := globalhelper.APIClient.ReplicaSets(namespace).Get(
 		context.Background(),
@@ -135,10 +138,8 @@ func isReplicaSetReady(namespace string, replicaSetName string) (bool, error) {
 		return false, err
 	}
 
-	if testReplicaSet.Status.ReadyReplicas > 0 {
-		if testReplicaSet.Status.Replicas == testReplicaSet.Status.ReadyReplicas {
-			return true, nil
-		}
+	if *testReplicaSet.Spec.Replicas == testReplicaSet.Status.ReadyReplicas {
+		return true, nil
 	}
 
 	return false, nil

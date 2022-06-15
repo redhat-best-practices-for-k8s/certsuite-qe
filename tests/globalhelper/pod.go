@@ -7,16 +7,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
+
+	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
-)
-
-const (
-	podRetryIntervalSecs = 5
 )
 
 // ExecCommand runs command in the pod and returns buffer output.
@@ -66,7 +63,7 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 	return runningPods, nil
 }
 
-// CreateAndWaitUntilPodIsReady create and wait until pod is in a "Running" phase.
+// CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
 	createdPod, err := APIClient.Pods(pod.Namespace).Create(
 		context.Background(),
@@ -81,17 +78,18 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		if err != nil {
 
 			glog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not ready, retry in %d seconds", createdPod.Name, podRetryIntervalSecs))
+				"Pod %s is not ready, retry in %d seconds", createdPod.Name, retryInterval))
 
 			return false
 		}
 
 		return status
-	}, timeout, podRetryIntervalSecs*time.Second).Should(Equal(true), "Deployment is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "Pod is not ready")
 
 	return nil
 }
 
+// isPodReady checks if a pod is ready.
 func isPodReady(namespace string, podName string) (bool, error) {
 	podObject, err := APIClient.Pods(namespace).Get(
 		context.Background(),
@@ -103,9 +101,17 @@ func isPodReady(namespace string, podName string) (bool, error) {
 		return false, err
 	}
 
-	if podObject.Status.Phase == "Running" {
-		return true, nil
+	numContainers := len(podObject.Spec.Containers)
+
+	if len(podObject.Status.ContainerStatuses) != numContainers {
+		return false, nil
 	}
 
-	return false, nil
+	for index := range podObject.Spec.Containers {
+		if !podObject.Status.ContainerStatuses[index].Ready {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }

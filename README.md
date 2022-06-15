@@ -43,10 +43,10 @@ The list of available features:
 * *affiliated-certification*
 * *lifecycle*
 * *observability*
+* *platform-alteration*
 
 
 #### Running the tests
-
 Choose the variant that suits you best:
 
 * `make test-features` - will only run tests for the features that were defined in the `FEATURES` variable
