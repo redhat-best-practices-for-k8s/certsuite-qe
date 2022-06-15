@@ -74,3 +74,16 @@ func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32
 
 	return statefulSet
 }
+
+func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+	for index := range statefulSet.Spec.Template.Spec.Containers {
+		statefulSet.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: pointer.Bool(true),
+			RunAsUser:  pointer.Int64(0),
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"ALL"}},
+		}
+	}
+
+	return statefulSet
+}

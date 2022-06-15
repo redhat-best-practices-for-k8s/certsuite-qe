@@ -11,6 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
 var _ = Describe("platform-alteration-base-image", func() {
@@ -36,7 +37,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfBaseImageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -60,7 +61,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfBaseImageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -74,10 +75,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("Two deployments, one pod each, change container base image by creating a file [negative]", func() {
 
 		By("Define first deployment")
-		deploymenta := tshelper.DefineDeploymentWithPriviledgedContainer(
-			tsparams.TestDeploymentName,
-			tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+		deploymenta := deployment.RedefineWithPriviledgedContainer(
+			deployment.DefineDeployment(tsparams.TestDeploymentName,
+				tsparams.PlatformAlterationNamespace,
+				globalhelper.Configuration.General.TestImage,
+				tsparams.TnfTargetPodLabels))
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -100,7 +102,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfBaseImageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -113,10 +115,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("One statefulSet, one pod, change container base image by creating a file [negative]", func() {
 
 		By("Define statefulSet")
-		statefulSet := tshelper.DefineStatefulSetWithPriviledgedContainer(
-			tsparams.TestStatefulSetName,
-			tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+		statefulSet := statefulset.RedefineWithPriviledgedContainer(
+			statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
+				tsparams.PlatformAlterationNamespace,
+				globalhelper.Configuration.General.TestImage,
+				tsparams.TnfTargetPodLabels))
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -131,7 +134,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfBaseImageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentGinkgoTestDescription().FullTestText))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

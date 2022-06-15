@@ -31,7 +31,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Define ReplicaSet with replica number")
 		replicaSet := replicaset.RedefineWithReplicaNumber(tshelper.DefineReplicaSet("lifecyclers"), 3)
 
-		err := globalhelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, tsparams.WaitingTime)
+		err := tshelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
