@@ -11,6 +11,7 @@ require (
 	github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47
 	github.com/operator-framework/api v0.9.2
 	github.com/operator-framework/operator-lifecycle-manager v0.18.3
+	github.com/stretchr/testify v1.7.0
 	github.com/test-network-function/test-network-function-claim v1.0.5
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.22.3
@@ -39,6 +40,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/openshift/api v0.0.0-20210105115604-44119421ec6b // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect

@@ -36,3 +36,6 @@ install-ginkgo:
 
 install: deps-update install-ginkgo
 	@echo "Installing needed dependencies"
+
+unit-tests:
+	UNIT_TEST=true go test ./... -tags=utest
