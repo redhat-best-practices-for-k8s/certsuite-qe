@@ -81,6 +81,10 @@ func getTestSuteName(testCaseName string) string {
 		return globalparameters.LifecycleSuiteName
 	}
 
+	if strings.Contains(testCaseName, globalparameters.PlatformAlterationSuiteName) {
+		return globalparameters.PlatformAlterationSuiteName
+	}
+
 	if strings.Contains(testCaseName, globalparameters.ObservabilitySuiteName) {
 		return globalparameters.ObservabilitySuiteName
 	}

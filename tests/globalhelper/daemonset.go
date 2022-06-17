@@ -12,9 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-const daemonSetReadyRetryInterval = 5 * time.Second
-
-// CreateAndWaitUntilDaemonSetIsReady creates daemonSet and wait until all  replicas are up and running.
+// CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := APIClient.DaemonSets(daemonSet.Namespace).Create(
 		context.Background(), daemonSet, metav1.CreateOptions{})
@@ -32,7 +30,7 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 		}
 
 		return status
-	}, timeout, daemonSetReadyRetryInterval).Should(Equal(true), "DaemonSet is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "DaemonSet is not ready")
 
 	return nil
 }

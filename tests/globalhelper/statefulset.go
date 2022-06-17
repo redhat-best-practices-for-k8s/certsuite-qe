@@ -5,19 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
+
+	"github.com/golang/glog"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const (
-	replicaSetRetryIntervalSecs = 5
-)
-
-// CreateAndWaitUntilStatefulSetIsReady creates statefulset and wait until all replicas are ready.
+// CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout time.Duration) error {
-	runningReplica, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
+	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
 		context.Background(),
 		statefulSet,
 		metav1.CreateOptions{})
@@ -26,20 +23,21 @@ func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout t
 	}
 
 	Eventually(func() bool {
-		status, err := isStatefulSetReady(runningReplica.Namespace, runningReplica.Name)
+		status, err := isStatefulSetReady(runningStatefulSet.Namespace, runningStatefulSet.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"statefulSet %s is not ready, retry in %d seconds", runningReplica.Name, replicaSetRetryIntervalSecs))
+				"statefulSet %s is not ready, retry in %d seconds", runningStatefulSet.Name, retryInterval))
 
 			return false
 		}
 
 		return status
-	}, timeout, replicaSetRetryIntervalSecs*time.Second).Should(Equal(true), "statefulSet is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "statefulSet is not ready")
 
 	return nil
 }
 
+// isStatefulSetReady checks if a statefulset is ready.
 func isStatefulSetReady(namespace string, statefulSetName string) (bool, error) {
 	testStatefulSet, err := APIClient.StatefulSets(namespace).Get(
 		context.Background(),
@@ -50,10 +48,8 @@ func isStatefulSetReady(namespace string, statefulSetName string) (bool, error) 
 		return false, err
 	}
 
-	if testStatefulSet.Status.ReadyReplicas > 0 {
-		if testStatefulSet.Status.Replicas == testStatefulSet.Status.ReadyReplicas {
-			return true, nil
-		}
+	if *testStatefulSet.Spec.Replicas == testStatefulSet.Status.ReadyReplicas {
+		return true, nil
 	}
 
 	return false, nil
