@@ -25,7 +25,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		By("Removing all CRDs created by previous test case.")
 		for _, crd := range crdNames {
 			By("Removing CRD " + crd)
-			globalhelper.DeleteCrdAndWaitUntilIsRemoved(crd, 10*time.Second)
+			tshelper.DeleteCrdAndWaitUntilIsRemoved(crd, 10*time.Second)
 		}
 		// Clear list.
 		crdNames = []string{}
@@ -38,7 +38,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
+		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRD to be removed after the TC has finished.
@@ -60,13 +60,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
+		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
 		crd2 := tshelper.DefineCrdWithStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
-		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
+		err = tshelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRDs to be removed after the TC has finished.
@@ -89,7 +89,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
+		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRD to be removed after the TC has finished.
@@ -111,13 +111,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
+		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
 		crd2 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
-		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
+		err = tshelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRDs to be removed after the TC has finished.
@@ -139,13 +139,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
+		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
 		crd2 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
-		err = globalhelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
+		err = tshelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRDs to be removed after the TC has finished.
@@ -168,7 +168,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne",
 			tsparams.NotConfiguredCrdSuffix)
 
-		err := globalhelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
+		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Save CRD to be removed after the TC has finished.

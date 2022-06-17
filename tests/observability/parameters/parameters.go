@@ -40,6 +40,8 @@ const (
 	CrdSuffix2 = "tnf-qe.suffix2.com"
 
 	NotConfiguredCrdSuffix = "not-configured-suffix.com"
+
+	CrdRetryInterval = 5 * time.Second
 )
 
 var (

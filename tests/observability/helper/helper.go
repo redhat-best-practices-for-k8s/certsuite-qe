@@ -1,11 +1,15 @@
 package helper
 
 import (
+	"context"
 	"fmt"
 	"strings"
+	"time"
+
+	"github.com/golang/glog"
+	. "github.com/onsi/gomega"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -14,6 +18,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
@@ -82,6 +87,59 @@ func DefineCrdWithoutStatusSubresource(kind, group string) *apiextv1.CustomResou
 		Plural:   strings.ToLower(kind) + "s",
 		ListKind: kind + "List",
 	}, group, false)
+}
+
+func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeout time.Duration) error {
+	_, err := globalhelper.APIClient.CustomResourceDefinitions().Create(
+		context.Background(),
+		crd,
+		metav1.CreateOptions{},
+	)
+	if err != nil {
+		return err
+	}
+
+	Eventually(func() bool {
+		runningCrd, err := globalhelper.APIClient.CustomResourceDefinitions().Get(
+			context.Background(),
+			crd.Name,
+			metav1.GetOptions{},
+		)
+		if err != nil {
+			glog.V(5).Info(fmt.Sprintf(
+				"crd %s is not ready, retry in 5 seconds", runningCrd.Name))
+
+			return false
+		}
+
+		for _, condition := range runningCrd.Status.Conditions {
+			if condition.Type == apiextv1.Established {
+				return true
+			}
+		}
+
+		return false
+	}, timeout, tsparams.CrdRetryInterval).Should(Equal(true), "CRD is not ready")
+
+	return nil
+}
+
+func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
+	err := globalhelper.APIClient.CustomResourceDefinitions().Delete(
+		context.Background(),
+		crd,
+		metav1.DeleteOptions{})
+	Expect(err).ToNot(HaveOccurred())
+
+	Eventually(func() bool {
+		_, err := globalhelper.APIClient.CustomResourceDefinitions().Get(
+			context.Background(),
+			crd,
+			metav1.GetOptions{})
+
+		// If the CRD was already removed, we'll get an error.
+		return err != nil
+	}, timeout, tsparams.CrdRetryInterval).Should(Equal(true), "CRD is not removed yet")
 }
 
 // getContainerCommandWithStdout is a helper function that will return the command slice
