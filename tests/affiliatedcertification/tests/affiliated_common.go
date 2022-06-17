@@ -66,6 +66,7 @@ func preConfigureAffiliatedCertificationEnvironment() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.TestCertificationNameSpace},
 		[]string{tsparams.TestPodLabel},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 }

@@ -8,6 +8,11 @@ type (
 		TargetPodLabels        []PodLabel                   `yaml:"targetPodLabels" json:"targetPodLabels"`
 		Certifiedcontainerinfo []CertifiedContainerRepoInfo `yaml:"certifiedcontainerinfo" json:"certifiedcontainerinfo"`
 		Certifiedoperatorinfo  []CertifiedOperatorRepoInfo  `yaml:"certifiedoperatorinfo" json:"certifiedoperatorinfo"`
+		TargetCrdFilters       []TargetCrdFilter            `yaml:"targetCrdFilters" json:"targetCrdFilters"`
+	}
+
+	TargetCrdFilter struct {
+		NameSuffix string `yaml:"nameSuffix" json:"nameSuffix"`
 	}
 
 	TargetNameSpace struct {

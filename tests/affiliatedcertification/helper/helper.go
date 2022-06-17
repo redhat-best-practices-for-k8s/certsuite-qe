@@ -23,7 +23,8 @@ func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expect
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.TestCertificationNameSpace},
 		[]string{tsparams.TestPodLabel},
-		containersInfo)
+		containersInfo,
+		[]string{})
 
 	if err != nil {
 		return fmt.Errorf("error defining tnf config file: %w", err)

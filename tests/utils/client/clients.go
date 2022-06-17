@@ -11,6 +11,7 @@ import (
 	clientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
 	olm "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme"
 	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
+	apiextv1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -29,6 +30,7 @@ type ClientSet struct {
 	networkv1client.NetworkingV1Client
 	rbacv1client.RbacV1Interface
 	appsv1client.AppsV1Interface
+	apiextv1client.ApiextensionsV1Interface
 	discovery.DiscoveryInterface
 	Config *rest.Config
 	runtimeclient.Client
@@ -66,6 +68,7 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.DiscoveryInterface = discovery.NewDiscoveryClientForConfigOrDie(config)
 	clientSet.NetworkingV1Client = *networkv1client.NewForConfigOrDie(config)
 	clientSet.OperatorsV1alpha1Interface = v1alpha1.NewForConfigOrDie(config)
+	clientSet.ApiextensionsV1Interface = apiextv1client.NewForConfigOrDie(config)
 	clientSet.Config = config
 
 	crScheme := runtime.NewScheme()
