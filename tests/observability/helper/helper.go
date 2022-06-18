@@ -142,6 +142,30 @@ func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
 	}, timeout, tsparams.CrdRetryInterval).Should(Equal(true), "CRD is not removed yet")
 }
 
+func DefineDeploymentWithTerminationMsgPolicies(name string, replicas int,
+	policies []corev1.TerminationMessagePolicy) *appsv1.Deployment {
+	// Create one container spec per policy.
+	containerSpecs := createContainerSpecsFromTerminationMsgPolicies(policies)
+
+	return defineDeploymentWithContainerSpecs(name, replicas, containerSpecs)
+}
+
+func DefineDaemonSetWithTerminationMsgPolicies(name string,
+	policies []corev1.TerminationMessagePolicy) *appsv1.DaemonSet {
+	// Create one container spec per policy.
+	containerSpecs := createContainerSpecsFromTerminationMsgPolicies(policies)
+
+	return defineDaemonSetWithContainerSpecs(name, containerSpecs)
+}
+
+func DefineStatefulSetWithTerminationMsgPolicies(name string, replicas int,
+	policies []corev1.TerminationMessagePolicy) *appsv1.StatefulSet {
+	// Create one container spec per policy.
+	containerSpecs := createContainerSpecsFromTerminationMsgPolicies(policies)
+
+	return defineStatefulSetWithContainerSpecs(name, replicas, containerSpecs)
+}
+
 // getContainerCommandWithStdout is a helper function that will return the command slice
 // to be used in a container spec. The command will call bash to execute printf <stdout>
 // followed by an infinite sleep. The text should be whatever the TC needs to print in the
@@ -166,6 +190,28 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 				Command: getContainerCommandWithStdout(stdoutLines),
 			},
 		)
+	}
+
+	return containerSpecs
+}
+
+func createContainerSpecsFromTerminationMsgPolicies(policies []corev1.TerminationMessagePolicy) []corev1.Container {
+	numContainers := len(policies)
+	containerSpecs := []corev1.Container{}
+
+	for index := 0; index < numContainers; index++ {
+		container := corev1.Container{
+			Name:    fmt.Sprintf("%s-%d", tsparams.TestContainerBaseName, index),
+			Image:   globalhelper.Configuration.General.TestImage,
+			Command: tsparams.TestContainerNormalCommand,
+		}
+
+		// If the policy is an empty string, leave the field unset, and k8s will
+		// set it as TerminationMessageReadFile
+		if policies[index] != tsparams.UseDefaultTerminationMsgPolicy {
+			container.TerminationMessagePolicy = policies[index]
+		}
+		containerSpecs = append(containerSpecs, container)
 	}
 
 	return containerSpecs
