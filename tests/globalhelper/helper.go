@@ -71,7 +71,8 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 }
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedContainerInfo []string) error {
+func DefineTnfConfig(namespaces []string, targetPodLabels []string,
+	certifiedContainerInfo []string, crdFilters []string) error {
 	configFile, err := os.OpenFile(
 		path.Join(
 			Configuration.General.TnfConfigDir,
@@ -98,6 +99,9 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, certifiedCon
 	if err != nil {
 		return err
 	}
+
+	// CRD filters is an optional field.
+	defineCrdFilters(&tnfConfig, crdFilters)
 
 	err = configFileEncoder.Encode(tnfConfig)
 
@@ -217,6 +221,16 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	}
 
 	return nil
+}
+
+func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) {
+	for _, crdSuffix := range crdSuffixes {
+		glog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to tnf configuration file", crdSuffix))
+
+		config.TargetCrdFilters = append(config.TargetCrdFilters, globalparameters.TargetCrdFilter{
+			NameSuffix: crdSuffix,
+		})
+	}
 }
 
 func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []string) error {
