@@ -6,11 +6,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"fmt"
-
 	"runtime"
 	"testing"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -36,10 +35,12 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 
-	By(fmt.Sprintf("Remove %s namespace", parameters.TestAccessControlNameSpace))
-	err := namespaces.DeleteAndWait(
+	By("Remove test namespaces")
+	err := helper.DeleteNamespaces(
+		[]string{parameters.TestAccessControlNameSpace,
+			parameters.AdditionalValidNamespace,
+			parameters.InvalidNamespace},
 		globalhelper.APIClient,
-		parameters.TestAccessControlNameSpace,
 		parameters.Timeout,
 	)
 	Expect(err).ToNot(HaveOccurred())
