@@ -33,6 +33,7 @@ var _ = Describe("Access-control namespace, ", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{parameters.TestAccessControlNameSpace},
 			[]string{parameters.TestPodLabel},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -56,6 +57,7 @@ var _ = Describe("Access-control namespace, ", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{parameters.InvalidNamespace},
 			[]string{parameters.TestPodLabel},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -80,6 +82,7 @@ var _ = Describe("Access-control namespace, ", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{parameters.TestAccessControlNameSpace, parameters.AdditionalValidNamespace},
 			[]string{parameters.TestPodLabel},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -104,6 +107,7 @@ var _ = Describe("Access-control namespace, ", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{parameters.InvalidNamespace, parameters.AdditionalValidNamespace},
 			[]string{parameters.TestPodLabel},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -123,32 +127,32 @@ var _ = Describe("Access-control namespace, ", func() {
 
 	// 51971
 	It("one custom resource in a valid namespace", func() {
-		//Under development
+		Skip("Under development")
 	})
 
 	// 52058
 	It("one custom resource in an invalid namespace [negative]", func() {
-		//Under development
+		Skip("Under development")
 	})
 
 	// 52069
 	It("two custom resources, both in valid namespaces", func() {
-		//Under development
+		Skip("Under development")
 	})
 
 	// 52070
 	It("two custom resources, one in invalid namespace [negative]", func() {
-		//Under development
+		Skip("Under development")
 	})
 
 	// 52073
 	It("two custom resources of different CRDs, both in valid namespace", func() {
-		//Under development
+		Skip("Under development")
 	})
 
 	// 52098
 	It("two custom resources of different CRDs, one in invalid namespace [negative]", func() {
-		//Under development
+		Skip("Under development")
 	})
 
 })
