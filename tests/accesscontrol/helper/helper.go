@@ -11,19 +11,22 @@ import (
 
 func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout time.Duration) error {
 	var failedNs []string
-	for _, ns := range nsToDelete {
+
+	for _, namespace := range nsToDelete {
 		err := namespaces.DeleteAndWait(
 			clientSet,
-			ns,
+			namespace,
 			timeout,
 		)
 		if err != nil {
-			failedNs = append(failedNs, ns)
+			failedNs = append(failedNs, namespace)
 		}
 	}
+
 	if len(failedNs) > 0 {
 		return fmt.Errorf("Failed to remove the following namespaces: " +
 			strings.Join(failedNs, ", "))
 	}
+
 	return nil
 }
