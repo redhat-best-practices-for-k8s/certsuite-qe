@@ -21,21 +21,18 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 	glog.V(5).Info("Verify test case status in Junit report")
 
 	junitTestReport, err := OpenJunitTestReport()
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open junit test report, err: %w", err)
 	}
 
 	claimReport, err := OpenClaimReport()
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open tnf claim report, err: %w", err)
 	}
 
 	err = IsExpectedStatusParamValid(tcExpectedStatus)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("expected status %q is not valid, err: %w", tcExpectedStatus, err)
 	}
 
 	isTestCaseInValidStatusInJunitReport := IsTestCasePassedInJunitReport
@@ -51,20 +48,21 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 		isTestCaseInValidStatusInClaimReport = IsTestCaseSkippedInClaimReport
 	}
 
+	glog.V(5).Info("Verify test case status in junit report file")
+
 	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
-		return fmt.Errorf("test case %s is not in expected %s state in junit report", tcName, tcExpectedStatus)
+		return fmt.Errorf("test case %q is not in expected %q state in junit report", tcName, tcExpectedStatus)
 	}
 
 	glog.V(5).Info("Verify test case status in claim report file")
 
 	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get the state of test case %q from the claim report file, err: %w", tcName, err)
 	}
 
 	if !testPassed {
-		return fmt.Errorf("test case %s is not in expected %s state in claim report", tcName, tcExpectedStatus)
+		return fmt.Errorf("test case %q is not in expected %q state in claim report", tcName, tcExpectedStatus)
 	}
 
 	return nil
