@@ -16,7 +16,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-func TestAffiliatedCertification(t *testing.T) {
+func TestAccessControl(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	_ = flag.Lookup("logtostderr").Value.Set("true")
 	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)

@@ -2,7 +2,6 @@ package helper
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
@@ -10,7 +9,7 @@ import (
 )
 
 func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout time.Duration) error {
-	var failedNs []string
+	failedNs := make(map[string]error)
 
 	for _, namespace := range nsToDelete {
 		err := namespaces.DeleteAndWait(
@@ -19,13 +18,12 @@ func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout 
 			timeout,
 		)
 		if err != nil {
-			failedNs = append(failedNs, namespace)
+			failedNs[namespace] = err
 		}
 	}
 
 	if len(failedNs) > 0 {
-		return fmt.Errorf("Failed to remove the following namespaces: " +
-			strings.Join(failedNs, ", "))
+		return fmt.Errorf("failed to remove the following namespaces: %v", failedNs)
 	}
 
 	return nil
