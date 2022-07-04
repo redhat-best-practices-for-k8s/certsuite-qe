@@ -33,4 +33,5 @@ const (
 	TnfBaseImageName          = "platform-alteration-base-image"
 	TnfIsSelinuxEnforcingName = "platform-alteration-is-selinux-enforcing"
 	TnfIsRedHatReleaseName    = "platform-alteration-isredhat-release"
+	TnfTaintedNodeKernelName  = "platform-alteration-tainted-node-kernel"
 )
