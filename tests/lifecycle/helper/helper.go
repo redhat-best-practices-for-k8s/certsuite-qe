@@ -66,21 +66,6 @@ func DefinePod(name string) *corev1.Pod {
 		globalhelper.Configuration.General.TestImage)
 }
 
-// EnableMasterScheduling enables/disables master nodes scheduling.
-func EnableMasterScheduling(scheduleable bool) error {
-	scheduler, err := globalhelper.APIClient.ConfigV1Interface.Schedulers().Get(
-		context.TODO(), "cluster", metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
-	scheduler.Spec.MastersSchedulable = scheduleable
-	_, err = globalhelper.APIClient.ConfigV1Interface.Schedulers().Update(context.TODO(),
-		scheduler, metav1.UpdateOptions{})
-
-	return err
-}
-
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
 	return daemonset.RedefineWithImagePullPolicy(
 		daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, image,

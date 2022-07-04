@@ -71,42 +71,44 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
 func DefineTnfConfig(namespaces []string, targetPodLabels []string,
 	certifiedContainerInfo []string, crdFilters []string) error {
-	configFile, err := os.OpenFile(
-		path.Join(
-			Configuration.General.TnfConfigDir,
-			globalparameters.DefaultTnfConfigFileName),
-		os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	tnfConfigFilePath := path.Join(Configuration.General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
+
+	configFile, err := os.OpenFile(tnfConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		return fmt.Errorf("error opening/creating file: %w", err)
+		return fmt.Errorf("error opening/creating file %s: %w", tnfConfigFilePath, err)
 	}
+
 	defer configFile.Close()
 	configFileEncoder := yaml.NewEncoder(configFile)
 	tnfConfig := globalparameters.TnfConfig{}
 
 	err = defineTnfNamespaces(&tnfConfig, namespaces)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create namespaces section in tnf yaml config file: %w", err)
 	}
 
 	err = defineTargetPodLabels(&tnfConfig, targetPodLabels)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
 	}
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create certified containers info section in tnf yaml config file: %w", err)
 	}
 
 	// CRD filters is an optional field.
 	defineCrdFilters(&tnfConfig, crdFilters)
 
 	err = configFileEncoder.Encode(tnfConfig)
+	if err != nil {
+		return fmt.Errorf("failed to encode tnf yaml config file on %s: %w", tnfConfigFilePath, err)
+	}
 
 	glog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
 		globalparameters.DefaultTnfConfigFileName, Configuration.General.TnfConfigDir))
 
-	return err
+	return nil
 }
 
 // IsExpectedStatusParamValid validates if requested test status is valid.
