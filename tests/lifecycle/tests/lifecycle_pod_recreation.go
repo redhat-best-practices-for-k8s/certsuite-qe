@@ -21,7 +21,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
-		err := tshelper.EnableMasterScheduling(true)
+		err := globalhelper.EnableMasterScheduling(true)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")

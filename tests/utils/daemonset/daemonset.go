@@ -110,3 +110,42 @@ func RedefineWithContainerSpecs(daemonSet *v1.DaemonSet, containerSpecs []corev1
 
 	return daemonSet
 }
+
+func RedefineWithPriviledgedContainer(daemonSet *v1.DaemonSet) *v1.DaemonSet {
+	for index := range daemonSet.Spec.Template.Spec.Containers {
+		daemonSet.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: pointer.Bool(true),
+			RunAsUser:  pointer.Int64(0),
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"ALL"}},
+		}
+	}
+
+	return daemonSet
+}
+
+func RedefineWithVolumeMount(daemonSet *v1.DaemonSet) *v1.DaemonSet {
+	for index := range daemonSet.Spec.Template.Spec.Containers {
+		daemonSet.Spec.Template.Spec.Containers[index].VolumeMounts = []corev1.VolumeMount{
+			{
+				Name:      "host",
+				MountPath: "/host",
+			},
+		}
+	}
+
+	hostPathType := corev1.HostPathDirectory
+	daemonSet.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: "host",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: "/",
+					Type: &hostPathType,
+				},
+			},
+		},
+	}
+
+	return daemonSet
+}
