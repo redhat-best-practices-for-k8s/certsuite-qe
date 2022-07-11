@@ -6,8 +6,9 @@ const (
 	TnfTestSuiteName = "observability"
 
 	// TNF test cases names.
-	TnfContainerLoggingTcName = "observability-container-logging"
-	TnfCrdStatusTcName        = "observability-crd-status"
+	TnfContainerLoggingTcName      = "observability-container-logging"
+	TnfCrdStatusTcName             = "observability-crd-status"
+	TnfTerminationMsgPolicysTcName = "observability-termination-policy"
 
 	TestNamespace = "observability-ns"
 
@@ -44,10 +45,17 @@ const (
 	CrdRetryInterval = 5 * time.Second
 )
 
+// observability-termination-policy helper params.
+const (
+	UseDefaultTerminationMsgPolicy = ""
+)
+
 var (
 	TnfTargetPodLabels = map[string]string{
 		TestPodLabelKey: TestPodLabelValue,
 	}
+
+	TestContainerNormalCommand = []string{"/bin/bash", "-c", "sleep INF"}
 
 	PodDeployTimeoutMins         = 5 * time.Minute
 	DeploymentDeployTimeoutMins  = 5 * time.Minute
