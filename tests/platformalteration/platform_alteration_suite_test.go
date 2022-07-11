@@ -40,6 +40,7 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.PlatformAlterationNamespace},
 		[]string{tsparams.TestPodLabel},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })

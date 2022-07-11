@@ -44,6 +44,7 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.LifecycleNamespace},
 		[]string{tsparams.TestPodLabel},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })
@@ -63,7 +64,7 @@ var _ = AfterSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove masters scheduling")
-	err = tshelper.EnableMasterScheduling(false)
+	err = globalhelper.EnableMasterScheduling(false)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
