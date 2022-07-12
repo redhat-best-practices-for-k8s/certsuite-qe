@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
@@ -19,6 +20,8 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 	})
 
+	const reboot = `chroot /host systemctl reboot
+	`
 	// 51389
 	It("Untainted node", func() {
 
@@ -54,7 +57,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 		}
 
 		// we can only set a taint flag in this way, not remove it, there is no way to untaint a running kernel,
-		// the taint flag will be removed once the cluster is redeployed.
+		// the taint flag will be removed once the node is rebooted.
 		By("Taint a node")
 		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", "echo 32 > /proc/sys/kernel/tainted"})
 		Expect(err).ToNot(HaveOccurred())
@@ -64,9 +67,22 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfTaintedNodeKernelName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTaintedNodeKernelName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Reboot the node to remove the taint")
+		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", reboot})
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Wait for the node to become not ready")
+		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
+			tsparams.WaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, false)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Wait for the node to become ready")
+		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
+			tsparams.WaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
+		Expect(err).ToNot(HaveOccurred())
+
 	})
 })

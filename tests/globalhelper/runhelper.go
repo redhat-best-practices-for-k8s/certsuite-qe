@@ -52,7 +52,7 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	}
 
 	if debugTnf {
-		outfile := Configuration.CreateLogFile(getTestSuteName(testCaseName), tcNameForReport)
+		outfile := Configuration.CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
 		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
@@ -68,7 +68,7 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	return cmd.Run()
 }
 
-func getTestSuteName(testCaseName string) string {
+func getTestSuiteName(testCaseName string) string {
 	if strings.Contains(testCaseName, globalparameters.NetworkSuiteName) {
 		return globalparameters.NetworkSuiteName
 	}
