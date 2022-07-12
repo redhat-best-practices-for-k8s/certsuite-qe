@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"time"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -20,6 +22,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 	})
 
+	const rebootWaitingTime = 10 * time.Minute
 	const reboot = `chroot /host systemctl reboot
 	`
 	// 51389
@@ -76,12 +79,12 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 		By("Wait for the node to become not ready")
 		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
-			tsparams.WaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, false)
+			rebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, false)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Wait for the node to become ready")
 		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
-			tsparams.WaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
+			rebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
