@@ -31,7 +31,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		crdNames = []string{}
 	})
 
-	// Positive #1
+	// 52444
 	It("One CRD created with status subresource", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
@@ -53,7 +53,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Positive #2
+	// 52445
 	It("Two CRDs created, both with status subresource", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
@@ -82,7 +82,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #1
+	// 52446
 	It("One CRD created without status subresource [negative]", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
@@ -104,7 +104,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Negative #2
+	// 52447
 	It("Two CRDs created, one with and the other without status subresource [negative]", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
@@ -133,6 +133,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	// 52448
 	It("Two CRDs created, both without status subresource [negative]", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
@@ -161,6 +162,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	// 52449
 	It("One CRD deployed not having any of the configured suffixes [skip]", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
