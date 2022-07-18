@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"time"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -22,9 +20,6 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 	})
 
-	const rebootWaitingTime = 10 * time.Minute
-	const reboot = `chroot /host systemctl reboot
-	`
 	// 51389
 	It("Untainted node", func() {
 
@@ -74,17 +69,17 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Reboot the node to remove the taint")
-		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", reboot})
+		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", tsparams.Reboot})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Wait for the node to become not ready")
 		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
-			rebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, false)
+			tsparams.RebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, false)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Wait for the node to become ready")
 		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
-			rebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
+			tsparams.RebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
 		Expect(err).ToNot(HaveOccurred())
 
 	})

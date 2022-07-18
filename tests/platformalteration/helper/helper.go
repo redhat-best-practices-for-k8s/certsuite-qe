@@ -13,6 +13,7 @@ import (
 
 const WaitingTime = 5 * time.Minute
 
+// WaitForSpecificNodeCondition waits for a given node to become ready or not.
 func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval time.Duration, nodeName string,
 	ready bool) error {
 	return wait.PollImmediate(interval, timeout, func() (bool, error) {

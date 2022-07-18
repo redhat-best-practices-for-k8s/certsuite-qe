@@ -27,13 +27,6 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	const (
-		getenforce    = `chroot /host getenforce`
-		enforcing     = "Enforcing"
-		setPermissive = `chroot /host setenforce 0`
-		setEnforce    = `chroot /host setenforce 1`
-	)
-
 	// 51310
 	It("SELinux is enforcing on all nodes", func() {
 		daemonset := daemonset.RedefineWithPriviledgedContainer(
@@ -50,11 +43,11 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		By("Verify that all nodes are running with selinux on enforcing mode")
 		for _, pod := range podList.Items {
 
-			buf, err := globalhelper.ExecCommand(pod, []string{"/bin/bash", "-c", getenforce})
+			buf, err := globalhelper.ExecCommand(pod, []string{"/bin/bash", "-c", tsparams.Getenforce})
 			Expect(err).ToNot(HaveOccurred())
 
-			if !strings.Contains(buf.String(), enforcing) {
-				_, err = globalhelper.ExecCommand(pod, []string{"/bin/bash", "-c", setEnforce})
+			if !strings.Contains(buf.String(), tsparams.Enforcing) {
+				_, err = globalhelper.ExecCommand(pod, []string{"/bin/bash", "-c", tsparams.SetEnforce})
 				Expect(err).ToNot(HaveOccurred())
 			}
 		}
@@ -84,7 +77,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set SELinux permissive on the node")
-		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", setPermissive})
+		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", tsparams.SetPermissive})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-is-selinux-enforcing test")
@@ -98,7 +91,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verifying SELinux is enforcing on the node")
-		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", setEnforce})
+		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", tsparams.SetEnforce})
 		Expect(err).ToNot(HaveOccurred())
 
 	})
