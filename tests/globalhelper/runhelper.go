@@ -89,5 +89,9 @@ func getTestSuiteName(testCaseName string) string {
 		return globalparameters.ObservabilitySuiteName
 	}
 
+	if strings.Contains(testCaseName, globalparameters.AccessControlSuiteName) {
+		return globalparameters.AccessControlSuiteName
+	}
+
 	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
 }

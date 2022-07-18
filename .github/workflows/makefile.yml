@@ -23,6 +23,9 @@ jobs:
       - name: Run lint
         run: make lint
 
+      - name: Run Unit Tests
+        run: make unit-tests
+
       - name:  Install ginkgo
         run: make install-ginkgo
 

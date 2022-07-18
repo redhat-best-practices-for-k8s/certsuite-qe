@@ -2,6 +2,7 @@ package globalhelper
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/golang/glog"
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
@@ -14,6 +15,12 @@ var (
 )
 
 func init() {
+	if os.Getenv("UNIT_TEST") != "" {
+		Configuration = &config.Config{}
+
+		return
+	}
+
 	var err error
 	APIClient, err = config.DefineClients()
 
