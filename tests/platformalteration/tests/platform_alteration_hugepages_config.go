@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -67,6 +68,9 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		hugePagesPaths := strings.Split(nrHugepagesFiles.String(), "\r\n")
+		if len(hugePagesPaths) == 0 {
+			Fail(fmt.Sprintf("No hugepages files have been found on node - %s ", podList.Items[0].Spec.NodeName))
+		}
 
 		By("Get hugepages config")
 		cmd := fmt.Sprintf("cat %s", hugePagesPaths[0])
@@ -76,10 +80,28 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		hugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Change hugepages config")
+		By("Manually increase hugepages config")
 		cmd = fmt.Sprintf("echo %d > %s", hugepagesNumber+1, hugePagesPaths[0])
 		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
 		Expect(err).ToNot(HaveOccurred())
+
+		cmd = fmt.Sprintf("cat %s", hugePagesPaths[0])
+		buf, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
+		Expect(err).ToNot(HaveOccurred())
+
+		currentHugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
+		Expect(err).ToNot(HaveOccurred())
+
+		// loop to wait until the file has been actually updated.
+		timeout := time.Now().Add(5 * time.Minute)
+
+		for {
+			if currentHugepagesNumber == hugepagesNumber+1 {
+				break
+			} else if time.Now().After(timeout) {
+				Fail("The file was not updated with the increased hugepages number.")
+			}
+		}
 
 		By("Start platform-alteration-hugepages-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePagesConfigName,
