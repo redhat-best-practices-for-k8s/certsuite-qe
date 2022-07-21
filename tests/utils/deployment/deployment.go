@@ -234,3 +234,10 @@ func RedefineWithPriviledgedContainer(deployment *v1.Deployment) *v1.Deployment 
 
 	return deployment
 }
+
+// RedefineWithAutomountServiceAccountToken redefines deployment with provided automountServiceAccountToken value
+func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token bool) *v1.Deployment {
+	deployment.Spec.Template.Spec.AutomountServiceAccountToken = &token
+
+	return deployment
+}
