@@ -28,8 +28,9 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 	It("Hugepages config unchanged configuration", func() {
 
 		crdExists, err := crd.EnsureCrdExists(tsparams.PerformanceProfileCrd)
+		Expect(err).ToNot(HaveOccurred())
 
-		if !crdExists || err != nil {
+		if !crdExists {
 			Skip("performance profile does not exist.")
 		}
 
