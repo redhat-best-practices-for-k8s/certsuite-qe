@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control pod-automount-service-account-token , ", func() {
+var _ = Describe("Access-control pod-automount-service-account-token, ", func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")
@@ -27,7 +27,6 @@ var _ = Describe("Access-control pod-automount-service-account-token , ", func()
 	})
 
 	BeforeEach(func() {
-
 		By("Clean namespace before each test")
 		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
