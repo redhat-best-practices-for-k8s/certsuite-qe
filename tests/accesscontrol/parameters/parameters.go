@@ -24,4 +24,6 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
+
+	ServiceAccountName = "default"
 )

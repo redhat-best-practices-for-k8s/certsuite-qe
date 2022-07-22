@@ -83,22 +83,112 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 	// 53035
 	It("one deployment, one pod, token not set, service account's token false", func() {
-		Skip("Under development")
+		By("Define deployment with automountServiceAccountToken not set")
+		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Set namespace's default serviceaccount's automountServiceAccountToken to false")
+		err = helper.SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace,
+			parameters.ServiceAccountName, "false")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53036
 	It("one deployment, one pod, token not set, service account's token true [negative]", func() {
-		Skip("Under development")
+		By("Define deployment with automountServiceAccountToken not set")
+		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Set namespace's defualt serviceaccount's automountServiceAccountToken to true")
+		err = helper.SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace,
+			parameters.ServiceAccountName, "true")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53040
 	It("one deployment, one pod, token not set, service account's token not set [negative]", func() {
-		Skip("Under development")
+		By("Define deployment with automountServiceAccountToken not set")
+		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Set namespace's default serviceaccount's automountServiceAccountToken to nil")
+		err = helper.SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace,
+			parameters.ServiceAccountName, "nil")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53054
 	It("one deployment, one pod, token false, service account's token true", func() {
-		Skip("Under development")
+		By("Define deployment with automountServiceAccountToken not set")
+		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		dep = deployment.RedefineWithAutomountServiceAccountToken(dep, false)
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Set namespace's default serviceaccount's automountServiceAccountToken to true")
+		err = helper.SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace,
+			parameters.ServiceAccountName, "true")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			parameters.TestCaseNameAccessControlPodAutomountToken,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53036
