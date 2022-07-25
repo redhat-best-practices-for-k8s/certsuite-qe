@@ -32,7 +32,7 @@ func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod 
 func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -47,7 +47,7 @@ func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
 func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},

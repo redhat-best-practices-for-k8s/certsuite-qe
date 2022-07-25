@@ -49,7 +49,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
-			PreStop: &corev1.Handler{
+			PreStop: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
 					Command: command,
 				},
@@ -120,7 +120,7 @@ func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) 
 func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
 	if len(deployment.Spec.Template.Spec.Containers) > 0 {
 		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
-			PreStop: &corev1.Handler{
+			PreStop: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
 					Command: command}}}
 
@@ -191,7 +191,7 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -205,7 +205,7 @@ func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
 func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},

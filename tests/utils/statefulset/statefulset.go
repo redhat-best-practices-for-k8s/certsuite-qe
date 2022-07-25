@@ -37,7 +37,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -52,7 +52,7 @@ func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
