@@ -80,25 +80,30 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		hugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
 		Expect(err).ToNot(HaveOccurred())
 
+		updatedHugePagesNumber := hugepagesNumber + 1
+
 		By("Manually increase hugepages config")
-		cmd = fmt.Sprintf("echo %d > %s", hugepagesNumber+1, hugePagesPaths[0])
+		cmd = fmt.Sprintf("echo %d > %s", updatedHugePagesNumber, hugePagesPaths[0])
 		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
-		Expect(err).ToNot(HaveOccurred())
-
-		cmd = fmt.Sprintf("cat %s", hugePagesPaths[0])
-		buf, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
-		Expect(err).ToNot(HaveOccurred())
-
-		currentHugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
 		Expect(err).ToNot(HaveOccurred())
 
 		// loop to wait until the file has been actually updated.
 		timeout := time.Now().Add(5 * time.Minute)
 
 		for {
-			if currentHugepagesNumber == hugepagesNumber+1 {
+
+			cmd = fmt.Sprintf("cat %s", hugePagesPaths[0])
+			buf, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
+			Expect(err).ToNot(HaveOccurred())
+
+			currentHugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
+			Expect(err).ToNot(HaveOccurred())
+
+			if currentHugepagesNumber == updatedHugePagesNumber {
 				break
-			} else if time.Now().After(timeout) {
+			}
+
+			if time.Now().After(timeout) {
 				Fail("The file was not updated with the increased hugepages number.")
 			}
 		}
