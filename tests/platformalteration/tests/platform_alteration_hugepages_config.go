@@ -2,14 +2,13 @@ package tests
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
-	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
@@ -73,39 +72,17 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		}
 
 		By("Get hugepages config")
-		cmd := fmt.Sprintf("cat %s", hugePagesPaths[0])
-		buf, err := globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
+		currentHugepagesNumber, err := tshelper.GetHugePagesConfigNumber(hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred())
 
-		hugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
+		updatedHugePagesNumber := currentHugepagesNumber + 1
+
+		By("Manually update hugepages config")
+		updated, err := tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred())
 
-		updatedHugePagesNumber := hugepagesNumber + 1
-
-		By("Manually increase hugepages config")
-		cmd = fmt.Sprintf("echo %d > %s", updatedHugePagesNumber, hugePagesPaths[0])
-		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
-		Expect(err).ToNot(HaveOccurred())
-
-		// loop to wait until the file has been actually updated.
-		timeout := time.Now().Add(5 * time.Minute)
-
-		for {
-
-			cmd = fmt.Sprintf("cat %s", hugePagesPaths[0])
-			buf, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
-			Expect(err).ToNot(HaveOccurred())
-
-			currentHugepagesNumber, err := strconv.Atoi(strings.Split(buf.String(), "\r\n")[0])
-			Expect(err).ToNot(HaveOccurred())
-
-			if currentHugepagesNumber == updatedHugePagesNumber {
-				break
-			}
-
-			if time.Now().After(timeout) {
-				Fail("The file was not updated with the increased hugepages number.")
-			}
+		if updated == false {
+			Fail(fmt.Sprintf("Hugepages file %s was not updated successfully.", hugePagesPaths[0]))
 		}
 
 		By("Start platform-alteration-hugepages-config test")
@@ -117,9 +94,13 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Fix hugepages config")
-		cmd = fmt.Sprintf("echo %d > %s", hugepagesNumber, hugePagesPaths[0])
-		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", cmd})
+		updatedHugePagesNumber = currentHugepagesNumber
+		updated, err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred())
+
+		if updated == false {
+			Fail(fmt.Sprintf("Hugepages file %s was not updated successfully.", hugePagesPaths[0]))
+		}
 	})
 
 })
