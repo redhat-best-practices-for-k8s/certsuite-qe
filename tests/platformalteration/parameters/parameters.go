@@ -33,4 +33,13 @@ const (
 	TnfBaseImageName          = "platform-alteration-base-image"
 	TnfIsSelinuxEnforcingName = "platform-alteration-is-selinux-enforcing"
 	TnfIsRedHatReleaseName    = "platform-alteration-isredhat-release"
+	TnfTaintedNodeKernelName  = "platform-alteration-tainted-node-kernel"
+
+	Getenforce    = `chroot /host getenforce`
+	Enforcing     = "Enforcing"
+	SetPermissive = `chroot /host setenforce 0`
+	SetEnforce    = `chroot /host setenforce 1`
+
+	RebootWaitingTime = 10 * time.Minute
+	Reboot            = `chroot /host systemctl reboot`
 )

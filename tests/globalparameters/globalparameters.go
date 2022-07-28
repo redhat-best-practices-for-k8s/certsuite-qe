@@ -91,4 +91,5 @@ var (
 	LifecycleSuiteName               = "lifecycle"
 	PlatformAlterationSuiteName      = "platform-alteration"
 	ObservabilitySuiteName           = "observability"
+	AccessControlSuiteName           = "access-control"
 )
