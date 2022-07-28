@@ -35,7 +35,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 	// 53140
 	It("one deployment, one pod, HostIpc false", func() {
-		By("Define deployment with hostPID set to false")
+		By("Define deployment with hostIPC set to false")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -46,20 +46,20 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53141
 	It("one deployment, one pod, HostIpc true [negative]", func() {
-		By("Define deployment with hostPID set to true")
+		By("Define deployment with hostIPC set to true")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -70,20 +70,20 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53142
 	It("two deployments, one pod each, HostIpcs false", func() {
-		By("Define deployments with hostPID set to false")
+		By("Define deployments with hostIPC set to false")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -102,20 +102,20 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53143
 	It("two deployments, one pod each, one HostIpc true [negative]", func() {
-		By("Define deployments with hostPID set to different values")
+		By("Define deployments with hostIPC set to different values")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -134,13 +134,13 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPid,
+			parameters.TestCaseNameAccessControlPodHostIpc,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

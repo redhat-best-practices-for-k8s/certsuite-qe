@@ -18,7 +18,7 @@ var (
 	AdditionalValidNamespace   = "ac-test"
 
 	TestCaseNameAccessControlNamespace         = "access-control-namespace"
-	TestCaseNameAccessControlPodHostPid        = "access-control-pod-host-pid"
+	TestCaseNameAccessControlPodHostIpc        = "access-control-pod-host-ipc"
 	TestCaseNameAccessControlPodAutomountToken = "access-control-pod-automount-service-account-token"
 
 	TestDeploymentLabels = map[string]string{
