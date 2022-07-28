@@ -17,8 +17,9 @@ var (
 	InvalidNamespace           = "openshift-test"
 	AdditionalValidNamespace   = "ac-test"
 
-	TestCaseNameAccessControlNamespace  = "access-control-namespace"
-	TestCaseNameAccessControlPodHostPid = "access-control-pod-host-pid"
+	TestCaseNameAccessControlNamespace         = "access-control-namespace"
+	TestCaseNameAccessControlPodHostPid        = "access-control-pod-host-pid"
+	TestCaseNameAccessControlPodAutomountToken = "access-control-pod-automount-service-account-token"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,

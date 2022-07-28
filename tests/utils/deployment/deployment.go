@@ -240,3 +240,9 @@ func RedefineWithHostIpc(deployment *v1.Deployment, hostIpc bool) *v1.Deployment
 
 	return deployment
 }
+
+func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token bool) *v1.Deployment {
+	deployment.Spec.Template.Spec.AutomountServiceAccountToken = &token
+
+	return deployment
+}
