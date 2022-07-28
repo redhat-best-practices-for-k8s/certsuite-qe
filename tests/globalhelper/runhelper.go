@@ -65,6 +65,9 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 		cmd.Stderr = outfile
 	}
 
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
 	return cmd.Run()
 }
 

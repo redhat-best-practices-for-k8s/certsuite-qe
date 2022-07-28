@@ -234,3 +234,9 @@ func RedefineWithPriviledgedContainer(deployment *v1.Deployment) *v1.Deployment 
 
 	return deployment
 }
+
+func RedefineWithHostIpc(deployment *v1.Deployment, hostIpc bool) *v1.Deployment {
+	deployment.Spec.Template.Spec.HostIPC = hostIpc
+
+	return deployment
+}
