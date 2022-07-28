@@ -81,7 +81,7 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		updated, err := tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred())
 
-		if updated == false {
+		if !updated {
 			Fail(fmt.Sprintf("Hugepages file %s was not updated successfully.", hugePagesPaths[0]))
 		}
 
@@ -98,7 +98,7 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		updated, err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred())
 
-		if updated == false {
+		if !updated {
 			Fail(fmt.Sprintf("Hugepages file %s was not updated successfully.", hugePagesPaths[0]))
 		}
 	})
