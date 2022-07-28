@@ -117,7 +117,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Set namespace's defualt serviceaccount's automountServiceAccountToken to true")
+		By("Set namespace's default serviceaccount's automountServiceAccountToken to true")
 		err = helper.SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace,
 			parameters.ServiceAccountName, "true")
 		Expect(err).ToNot(HaveOccurred())
@@ -164,7 +164,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 	// 53054
 	It("one deployment, one pod, token false, service account's token true", func() {
-		By("Define deployment with automountServiceAccountToken not set")
+		By("Define deployment with automountServiceAccountToken set to false")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 

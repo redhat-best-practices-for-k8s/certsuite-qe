@@ -56,25 +56,32 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 
 func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value string) error {
 	var boolVal bool
+
 	serviceacct, err := globalhelper.APIClient.ServiceAccounts(namespace).
 		Get(context.TODO(), saname, metav1.GetOptions{})
+
 	if err != nil {
-		return fmt.Errorf("Error getting service account: %w", err)
+		return fmt.Errorf("error getting service account: %w", err)
 	}
 
-	if value == "true" {
+	switch value {
+	case "true":
 		boolVal = true
 		serviceacct.AutomountServiceAccountToken = &boolVal
-	} else if value == "false" {
+
+	case "false":
 		boolVal = false
 		serviceacct.AutomountServiceAccountToken = &boolVal
-	} else if value == "nil" {
+
+	case "nil":
 		serviceacct.AutomountServiceAccountToken = nil
-	} else {
-		return fmt.Errorf("Invalid value for token value")
+
+	default:
+		return fmt.Errorf("invalid value for token value")
 	}
 
 	_, err = globalhelper.APIClient.ServiceAccounts(parameters.TestAccessControlNameSpace).
 		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
+
 	return err
 }
