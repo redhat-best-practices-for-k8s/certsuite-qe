@@ -17,6 +17,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
@@ -35,6 +36,13 @@ var _ = BeforeSuite(func() {
 	By("Create namespace")
 	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+	By("Un-label operator used in other suites")
+	_ = tshelper.DeleteLabelFromInstalledCSV(
+		tsparams.UnrelatedOperatorPrefixCloudcasa,
+		tsparams.UnrelatedNamespace,
+		tsparams.OperatorLabel)
+
 })
 
 var _ = AfterSuite(func() {
@@ -50,4 +58,10 @@ var _ = AfterSuite(func() {
 	By("Remove reports from report directory")
 	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
+
+	By("Re-label operator used in other suites")
+	_ = tshelper.AddLabelToInstalledCSV(
+		tsparams.UnrelatedOperatorPrefixCloudcasa,
+		tsparams.UnrelatedNamespace,
+		tsparams.OperatorLabel)
 })

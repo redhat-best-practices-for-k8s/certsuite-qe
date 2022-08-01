@@ -30,6 +30,9 @@ var (
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 
+	UnrelatedOperatorPrefixCloudcasa = "cloudcasa"
+	UnrelatedNamespace               = "tnf"
+
 	TestCaseContainerAffiliatedCertName = "affiliated-certification-container-is-certified"
 	CertifiedContainerCockroachDB       = "cockroachdb/cockroach;registry.connect.redhat.com;v20.1.8;" +
 		"sha256:6667919a41d304d5d4ade3ded4f11b42d722a995a4283e11e15320529f7f9abf"
