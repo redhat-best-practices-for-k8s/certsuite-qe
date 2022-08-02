@@ -49,13 +49,17 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 	// 51309
 	It("Change Hugepages config manually [negative]", func() {
 
+		By("Set rbac policy which allows authenticated users to run privileged containers")
+		err := globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Create daemonSet")
 		daemonset := daemonset.RedefineWithPriviledgedContainer(
 			daemonset.RedefineWithVolumeMount(
 				daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 					tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)))
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonset, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonset, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
