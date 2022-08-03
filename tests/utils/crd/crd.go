@@ -65,8 +65,8 @@ func DefineCustomResourceDefinition(names apiextv1.CustomResourceDefinitionNames
 }
 
 func EnsureCrdExists(name string) (bool, error) {
-	crd, err := globalhelper.APIClient.ApiextensionsV1Interface.CustomResourceDefinitions().Get(
-		context.Background(), name, metav1.GetOptions{})
+	_, err := globalhelper.APIClient.CustomResourceDefinitions().Get(context.Background(),
+		name, metav1.GetOptions{})
 
 	if err != nil {
 		if k8serrors.IsNotFound(err) {
@@ -76,9 +76,5 @@ func EnsureCrdExists(name string) (bool, error) {
 		return false, err
 	}
 
-	if crd != nil {
-		return true, nil
-	}
-
-	return false, nil
+	return true, nil
 }

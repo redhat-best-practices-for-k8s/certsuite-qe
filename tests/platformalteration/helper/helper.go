@@ -46,7 +46,7 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 
 	_, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute command %s: %w", cmd, err)
 	}
 
 	// loop to wait until the file has been actually updated.
@@ -55,7 +55,7 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 	for {
 		currentHugepagesNumber, err := GetHugePagesConfigNumber(filePath, pod)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get hugepages number: %w", err)
 		}
 
 		if updatedHugePagesNumber == currentHugepagesNumber {
@@ -63,7 +63,8 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 		}
 
 		if time.Now().After(timeout) {
-			return nil
+			return fmt.Errorf("timedout waiting for hugepages to be updated, currently: %d, expected: %d",
+				currentHugepagesNumber, updatedHugePagesNumber)
 		}
 
 		time.Sleep(tsparams.RetryInterval * time.Second)
