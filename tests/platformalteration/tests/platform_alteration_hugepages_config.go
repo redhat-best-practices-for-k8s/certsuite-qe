@@ -82,12 +82,8 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		updatedHugePagesNumber := currentHugepagesNumber + 1
 
 		By("Manually update hugepages config")
-		updated, err := tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
-		Expect(err).ToNot(HaveOccurred())
-
-		if !updated {
-			Fail(fmt.Sprintf("Hugepages file %s was not updated successfully.", hugePagesPaths[0]))
-		}
+		err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
+		Expect(err).ToNot(HaveOccurred(), "failed to update and verify hugepages file: %s, %v ", hugePagesPaths[0], err)
 
 		By("Start platform-alteration-hugepages-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePagesConfigName,
@@ -99,12 +95,9 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 
 		By("Fix hugepages config")
 		updatedHugePagesNumber = currentHugepagesNumber
-		updated, err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
-		Expect(err).ToNot(HaveOccurred())
+		err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
+		Expect(err).ToNot(HaveOccurred(), "failed to update and verify hugepages file: %s, %v ", hugePagesPaths[0], err)
 
-		if !updated {
-			Fail(fmt.Sprintf("Hugepages file %s was not updated successfully.", hugePagesPaths[0]))
-		}
 	})
 
 })

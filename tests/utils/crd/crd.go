@@ -5,6 +5,7 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -64,14 +65,18 @@ func DefineCustomResourceDefinition(names apiextv1.CustomResourceDefinitionNames
 }
 
 func EnsureCrdExists(name string) (bool, error) {
-	apiextv1, err := globalhelper.APIClient.ApiextensionsV1Interface.CustomResourceDefinitions().Get(
+	crd, err := globalhelper.APIClient.ApiextensionsV1Interface.CustomResourceDefinitions().Get(
 		context.Background(), name, metav1.GetOptions{})
 
 	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return false, nil
+		}
+
 		return false, err
 	}
 
-	if apiextv1 != nil {
+	if crd != nil {
 		return true, nil
 	}
 

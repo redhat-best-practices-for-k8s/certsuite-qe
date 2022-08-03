@@ -41,12 +41,12 @@ func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval t
 
 // UpdateAndVerifyHugePagesConfig updates the hugepages file with a given number,
 // and verify that it was updated successfully.
-func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string, pod *corev1.Pod) (bool, error) {
+func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string, pod *corev1.Pod) error {
 	cmd := fmt.Sprintf("echo %d > %s", updatedHugePagesNumber, filePath)
-	_, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
 
+	_, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	// loop to wait until the file has been actually updated.
@@ -55,15 +55,15 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 	for {
 		currentHugepagesNumber, err := GetHugePagesConfigNumber(filePath, pod)
 		if err != nil {
-			return false, err
+			return err
 		}
 
 		if updatedHugePagesNumber == currentHugepagesNumber {
-			return true, nil
+			return nil
 		}
 
 		if time.Now().After(timeout) {
-			return false, nil
+			return nil
 		}
 
 		time.Sleep(tsparams.RetryInterval * time.Second)
@@ -73,8 +73,8 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 // GetHugePagesConfigNumber returns hugepages config number from a given file.
 func GetHugePagesConfigNumber(file string, pod *corev1.Pod) (int, error) {
 	cmd := fmt.Sprintf("cat %s", file)
-	buf, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
 
+	buf, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
 	if err != nil {
 		return -1, err
 	}
