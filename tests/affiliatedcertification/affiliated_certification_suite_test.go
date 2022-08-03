@@ -32,16 +32,25 @@ func TestAffiliatedCertification(t *testing.T) {
 	RunSpecs(t, "CNFCert affiliated-certification tests", reporterConfig)
 }
 
+var isCloudCasaAlreadyLabeled bool
+
 var _ = BeforeSuite(func() {
 	By("Create namespace")
 	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
-	By("Un-label operator used in other suites")
-	_ = tshelper.DeleteLabelFromInstalledCSV(
-		tsparams.UnrelatedOperatorPrefixCloudcasa,
+	isCloudCasaAlreadyLabeled = tshelper.DoesOperatorHaveLabel(tsparams.UnrelatedOperatorPrefixCloudcasa,
 		tsparams.UnrelatedNamespace,
 		tsparams.OperatorLabel)
+
+	By("Un-label operator used in other suites if labeled")
+	if isCloudCasaAlreadyLabeled {
+		err = tshelper.DeleteLabelFromInstalledCSV(
+			tsparams.UnrelatedOperatorPrefixCloudcasa,
+			tsparams.UnrelatedNamespace,
+			tsparams.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred())
+	}
 
 })
 
@@ -59,9 +68,12 @@ var _ = AfterSuite(func() {
 	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Re-label operator used in other suites")
-	_ = tshelper.AddLabelToInstalledCSV(
-		tsparams.UnrelatedOperatorPrefixCloudcasa,
-		tsparams.UnrelatedNamespace,
-		tsparams.OperatorLabel)
+	if isCloudCasaAlreadyLabeled {
+		By("Re-label operator used in other suites")
+		err = tshelper.AddLabelToInstalledCSV(
+			tsparams.UnrelatedOperatorPrefixCloudcasa,
+			tsparams.UnrelatedNamespace,
+			tsparams.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred())
+	}
 })

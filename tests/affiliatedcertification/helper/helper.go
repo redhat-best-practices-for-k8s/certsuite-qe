@@ -103,6 +103,21 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 	return updateCsv(namespace, csv)
 }
 
+func DoesOperatorHaveLabel(prefixCsvName string, namespace string, label map[string]string) bool {
+	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
+	if err != nil {
+		return false
+	}
+
+	for k := range csv.GetLabels() {
+		if _, ok := label[k]; ok {
+			return true
+		}
+
+	}
+	return false
+}
+
 // GetCsvByPrefix returns csv object based on given prefix.
 func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
 	csvs, err := globalhelper.APIClient.ClusterServiceVersions(namespace).List(
