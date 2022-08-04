@@ -1,7 +1,11 @@
 package crd
 
 import (
+	"context"
+
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -58,4 +62,19 @@ func DefineCustomResourceDefinition(names apiextv1.CustomResourceDefinitionNames
 			Versions: []apiextv1.CustomResourceDefinitionVersion{version},
 		},
 	}
+}
+
+func EnsureCrdExists(name string) (bool, error) {
+	_, err := globalhelper.APIClient.CustomResourceDefinitions().Get(context.Background(),
+		name, metav1.GetOptions{})
+
+	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	return true, nil
 }

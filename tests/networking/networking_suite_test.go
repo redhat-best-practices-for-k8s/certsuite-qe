@@ -18,7 +18,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
@@ -60,7 +59,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Set rbac policy which allows authenticated users to run privileged containers")
-	err = tshelper.AllowAuthenticatedUsersRunPrivilegedContainers()
+	err = globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
 	Expect(err).ToNot(HaveOccurred())
 
 })

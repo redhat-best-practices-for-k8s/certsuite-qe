@@ -1,6 +1,7 @@
 package globalhelper
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -8,10 +9,13 @@ import (
 
 	"github.com/golang/glog"
 	v1 "k8s.io/api/apps/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
 	"gopkg.in/yaml.v2"
 	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
 const retryInterval = 5
@@ -241,4 +245,40 @@ func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []s
 	}
 
 	return fmt.Errorf("parameter %s is not allowed. List of allowed parameters %s", parameter, listOfParameters)
+}
+
+// AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group.
+func AllowAuthenticatedUsersRunPrivilegedContainers() error {
+	_, err := APIClient.ClusterRoleBindings().Get(
+		context.Background(),
+		"system:openshift:scc:privileged",
+		metav1.GetOptions{},
+	)
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info("RBAC policy is not found")
+
+		roleBind := rbac.DefineClusterRoleBinding(
+			*rbac.DefineRbacAuthorizationClusterRoleRef("system:openshift:scc:privileged"),
+			*rbac.DefineRbacAuthorizationClusterGroupSubjects([]string{"system:authenticated"}),
+		)
+		_, err = APIClient.ClusterRoleBindings().Create(
+			context.Background(),
+			roleBind,
+			metav1.CreateOptions{},
+		)
+
+		if err != nil {
+			return err
+		}
+
+		glog.V(5).Info("RBAC policy created")
+
+		return nil
+	} else if err == nil {
+		glog.V(5).Info("RBAC policy detected")
+	}
+
+	glog.V(5).Info("error to query RBAC policy")
+
+	return err
 }
