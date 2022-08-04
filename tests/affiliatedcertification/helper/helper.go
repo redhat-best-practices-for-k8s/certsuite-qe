@@ -113,8 +113,8 @@ func DoesOperatorHaveLabel(prefixCsvName string, namespace string, label map[str
 		if _, ok := label[k]; ok {
 			return true
 		}
-
 	}
+
 	return false
 }
 
