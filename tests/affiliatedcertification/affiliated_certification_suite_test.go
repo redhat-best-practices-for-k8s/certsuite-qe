@@ -5,7 +5,6 @@ package affiliatedcertification
 import (
 	"flag"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -40,12 +39,9 @@ var _ = BeforeSuite(func() {
 	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
-	isCloudCasaAlreadyLabeled, err = tshelper.DoesOperatorHaveLabel(tsparams.UnrelatedOperatorPrefixCloudcasa,
+	isCloudCasaAlreadyLabeled = tshelper.DoesOperatorHaveLabel(tsparams.UnrelatedOperatorPrefixCloudcasa,
 		tsparams.UnrelatedNamespace,
 		tsparams.OperatorLabel)
-	if err != nil {
-		glog.Info(tsparams.UnrelatedOperatorPrefixCloudcasa+" not installed or error accessing it: ", err)
-	}
 
 	By("Un-label operator used in other suites if labeled")
 	if isCloudCasaAlreadyLabeled {
