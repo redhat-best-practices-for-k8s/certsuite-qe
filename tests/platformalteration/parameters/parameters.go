@@ -22,7 +22,7 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 	}
 
-	NotRedHatRelease = "ubuntu:20.04"
+	NotRedHatRelease = "quay.io/baselibrary/ubuntu:latest"
 )
 
 const (
