@@ -14,9 +14,13 @@ import (
 var _ = Describe("Access-control namespace, ", func() {
 
 	execute.BeforeAll(func() {
+		By("Clean test suite namespace before tests")
+		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Create additional namespaces for testing")
 		// these namespaces will only be used for the access-control-namespace tests
-		err := namespaces.Create(parameters.AdditionalValidNamespace, globalhelper.APIClient)
+		err = namespaces.Create(parameters.AdditionalValidNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = namespaces.Create(parameters.InvalidNamespace, globalhelper.APIClient)

@@ -12,12 +12,8 @@ import (
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	corev1 "k8s.io/api/core/v1"
-	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-
-	"github.com/golang/glog"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	v1 "k8s.io/api/apps/v1"
@@ -85,42 +81,6 @@ func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
 
 func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, tsparams.NetworkingTestMultusSkipLabel)
-}
-
-// AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group.
-func AllowAuthenticatedUsersRunPrivilegedContainers() error {
-	_, err := globalhelper.APIClient.ClusterRoleBindings().Get(
-		context.Background(),
-		"system:openshift:scc:privileged",
-		metav1.GetOptions{},
-	)
-	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info("RBAC policy is not found")
-
-		roleBind := rbac.DefineClusterRoleBinding(
-			*rbac.DefineRbacAuthorizationClusterRoleRef("system:openshift:scc:privileged"),
-			*rbac.DefineRbacAuthorizationClusterGroupSubjects([]string{"system:authenticated"}),
-		)
-		_, err = globalhelper.APIClient.ClusterRoleBindings().Create(
-			context.Background(),
-			roleBind,
-			metav1.CreateOptions{},
-		)
-
-		if err != nil {
-			return err
-		}
-
-		glog.V(5).Info("RBAC policy created")
-
-		return nil
-	} else if err == nil {
-		glog.V(5).Info("RBAC policy detected")
-	}
-
-	glog.V(5).Info("error to query RBAC policy")
-
-	return err
 }
 
 // ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace.
