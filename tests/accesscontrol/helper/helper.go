@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	v1 "k8s.io/api/apps/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout time.Duration) error {
@@ -50,4 +52,36 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 		globalhelper.Configuration.General.TestImage)
 
 	return deploymentStruct, nil
+}
+
+func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value string) error {
+	var boolVal bool
+
+	serviceacct, err := globalhelper.APIClient.ServiceAccounts(namespace).
+		Get(context.TODO(), saname, metav1.GetOptions{})
+
+	if err != nil {
+		return fmt.Errorf("error getting service account: %w", err)
+	}
+
+	switch value {
+	case "true":
+		boolVal = true
+		serviceacct.AutomountServiceAccountToken = &boolVal
+
+	case "false":
+		boolVal = false
+		serviceacct.AutomountServiceAccountToken = &boolVal
+
+	case "nil":
+		serviceacct.AutomountServiceAccountToken = nil
+
+	default:
+		return fmt.Errorf("invalid value for token value")
+	}
+
+	_, err = globalhelper.APIClient.ServiceAccounts(parameters.TestAccessControlNameSpace).
+		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
+
+	return err
 }
