@@ -235,14 +235,10 @@ func RedefineWithPriviledgedContainer(deployment *v1.Deployment) *v1.Deployment 
 	return deployment
 }
 
-func RedefineWithHostIpc(deployment *v1.Deployment, hostIpc bool) *v1.Deployment {
+func RedefineWithHostIpc(deployment *v1.Deployment, hostIpc bool) {
 	deployment.Spec.Template.Spec.HostIPC = hostIpc
-
-	return deployment
 }
 
-func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token bool) *v1.Deployment {
+func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token bool) {
 	deployment.Spec.Template.Spec.AutomountServiceAccountToken = &token
-
-	return deployment
 }
