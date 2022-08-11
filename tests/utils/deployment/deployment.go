@@ -240,3 +240,7 @@ func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token b
 
 	return deployment
 }
+
+func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) {
+	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
+}

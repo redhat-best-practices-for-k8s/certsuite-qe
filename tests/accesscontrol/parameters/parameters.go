@@ -19,6 +19,7 @@ var (
 
 	TestCaseNameAccessControlNamespace         = "access-control-namespace"
 	TestCaseNameAccessControlPodAutomountToken = "access-control-pod-automount-service-account-token"
+	TestCaseNameAccessControlPodHostNetwork    = "access-control-pod-host-network"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
