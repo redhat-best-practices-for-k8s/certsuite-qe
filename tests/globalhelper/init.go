@@ -25,12 +25,12 @@ func init() {
 	APIClient, err = config.DefineClients()
 
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load api client. Please check KUBECONFIG env var"))
+		glog.Fatal(fmt.Sprintf("can not load api client. Please check KUBECONFIG env var - %s", err))
 	}
 
 	Configuration, err = config.NewConfig()
 
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load configuration"))
+		glog.Fatal(fmt.Sprintf("can not load configuration - %s", err))
 	}
 }

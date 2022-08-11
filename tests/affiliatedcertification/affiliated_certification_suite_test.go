@@ -5,6 +5,7 @@ package affiliatedcertification
 import (
 	"flag"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -17,6 +18,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
@@ -31,10 +33,29 @@ func TestAffiliatedCertification(t *testing.T) {
 	RunSpecs(t, "CNFCert affiliated-certification tests", reporterConfig)
 }
 
+var isCloudCasaAlreadyLabeled bool
+
 var _ = BeforeSuite(func() {
 	By("Create namespace")
 	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+	isCloudCasaAlreadyLabeled, err = tshelper.DoesOperatorHaveLabels(tsparams.UnrelatedOperatorPrefixCloudcasa,
+		tsparams.UnrelatedNamespace,
+		tsparams.OperatorLabel)
+	if err != nil {
+		glog.Info(tsparams.UnrelatedOperatorPrefixCloudcasa+" not installed or error accessing it: ", err)
+	}
+
+	By("Un-label operator used in other suites if labeled")
+	if isCloudCasaAlreadyLabeled {
+		err = tshelper.DeleteLabelFromInstalledCSV(
+			tsparams.UnrelatedOperatorPrefixCloudcasa,
+			tsparams.UnrelatedNamespace,
+			tsparams.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred())
+	}
+
 })
 
 var _ = AfterSuite(func() {
@@ -50,4 +71,13 @@ var _ = AfterSuite(func() {
 	By("Remove reports from report directory")
 	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
+
+	if isCloudCasaAlreadyLabeled {
+		By("Re-label operator used in other suites")
+		err = tshelper.AddLabelToInstalledCSV(
+			tsparams.UnrelatedOperatorPrefixCloudcasa,
+			tsparams.UnrelatedNamespace,
+			tsparams.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred())
+	}
 })
