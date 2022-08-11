@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control pod-host-network, ", func() {
+var _ = Describe("Access-control pod-host-network ", func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")
@@ -35,7 +35,7 @@ var _ = Describe("Access-control pod-host-network, ", func() {
 
 	// 53293
 	It("one deployment, one pod, HostNetwork false", func() {
-		By("Define deployment with hostIPC set to false")
+		By("Define deployment with hostNetwork set to false")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -59,7 +59,7 @@ var _ = Describe("Access-control pod-host-network, ", func() {
 
 	// 53294
 	It("one deployment, one pod, HostNetwork true [negative]", func() {
-		By("Define deployment with hostIPC set to true")
+		By("Define deployment with hostNetwork set to true")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -83,7 +83,7 @@ var _ = Describe("Access-control pod-host-network, ", func() {
 
 	// 53295
 	It("two deployments, one pod each, HostNetworks false", func() {
-		By("Define deployments with hostIPC set to false")
+		By("Define deployments with hostNetwork set to false")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -115,7 +115,7 @@ var _ = Describe("Access-control pod-host-network, ", func() {
 
 	// 53296
 	It("two deployments, one pod each, one HostNetwork true [negative]", func() {
-		By("Define deployments with hostIPC set to different values")
+		By("Define deployments with hostNetwork set to different values")
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
