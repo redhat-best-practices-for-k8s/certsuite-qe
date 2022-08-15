@@ -39,7 +39,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithAutomountServiceAccountToken(dep, false)
+		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -63,7 +63,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithAutomountServiceAccountToken(dep, true)
+		deployment.RedefineWithAutomountServiceAccountToken(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -168,7 +168,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithAutomountServiceAccountToken(dep, false)
+		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -197,7 +197,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithAutomountServiceAccountToken(dep, false)
+		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -205,7 +205,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2 = deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
+		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -229,7 +229,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithAutomountServiceAccountToken(dep, true)
+		deployment.RedefineWithAutomountServiceAccountToken(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -237,7 +237,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2 = deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
+		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
