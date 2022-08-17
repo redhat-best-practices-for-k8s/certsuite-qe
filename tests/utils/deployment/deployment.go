@@ -242,3 +242,7 @@ func RedefineWithHostIpc(deployment *v1.Deployment, hostIpc bool) {
 func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token bool) {
 	deployment.Spec.Template.Spec.AutomountServiceAccountToken = &token
 }
+
+func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) {
+	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
+}
