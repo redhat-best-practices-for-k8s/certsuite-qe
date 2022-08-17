@@ -25,7 +25,7 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 	})
 
 	// 51308
-	It("Hugepages config unchanged configuration", func() {
+	It("unchanged configuration", func() {
 
 		crdExists, err := crd.EnsureCrdExists(tsparams.PerformanceProfileCrd)
 		Expect(err).ToNot(HaveOccurred())
