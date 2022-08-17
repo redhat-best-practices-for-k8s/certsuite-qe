@@ -27,8 +27,8 @@ var (
 	TnfPodRecreationTcName       = "lifecycle-pod-recreation"
 	TnfPodHighAvailabilityTcName = "lifecycle-pod-high-availability"
 	TnfPodSchedulingTcName       = "lifecycle-pod-scheduling"
-	TnfLivenessTcName            = "lifecycle-liveness"
-	TnfReadinessTcName           = "lifecycle-readiness"
+	TnfLivenessTcName            = "lifecycle-liveness-probe"
+	TnfReadinessTcName           = "lifecycle-readiness-probe"
 	TnfStatefulSetScalingTcName  = "lifecycle-statefulset-scaling"
 	TnfImagePullPolicyTcName     = "lifecycle-image-pull-policy"
 )
