@@ -35,6 +35,7 @@ const (
 	TnfIsRedHatReleaseName    = "platform-alteration-isredhat-release"
 	TnfTaintedNodeKernelName  = "platform-alteration-tainted-node-kernel"
 	TnfHugePagesConfigName    = "platform-alteration-hugepages-config"
+	TnfBootParamsName         = "platform-alteration-boot-params"
 
 	Getenforce    = `chroot /host getenforce`
 	Enforcing     = "Enforcing"

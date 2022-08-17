@@ -99,6 +99,11 @@ github.com/openshift/api/config/v1
 ## explicit; go 1.13
 github.com/openshift/client-go/config/clientset/versioned/scheme
 github.com/openshift/client-go/config/clientset/versioned/typed/config/v1
+# github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
+## explicit; go 1.13
+github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1
+github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/scheme
+github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/typed/machineconfiguration.openshift.io/v1
 # github.com/operator-framework/api v0.9.2
 ## explicit; go 1.15
 github.com/operator-framework/api/pkg/lib/version

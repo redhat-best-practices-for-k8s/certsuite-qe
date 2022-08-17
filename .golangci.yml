@@ -11,6 +11,8 @@ linters-settings:
       - name: indent-error-flow
       - name: var-naming
       - name: increment-decrement
+  lll:
+    line-length: 135
   wsl:
     strict-append: false
   gocognit:
