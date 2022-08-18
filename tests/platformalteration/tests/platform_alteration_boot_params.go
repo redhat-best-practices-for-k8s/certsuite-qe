@@ -64,18 +64,18 @@ var _ = Describe("platform-alteration-boot-params", func() {
 					By("Update the current machineConfig")
 					_, err := globalhelper.APIClient.MachineConfigs().Update(context.TODO(), &machineConfig, metav1.UpdateOptions{})
 					Expect(err).ToNot(HaveOccurred())
-
-					By("Start platform-alteration-boot-params test")
-					err = globalhelper.LaunchTests(tsparams.TnfBootParamsName,
-						globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-					Expect(err).ToNot(HaveOccurred())
-
-					err = globalhelper.ValidateIfReportsAreValid(
-						tsparams.TnfBootParamsName,
-						globalparameters.TestCasePassed)
-					Expect(err).ToNot(HaveOccurred())
 				}
 			}
 		}
+
+		By("Start platform-alteration-boot-params test")
+		err = globalhelper.LaunchTests(tsparams.TnfBootParamsName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TnfBootParamsName,
+			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
 	})
 })
