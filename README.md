@@ -44,6 +44,7 @@ The list of available features:
 * *lifecycle*
 * *observability*
 * *platform-alteration*
+* *access-control*
 
 
 #### Running the tests
