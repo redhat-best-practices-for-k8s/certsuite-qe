@@ -9,6 +9,7 @@ import (
 	"github.com/golang/glog"
 	netattdefv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	clientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
+	clientmcv1 "github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/typed/machineconfiguration.openshift.io/v1"
 	olm "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme"
 	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	apiextv1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
@@ -17,7 +18,6 @@ import (
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 	networkv1client "k8s.io/client-go/kubernetes/typed/networking/v1"
 	rbacv1client "k8s.io/client-go/kubernetes/typed/rbac/v1"
-
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	runtimeclient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -35,6 +35,7 @@ type ClientSet struct {
 	Config *rest.Config
 	runtimeclient.Client
 	v1alpha1.OperatorsV1alpha1Interface
+	clientmcv1.MachineconfigurationV1Interface
 }
 
 // New returns a *ClientBuilder with the given kubeconfig.
@@ -69,6 +70,7 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.NetworkingV1Client = *networkv1client.NewForConfigOrDie(config)
 	clientSet.OperatorsV1alpha1Interface = v1alpha1.NewForConfigOrDie(config)
 	clientSet.ApiextensionsV1Interface = apiextv1client.NewForConfigOrDie(config)
+	clientSet.MachineconfigurationV1Interface = clientmcv1.NewForConfigOrDie(config)
 	clientSet.Config = config
 
 	crScheme := runtime.NewScheme()
