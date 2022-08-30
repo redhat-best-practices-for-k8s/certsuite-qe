@@ -136,7 +136,7 @@ func isTestCaseInRequiredStatusInJunitReport(
 	testCaseName string,
 	status string) (bool, error) {
 	for _, testCase := range report.Suites[0].Testcases {
-		tags := extractTags((testCase.Name))
+		tags := extractTags(testCase.Name)
 		if tags == nil {
 			return false, fmt.Errorf("no tags found in name for test case: %s", testCase.Name)
 		}
