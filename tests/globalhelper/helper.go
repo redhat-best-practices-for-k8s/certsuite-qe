@@ -54,8 +54,9 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 
 	glog.V(5).Info("Verify test case status in junit report file")
 
-	if !isTestCaseInValidStatusInJunitReport(junitTestReport, tcName) {
-		return fmt.Errorf("test case %q is not in expected %q state in junit report", tcName, tcExpectedStatus)
+	isValid, err := isTestCaseInValidStatusInJunitReport(junitTestReport, tcName)
+	if !isValid {
+		return fmt.Errorf("test case %q is not in expected %q state in junit report. %w", tcName, tcExpectedStatus, err)
 	}
 
 	glog.V(5).Info("Verify test case status in claim report file")
