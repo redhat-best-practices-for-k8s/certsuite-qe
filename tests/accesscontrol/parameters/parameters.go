@@ -19,6 +19,7 @@ var (
 
 	TestCaseNameAccessControlNamespace         = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc        = "access-control-pod-host-ipc"
+	TestCaseNameAccessControlPodHostPid        = "access-control-pod-host-pid"
 	TestCaseNameAccessControlPodAutomountToken = "access-control-pod-automount-service-account-token"
 	TestCaseNameAccessControlPodHostNetwork    = "access-control-pod-host-network"
 
