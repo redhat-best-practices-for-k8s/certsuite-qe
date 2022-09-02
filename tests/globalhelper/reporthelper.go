@@ -80,17 +80,17 @@ func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
 }
 
 // IsTestCasePassedInJunitReport tests if test case is passed as expected in junit report file.
-func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
+func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
 	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCasePassed)
 }
 
 // IsTestCaseFailedInJunitReport tests if test case is failed as expected in junit report file.
-func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
+func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
 	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseFailed)
 }
 
 // IsTestCaseSkippedInJunitReport tests if test case is skipped as expected in junit report file.
-func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) bool {
+func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
 	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseSkipped)
 }
 
@@ -134,16 +134,21 @@ func ConvertSpecNameToFileName(specName string) string {
 func isTestCaseInRequiredStatusInJunitReport(
 	report *globalparameters.JUnitTestSuites,
 	testCaseName string,
-	status string) bool {
-	for _, tc := range report.Suites[0].Testcases {
-		if strings.Contains(formatTestCaseName(tc.Name), fmt.Sprintf("[%s]", formatTestCaseName(testCaseName))) {
-			glog.V(5).Info(fmt.Sprintf("test case status %s", tc.Status))
+	status string) (bool, error) {
+	for _, testCase := range report.Suites[0].Testcases {
+		tags := extractTags(testCase.Name)
+		if tags == nil {
+			return false, fmt.Errorf("no tags found in name for test case: %s", testCase.Name)
+		}
 
-			return tc.Status == status
+		if containsString(tags, testCaseName) {
+			glog.V(5).Info(fmt.Sprintf("test case status %s", testCase.Status))
+
+			return testCase.Status == status, nil
 		}
 	}
 
-	return false
+	return false, nil
 }
 
 func isTestCaseInExpectedStatusInClaimReport(
@@ -197,4 +202,32 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 
 func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
+}
+
+func extractTags(tcName string) []string {
+	lastClosingBracket := strings.LastIndex(tcName, "]")
+	lastOpeningBracket := strings.LastIndex(tcName, "[")
+
+	if lastClosingBracket >= 0 && lastOpeningBracket >= 0 && lastClosingBracket > lastOpeningBracket {
+		tagsString := tcName[lastOpeningBracket+1 : lastClosingBracket]
+		tags := strings.Split(tagsString, ",")
+
+		for i := range tags {
+			tags[i] = strings.TrimSpace(tags[i])
+		}
+
+		return tags
+	}
+
+	return nil
+}
+
+func containsString(list []string, item string) bool {
+	for _, i := range list {
+		if i == item {
+			return true
+		}
+	}
+
+	return false
 }
