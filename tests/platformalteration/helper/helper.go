@@ -87,3 +87,20 @@ func GetHugePagesConfigNumber(file string, pod *corev1.Pod) (int, error) {
 
 	return hugepagesNumber, nil
 }
+
+// ArgListToMap takes a list of strings of the form "key=value" and translate it into a map
+// of the form {key: value}.
+func ArgListToMap(lst []string) map[string]string {
+	retval := make(map[string]string)
+
+	for _, arg := range lst {
+		splitArgs := strings.Split(arg, "=")
+		if len(splitArgs) == 1 {
+			retval[splitArgs[0]] = ""
+		} else {
+			retval[splitArgs[0]] = splitArgs[1]
+		}
+	}
+
+	return retval
+}

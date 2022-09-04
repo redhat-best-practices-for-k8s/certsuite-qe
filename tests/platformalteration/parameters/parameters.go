@@ -36,6 +36,7 @@ const (
 	TnfTaintedNodeKernelName  = "platform-alteration-tainted-node-kernel"
 	TnfHugePagesConfigName    = "platform-alteration-hugepages-config"
 	TnfBootParamsName         = "platform-alteration-boot-params"
+	TnfSysctlConfigName       = "platform-alteration-sysctl-config"
 
 	Getenforce    = `chroot /host getenforce`
 	Enforcing     = "Enforcing"
