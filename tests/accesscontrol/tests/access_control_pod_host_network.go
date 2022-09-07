@@ -39,7 +39,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithHostNetwork(dep, false)
+		dep = deployment.RedefineWithHostNetwork(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -63,7 +63,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithHostNetwork(dep, true)
+		dep = deployment.RedefineWithHostNetwork(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -87,7 +87,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithHostNetwork(dep, false)
+		dep = deployment.RedefineWithHostNetwork(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -95,7 +95,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		dep2, err := helper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithHostNetwork(dep2, false)
+		dep2 = deployment.RedefineWithHostNetwork(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -119,7 +119,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithHostNetwork(dep, true)
+		dep = deployment.RedefineWithHostNetwork(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -127,7 +127,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		dep2, err := helper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithHostNetwork(dep2, false)
+		dep2 = deployment.RedefineWithHostNetwork(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
