@@ -38,3 +38,19 @@ func RedefineWithReplicaNumber(replicaSet *v1.ReplicaSet, replicasNumber int32) 
 
 	return replicaSet
 }
+
+func RedefineWithVolume(replicaSet *v1.ReplicaSet, name string) *v1.ReplicaSet {
+	replicaSet.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{
+					Medium:    corev1.StorageMediumDefault,
+					SizeLimit: nil,
+				},
+			},
+		},
+	}
+
+	return replicaSet
+}

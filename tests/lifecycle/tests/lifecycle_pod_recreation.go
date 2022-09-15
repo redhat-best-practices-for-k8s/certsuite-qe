@@ -48,25 +48,23 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		}
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
+
 		By("Define & create deployment")
-		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodRecreationTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodRecreationTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -80,34 +78,32 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		}
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
+
 		By("Define & create first deployment")
-		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestDeploymentLabels)
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodRecreationTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodRecreationTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -121,24 +117,21 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		}
 
 		By("Define & create deployment")
-		deploymenta, err := tshelper.DefineDeployment(schedulableNodes, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(schedulableNodes, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodRecreationTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodRecreationTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -155,33 +148,30 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment
 
 		By("Define & create first deployment")
-		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestDeploymentLabels)
+		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestDeploymentLabels)
+		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodRecreationTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodRecreationTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

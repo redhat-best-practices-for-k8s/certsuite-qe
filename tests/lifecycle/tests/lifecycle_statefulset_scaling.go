@@ -32,20 +32,18 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 	// 45439
 	It("One statefulSet, one pod", func() {
 		By("Define statefulSet")
-		statefulset := tshelper.DefineStatefulSet("lifecyclesf")
+		statefulset := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName)
+
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("start lifecycle-statefulset-scaling test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfStatefulSetScalingTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfStatefulSetScalingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfStatefulSetScalingTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStatefulSetScalingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

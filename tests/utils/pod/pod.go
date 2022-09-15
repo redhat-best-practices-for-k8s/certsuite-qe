@@ -57,3 +57,19 @@ func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 
 	return pod
 }
+
+func RedefineWithVolume(pod *corev1.Pod, name string) *corev1.Pod {
+	pod.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{
+					Medium:    corev1.StorageMediumDefault,
+					SizeLimit: nil,
+				},
+			},
+		},
+	}
+
+	return pod
+}

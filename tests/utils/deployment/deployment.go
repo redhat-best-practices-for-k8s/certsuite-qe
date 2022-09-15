@@ -256,3 +256,19 @@ func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) *v1.De
 
 	return deployment
 }
+
+func RedefineWithVolume(deployment *v1.Deployment, name string) *v1.Deployment {
+	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{
+					Medium:    corev1.StorageMediumDefault,
+					SizeLimit: nil,
+				},
+			},
+		},
+	}
+
+	return deployment
+}

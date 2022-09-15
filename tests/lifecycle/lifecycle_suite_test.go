@@ -52,11 +52,7 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.LifecycleNamespace))
-	err := namespaces.DeleteAndWait(
-		globalhelper.APIClient,
-		tsparams.LifecycleNamespace,
-		tsparams.WaitingTime,
-	)
+	err := namespaces.DeleteAndWait(globalhelper.APIClient, tsparams.LifecycleNamespace, tsparams.WaitingTime)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove reports from reports directory")

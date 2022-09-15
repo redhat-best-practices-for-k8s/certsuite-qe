@@ -309,6 +309,29 @@ func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error 
 	return err
 }
 
+func CleanPVs(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.PersistentVolumes().DeleteCollection(context.Background(),
+		metav1.DeleteOptions{
+			GracePeriodSeconds: pointer.Int64Ptr(0),
+		},
+		metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete persistent volume %w", err)
+	}
+
+	return err
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	err := CleanDeployments(namespace, clientSet)
@@ -317,49 +340,46 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = CleanDaemonSets(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanPods(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanReplicaSets(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanStatefulSets(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanNetworkAttachmentDefinition(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanServices(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanSubscriptions(namespace, clientSet)
-
 	if err != nil {
 		return err
 	}
 
 	err = CleanCSVs(namespace, clientSet)
+	if err != nil {
+		return err
+	}
 
+	err = CleanPVs(namespace, clientSet)
 	if err != nil {
 		return err
 	}
