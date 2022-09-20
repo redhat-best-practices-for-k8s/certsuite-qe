@@ -39,7 +39,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithHostIpc(dep, false)
+		deployment.RedefineWithHostIpc(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -63,7 +63,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithHostIpc(dep, true)
+		deployment.RedefineWithHostIpc(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -87,7 +87,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithHostIpc(dep, false)
+		deployment.RedefineWithHostIpc(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -95,7 +95,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		dep2, err := helper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2 = deployment.RedefineWithHostIpc(dep2, false)
+		deployment.RedefineWithHostIpc(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -119,7 +119,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep = deployment.RedefineWithHostIpc(dep, true)
+		deployment.RedefineWithHostIpc(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -127,7 +127,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		dep2, err := helper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2 = deployment.RedefineWithHostIpc(dep2, false)
+		deployment.RedefineWithHostIpc(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
