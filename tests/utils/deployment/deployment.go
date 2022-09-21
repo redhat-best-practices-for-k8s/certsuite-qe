@@ -251,14 +251,13 @@ func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) {
 	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
 }
 
-func RedefineWithVolume(deployment *v1.Deployment, name string) *v1.Deployment {
+func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) *v1.Deployment {
 	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
 		{
 			Name: name,
 			VolumeSource: corev1.VolumeSource{
-				EmptyDir: &corev1.EmptyDirVolumeSource{
-					Medium:    corev1.StorageMediumDefault,
-					SizeLimit: nil,
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: claim,
 				},
 			},
 		},

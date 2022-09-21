@@ -332,6 +332,29 @@ func CleanPVs(namespace string, clientSet *testclient.ClientSet) error {
 	return err
 }
 
+func CleanPVCs(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.PersistentVolumeClaims(namespace).DeleteCollection(context.Background(),
+		metav1.DeleteOptions{
+			GracePeriodSeconds: pointer.Int64Ptr(0),
+		},
+		metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete persistent volume claim %w", err)
+	}
+
+	return err
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	err := CleanDeployments(namespace, clientSet)
@@ -375,6 +398,11 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = CleanCSVs(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	err = CleanPVCs(namespace, clientSet)
 	if err != nil {
 		return err
 	}

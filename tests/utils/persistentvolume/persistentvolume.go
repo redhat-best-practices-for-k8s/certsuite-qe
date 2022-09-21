@@ -6,12 +6,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// DefinePod defines pod manifest based on given params.
+// DefinePersistentVolume defines a persistent volume manifest based on given params.
 func DefinePersistentVolume(pvName string, namespace string) *corev1.PersistentVolume {
 	return &corev1.PersistentVolume{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      pvName,
-			Namespace: namespace,
+			Name: pvName,
 		},
 		Spec: corev1.PersistentVolumeSpec{
 			AccessModes: []corev1.PersistentVolumeAccessMode{
@@ -32,7 +31,7 @@ func DefinePersistentVolume(pvName string, namespace string) *corev1.PersistentV
 				},
 			},
 			},
-			Capacity: corev1.ResourceList{corev1.ResourceStorage: resource.MustParse("1Gi")},
+			Capacity: corev1.ResourceList{corev1.ResourceStorage: resource.MustParse("10Gi")},
 		},
 	}
 }

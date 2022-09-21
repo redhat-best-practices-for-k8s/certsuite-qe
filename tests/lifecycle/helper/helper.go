@@ -135,3 +135,35 @@ func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) 
 
 	return err
 }
+
+func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace string, timeout time.Duration, pvName string) error {
+	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Create(context.Background(), pvc, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	Eventually(func() bool {
+
+		status, err := isPvcBound(pvc.Name, pvc.Namespace, pvName)
+		if err != nil {
+
+			glog.V(5).Info(fmt.Sprintf(
+				"pvc %s is not bound, retry in %d seconds", pvc.Name, retryInterval))
+
+			return false
+		}
+
+		return status
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "pvc is not bound")
+
+	return nil
+}
+
+func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
+	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Get(context.Background(), pvcName, metav1.GetOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	return pvc.Status.Phase == corev1.ClaimBound && pvc.Spec.VolumeName == pvName, nil
+}

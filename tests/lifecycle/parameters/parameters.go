@@ -16,6 +16,9 @@ var (
 	TestStatefulSetName = "lifecycle-sfa"
 	TestPodName         = "lifecycle-pod"
 	TestReplicaSetName  = "lifecycle-rsa"
+	TestPVName          = "lifecycle-pv"
+	TestPVCName         = "lifecycle-pvc"
+	TestVolumeName      = "lifecycle-storage"
 )
 
 var (
