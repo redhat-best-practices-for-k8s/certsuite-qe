@@ -22,6 +22,7 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/pointer"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
@@ -168,12 +169,20 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 	return pvc.Status.Phase == corev1.ClaimBound && pvc.Spec.VolumeName == pvName, nil
 }
 
-func DeletePVs() error {
-	err := globalhelper.APIClient.PersistentVolumes().DeleteCollection(context.Background(),
-		*metav1.NewDeleteOptions(0), metav1.ListOptions{})
+func DeletePV(persistentVolume string, timeout time.Duration) error {
+	err := globalhelper.APIClient.PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
+		GracePeriodSeconds: pointer.Int64Ptr(0),
+	})
 	if err != nil {
 		return fmt.Errorf("failed to delete persistent volume %w", err)
 	}
+
+	Eventually(func() bool {
+		// if the pv was deleted, we will get an error.
+		_, err := globalhelper.APIClient.PersistentVolumes().Get(context.Background(), persistentVolume, metav1.GetOptions{})
+
+		return err != nil
+	}, timeout, tsparams.RetryInterval*time.Second).Should(Equal(true), "PV is not removed yet.")
 
 	return nil
 }

@@ -17,6 +17,11 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 )
 
+var (
+	// Each tc will save the PV that was created in order to delete them.
+	pvNames = []string{}
+)
+
 var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 
 	BeforeEach(func() {
@@ -26,11 +31,22 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		By("Clean namespace before each test")
 		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
-		By("Delete all existing PVs")
-		err = tshelper.DeletePVs()
+	AfterEach(func() {
+		By("Clean namespace after each test in order to enable PVs deletion.")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Delete all PVs that were created by the previous test case.")
+		for _, pv := range pvNames {
+			By("Deleting pv " + pv)
+			err := tshelper.DeletePV(pv, tsparams.WaitingTime)
+			Expect(err).ToNot(HaveOccurred())
+		}
+
+		// clear the list.
+		pvNames = []string{}
 	})
 
 	// 54201
@@ -41,6 +57,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		pvNames = append(pvNames, tsparams.TestPVName)
 
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
@@ -64,6 +82,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
+
 	})
 
 	// 54202
@@ -74,6 +93,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		pvNames = append(pvNames, tsparams.TestPVName)
 
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
@@ -109,6 +130,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		pvNames = append(pvNames, tsparams.TestPVName)
+
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
@@ -141,6 +164,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		pvNames = append(pvNames, tsparams.TestPVName)
+
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
@@ -163,6 +188,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
+
 	})
 
 	// 54206
@@ -173,6 +199,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		pvNames = append(pvNames, tsparams.TestPVName)
 
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
@@ -216,6 +244,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		err = tshelper.CreatePersistentVolume(persistentVolumeb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		pvNames = append(pvNames, tsparams.TestPVName, "lifecycle-pvb")
+
 		By("Define & create first pvc")
 		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
@@ -253,6 +283,5 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })
