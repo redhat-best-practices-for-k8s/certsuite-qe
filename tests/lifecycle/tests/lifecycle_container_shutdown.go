@@ -28,8 +28,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, one pod with preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
@@ -45,9 +44,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfShutdownTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -55,7 +52,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, one pod without preStop field configured [negative]", func() {
 
 		By("Define deployment without prestop field configured")
-		deployment, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
@@ -68,9 +65,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfShutdownTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -78,7 +73,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, several pods, several containers that have preStop field configured", func() {
 
 		By("Define deployment with preStop field configured")
-		deploymenta, err := tshelper.DefineDeployment(3, 2, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
@@ -95,9 +90,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfShutdownTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -105,7 +98,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("Two deployments, several pods, several containers that have preStop field configured", func() {
 
 		By("Define first deployment with preStop field configured")
-		deploymenta, err := tshelper.DefineDeployment(3, 2, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
@@ -116,7 +109,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with preStop field configured")
-		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb = deployment.RedefineAllContainersWithPreStopSpec(
@@ -133,9 +126,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfShutdownTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -143,7 +134,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("One deployment, several pods, several containers one without preStop field configured [negative]", func() {
 
 		By("Define deployment with preStop field configured")
-		deploymenta, err := tshelper.DefineDeployment(3, 2, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta, err = deployment.RedefineFirstContainerWithPreStopSpec(
@@ -161,9 +152,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfShutdownTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -171,7 +160,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	It("Two deployments, several pods, several containers that do not have preStop field configured [negative]", func() {
 
 		By("Define & create first deployment")
-		deploymenta, err := tshelper.DefineDeployment(3, 2, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -179,7 +168,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define & create second deployment")
-		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -193,9 +182,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfShutdownTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

@@ -250,3 +250,18 @@ func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token b
 func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) {
 	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
 }
+
+func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) *v1.Deployment {
+	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: claim,
+				},
+			},
+		},
+	}
+
+	return deployment
+}

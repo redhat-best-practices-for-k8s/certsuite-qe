@@ -26,7 +26,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("One deployment with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
@@ -35,15 +35,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -51,7 +48,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("Several deployments with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployments with ifNotPresent as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
@@ -59,7 +56,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb = deployment.RedefineWithImagePullPolicy(deploymentb, v1.PullIfNotPresent)
@@ -67,7 +64,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycleputc")
+		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpc")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentc = deployment.RedefineWithImagePullPolicy(deploymentc, v1.PullIfNotPresent)
@@ -76,15 +73,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -92,22 +86,19 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("One DaemonSet with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define DaemonSet with ifNotPresent as ImagePullPolicy")
-		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycleds", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
+			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -115,34 +106,31 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("Several DaemonSets with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define DaemonSets with ifNotPresent as ImagePullPolicy")
-		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycledsa", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
+			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSeta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		daemonSetb := tshelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycledsb", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+		daemonSetb := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsb",
+			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		daemonSetc := tshelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycledsc", globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+		daemonSetc := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsc",
+			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -152,24 +140,19 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		// and you don't specify the tag for the container image,
 		// imagePullPolicy is automatically set to Always;
 		By("Define DaemonSet without ImagePullPolicy")
-		daemonSet := daemonset.DefineDaemonSet(
-			tsparams.LifecycleNamespace,
-			"registry.access.redhat.com/ubi8/ubi",
-			tsparams.TestDeploymentLabels, "lifecycleds")
+		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, "registry.access.redhat.com/ubi8/ubi",
+			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -179,24 +162,19 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		// and the tag for the container image is :latest,
 		// imagePullPolicy is automatically set to Always;
 		By("Define deployment without ImagePullPolicy")
-		deployment := deployment.DefineDeployment("lifecycleput",
-			tsparams.LifecycleNamespace,
-			"registry.access.redhat.com/ubi8/ubi:latest",
-			tsparams.TestDeploymentLabels)
+		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+			"registry.access.redhat.com/ubi8/ubi:latest", tsparams.TestTargetLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -204,7 +182,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("One deployment with Always as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with 'Always' as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullAlways)
@@ -213,15 +191,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -229,7 +204,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("Two deployments one with Never other with ifNotPresent as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with Never as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullNever)
@@ -238,7 +213,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb = deployment.RedefineWithImagePullPolicy(deploymentb, v1.PullIfNotPresent)
@@ -247,15 +222,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -263,14 +235,14 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	It("One DaemonSet with Never one deployment with ifNotPresent as ImagePullPolicy [negative]", func() {
 
 		By("Define DaemonSet with Never as ImagePullPolicy")
-		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(
-			"lifecycleds", globalhelper.Configuration.General.TestImage, v1.PullNever)
+		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
+			globalhelper.Configuration.General.TestImage, v1.PullNever)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
@@ -279,15 +251,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfImagePullPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfImagePullPolicyTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

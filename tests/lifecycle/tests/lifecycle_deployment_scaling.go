@@ -33,7 +33,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 	It("One deployment, one pod, one container, scale in and out", func() {
 
 		By("Define Deployment")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycleput")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
@@ -47,9 +47,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDeploymentScalingTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfDeploymentScalingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

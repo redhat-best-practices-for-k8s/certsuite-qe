@@ -57,3 +57,18 @@ func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 
 	return pod
 }
+
+func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
+	pod.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: claim,
+				},
+			},
+		},
+	}
+
+	return pod
+}

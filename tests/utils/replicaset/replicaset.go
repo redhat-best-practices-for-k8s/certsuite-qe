@@ -38,3 +38,18 @@ func RedefineWithReplicaNumber(replicaSet *v1.ReplicaSet, replicasNumber int32) 
 
 	return replicaSet
 }
+
+func RedefineWithPVC(replicaSet *v1.ReplicaSet, name string, claim string) *v1.ReplicaSet {
+	replicaSet.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: claim,
+				},
+			},
+		},
+	}
+
+	return replicaSet
+}

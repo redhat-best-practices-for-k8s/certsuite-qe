@@ -29,21 +29,18 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One ReplicaSet, several pods", func() {
 
 		By("Define ReplicaSet with replica number")
-		replicaSet := replicaset.RedefineWithReplicaNumber(tshelper.DefineReplicaSet("lifecyclers"), 3)
+		replicaSet := replicaset.RedefineWithReplicaNumber(tshelper.DefineReplicaSet(tsparams.TestReplicaSetName), 3)
 
 		err := tshelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodOwnerTypeTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -51,28 +48,25 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("Two deployments, several pods", func() {
 
 		By("Define deployments")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodOwnerTypeTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -80,20 +74,18 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("StatefulSet pod", func() {
 
 		By("Define statefulSet")
-		statefulSet := tshelper.DefineStatefulSet("lifecyclesf")
+		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName)
+
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodOwnerTypeTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -101,21 +93,18 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One pod, not part of any workload resource [negative]", func() {
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(tshelper.DefinePod("lifecyclepod"),
-			tsparams.TestDeploymentLabels)
+		pod := pod.RedefinePodWithLabel(tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels)
+
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodOwnerTypeTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -123,34 +112,31 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("Two deployments, one pod not related to any resource [negative]", func() {
 
 		By("Define deployments")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, "lifecycleputa")
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycleputb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(tshelper.DefinePod("lifecyclepod"),
-			tsparams.TestDeploymentLabels)
+		pod := pod.RedefinePodWithLabel(tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels)
+
 		err = globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodOwnerTypeTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

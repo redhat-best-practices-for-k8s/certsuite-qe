@@ -38,22 +38,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment, no nodeSelector nor nodeAffinity", func() {
 
 		By("Define Deployment")
-		deployment, err := tshelper.DefineDeployment(1, 1, "lifecycledp")
+		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodSchedulingTcName,
-			globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -61,7 +58,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment with nodeSelector [negative]", func() {
 
 		By("Define Deployment with nodeSelector")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycledp")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithNodeSelector(deploymenta,
@@ -72,15 +69,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodSchedulingTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -88,7 +82,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment with nodeAffinity [negative]", func() {
 
 		By("Define Deployment with nodeAffinity")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycledp")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymenta = deployment.RedefineWithNodeAffinity(deploymenta, configSuite.General.CnfNodeLabel)
@@ -97,15 +91,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodSchedulingTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -113,14 +104,14 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("Two deployments, one pod each, one pod with nodeAffinity [negative]", func() {
 
 		By("Define Deployment without nodeAffinity")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, "lifecycledpa")
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define Deployment with nodeAffinity")
-		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycledpb")
+		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb = deployment.RedefineWithNodeAffinity(deploymentb,
@@ -130,15 +121,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodSchedulingTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -146,7 +134,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	It("One deployment, one daemonSet [negative]", func() {
 
 		By("Define Deployment without nodeAffinity/ nodeSelector")
-		deployment, err := tshelper.DefineDeployment(1, 1, "lifecycledp")
+		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
@@ -155,21 +143,18 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace,
 			globalhelper.Configuration.General.TestImage,
-			tsparams.TestDeploymentLabels, "lifecycleds")
+			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodSchedulingTcName,
-			globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

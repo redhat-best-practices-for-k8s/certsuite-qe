@@ -22,6 +22,7 @@ import (
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/pointer"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
@@ -40,7 +41,7 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 				name,
 				tsparams.LifecycleNamespace,
 				globalhelper.Configuration.General.TestImage,
-				tsparams.TestDeploymentLabels), replica),
+				tsparams.TestTargetLabels), replica),
 		containers-1,
 		globalhelper.Configuration.General.TestImage)
 
@@ -51,14 +52,14 @@ func DefineReplicaSet(name string) *v1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
 		tsparams.LifecycleNamespace,
 		globalhelper.Configuration.General.TestImage,
-		tsparams.TestDeploymentLabels)
+		tsparams.TestTargetLabels)
 }
 
 func DefineStatefulSet(name string) *v1.StatefulSet {
 	return statefulset.DefineStatefulSet(name,
 		tsparams.LifecycleNamespace,
 		globalhelper.Configuration.General.TestImage,
-		tsparams.TestDeploymentLabels)
+		tsparams.TestTargetLabels)
 }
 
 func DefinePod(name string) *corev1.Pod {
@@ -69,7 +70,7 @@ func DefinePod(name string) *corev1.Pod {
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
 	return daemonset.RedefineWithImagePullPolicy(
 		daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, image,
-			tsparams.TestDeploymentLabels, name), pullPolicy)
+			tsparams.TestTargetLabels, name), pullPolicy)
 }
 
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
@@ -82,7 +83,7 @@ func WaitUntilClusterIsStable() error {
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
 	err := nodes.WaitForNodesReady(globalhelper.APIClient,
-		tsparams.WaitingTime, tsparams.RetryInterval)
+		tsparams.WaitingTime, tsparams.RetryInterval*time.Second)
 
 	return err
 }
@@ -128,4 +129,60 @@ func isReplicaSetReady(namespace string, replicaSetName string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) error {
+	_, err := globalhelper.APIClient.PersistentVolumes().Create(context.Background(), pv, metav1.CreateOptions{})
+
+	return err
+}
+
+func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace string, timeout time.Duration, pvName string) error {
+	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Create(context.Background(), pvc, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	Eventually(func() bool {
+
+		status, err := isPvcBound(pvc.Name, pvc.Namespace, pvName)
+		if err != nil {
+
+			glog.V(5).Info(fmt.Sprintf(
+				"pvc %s is not bound, retry in %d seconds", pvc.Name, retryInterval))
+
+			return false
+		}
+
+		return status
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "pvc is not bound")
+
+	return nil
+}
+
+func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
+	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Get(context.Background(), pvcName, metav1.GetOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	return pvc.Status.Phase == corev1.ClaimBound && pvc.Spec.VolumeName == pvName, nil
+}
+
+func DeletePV(persistentVolume string, timeout time.Duration) error {
+	err := globalhelper.APIClient.PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
+		GracePeriodSeconds: pointer.Int64Ptr(0),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete persistent volume %w", err)
+	}
+
+	Eventually(func() bool {
+		// if the pv was deleted, we will get an error.
+		_, err := globalhelper.APIClient.PersistentVolumes().Get(context.Background(), persistentVolume, metav1.GetOptions{})
+
+		return err != nil
+	}, timeout, tsparams.RetryInterval*time.Second).Should(Equal(true), "PV is not removed yet.")
+
+	return nil
 }
