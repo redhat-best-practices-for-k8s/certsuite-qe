@@ -237,6 +237,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		err := tshelper.CreatePersistentVolume(persistentVolumea, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		pvNames = append(pvNames, tsparams.TestPVName)
+
 		By("Define & create second pv")
 		persistentVolumeb := persistentvolume.RedefineWithPVReclaimPolicy(
 			persistentvolume.DefinePersistentVolume("lifecycle-pvb", tsparams.LifecycleNamespace), corev1.PersistentVolumeReclaimRecycle)
@@ -244,7 +246,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		err = tshelper.CreatePersistentVolume(persistentVolumeb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		pvNames = append(pvNames, tsparams.TestPVName, "lifecycle-pvb")
+		pvNames = append(pvNames, "lifecycle-pvb")
 
 		By("Define & create first pvc")
 		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
