@@ -167,3 +167,13 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 
 	return pvc.Status.Phase == corev1.ClaimBound && pvc.Spec.VolumeName == pvName, nil
 }
+
+func DeletePVs() error {
+	err := globalhelper.APIClient.PersistentVolumes().DeleteCollection(context.Background(),
+		*metav1.NewDeleteOptions(0), metav1.ListOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to delete persistent volume %w", err)
+	}
+
+	return nil
+}
