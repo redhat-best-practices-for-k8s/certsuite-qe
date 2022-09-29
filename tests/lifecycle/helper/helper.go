@@ -187,20 +187,9 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 	return nil
 }
 
-func AppendAnnotationsToPod(pod *corev1.Pod, annotation string, annotationValue string) {
-	m := make(map[string]string)
-
-	for k, v := range pod.Annotations {
-		m[k] = v
-	}
-
-	pod.Annotations = make(map[string]string)
-	pod.Annotations[annotation] = annotationValue
-}
-
-func DeleteRunTimeClasses() error {
-	err := globalhelper.APIClient.RuntimeClasses().DeleteCollection(context.Background(),
-		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64Ptr(0)}, metav1.ListOptions{})
+func DeleteRunTimeClass(rtcName string) error {
+	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
+		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64Ptr(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
 	}

@@ -6,7 +6,6 @@ import (
 
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	nodev1 "k8s.io/api/node/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
@@ -268,7 +267,7 @@ func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) *v1.D
 	return deployment
 }
 
-func RedefineWithResources(deployment *v1.Deployment, limit string, req string) {
+func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
@@ -281,6 +280,6 @@ func RedefineWithResources(deployment *v1.Deployment, limit string, req string) 
 	}
 }
 
-func RedefineWithRunTimeClass(deployment *v1.Deployment, rtc *nodev1.RuntimeClass) {
-	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtc.Name)
+func RedefineWithRunTimeClass(deployment *v1.Deployment, rtcName string) {
+	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }

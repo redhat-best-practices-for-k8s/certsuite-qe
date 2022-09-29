@@ -19,6 +19,7 @@ var (
 	TestPVName          = "lifecycle-pv"
 	TestPVCName         = "lifecycle-pvc"
 	TestVolumeName      = "lifecycle-storage"
+	TnfRunTimeClass     = "lifecycle-rtc"
 )
 
 var (

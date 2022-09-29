@@ -5,7 +5,6 @@ import (
 
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	nodev1 "k8s.io/api/node/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
@@ -152,7 +151,7 @@ func RedefineWithVolumeMount(daemonSet *v1.DaemonSet) *v1.DaemonSet {
 	return daemonSet
 }
 
-func RedefineWithResources(daemonSet *v1.DaemonSet, limit string, req string) {
+func RedefineWithCPUResources(daemonSet *v1.DaemonSet, limit string, req string) {
 	for i := range daemonSet.Spec.Template.Spec.Containers {
 		daemonSet.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
@@ -165,6 +164,6 @@ func RedefineWithResources(daemonSet *v1.DaemonSet, limit string, req string) {
 	}
 }
 
-func RedefineWithRunTimeClass(daemonSet *v1.DaemonSet, rtc *nodev1.RuntimeClass) {
-	daemonSet.Spec.Template.Spec.RuntimeClassName = pointer.String(rtc.Name)
+func RedefineWithRunTimeClass(daemonSet *v1.DaemonSet, rtcName string) {
+	daemonSet.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }

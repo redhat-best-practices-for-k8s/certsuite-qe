@@ -2,7 +2,6 @@ package pod
 
 import (
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/node/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -76,7 +75,7 @@ func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
 	return pod
 }
 
-func RedefineWithResources(pod *corev1.Pod, limit string, req string) {
+func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
 	for i := range pod.Spec.Containers {
 		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
@@ -89,6 +88,6 @@ func RedefineWithResources(pod *corev1.Pod, limit string, req string) {
 	}
 }
 
-func RedefineWithRunTimeClass(pod *corev1.Pod, rtc *v1.RuntimeClass) {
-	pod.Spec.RuntimeClassName = pointer.String(rtc.Name)
+func RedefineWithRunTimeClass(pod *corev1.Pod, rtcName string) {
+	pod.Spec.RuntimeClassName = pointer.String(rtcName)
 }

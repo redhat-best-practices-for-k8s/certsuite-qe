@@ -24,8 +24,6 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DeleteRunTimeClasses()
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	const disableVar = "disable"
@@ -43,12 +41,12 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		put.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass("test")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
 		err := runtimeclass.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		pod.RedefineWithRunTimeClass(put, rtc)
-		pod.RedefineWithResources(put, "1", "1")
+		pod.RedefineWithRunTimeClass(put, rtc.Name)
+		pod.RedefineWithCPUResources(put, "1", "1")
 		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
@@ -62,6 +60,10 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Delete runTimeClass")
+		err = tshelper.DeleteRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(err).ToNot(HaveOccurred(), "failed to delete runTimeClass")
 
 	})
 
@@ -79,12 +81,12 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		put.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass("test")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
 		err := runtimeclass.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		pod.RedefineWithRunTimeClass(put, rtc)
-		pod.RedefineWithResources(put, "1", "1")
+		pod.RedefineWithRunTimeClass(put, rtc.Name)
+		pod.RedefineWithCPUResources(put, "1", "1")
 		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
@@ -98,6 +100,10 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Delete runTimeClass")
+		err = tshelper.DeleteRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(err).ToNot(HaveOccurred(), "failed to delete runTimeClass")
 	})
 
 	// 54732
@@ -116,12 +122,12 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		dep.Spec.Template.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass("test")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
 		err := runtimeclass.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithRunTimeClass(dep, rtc)
-		deployment.RedefineWithResources(dep, "1", "1")
+		deployment.RedefineWithRunTimeClass(dep, rtc.Name)
+		deployment.RedefineWithCPUResources(dep, "1", "1")
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -134,6 +140,10 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Delete runTimeClass")
+		err = tshelper.DeleteRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(err).ToNot(HaveOccurred(), "failed to delete runTimeClass")
 
 	})
 
@@ -152,12 +162,12 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		daemonSet.Spec.Template.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass("test")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
 		err := runtimeclass.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		daemonset.RedefineWithRunTimeClass(daemonSet, rtc)
-		daemonset.RedefineWithResources(daemonSet, "1", "1")
+		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
+		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -171,6 +181,10 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Delete runTimeClass")
+		err = tshelper.DeleteRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(err).ToNot(HaveOccurred(), "failed to delete runTimeClass")
+
 	})
 
 	// 54734
@@ -180,12 +194,12 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass("test")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
 		err := runtimeclass.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		daemonset.RedefineWithRunTimeClass(daemonSet, rtc)
-		daemonset.RedefineWithResources(daemonSet, "1", "1")
+		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
+		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -198,6 +212,10 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Delete runTimeClass")
+		err = tshelper.DeleteRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(err).ToNot(HaveOccurred(), "failed to delete runTimeClass")
 
 	})
 
@@ -215,7 +233,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap["irq-load-balancing.crio.io"] = disableVar
 
 		dep.Spec.Template.SetAnnotations(annotationsMap)
-		deployment.RedefineWithResources(dep, "1", "1")
+		deployment.RedefineWithCPUResources(dep, "1", "1")
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -247,16 +265,16 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		putb.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass("test")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
 		err := runtimeclass.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define runTimeClass for the first pod")
-		pod.RedefineWithRunTimeClass(puta, rtc)
-		pod.RedefineWithResources(puta, "1", "1")
+		pod.RedefineWithRunTimeClass(puta, rtc.Name)
+		pod.RedefineWithCPUResources(puta, "1", "1")
 		pod.RedefinePodWithLabel(puta, tsparams.TestTargetLabels)
 
-		pod.RedefineWithResources(putb, "1", "1")
+		pod.RedefineWithCPUResources(putb, "1", "1")
 		pod.RedefinePodWithLabel(putb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
@@ -273,5 +291,9 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Delete runTimeClass")
+		err = tshelper.DeleteRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(err).ToNot(HaveOccurred(), "failed to delete runTimeClass")
 	})
 })
