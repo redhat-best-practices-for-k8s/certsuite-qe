@@ -115,3 +115,17 @@ func isPodReady(namespace string, podName string) (bool, error) {
 
 	return true, nil
 }
+
+// AppendContainersToPod appends containers to a pod.
+func AppendContainersToPod(pod *corev1.Pod, containersNum int, image string) {
+	containerList := &pod.Spec.Containers
+
+	for i := 0; i < containersNum; i++ {
+		*containerList = append(
+			*containerList, corev1.Container{
+				Name:    fmt.Sprintf("container%d", i+1),
+				Image:   image,
+				Command: []string{"/bin/bash", "-c", "sleep INF"},
+			})
+	}
+}

@@ -33,6 +33,7 @@ var (
 	TnfStatefulSetScalingTcName      = "lifecycle-statefulset-scaling"
 	TnfImagePullPolicyTcName         = "lifecycle-image-pull-policy"
 	TnfPersistentVolumeReclaimPolicy = "lifecycle-persistent-volume-reclaim-policy"
+	TnfCPUIsolationName              = "lifecycle-cpu-isolation"
 )
 
 var (
