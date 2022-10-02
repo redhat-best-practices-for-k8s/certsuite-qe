@@ -75,12 +75,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicy,
+		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -111,12 +111,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicy,
+		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -145,12 +145,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicy,
+		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -181,12 +181,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicy,
+		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -217,12 +217,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicy,
+		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -278,12 +278,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicy,
+		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicy, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

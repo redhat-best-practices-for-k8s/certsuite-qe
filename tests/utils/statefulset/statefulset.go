@@ -63,6 +63,21 @@ func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 	return statefulSet
 }
 
+// RedefineWithStartUpProbe adds startup probe to statefulSet manifest.
+func RedefineWithStartUpProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+	for index := range statefulSet.Spec.Template.Spec.Containers {
+		statefulSet.Spec.Template.Spec.Containers[index].StartupProbe = &corev1.Probe{
+			ProbeHandler: corev1.ProbeHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+
+	return statefulSet
+}
+
 func RedefineWithContainerSpecs(statefulSet *v1.StatefulSet, containerSpecs []corev1.Container) *v1.StatefulSet {
 	statefulSet.Spec.Template.Spec.Containers = containerSpecs
 

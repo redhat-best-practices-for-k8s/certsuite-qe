@@ -23,18 +23,19 @@ var (
 )
 
 var (
-	TnfShutdownTcName                = "lifecycle-container-shutdown"
-	TnfDeploymentScalingTcName       = "lifecycle-deployment-scaling"
-	TnfPodOwnerTypeTcName            = "lifecycle-pod-owner-type"
-	TnfPodRecreationTcName           = "lifecycle-pod-recreation"
-	TnfPodHighAvailabilityTcName     = "lifecycle-pod-high-availability"
-	TnfPodSchedulingTcName           = "lifecycle-pod-scheduling"
-	TnfLivenessTcName                = "lifecycle-liveness-probe"
-	TnfReadinessTcName               = "lifecycle-readiness-probe"
-	TnfStatefulSetScalingTcName      = "lifecycle-statefulset-scaling"
-	TnfImagePullPolicyTcName         = "lifecycle-image-pull-policy"
-	TnfPersistentVolumeReclaimPolicy = "lifecycle-persistent-volume-reclaim-policy"
-	TnfCPUIsolationName              = "lifecycle-cpu-isolation"
+	TnfShutdownTcName                      = "lifecycle-container-shutdown"
+	TnfDeploymentScalingTcName             = "lifecycle-deployment-scaling"
+	TnfPodOwnerTypeTcName                  = "lifecycle-pod-owner-type"
+	TnfPodRecreationTcName                 = "lifecycle-pod-recreation"
+	TnfPodHighAvailabilityTcName           = "lifecycle-pod-high-availability"
+	TnfPodSchedulingTcName                 = "lifecycle-pod-scheduling"
+	TnfLivenessTcName                      = "lifecycle-liveness-probe"
+	TnfReadinessTcName                     = "lifecycle-readiness-probe"
+	TnfStatefulSetScalingTcName            = "lifecycle-statefulset-scaling"
+	TnfImagePullPolicyTcName               = "lifecycle-image-pull-policy"
+	TnfPersistentVolumeReclaimPolicyTcName = "lifecycle-persistent-volume-reclaim-policy"
+	TnfCPUIsolationTcName                  = "lifecycle-cpu-isolation"
+	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"
 )
 
 var (

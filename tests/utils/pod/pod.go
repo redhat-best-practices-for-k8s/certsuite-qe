@@ -60,6 +60,21 @@ func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 	return pod
 }
 
+// RedefineWithStartUpProbe adds startup probe to pod manifest.
+func RedefineWithStartUpProbe(pod *corev1.Pod) *corev1.Pod {
+	for index := range pod.Spec.Containers {
+		pod.Spec.Containers[index].StartupProbe = &corev1.Probe{
+			ProbeHandler: corev1.ProbeHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+
+	return pod
+}
+
 func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
 	pod.Spec.Volumes = []corev1.Volume{
 		{
