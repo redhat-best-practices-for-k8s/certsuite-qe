@@ -194,5 +194,5 @@ func DeleteRunTimeClass(rtcName string) error {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
 	}
 
-	return err
+	return nil
 }
