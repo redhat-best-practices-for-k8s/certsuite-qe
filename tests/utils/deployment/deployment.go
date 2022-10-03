@@ -217,6 +217,21 @@ func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
 	return deployment
 }
 
+// RedefineWithStartUpProbe adds startup probe to deployment manifest.
+func RedefineWithStartUpProbe(deployment *v1.Deployment) *v1.Deployment {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].StartupProbe = &corev1.Probe{
+			ProbeHandler: corev1.ProbeHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+
+	return deployment
+}
+
 func RedefineWithContainerSpecs(deployment *v1.Deployment, containerSpecs []corev1.Container) *v1.Deployment {
 	deployment.Spec.Template.Spec.Containers = containerSpecs
 
