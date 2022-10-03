@@ -6,6 +6,7 @@ import (
 
 	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 )
@@ -49,7 +50,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
-			PreStop: &corev1.Handler{
+			PreStop: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
 					Command: command,
 				},
@@ -120,7 +121,7 @@ func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) 
 func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
 	if len(deployment.Spec.Template.Spec.Containers) > 0 {
 		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
-			PreStop: &corev1.Handler{
+			PreStop: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
 					Command: command}}}
 
@@ -191,7 +192,7 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -205,7 +206,7 @@ func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
 func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -264,4 +265,21 @@ func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) *v1.D
 	}
 
 	return deployment
+}
+
+func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU: resource.MustParse(limit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceCPU: resource.MustParse(req),
+			},
+		}
+	}
+}
+
+func RedefineWithRunTimeClass(deployment *v1.Deployment, rtcName string) {
+	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }

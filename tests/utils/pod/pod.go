@@ -2,6 +2,8 @@ package pod
 
 import (
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 )
@@ -32,7 +34,7 @@ func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod 
 func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -47,7 +49,7 @@ func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
 func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
+			ProbeHandler: corev1.ProbeHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{"ls"},
 				},
@@ -71,4 +73,21 @@ func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
 	}
 
 	return pod
+}
+
+func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
+	for i := range pod.Spec.Containers {
+		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU: resource.MustParse(limit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceCPU: resource.MustParse(req),
+			},
+		}
+	}
+}
+
+func RedefineWithRunTimeClass(pod *corev1.Pod, rtcName string) {
+	pod.Spec.RuntimeClassName = pointer.String(rtcName)
 }

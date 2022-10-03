@@ -186,3 +186,13 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 
 	return nil
 }
+
+func DeleteRunTimeClass(rtcName string) error {
+	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
+		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64Ptr(0)})
+	if err != nil {
+		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
+	}
+
+	return nil
+}
