@@ -35,15 +35,11 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 		return nil, errors.New("invalid containers number")
 	}
 
-	deploymentStruct := globalhelper.AppendContainersToDeployment(
-		deployment.RedefineWithReplicaNumber(
-			deployment.DefineDeployment(
-				name,
-				tsparams.LifecycleNamespace,
-				globalhelper.Configuration.General.TestImage,
-				tsparams.TestTargetLabels), replica),
-		containers-1,
-		globalhelper.Configuration.General.TestImage)
+	deploymentStruct := deployment.DefineDeployment(name, tsparams.LifecycleNamespace,
+		globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
 }
@@ -68,9 +64,10 @@ func DefinePod(name string) *corev1.Pod {
 }
 
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
-	return daemonset.RedefineWithImagePullPolicy(
-		daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, image,
-			tsparams.TestTargetLabels, name), pullPolicy)
+	daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, image, tsparams.TestTargetLabels, name)
+	daemonset.RedefineWithImagePullPolicy(daemonSet, pullPolicy)
+
+	return daemonSet
 }
 
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
@@ -84,18 +81,19 @@ func WaitUntilClusterIsStable() error {
 
 	err := nodes.WaitForNodesReady(globalhelper.APIClient,
 		tsparams.WaitingTime, tsparams.RetryInterval*time.Second)
+	if err != nil {
+		return fmt.Errorf("failed to wait for node to become ready: %w", err)
+	}
 
-	return err
+	return nil
 }
 
 // CreateAndWaitUntilReplicaSetIsReady creates replicaSet and waits until all it's replicas are ready.
 func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time.Duration) error {
-	runningReplica, err := globalhelper.APIClient.ReplicaSets(replicaSet.Namespace).Create(
-		context.Background(),
-		replicaSet,
-		metav1.CreateOptions{})
+	runningReplica, err := globalhelper.APIClient.ReplicaSets(replicaSet.Namespace).Create(context.Background(),
+		replicaSet, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create replicaSet: %w", err)
 	}
 
 	Eventually(func() bool {
@@ -133,14 +131,17 @@ func isReplicaSetReady(namespace string, replicaSetName string) (bool, error) {
 
 func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) error {
 	_, err := globalhelper.APIClient.PersistentVolumes().Create(context.Background(), pv, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create persistent volume: %w", err)
+	}
 
-	return err
+	return nil
 }
 
 func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace string, timeout time.Duration, pvName string) error {
 	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Create(context.Background(), pvc, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create persistent volume claim: %w", err)
 	}
 
 	Eventually(func() bool {

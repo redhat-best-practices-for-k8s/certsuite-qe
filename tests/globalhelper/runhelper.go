@@ -16,13 +16,12 @@ import (
 func LaunchTests(testCaseName string, tcNameForReport string) error {
 	containerEngine, err := container.SelectEngine()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to select engine: %w", err)
 	}
 
 	err = os.Setenv("TNF_CONTAINER_CLIENT", containerEngine)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set TNF_CONTAINER_CLIENT: %w", err)
 	}
 
 	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
@@ -46,19 +45,18 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	cmd.Dir = Configuration.General.TnfRepoPath
 
 	debugTnf, err := Configuration.DebugTnf()
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
 	}
 
 	if debugTnf {
 		outfile := Configuration.CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
-		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
 
+		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
 
 		cmd.Stdout = outfile

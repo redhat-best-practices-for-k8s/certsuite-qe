@@ -47,7 +47,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 }
 
 // RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
-func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) *v1.Deployment {
+func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
 			PreStop: &corev1.LifecycleHandler{
@@ -57,24 +57,20 @@ func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []s
 			},
 		}
 	}
-
-	return deployment
 }
 
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
-func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) *v1.Deployment {
+func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"ALL"}},
 		}
 	}
-
-	return deployment
 }
 
 // RedefineWithLabels redefines deployment with additional label.
-func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.Deployment {
+func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) {
 	newMap := make(map[string]string)
 	for k, v := range deployment.Spec.Template.Labels {
 		newMap[k] = v
@@ -85,8 +81,6 @@ func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) *v1.
 	}
 
 	deployment.Spec.Template.Labels = newMap
-
-	return deployment
 }
 
 // RedefineWithMultus redefines deployment with additional labels.
@@ -111,35 +105,31 @@ func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deploy
 }
 
 // RedefineWithReplicaNumber redefines deployment with requested replica number.
-func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) *v1.Deployment {
+func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) {
 	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
-
-	return deployment
 }
 
 // RedefineFirstContainerWithPreStopSpec redefines deployment first container with lifecycle/preStop spec.
-func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) (*v1.Deployment, error) {
+func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) error {
 	if len(deployment.Spec.Template.Spec.Containers) > 0 {
 		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
 			PreStop: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
 					Command: command}}}
 
-		return deployment, nil
+		return nil
 	}
 
-	return nil, fmt.Errorf("deployment %s does not have any containers", deployment.Name)
+	return fmt.Errorf("deployment %s does not have any containers", deployment.Name)
 }
 
 // RedefineWithTerminationGracePeriod redefines deployment with terminationGracePeriod spec.
-func RedefineWithTerminationGracePeriod(deployment *v1.Deployment, terminationGracePeriod *int64) *v1.Deployment {
+func RedefineWithTerminationGracePeriod(deployment *v1.Deployment, terminationGracePeriod *int64) {
 	deployment.Spec.Template.Spec.TerminationGracePeriodSeconds = terminationGracePeriod
-
-	return deployment
 }
 
 // RedefineWithPodAntiAffinity redefines deployment with podAntiAffinity spec.
-func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]string) *v1.Deployment {
+func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]string) {
 	deployment.Spec.Template.Spec.Affinity = &corev1.Affinity{
 		PodAntiAffinity: &corev1.PodAntiAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
@@ -151,25 +141,19 @@ func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]str
 				},
 			},
 		}}
-
-	return deployment
 }
 
-func RedefineWithImagePullPolicy(deployment *v1.Deployment, pullPolicy corev1.PullPolicy) *v1.Deployment {
+func RedefineWithImagePullPolicy(deployment *v1.Deployment, pullPolicy corev1.PullPolicy) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
 	}
-
-	return deployment
 }
 
-func RedefineWithNodeSelector(deployment *v1.Deployment, nodeSelector map[string]string) *v1.Deployment {
+func RedefineWithNodeSelector(deployment *v1.Deployment, nodeSelector map[string]string) {
 	deployment.Spec.Template.Spec.NodeSelector = nodeSelector
-
-	return deployment
 }
 
-func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deployment {
+func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) {
 	deployment.Spec.Template.Spec.Affinity = &corev1.Affinity{
 		NodeAffinity: &corev1.NodeAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
@@ -185,11 +169,9 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) *v1.Deploym
 				},
 			},
 		}}
-
-	return deployment
 }
 
-func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
+func RedefineWithReadinessProbe(deployment *v1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -199,11 +181,9 @@ func RedefineWithReadinessProbe(deployment *v1.Deployment) *v1.Deployment {
 			},
 		}
 	}
-
-	return deployment
 }
 
-func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
+func RedefineWithLivenessProbe(deployment *v1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -213,12 +193,10 @@ func RedefineWithLivenessProbe(deployment *v1.Deployment) *v1.Deployment {
 			},
 		}
 	}
-
-	return deployment
 }
 
 // RedefineWithStartUpProbe adds startup probe to deployment manifest.
-func RedefineWithStartUpProbe(deployment *v1.Deployment) *v1.Deployment {
+func RedefineWithStartUpProbe(deployment *v1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].StartupProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -228,17 +206,13 @@ func RedefineWithStartUpProbe(deployment *v1.Deployment) *v1.Deployment {
 			},
 		}
 	}
-
-	return deployment
 }
 
-func RedefineWithContainerSpecs(deployment *v1.Deployment, containerSpecs []corev1.Container) *v1.Deployment {
+func RedefineWithContainerSpecs(deployment *v1.Deployment, containerSpecs []corev1.Container) {
 	deployment.Spec.Template.Spec.Containers = containerSpecs
-
-	return deployment
 }
 
-func RedefineWithPriviledgedContainer(deployment *v1.Deployment) *v1.Deployment {
+func RedefineWithPriviledgedContainer(deployment *v1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),
@@ -247,8 +221,6 @@ func RedefineWithPriviledgedContainer(deployment *v1.Deployment) *v1.Deployment 
 				Add: []corev1.Capability{"ALL"}},
 		}
 	}
-
-	return deployment
 }
 
 func RedefineWithHostPid(deployment *v1.Deployment, hostPid bool) {
@@ -267,7 +239,7 @@ func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) {
 	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
 }
 
-func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) *v1.Deployment {
+func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) {
 	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
 		{
 			Name: name,
@@ -278,8 +250,6 @@ func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) *v1.D
 			},
 		},
 	}
-
-	return deployment
 }
 
 func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req string) {

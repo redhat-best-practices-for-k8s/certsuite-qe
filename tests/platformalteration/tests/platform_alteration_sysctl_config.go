@@ -30,12 +30,12 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 	It("unchanged sysctl config", func() {
 
 		By("Create daemonSet")
-		daemonset := daemonset.RedefineWithPriviledgedContainer(
-			daemonset.RedefineWithVolumeMount(
-				daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
-					tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)))
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+		daemonset.RedefineWithPriviledgedContainer(daemonSet)
+		daemonset.RedefineWithVolumeMount(daemonSet)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonset, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-sysctl-config test")
@@ -51,12 +51,12 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 	It("change sysctl config using MCO", func() {
 
 		By("Create daemonSet")
-		daemonset := daemonset.RedefineWithPriviledgedContainer(
-			daemonset.RedefineWithVolumeMount(
-				daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
-					tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)))
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+		daemonset.RedefineWithPriviledgedContainer(daemonSet)
+		daemonset.RedefineWithVolumeMount(daemonSet)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonset, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)

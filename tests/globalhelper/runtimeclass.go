@@ -14,15 +14,13 @@ import (
 func CreateRunTimeClass(rtc *v1.RuntimeClass) error {
 	rtc, err := APIClient.RuntimeClasses().Create(context.Background(), rtc, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create runTimeClass: %w", err)
 	}
 
 	Eventually(func() bool {
 		rtcCreated, err := isRtcCreated(rtc)
 		if err != nil {
-
-			glog.V(5).Info(fmt.Sprintf(
-				"rtc %s was not created, retry in %d seconds", rtc.Name, retryInterval))
+			glog.V(5).Info(fmt.Sprintf("rtc %s was not created, retry in %d seconds", rtc.Name, retryInterval))
 
 			return false
 		}

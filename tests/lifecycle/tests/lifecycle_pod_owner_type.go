@@ -29,7 +29,8 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One ReplicaSet, several pods", func() {
 
 		By("Define ReplicaSet with replica number")
-		replicaSet := replicaset.RedefineWithReplicaNumber(tshelper.DefineReplicaSet(tsparams.TestReplicaSetName), 3)
+		replicaSet := tshelper.DefineReplicaSet(tsparams.TestReplicaSetName)
+		replicaset.RedefineWithReplicaNumber(replicaSet, 3)
 
 		err := tshelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -93,9 +94,10 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	It("One pod, not part of any workload resource [negative]", func() {
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels)
+		put := tshelper.DefinePod(tsparams.TestPodName)
+		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
@@ -125,9 +127,10 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		pod := pod.RedefinePodWithLabel(tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels)
+		put := tshelper.DefinePod(tsparams.TestPodName)
+		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")

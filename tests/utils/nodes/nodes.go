@@ -3,6 +3,7 @@ package nodes
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/golang/glog"
@@ -86,6 +87,9 @@ func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedul
 
 	_, err = clients.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
 		cordonPatchBytes, metav1.PatchOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to patch node unschedulable value: %w", err)
+	}
 
-	return err
+	return nil
 }

@@ -24,14 +24,12 @@ func DefinePod(podName string, namespace string, image string) *corev1.Pod {
 }
 
 // RedefinePodWithLabel adds label to given pod manifest.
-func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod {
+func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) {
 	pod.ObjectMeta.Labels = label
-
-	return pod
 }
 
 // RedefineWithReadinessProbe adds readiness probe to given pod manifest.
-func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
+func RedefineWithReadinessProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -41,12 +39,10 @@ func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
 			},
 		}
 	}
-
-	return pod
 }
 
 // RedefineWithLivenessProbe adds liveness probe to pod manifest.
-func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
+func RedefineWithLivenessProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -56,12 +52,10 @@ func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 			},
 		}
 	}
-
-	return pod
 }
 
 // RedefineWithStartUpProbe adds startup probe to pod manifest.
-func RedefineWithStartUpProbe(pod *corev1.Pod) *corev1.Pod {
+func RedefineWithStartUpProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].StartupProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -71,11 +65,9 @@ func RedefineWithStartUpProbe(pod *corev1.Pod) *corev1.Pod {
 			},
 		}
 	}
-
-	return pod
 }
 
-func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
+func RedefineWithPVC(pod *corev1.Pod, name string, claim string) {
 	pod.Spec.Volumes = []corev1.Volume{
 		{
 			Name: name,
@@ -86,8 +78,6 @@ func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
 			},
 		},
 	}
-
-	return pod
 }
 
 func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {

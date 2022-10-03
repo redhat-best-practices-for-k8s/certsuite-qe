@@ -39,7 +39,7 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time
 		deployment,
 		metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create deployment: %w", err)
 	}
 
 	Eventually(func() bool {

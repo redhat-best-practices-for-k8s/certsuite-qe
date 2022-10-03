@@ -61,8 +61,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithNodeSelector(deploymenta,
-			map[string]string{configSuite.General.CnfNodeLabel: ""})
+		deployment.RedefineWithNodeSelector(deploymenta, map[string]string{configSuite.General.CnfNodeLabel: ""})
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
@@ -85,7 +84,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithNodeAffinity(deploymenta, configSuite.General.CnfNodeLabel)
+		deployment.RedefineWithNodeAffinity(deploymenta, configSuite.General.CnfNodeLabel)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -114,8 +113,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithNodeAffinity(deploymentb,
-			configSuite.General.CnfNodeLabel)
+		deployment.RedefineWithNodeAffinity(deploymentb, configSuite.General.CnfNodeLabel)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
