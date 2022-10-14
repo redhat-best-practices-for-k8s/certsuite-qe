@@ -298,3 +298,16 @@ func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req strin
 func RedefineWithRunTimeClass(deployment *v1.Deployment, rtcName string) {
 	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }
+
+func RedefineWithShareProcessNamespace(deployment *v1.Deployment, shareProcessNamespace bool) {
+	deployment.Spec.Template.Spec.ShareProcessNamespace = &shareProcessNamespace
+}
+
+func RedefineWithSysPtrace(deployment *v1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"SYS_PTRACE"}},
+		}
+	}
+}
