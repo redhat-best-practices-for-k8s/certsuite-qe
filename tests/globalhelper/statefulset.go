@@ -17,7 +17,7 @@ func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout t
 	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(context.Background(),
 		statefulSet, metav1.CreateOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to create statefulSet: %w", err)
+		return fmt.Errorf("failed to create statefulSet %q (ns %s): %w", statefulSet.Name, statefulSet.Namespace, err)
 	}
 
 	Eventually(func() bool {

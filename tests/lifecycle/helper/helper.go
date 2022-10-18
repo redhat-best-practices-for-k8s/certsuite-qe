@@ -93,7 +93,7 @@ func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time
 	runningReplica, err := globalhelper.APIClient.ReplicaSets(replicaSet.Namespace).Create(context.Background(),
 		replicaSet, metav1.CreateOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to create replicaSet: %w", err)
+		return fmt.Errorf("failed to create replicaSet %q (ns %s): %w", replicaSet.Name, replicaSet.Namespace, err)
 	}
 
 	Eventually(func() bool {

@@ -14,7 +14,7 @@ import (
 func CreateRunTimeClass(rtc *v1.RuntimeClass) error {
 	rtc, err := APIClient.RuntimeClasses().Create(context.Background(), rtc, metav1.CreateOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to create runTimeClass: %w", err)
+		return fmt.Errorf("failed to create runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
 	}
 
 	Eventually(func() bool {
