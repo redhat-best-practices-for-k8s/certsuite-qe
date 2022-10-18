@@ -98,11 +98,12 @@ func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, te
 func RemoveContentsFromReportDir() error {
 	tnfReportDir, err := os.Open(Configuration.General.TnfReportDir)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open report directory: %w", err)
 	}
-	defer tnfReportDir.Close()
-	names, err := tnfReportDir.Readdirnames(-1)
 
+	defer tnfReportDir.Close()
+
+	names, err := tnfReportDir.Readdirnames(-1)
 	if err != nil {
 		return err
 	}
@@ -110,7 +111,7 @@ func RemoveContentsFromReportDir() error {
 	for _, name := range names {
 		err = os.RemoveAll(filepath.Join(Configuration.General.TnfReportDir, name))
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to remove content from report directory: %w", err)
 		}
 
 		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",

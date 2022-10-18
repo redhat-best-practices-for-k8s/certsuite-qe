@@ -72,11 +72,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.DefineDaemonSet(
-			tsparams.TestNetworkingNameSpace,
-			configSuite.General.TestImage,
-			tsparams.TestDeploymentLabels, "daemonsetnetworkingput",
-		), map[string]string{configSuite.General.CnfNodeLabel: ""})
+		daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, configSuite.General.TestImage,
+			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
+		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -165,12 +163,9 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.RedefineDaemonSetWithNodeSelector(
-			daemonset.DefineDaemonSet(
-				tsparams.TestNetworkingNameSpace,
-				configSuite.General.TestImage,
-				tsparams.TestDeploymentLabels, "daemonsetnetworkingput",
-			), map[string]string{configSuite.General.CnfNodeLabel: ""})
+		daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, configSuite.General.TestImage,
+			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
+		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)

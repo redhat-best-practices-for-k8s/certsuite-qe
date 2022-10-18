@@ -51,7 +51,7 @@ func Create(namespace string, cs *testclient.ClientSet) error {
 func DeleteAndWait(clientSet *testclient.ClientSet, namespace string, timeout time.Duration) error {
 	err := clientSet.Namespaces().Delete(context.Background(), namespace, metav1.DeleteOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to delete namespace: %w", err)
 	}
 
 	return WaitForDeletion(clientSet, namespace, timeout)
@@ -89,7 +89,7 @@ func CleanPods(namespace string, clientSet *testclient.ClientSet) error {
 		return fmt.Errorf("failed to delete pods %w", err)
 	}
 
-	return err
+	return nil
 }
 
 // CleanDeployments deletes all deployments in namespace.
@@ -111,7 +111,7 @@ func CleanDeployments(namespace string, clientSet *testclient.ClientSet) error {
 		return fmt.Errorf("failed to delete deployment %w", err)
 	}
 
-	return err
+	return nil
 }
 
 // CleanDaemonSets deletes all daemonsets in namespace.
@@ -133,7 +133,7 @@ func CleanDaemonSets(namespace string, clientSet *testclient.ClientSet) error {
 		return fmt.Errorf("failed to delete daemonSet %w", err)
 	}
 
-	return err
+	return nil
 }
 
 func CleanNetworkAttachmentDefinition(namespace string, clientSet *testclient.ClientSet) error {
@@ -147,8 +147,8 @@ func CleanNetworkAttachmentDefinition(namespace string, clientSet *testclient.Cl
 	}
 
 	nadList := &v1.NetworkAttachmentDefinitionList{}
-	err = clientSet.List(context.Background(), nadList)
 
+	err = clientSet.List(context.Background(), nadList)
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func CleanReplicaSets(namespace string, clientSet *testclient.ClientSet) error {
 		return fmt.Errorf("failed to delete ReplicaSet %w", err)
 	}
 
-	return err
+	return nil
 }
 
 // CleanStatefulSets deletes all StatefulSets in namespace.
@@ -208,7 +208,7 @@ func CleanStatefulSets(namespace string, clientSet *testclient.ClientSet) error 
 		return fmt.Errorf("failed to delete StatefulSet %w", err)
 	}
 
-	return err
+	return nil
 }
 
 // CleanServices deletes all service in namespace.
@@ -223,7 +223,6 @@ func CleanServices(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	serviceList, err := clientSet.Services(namespace).List(context.Background(), metav1.ListOptions{})
-
 	if err != nil {
 		return err
 	}
@@ -237,7 +236,7 @@ func CleanServices(namespace string, clientSet *testclient.ClientSet) error {
 		}
 	}
 
-	return err
+	return nil
 }
 
 func CleanSubscriptions(namespace string, clientSet *testclient.ClientSet) error {
@@ -260,7 +259,7 @@ func CleanSubscriptions(namespace string, clientSet *testclient.ClientSet) error
 		return fmt.Errorf("failed to delete subscriptions %w", err)
 	}
 
-	return err
+	return nil
 }
 
 func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
@@ -283,7 +282,7 @@ func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
 		return fmt.Errorf("failed to delete CSVs %w", err)
 	}
 
-	return err
+	return nil
 }
 
 func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error {
@@ -306,7 +305,7 @@ func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error 
 		return fmt.Errorf("failed to delete installplans %w", err)
 	}
 
-	return err
+	return nil
 }
 
 func CleanPVCs(namespace string, clientSet *testclient.ClientSet) error {
@@ -329,7 +328,7 @@ func CleanPVCs(namespace string, clientSet *testclient.ClientSet) error {
 		return fmt.Errorf("failed to delete persistent volume claim %w", err)
 	}
 
-	return err
+	return nil
 }
 
 // Clean cleans all dangling objects from the given namespace.

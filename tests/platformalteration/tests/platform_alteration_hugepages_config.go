@@ -54,12 +54,12 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create daemonSet")
-		daemonset := daemonset.RedefineWithPriviledgedContainer(
-			daemonset.RedefineWithVolumeMount(
-				daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
-					tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)))
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+		daemonset.RedefineWithPriviledgedContainer(daemonSet)
+		daemonset.RedefineWithVolumeMount(daemonSet)
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonset, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)

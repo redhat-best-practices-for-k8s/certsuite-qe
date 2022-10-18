@@ -33,7 +33,8 @@ var _ = Describe("lifecycle-readiness", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithReadinessProbe(deploymenta)
+		deployment.RedefineWithReadinessProbe(deploymenta)
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -53,7 +54,8 @@ var _ = Describe("lifecycle-readiness", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithReadinessProbe(deploymenta)
+		deployment.RedefineWithReadinessProbe(deploymenta)
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -61,7 +63,8 @@ var _ = Describe("lifecycle-readiness", func() {
 		deploymentb, err := tshelper.DefineDeployment(3, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithReadinessProbe(deploymentb)
+		deployment.RedefineWithReadinessProbe(deploymentb)
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -78,8 +81,9 @@ var _ = Describe("lifecycle-readiness", func() {
 	// 50147
 	It("One statefulSet, one pod with a readiness probe", func() {
 		By("Define statefulSet with a readiness probe")
-		statefulset := statefulset.RedefineWithReadinessProbe(tshelper.DefineStatefulSet(tsparams.TestStatefulSetName))
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.WaitingTime)
+		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName)
+		statefulset.RedefineWithReadinessProbe(statefulSet)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
@@ -95,9 +99,11 @@ var _ = Describe("lifecycle-readiness", func() {
 	// 50148
 	It("One pod with a readiness probe", func() {
 		By("Define pod with a readiness probe")
-		pod := pod.RedefineWithReadinessProbe(pod.RedefinePodWithLabel(tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels))
+		put := tshelper.DefinePod(tsparams.TestPodName)
+		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
+		pod.RedefineWithReadinessProbe(put)
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-readiness test")
@@ -135,7 +141,7 @@ var _ = Describe("lifecycle-readiness", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithReadinessProbe(deploymenta)
+		deployment.RedefineWithReadinessProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

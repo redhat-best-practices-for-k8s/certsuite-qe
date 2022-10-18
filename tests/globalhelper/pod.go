@@ -65,12 +65,9 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 
 // CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
-	createdPod, err := APIClient.Pods(pod.Namespace).Create(
-		context.Background(),
-		pod,
-		metav1.CreateOptions{})
+	createdPod, err := APIClient.Pods(pod.Namespace).Create(context.Background(), pod, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
 
 	Eventually(func() bool {

@@ -45,7 +45,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -73,7 +73,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -82,7 +82,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -169,7 +169,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

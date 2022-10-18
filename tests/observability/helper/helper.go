@@ -58,7 +58,7 @@ func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *apps
 func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
 	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.Configuration.General.TestImage)
 	// Add labels.
-	newPod = pod.RedefinePodWithLabel(newPod, tsparams.TnfTargetPodLabels)
+	pod.RedefinePodWithLabel(newPod, tsparams.TnfTargetPodLabels)
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
 
@@ -96,7 +96,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		metav1.CreateOptions{},
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create crd: %w", err)
 	}
 
 	Eventually(func() bool {
@@ -224,8 +224,8 @@ func defineDeploymentWithContainerSpecs(name string, replicas int,
 		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
-	dep = deployment.RedefineWithReplicaNumber(dep, int32(replicas))
-	dep = deployment.RedefineWithContainerSpecs(dep, containerSpecs)
+	deployment.RedefineWithReplicaNumber(dep, int32(replicas))
+	deployment.RedefineWithContainerSpecs(dep, containerSpecs)
 
 	return dep
 }
@@ -237,8 +237,8 @@ func defineStatefulSetWithContainerSpecs(name string, replicas int,
 		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
-	sts = statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
-	sts = statefulset.RedefineWithContainerSpecs(sts, containerSpecs)
+	statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
+	statefulset.RedefineWithContainerSpecs(sts, containerSpecs)
 
 	return sts
 }
@@ -250,5 +250,7 @@ func defineDaemonSetWithContainerSpecs(name string,
 		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels, name)
 
 	// Customize its container specs.
-	return daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)
+	daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)
+
+	return daemonSet
 }

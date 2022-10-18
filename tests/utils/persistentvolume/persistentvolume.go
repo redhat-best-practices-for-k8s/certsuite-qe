@@ -36,8 +36,6 @@ func DefinePersistentVolume(pvName string, namespace string) *corev1.PersistentV
 	}
 }
 
-func RedefineWithPVReclaimPolicy(pv *corev1.PersistentVolume, policy corev1.PersistentVolumeReclaimPolicy) *corev1.PersistentVolume {
+func RedefineWithPVReclaimPolicy(pv *corev1.PersistentVolume, policy corev1.PersistentVolumeReclaimPolicy) {
 	pv.Spec.PersistentVolumeReclaimPolicy = policy
-
-	return pv
 }

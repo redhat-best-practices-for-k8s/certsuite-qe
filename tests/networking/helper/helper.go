@@ -48,28 +48,20 @@ func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(
-		tsparams.TestDeploymentAName,
-		replicaNumber,
-		true,
-		nil,
-		nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, replicaNumber, true,
+		nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(
-		tsparams.TestDeploymentAName,
-		replicaNumber,
-		true,
-		nil,
-		tsparams.NetworkingTestSkipLabel)
-	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, replicaNumber,
+		true, nil, tsparams.NetworkingTestSkipLabel)
 
+	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create deployment: %w", err)
 	}
 
 	return nil
@@ -114,8 +106,11 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	_, err := globalhelper.APIClient.Services(tsparams.TestNetworkingNameSpace).Create(
 		context.Background(),
 		testService, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create service on cluster: %w", err)
+	}
 
-	return err
+	return nil
 }
 
 func DefineAndCreateNadOnCluster(name string, intName string, network string) error {
@@ -213,19 +208,16 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 
 func defineDeploymentBasedOnArgs(
 	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *v1.Deployment {
-	deploymentStruct := deployment.RedefineWithReplicaNumber(
-		deployment.DefineDeployment(
-			name,
-			tsparams.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			tsparams.TestDeploymentLabels),
-		replicaNumber)
+	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
+		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
+
 	if privileged {
-		deploymentStruct = deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
+		deployment.RedefineWithContainersSecurityContextAll(deploymentStruct)
 	}
 
 	if label != nil {
-		deploymentStruct = deployment.RedefineWithLabels(deploymentStruct, label)
+		deployment.RedefineWithLabels(deploymentStruct, label)
 	}
 
 	if len(multus) > 0 {
@@ -236,13 +228,10 @@ func defineDeploymentBasedOnArgs(
 }
 
 func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
-	testDaemonset := daemonset.RedefineDaemonSetWithNodeSelector(daemonset.RedefineWithMultus(
-		daemonset.DefineDaemonSet(
-			tsparams.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			tsparams.TestDeploymentLabels, "daemonsetnetworkingput"),
-		nadName,
-	), map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
+	testDaemonset := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace,
+		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
+	daemonset.RedefineWithMultus(testDaemonset, nadName)
+	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
 
 	if labels != nil {
 		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
@@ -252,14 +241,12 @@ func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error 
 }
 
 func defineAndCreatePrivilegedDaemonset() error {
-	daemonSet := daemonset.RedefineWithPrivilegeAndHostNetwork(daemonset.RedefineDaemonSetWithNodeSelector(
-		daemonset.DefineDaemonSet(
-			tsparams.TestNetworkingNameSpace,
-			globalhelper.Configuration.General.TestImage,
-			tsparams.TestDeploymentLabels, "daemonsetnetworkingput",
-		), map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""}))
-	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, globalhelper.Configuration.General.TestImage,
+		tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
+	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""})
+	daemonset.RedefineWithPrivilegeAndHostNetwork(daemonSet)
 
+	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 	if err != nil {
 		return err
 	}
