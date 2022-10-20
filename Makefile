@@ -8,7 +8,7 @@ GO_PACKAGES=$(shell go list ./... | grep -v vendor)
 		test-all \
 		test-features \
 		install \
-		vet
+		vet \
 
 vet:
 	go vet ${GO_PACKAGES}
@@ -16,6 +16,9 @@ vet:
 lint:
 	@echo "Running go lint"
 	scripts/golangci-lint.sh
+
+update-go:
+	scripts/install-latest-go.sh
 
 deps-update:
 	go mod tidy && \
@@ -25,10 +28,10 @@ gofmt:
 	@echo "Running gofmt"
 	gofmt -s -l `find . -path ./vendor -prune -o -type f -name '*.go' -print`
 
-test-all:
+test-all: update-go
 	./scripts/run-tests.sh all
 
-test-features:
+test-features: update-go
 	FEATURES="$(FEATURES)" ./scripts/run-tests.sh features
 
 install-ginkgo:
@@ -39,3 +42,5 @@ install: deps-update install-ginkgo
 
 unit-tests:
 	UNIT_TEST=true go test ./... -tags=utest
+
+
