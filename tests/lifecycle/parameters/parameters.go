@@ -49,7 +49,7 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	AffinityRequired = map[string]string{
+	AffinityRequiredPodLabels = map[string]string{
 		"AffinityRequired": "true",
 	}
 )

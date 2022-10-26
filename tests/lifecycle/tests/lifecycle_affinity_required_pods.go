@@ -37,8 +37,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	It("One pod, label is set, Affinity rules are set", func() {
 		By("Define & create pod")
 		put := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(put, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(put, configSuite.General.CnfNodeLabel)
 		pod.RedefineWithPodAffinity(put, tsparams.TestTargetLabels)
 
@@ -60,8 +60,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	It("Two pods, labels are set for both, Affinity rules are set", func() {
 		By("Define & create pods")
 		putA := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(putA, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(putA, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(putA, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(putA, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(putA, configSuite.General.CnfNodeLabel)
 		pod.RedefineWithPodAffinity(putA, tsparams.TestTargetLabels)
 
@@ -69,8 +69,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		putB := tshelper.DefinePod("lifecycle-podb")
-		pod.RedefinePodWithLabel(putB, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(putB, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(putB, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(putB, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(putB, configSuite.General.CnfNodeLabel)
 		pod.RedefineWithPodAffinity(putB, tsparams.TestTargetLabels)
 
@@ -92,8 +92,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	It("One pod, label is set, affinity rules are not set [negative]", func() {
 		By("Define & create pod")
 		put := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(put, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -112,8 +112,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	// 55330
 	It("One pod, label is set, podantiaffinity is set [negative]", func() {
 		put := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(put, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithPodantiAffinity(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
@@ -134,8 +134,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	It("Two pods, labels are set for both, affinity rules are not set for one of the pods [negative]", func() {
 		By("Define & create pods")
 		putA := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(putA, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(putA, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(putA, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(putA, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(putA, configSuite.General.CnfNodeLabel)
 		pod.RedefineWithPodAffinity(putA, tsparams.TestTargetLabels)
 
@@ -143,8 +143,8 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		putB := tshelper.DefinePod("lifecycle-podb")
-		pod.RedefinePodWithLabel(putB, tsparams.TestTargetLabels)
-		pod.RedefinePodWithLabel(putB, tsparams.AffinityRequired)
+		globalhelper.AppendLabelsToPod(putB, tsparams.TestTargetLabels)
+		globalhelper.AppendLabelsToPod(putB, tsparams.AffinityRequiredPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putB, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

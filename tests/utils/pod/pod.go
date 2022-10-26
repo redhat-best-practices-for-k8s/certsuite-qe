@@ -25,16 +25,7 @@ func DefinePod(podName string, namespace string, image string) *corev1.Pod {
 
 // RedefinePodWithLabel adds label to given pod manifest.
 func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) {
-	newMap := make(map[string]string)
-	for k, v := range pod.Labels {
-		newMap[k] = v
-	}
-
-	for k, v := range label {
-		newMap[k] = v
-	}
-
-	pod.Labels = newMap
+	pod.ObjectMeta.Labels = label
 }
 
 // RedefineWithReadinessProbe adds readiness probe to given pod manifest.

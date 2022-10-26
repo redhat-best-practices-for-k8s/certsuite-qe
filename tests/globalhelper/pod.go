@@ -126,3 +126,10 @@ func AppendContainersToPod(pod *corev1.Pod, containersNum int, image string) {
 			})
 	}
 }
+
+// AppendLabelsToPod appends labels to given pod manifest.
+func AppendLabelsToPod(pod *corev1.Pod, labels map[string]string) {
+	for name, value := range labels {
+		pod.Labels[name] = value
+	}
+}
