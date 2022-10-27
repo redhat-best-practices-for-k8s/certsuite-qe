@@ -30,14 +30,7 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 		"-t", Configuration.General.TnfConfigDir,
 		"-o", Configuration.General.TnfReportDir,
 		"-i", fmt.Sprintf("%s:%s", Configuration.General.TnfImage, Configuration.General.TnfImageTag),
-	}
-
-	if len(testCaseName) > 0 {
-		testArgs = append(testArgs, "-f")
-		testArgs = append(testArgs, testCaseName)
-		glog.V(5).Info(fmt.Sprintf("add test suite %s", testCaseName))
-	} else {
-		panic("No test suite name provided.")
+		"-l", testCaseName,
 	}
 
 	cmd := exec.Command(fmt.Sprintf("./%s", Configuration.General.TnfEntryPointScript))

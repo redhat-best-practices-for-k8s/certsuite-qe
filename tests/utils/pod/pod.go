@@ -96,3 +96,52 @@ func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
 func RedefineWithRunTimeClass(pod *corev1.Pod, rtcName string) {
 	pod.Spec.RuntimeClassName = pointer.String(rtcName)
 }
+
+// RedefineWithNodeAffinity redefines pod with nodeAffinity spec.
+func RedefineWithNodeAffinity(pod *corev1.Pod, key string) {
+	pod.Spec.Affinity = &corev1.Affinity{
+		NodeAffinity: &corev1.NodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+				NodeSelectorTerms: []corev1.NodeSelectorTerm{
+					{
+						MatchExpressions: []corev1.NodeSelectorRequirement{
+							{
+								Key:      key,
+								Operator: corev1.NodeSelectorOpExists,
+							},
+						},
+					},
+				},
+			},
+		}}
+}
+
+// RedefineWithPodAffinity redefines pod with podAffinity spec.
+func RedefineWithPodAffinity(put *corev1.Pod, label map[string]string) {
+	put.Spec.Affinity = &corev1.Affinity{
+		PodAffinity: &corev1.PodAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: label,
+					},
+					TopologyKey: "kubernetes.io/hostname",
+				},
+			},
+		}}
+}
+
+// RedefineWithPodantiAffinity redefines pod with podAntiAffinity spec.
+func RedefineWithPodantiAffinity(put *corev1.Pod, label map[string]string) {
+	put.Spec.Affinity = &corev1.Affinity{
+		PodAntiAffinity: &corev1.PodAntiAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: label,
+					},
+					TopologyKey: "kubernetes.io/hostname",
+				},
+			},
+		}}
+}
