@@ -265,6 +265,28 @@ func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req strin
 	}
 }
 
+func RedefineWithResourceLimits(deployment *v1.Deployment, memory string, cpu string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memory),
+				corev1.ResourceCPU:    resource.MustParse(cpu),
+			},
+		}
+	}
+}
+
+func RedefineWithResourceRequests(deployment *v1.Deployment, memory string, cpu string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memory),
+				corev1.ResourceCPU:    resource.MustParse(cpu),
+			},
+		}
+	}
+}
+
 func RedefineWithRunTimeClass(deployment *v1.Deployment, rtcName string) {
 	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }
