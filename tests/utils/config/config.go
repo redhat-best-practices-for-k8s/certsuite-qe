@@ -97,9 +97,8 @@ func NewConfig() (*Config, error) {
 func (c *Config) DebugTnf() (bool, error) {
 	if c.General.DebugTnf == "true" {
 		err := os.Setenv("TNF_LOG_LEVEL", "trace")
-
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
 		}
 
 		return true, nil
@@ -160,13 +159,13 @@ func (c *Config) defineTnfRepoPath() (string, error) {
 func readFile(cfg *Config, cfgFile string) error {
 	openedCnfFile, err := os.Open(cfgFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open cfg file: %w", err)
 	}
 	defer openedCnfFile.Close()
 
 	decoder := yaml.NewDecoder(openedCnfFile)
-	err = decoder.Decode(&cfg)
 
+	err = decoder.Decode(&cfg)
 	if err != nil {
 		return err
 	}

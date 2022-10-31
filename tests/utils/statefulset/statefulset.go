@@ -34,7 +34,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 }
 
 // RedefineWithReadinessProbe adds readiness probe to statefulSet manifest.
-func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -44,12 +44,10 @@ func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 			},
 		}
 	}
-
-	return statefulSet
 }
 
 // RedefineWithLivenessProbe adds liveness probe to statefulSet manifest.
-func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -59,12 +57,10 @@ func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 			},
 		}
 	}
-
-	return statefulSet
 }
 
 // RedefineWithStartUpProbe adds startup probe to statefulSet manifest.
-func RedefineWithStartUpProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+func RedefineWithStartUpProbe(statefulSet *v1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].StartupProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -74,23 +70,17 @@ func RedefineWithStartUpProbe(statefulSet *v1.StatefulSet) *v1.StatefulSet {
 			},
 		}
 	}
-
-	return statefulSet
 }
 
-func RedefineWithContainerSpecs(statefulSet *v1.StatefulSet, containerSpecs []corev1.Container) *v1.StatefulSet {
+func RedefineWithContainerSpecs(statefulSet *v1.StatefulSet, containerSpecs []corev1.Container) {
 	statefulSet.Spec.Template.Spec.Containers = containerSpecs
-
-	return statefulSet
 }
 
-func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) *v1.StatefulSet {
+func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) {
 	statefulSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
-
-	return statefulSet
 }
 
-func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) *v1.StatefulSet {
+func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),
@@ -99,6 +89,4 @@ func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) *v1.StatefulS
 				Add: []corev1.Capability{"ALL"}},
 		}
 	}
-
-	return statefulSet
 }

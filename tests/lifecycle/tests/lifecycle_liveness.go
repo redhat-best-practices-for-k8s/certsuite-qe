@@ -33,7 +33,8 @@ var _ = Describe("lifecycle-liveness", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithLivenessProbe(deploymenta)
+		deployment.RedefineWithLivenessProbe(deploymenta)
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -53,7 +54,7 @@ var _ = Describe("lifecycle-liveness", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithLivenessProbe(deploymenta)
+		deployment.RedefineWithLivenessProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -62,7 +63,7 @@ var _ = Describe("lifecycle-liveness", func() {
 		deploymentb, err := tshelper.DefineDeployment(3, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithLivenessProbe(deploymentb)
+		deployment.RedefineWithLivenessProbe(deploymentb)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -80,9 +81,10 @@ var _ = Describe("lifecycle-liveness", func() {
 	// 50055
 	It("One statefulSet, one pod with a liveness probe", func() {
 		By("Define statefulSet with a liveness probe")
-		statefulset := statefulset.RedefineWithLivenessProbe(tshelper.DefineStatefulSet(tsparams.TestStatefulSetName))
+		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName)
+		statefulset.RedefineWithLivenessProbe(statefulSet)
 
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
@@ -98,10 +100,11 @@ var _ = Describe("lifecycle-liveness", func() {
 	// 50056
 	It("One pod with a liveness probe", func() {
 		By("Define pod with a liveness probe")
-		pod := pod.RedefineWithLivenessProbe(pod.RedefinePodWithLabel(
-			tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels))
+		put := tshelper.DefinePod(tsparams.TestPodName)
+		pod.RedefineWithLivenessProbe(put)
+		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
@@ -140,7 +143,7 @@ var _ = Describe("lifecycle-liveness", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithLivenessProbe(deploymenta)
+		deployment.RedefineWithLivenessProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

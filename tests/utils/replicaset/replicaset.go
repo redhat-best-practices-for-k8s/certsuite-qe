@@ -33,13 +33,11 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 }
 
 // RedefineWithReplicaNumber redefines replicaSet with requested replica number.
-func RedefineWithReplicaNumber(replicaSet *v1.ReplicaSet, replicasNumber int32) *v1.ReplicaSet {
+func RedefineWithReplicaNumber(replicaSet *v1.ReplicaSet, replicasNumber int32) {
 	replicaSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
-
-	return replicaSet
 }
 
-func RedefineWithPVC(replicaSet *v1.ReplicaSet, name string, claim string) *v1.ReplicaSet {
+func RedefineWithPVC(replicaSet *v1.ReplicaSet, name string, claim string) {
 	replicaSet.Spec.Template.Spec.Volumes = []corev1.Volume{
 		{
 			Name: name,
@@ -50,6 +48,4 @@ func RedefineWithPVC(replicaSet *v1.ReplicaSet, name string, claim string) *v1.R
 			},
 		},
 	}
-
-	return replicaSet
 }

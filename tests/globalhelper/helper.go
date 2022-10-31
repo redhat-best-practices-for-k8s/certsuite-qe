@@ -124,7 +124,7 @@ func IsExpectedStatusParamValid(status string) error {
 }
 
 // AppendContainersToDeployment appends containers to a deployment.
-func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, image string) *v1.Deployment {
+func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, image string) {
 	containerList := &deployment.Spec.Template.Spec.Containers
 
 	for i := 0; i < containersNum; i++ {
@@ -135,8 +135,6 @@ func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, 
 				Command: []string{"/bin/bash", "-c", "sleep INF"},
 			})
 	}
-
-	return deployment
 }
 
 func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
@@ -262,14 +260,10 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 			*rbac.DefineRbacAuthorizationClusterRoleRef("system:openshift:scc:privileged"),
 			*rbac.DefineRbacAuthorizationClusterGroupSubjects([]string{"system:authenticated"}),
 		)
-		_, err = APIClient.ClusterRoleBindings().Create(
-			context.Background(),
-			roleBind,
-			metav1.CreateOptions{},
-		)
 
+		_, err = APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{})
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create cluster role binding: %w", err)
 		}
 
 		glog.V(5).Info("RBAC policy created")
@@ -281,5 +275,5 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 
 	glog.V(5).Info("error to query RBAC policy")
 
-	return err
+	return nil
 }

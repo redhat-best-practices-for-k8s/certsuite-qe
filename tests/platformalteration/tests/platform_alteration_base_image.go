@@ -75,11 +75,10 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("Two deployments, one pod each, change container base image by creating a file [negative]", func() {
 
 		By("Define first deployment")
-		deploymenta := deployment.RedefineWithPriviledgedContainer(
-			deployment.DefineDeployment(tsparams.TestDeploymentName,
-				tsparams.PlatformAlterationNamespace,
-				globalhelper.Configuration.General.TestImage,
-				tsparams.TnfTargetPodLabels))
+		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+
+		deployment.RedefineWithPriviledgedContainer(deploymenta)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -115,11 +114,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("One statefulSet, one pod, change container base image by creating a file [negative]", func() {
 
 		By("Define statefulSet")
-		statefulSet := statefulset.RedefineWithPriviledgedContainer(
-			statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
-				tsparams.PlatformAlterationNamespace,
-				globalhelper.Configuration.General.TestImage,
-				tsparams.TnfTargetPodLabels))
+		statefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
+			tsparams.PlatformAlterationNamespace,
+			globalhelper.Configuration.General.TestImage,
+			tsparams.TnfTargetPodLabels)
+		statefulset.RedefineWithPriviledgedContainer(statefulSet)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

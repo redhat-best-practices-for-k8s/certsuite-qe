@@ -24,14 +24,12 @@ func DefinePod(podName string, namespace string, image string) *corev1.Pod {
 }
 
 // RedefinePodWithLabel adds label to given pod manifest.
-func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) *corev1.Pod {
+func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) {
 	pod.ObjectMeta.Labels = label
-
-	return pod
 }
 
 // RedefineWithReadinessProbe adds readiness probe to given pod manifest.
-func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
+func RedefineWithReadinessProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -41,12 +39,10 @@ func RedefineWithReadinessProbe(pod *corev1.Pod) *corev1.Pod {
 			},
 		}
 	}
-
-	return pod
 }
 
 // RedefineWithLivenessProbe adds liveness probe to pod manifest.
-func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
+func RedefineWithLivenessProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -56,12 +52,10 @@ func RedefineWithLivenessProbe(pod *corev1.Pod) *corev1.Pod {
 			},
 		}
 	}
-
-	return pod
 }
 
 // RedefineWithStartUpProbe adds startup probe to pod manifest.
-func RedefineWithStartUpProbe(pod *corev1.Pod) *corev1.Pod {
+func RedefineWithStartUpProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
 		pod.Spec.Containers[index].StartupProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -71,11 +65,9 @@ func RedefineWithStartUpProbe(pod *corev1.Pod) *corev1.Pod {
 			},
 		}
 	}
-
-	return pod
 }
 
-func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
+func RedefineWithPVC(pod *corev1.Pod, name string, claim string) {
 	pod.Spec.Volumes = []corev1.Volume{
 		{
 			Name: name,
@@ -86,8 +78,6 @@ func RedefineWithPVC(pod *corev1.Pod, name string, claim string) *corev1.Pod {
 			},
 		},
 	}
-
-	return pod
 }
 
 func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
@@ -105,4 +95,53 @@ func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
 
 func RedefineWithRunTimeClass(pod *corev1.Pod, rtcName string) {
 	pod.Spec.RuntimeClassName = pointer.String(rtcName)
+}
+
+// RedefineWithNodeAffinity redefines pod with nodeAffinity spec.
+func RedefineWithNodeAffinity(pod *corev1.Pod, key string) {
+	pod.Spec.Affinity = &corev1.Affinity{
+		NodeAffinity: &corev1.NodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+				NodeSelectorTerms: []corev1.NodeSelectorTerm{
+					{
+						MatchExpressions: []corev1.NodeSelectorRequirement{
+							{
+								Key:      key,
+								Operator: corev1.NodeSelectorOpExists,
+							},
+						},
+					},
+				},
+			},
+		}}
+}
+
+// RedefineWithPodAffinity redefines pod with podAffinity spec.
+func RedefineWithPodAffinity(put *corev1.Pod, label map[string]string) {
+	put.Spec.Affinity = &corev1.Affinity{
+		PodAffinity: &corev1.PodAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: label,
+					},
+					TopologyKey: "kubernetes.io/hostname",
+				},
+			},
+		}}
+}
+
+// RedefineWithPodantiAffinity redefines pod with podAntiAffinity spec.
+func RedefineWithPodantiAffinity(put *corev1.Pod, label map[string]string) {
+	put.Spec.Affinity = &corev1.Affinity{
+		PodAntiAffinity: &corev1.PodAntiAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
+				{
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: label,
+					},
+					TopologyKey: "kubernetes.io/hostname",
+				},
+			},
+		}}
 }

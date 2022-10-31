@@ -17,7 +17,7 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Du
 	runningDaemonSet, err := APIClient.DaemonSets(daemonSet.Namespace).Create(
 		context.Background(), daemonSet, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create daemonset %q (ns %s): %w", daemonSet.Name, daemonSet.Namespace, err)
 	}
 
 	Eventually(func() bool {

@@ -33,7 +33,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithStartUpProbe(deploymenta)
+		deployment.RedefineWithStartUpProbe(deploymenta)
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -53,7 +54,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithStartUpProbe(deploymenta)
+		deployment.RedefineWithStartUpProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -62,7 +63,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymentb, err := tshelper.DefineDeployment(3, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithStartUpProbe(deploymentb)
+		deployment.RedefineWithStartUpProbe(deploymentb)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -80,9 +81,10 @@ var _ = Describe("lifecycle-startup-probe", func() {
 	// 54810
 	It("One statefulSet, one pod with a startup probe", func() {
 		By("Define statefulSet with a startup probe")
-		statefulset := statefulset.RedefineWithStartUpProbe(tshelper.DefineStatefulSet(tsparams.TestStatefulSetName))
+		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName)
+		statefulset.RedefineWithStartUpProbe(statefulSet)
 
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
@@ -98,10 +100,11 @@ var _ = Describe("lifecycle-startup-probe", func() {
 	// 54811
 	It("One pod with a startup probe", func() {
 		By("Define pod with a startup probe")
-		pod := pod.RedefineWithStartUpProbe(pod.RedefinePodWithLabel(
-			tshelper.DefinePod(tsparams.TestPodName), tsparams.TestTargetLabels))
+		put := tshelper.DefinePod(tsparams.TestPodName)
+		pod.RedefineWithStartUpProbe(put)
+		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
@@ -120,8 +123,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.Configuration.General.TestImage)
-		deploymenta = deployment.RedefineWithStartUpProbe(deploymenta)
+		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.Configuration.General.TestImage)
+		deployment.RedefineWithStartUpProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -162,7 +165,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithStartUpProbe(deploymenta)
+		deployment.RedefineWithStartUpProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -190,8 +193,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithStartUpProbe(deploymenta)
-		deploymenta = globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.Configuration.General.TestImage)
+		deployment.RedefineWithStartUpProbe(deploymenta)
+		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.Configuration.General.TestImage)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
