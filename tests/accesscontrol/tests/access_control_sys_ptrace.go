@@ -145,7 +145,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 
 	// 54662
 	It("two deployments, one pod each with namespace sharing enabled, one container with SYS_PTRACE not allowed [negative]", func() {
-		By("Define deployments with hostPid set to different values")
+		By("Define deployments with shareProcessNamespace set to true and one with SYS_PTRACE not enabled")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -160,8 +160,6 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithShareProcessNamespace(dep2, true)
-
-		deployment.RedefineWithSysPtrace(dep2)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
