@@ -53,7 +53,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -83,7 +83,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -92,7 +92,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -120,7 +120,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		deploymenta, err := tshelper.DefineDeployment(schedulableNodes, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -151,7 +151,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -160,7 +160,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
+		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

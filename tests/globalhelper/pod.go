@@ -65,12 +65,9 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 
 // CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
-	createdPod, err := APIClient.Pods(pod.Namespace).Create(
-		context.Background(),
-		pod,
-		metav1.CreateOptions{})
+	createdPod, err := APIClient.Pods(pod.Namespace).Create(context.Background(), pod, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
 
 	Eventually(func() bool {
@@ -127,5 +124,12 @@ func AppendContainersToPod(pod *corev1.Pod, containersNum int, image string) {
 				Image:   image,
 				Command: []string{"/bin/bash", "-c", "sleep INF"},
 			})
+	}
+}
+
+// AppendLabelsToPod appends labels to given pod manifest.
+func AppendLabelsToPod(pod *corev1.Pod, labels map[string]string) {
+	for name, value := range labels {
+		pod.Labels[name] = value
 	}
 }

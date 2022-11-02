@@ -14,12 +14,10 @@ import (
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout time.Duration) error {
-	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(
-		context.Background(),
-		statefulSet,
-		metav1.CreateOptions{})
+	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(context.Background(),
+		statefulSet, metav1.CreateOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create statefulSet %q (ns %s): %w", statefulSet.Name, statefulSet.Namespace, err)
 	}
 
 	Eventually(func() bool {

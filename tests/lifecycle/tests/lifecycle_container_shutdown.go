@@ -31,8 +31,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymenta, tsparams.PreStopCommand)
+		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -76,8 +75,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymenta, tsparams.PreStopCommand)
+		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			deploymenta, tsparams.WaitingTime)
@@ -101,8 +99,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymenta, tsparams.PreStopCommand)
+		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			deploymenta, tsparams.WaitingTime)
@@ -112,8 +109,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb = deployment.RedefineAllContainersWithPreStopSpec(
-			deploymentb, tsparams.PreStopCommand)
+		deployment.RedefineAllContainersWithPreStopSpec(deploymentb, tsparams.PreStopCommand)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
 			deploymentb, tsparams.WaitingTime)
@@ -137,8 +133,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymenta, err = deployment.RedefineFirstContainerWithPreStopSpec(
-			deploymenta, tsparams.PreStopCommand)
+		err = deployment.RedefineFirstContainerWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(

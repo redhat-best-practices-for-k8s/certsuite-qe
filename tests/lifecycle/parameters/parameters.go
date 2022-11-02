@@ -36,6 +36,7 @@ var (
 	TnfPersistentVolumeReclaimPolicyTcName = "lifecycle-persistent-volume-reclaim-policy"
 	TnfCPUIsolationTcName                  = "lifecycle-cpu-isolation"
 	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"
+	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
 )
 
 var (
@@ -47,5 +48,8 @@ var (
 	TestTargetLabels       = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
+	}
+	AffinityRequiredPodLabels = map[string]string{
+		"AffinityRequired": "true",
 	}
 )

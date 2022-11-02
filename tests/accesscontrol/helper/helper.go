@@ -41,15 +41,11 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 		return nil, errors.New("invalid containers number")
 	}
 
-	deploymentStruct := globalhelper.AppendContainersToDeployment(
-		deployment.RedefineWithReplicaNumber(
-			deployment.DefineDeployment(
-				name,
-				parameters.TestAccessControlNameSpace,
-				globalhelper.Configuration.General.TestImage,
-				parameters.TestDeploymentLabels), replica),
-		containers-1,
-		globalhelper.Configuration.General.TestImage)
+	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
+		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
 }
