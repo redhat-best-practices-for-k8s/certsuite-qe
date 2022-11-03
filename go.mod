@@ -11,7 +11,7 @@ require (
 	github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47
 	github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
 	github.com/operator-framework/api v0.9.2
-	github.com/operator-framework/operator-lifecycle-manager v0.18.3
+	github.com/operator-framework/operator-lifecycle-manager v3.11.0+incompatible
 	github.com/stretchr/testify v1.8.1
 	github.com/test-network-function/test-network-function-claim v1.0.8
 	gopkg.in/yaml.v2 v2.4.0
@@ -31,6 +31,7 @@ require (
 
 require (
 	github.com/blang/semver/v4 v4.0.0 // indirect
+	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
