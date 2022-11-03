@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.2.0
+	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.4.0
 	github.com/onsi/gomega v1.24.0
