@@ -12,7 +12,7 @@ require (
 	github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
 	github.com/operator-framework/api v0.9.2
 	github.com/operator-framework/operator-lifecycle-manager v0.18.3
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/test-network-function/test-network-function-claim v1.0.8
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.25.3
