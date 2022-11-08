@@ -1,6 +1,8 @@
 package pod
 
 import (
+	"fmt"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 
@@ -144,4 +146,39 @@ func RedefineWithPodantiAffinity(put *corev1.Pod, label map[string]string) {
 				},
 			},
 		}}
+}
+
+func RedefineWith2MiHugepages(pod *corev1.Pod, hugepages int) {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
+
+	for i := range pod.Spec.Containers {
+		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+	}
+}
+
+func RedefineFirstContainerWith2MiHugepages(pod *corev1.Pod, hugepages int) error {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
+
+	if len(pod.Spec.Containers) > 0 {
+		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+
+		return nil
+	}
+
+	return fmt.Errorf("pod %s does not have enough containers", pod.Name)
+}
+
+func RedefineSecondContainerWith1GHugepages(pod *corev1.Pod, hugepages int) error {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
+
+	if len(pod.Spec.Containers) > 1 {
+		pod.Spec.Containers[1].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		pod.Spec.Containers[1].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+
+		return nil
+	}
+
+	return fmt.Errorf("pod %s does not have enough containers", pod.Name)
 }
