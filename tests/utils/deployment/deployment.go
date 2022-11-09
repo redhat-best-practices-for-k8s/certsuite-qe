@@ -281,7 +281,7 @@ func RedefineWithAllRequestsAndLimits(deployment *v1.Deployment, memoryLimit str
 	}
 }
 
-func RedefineWithMemoryRequestsAndLimitsAndCpuRequest(deployment *v1.Deployment, memoryLimit string,
+func RedefineWithMemoryRequestsAndLimitsAndCPURequest(deployment *v1.Deployment, memoryLimit string,
 	memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
@@ -294,10 +294,9 @@ func RedefineWithMemoryRequestsAndLimitsAndCpuRequest(deployment *v1.Deployment,
 			},
 		}
 	}
-
 }
 
-func RedefineWithMemoryRequestAndCpuRequestsAndLimits(deployment *v1.Deployment, cpuLimit string,
+func RedefineWithMemoryRequestAndCPURequestsAndLimits(deployment *v1.Deployment, cpuLimit string,
 	memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{

@@ -110,7 +110,7 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithMemoryRequestsAndLimitsAndCpuRequest(dep, tsparams.MemoryLimit,
+		deployment.RedefineWithMemoryRequestsAndLimitsAndCPURequest(dep, tsparams.MemoryLimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -135,7 +135,7 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithMemoryRequestAndCpuRequestsAndLimits(dep, tsparams.CPULimit,
+		deployment.RedefineWithMemoryRequestAndCPURequestsAndLimits(dep, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -203,7 +203,7 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithMemoryRequestAndCpuRequestsAndLimits(dep2, tsparams.CPULimit,
+		deployment.RedefineWithMemoryRequestAndCPURequestsAndLimits(dep2, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
