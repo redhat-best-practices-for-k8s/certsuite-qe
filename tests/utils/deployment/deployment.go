@@ -281,3 +281,12 @@ func RedefineWithSysPtrace(deployment *v1.Deployment) {
 		}
 	}
 }
+
+func RedefineWith2MiHugepages(deployment *v1.Deployment, hugepages int) {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
+
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+		deployment.Spec.Template.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+	}
+}
