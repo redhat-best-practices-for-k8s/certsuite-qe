@@ -7,7 +7,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
@@ -95,7 +94,6 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Define pod")
 		put := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -128,7 +126,6 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		By("Define pod")
 		put := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

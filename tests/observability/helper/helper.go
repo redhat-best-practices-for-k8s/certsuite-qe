@@ -56,9 +56,8 @@ func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *apps
 }
 
 func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.Configuration.General.TestImage)
-	// Add labels.
-	pod.RedefinePodWithLabel(newPod, tsparams.TnfTargetPodLabels)
+	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
 

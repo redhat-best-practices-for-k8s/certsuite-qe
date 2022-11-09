@@ -54,7 +54,8 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources & runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage)
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -70,7 +71,6 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -91,7 +91,8 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources & runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage)
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TestTargetLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.Configuration.General.TestImage)
 
 		By("Add annotations to the pod")
@@ -108,7 +109,6 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -263,8 +263,10 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources & runTimeClass")
-		puta := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage)
-		putb := pod.DefinePod("lifecycle-podb", tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage)
+		puta := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TestTargetLabels)
+		putb := pod.DefinePod("lifecycle-podb", tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -283,10 +285,8 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Define runTimeClass for the first pod")
 		pod.RedefineWithRunTimeClass(puta, rtc.Name)
 		pod.RedefineWithCPUResources(puta, "1", "1")
-		pod.RedefinePodWithLabel(puta, tsparams.TestTargetLabels)
 
 		pod.RedefineWithCPUResources(putb, "1", "1")
-		pod.RedefinePodWithLabel(putb, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
