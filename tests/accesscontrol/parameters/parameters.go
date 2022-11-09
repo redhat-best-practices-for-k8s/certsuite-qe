@@ -32,6 +32,6 @@ var (
 	ServiceAccountName = "default"
 	MemoryLimit        = "512Mi"
 	MemoryRequest      = "500Mi"
-	CPULimit           = "0.25"
-	CPURequest         = "0.2"
+	CPULimit           = "1"
+	CPURequest         = "1"
 )

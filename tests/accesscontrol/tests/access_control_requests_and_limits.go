@@ -39,8 +39,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit)
-		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithAllRequestsAndLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -110,8 +110,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep, tsparams.MemoryLimit, "")
-		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithMemoryRequestsAndLimitsAndCpuRequest(dep, tsparams.MemoryLimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -135,8 +135,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep, "", tsparams.CPULimit)
-		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithMemoryRequestAndCpuRequestsAndLimits(dep, tsparams.CPULimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -160,8 +160,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit)
-		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithAllRequestsAndLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -169,8 +169,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep2, tsparams.MemoryLimit, tsparams.CPULimit)
-		deployment.RedefineWithResourceRequests(dep2, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithAllRequestsAndLimits(dep2, tsparams.MemoryLimit, tsparams.CPULimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -194,8 +194,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit)
-		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithAllRequestsAndLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -203,8 +203,8 @@ var _ = Describe("Access-control requests-and-limits ", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithResourceLimits(dep2, "", tsparams.CPULimit)
-		deployment.RedefineWithResourceRequests(dep2, tsparams.MemoryRequest, tsparams.CPURequest)
+		deployment.RedefineWithMemoryRequestAndCpuRequestsAndLimits(dep2, tsparams.CPULimit,
+			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())

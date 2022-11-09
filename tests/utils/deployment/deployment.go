@@ -265,12 +265,48 @@ func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req strin
 	}
 }
 
-func RedefineWithResourceLimits(deployment *v1.Deployment, memory string, cpu string) {
+func RedefineWithAllRequestsAndLimits(deployment *v1.Deployment, memoryLimit string, cpuLimit string,
+	memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
-				corev1.ResourceMemory: resource.MustParse(memory),
-				corev1.ResourceCPU:    resource.MustParse(cpu),
+				corev1.ResourceMemory: resource.MustParse(memoryLimit),
+				corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(cpuRequest),
+			},
+		}
+	}
+}
+
+func RedefineWithMemoryRequestsAndLimitsAndCpuRequest(deployment *v1.Deployment, memoryLimit string,
+	memoryRequest string, cpuRequest string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryLimit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(cpuRequest),
+			},
+		}
+	}
+
+}
+
+func RedefineWithMemoryRequestAndCpuRequestsAndLimits(deployment *v1.Deployment, cpuLimit string,
+	memoryRequest string, cpuRequest string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU: resource.MustParse(cpuLimit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(cpuRequest),
 			},
 		}
 	}
