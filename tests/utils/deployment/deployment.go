@@ -290,3 +290,16 @@ func RedefineWith2MiHugepages(deployment *v1.Deployment, hugepages int) {
 		deployment.Spec.Template.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
 	}
 }
+
+// RedefineWithPostStart adds postStart to deployment manifest.
+func RedefineWithPostStart(deployment *v1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PostStart: &corev1.LifecycleHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+}
