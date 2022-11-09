@@ -17,12 +17,13 @@ var (
 	InvalidNamespace           = "openshift-test"
 	AdditionalValidNamespace   = "ac-test"
 
-	TestCaseNameAccessControlNamespace         = "access-control-namespace"
-	TestCaseNameAccessControlPodHostIpc        = "access-control-pod-host-ipc"
-	TestCaseNameAccessControlPodHostPid        = "access-control-pod-host-pid"
-	TestCaseNameAccessControlPodAutomountToken = "access-control-pod-automount-service-account-token"
-	TestCaseNameAccessControlPodHostNetwork    = "access-control-pod-host-network"
-	TestCaseNameAccessControlRequestsAndLimits = "access-control-requests-and-limits"
+	TestCaseNameAccessControlNamespace           = "access-control-namespace"
+	TestCaseNameAccessControlPodHostIpc          = "access-control-pod-host-ipc"
+	TestCaseNameAccessControlPodHostPid          = "access-control-pod-host-pid"
+	TestCaseNameAccessControlPodAutomountToken   = "access-control-pod-automount-service-account-token"
+	TestCaseNameAccessControlPodHostNetwork      = "access-control-pod-host-network"
+	TestCaseNameAccessControlSysPtraceCapability = "access-control-sys-ptrace-capability"
+	TestCaseNameAccessControlRequestsAndLimits   = "access-control-requests-and-limits"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,

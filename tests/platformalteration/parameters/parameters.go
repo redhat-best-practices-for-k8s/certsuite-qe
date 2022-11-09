@@ -20,6 +20,7 @@ var (
 	TestPodName            = "platform-alteration-pod"
 	TnfTargetPodLabels     = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
 	}
 
 	NotRedHatRelease = "quay.io/baselibrary/ubuntu:latest"
@@ -37,15 +38,15 @@ const (
 	TnfHugePagesConfigName    = "platform-alteration-hugepages-config"
 	TnfBootParamsName         = "platform-alteration-boot-params"
 	TnfSysctlConfigName       = "platform-alteration-sysctl-config"
+	TnfHugePages2mOnlyName    = "platform-alteration-hugepages-2m-only"
 
 	Getenforce    = `chroot /host getenforce`
 	Enforcing     = "Enforcing"
 	SetPermissive = `chroot /host setenforce 0`
 	SetEnforce    = `chroot /host setenforce 1`
 
-	RebootWaitingTime  = 10 * time.Minute
-	Reboot             = `chroot /host systemctl reboot`
-	FindHugePagesFiles = "find /host/sys/devices/system/node/ -name nr_hugepages"
-
+	RebootWaitingTime     = 10 * time.Minute
+	Reboot                = `chroot /host systemctl reboot`
+	FindHugePagesFiles    = "find /host/sys/devices/system/node/ -name nr_hugepages"
 	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
 )
