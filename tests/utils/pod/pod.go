@@ -11,11 +11,12 @@ import (
 )
 
 // DefinePod defines pod manifest based on given params.
-func DefinePod(podName string, namespace string, image string) *corev1.Pod {
+func DefinePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
 	return &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      podName,
-			Namespace: namespace},
+			Namespace: namespace,
+			Labels:    label},
 		Spec: corev1.PodSpec{
 			TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
 			Containers: []corev1.Container{
@@ -23,11 +24,6 @@ func DefinePod(podName string, namespace string, image string) *corev1.Pod {
 					Name:    "test",
 					Image:   image,
 					Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}
-}
-
-// RedefinePodWithLabel adds label to given pod manifest.
-func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) {
-	pod.ObjectMeta.Labels = label
 }
 
 // RedefineWithReadinessProbe adds readiness probe to given pod manifest.

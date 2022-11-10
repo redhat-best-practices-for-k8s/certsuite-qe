@@ -102,7 +102,6 @@ var _ = Describe("lifecycle-liveness", func() {
 		By("Define pod with a liveness probe")
 		put := tshelper.DefinePod(tsparams.TestPodName)
 		pod.RedefineWithLivenessProbe(put)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
