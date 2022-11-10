@@ -83,7 +83,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 	})
 
 	// 55023
-	It(" one deployment, one container with no limits or requests set [negative]", func() {
+	It("one deployment, one container with no limits or requests set [negative]", func() {
 		By("Define deployment with no limits or requests set")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
