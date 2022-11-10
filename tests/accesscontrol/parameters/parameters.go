@@ -23,6 +23,7 @@ var (
 	TestCaseNameAccessControlPodAutomountToken   = "access-control-pod-automount-service-account-token"
 	TestCaseNameAccessControlPodHostNetwork      = "access-control-pod-host-network"
 	TestCaseNameAccessControlSysPtraceCapability = "access-control-sys-ptrace-capability"
+	TestCaseNameAccessControlRequestsAndLimits   = "access-control-requests-and-limits"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
@@ -30,4 +31,8 @@ var (
 	}
 
 	ServiceAccountName = "default"
+	MemoryLimit        = "512Mi"
+	MemoryRequest      = "500Mi"
+	CPULimit           = "1"
+	CPURequest         = "1"
 )
