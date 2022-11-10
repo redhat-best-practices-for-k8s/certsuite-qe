@@ -102,7 +102,6 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		By("Define pod with a startup probe")
 		put := tshelper.DefinePod(tsparams.TestPodName)
 		pod.RedefineWithStartUpProbe(put)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

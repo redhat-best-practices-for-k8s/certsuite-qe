@@ -60,7 +60,7 @@ func DefineStatefulSet(name string) *v1.StatefulSet {
 
 func DefinePod(name string) *corev1.Pod {
 	return pod.DefinePod(name, tsparams.LifecycleNamespace,
-		globalhelper.Configuration.General.TestImage)
+		globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 }
 
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
