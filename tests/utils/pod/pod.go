@@ -178,3 +178,16 @@ func RedefineSecondContainerWith1GHugepages(pod *corev1.Pod, hugepages int) erro
 
 	return fmt.Errorf("pod %s does not have enough containers", pod.Name)
 }
+
+// RedefineWithPostStart adds postStart to pod manifest.
+func RedefineWithPostStart(pod *corev1.Pod) {
+	for index := range pod.Spec.Containers {
+		pod.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PostStart: &corev1.LifecycleHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+}

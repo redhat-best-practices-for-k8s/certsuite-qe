@@ -90,3 +90,16 @@ func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) {
 		}
 	}
 }
+
+// RedefineWithPostStart adds postStart to statefulSet manifest.
+func RedefineWithPostStart(statefulSet *v1.StatefulSet) {
+	for index := range statefulSet.Spec.Template.Spec.Containers {
+		statefulSet.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PostStart: &corev1.LifecycleHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+}
