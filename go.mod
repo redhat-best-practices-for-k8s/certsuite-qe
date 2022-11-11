@@ -16,15 +16,14 @@ require (
 	github.com/test-network-function/test-network-function-claim v1.0.8
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.25.4
-	k8s.io/apiextensions-apiserver v0.25.2
+	k8s.io/apiextensions-apiserver v0.25.4
 	k8s.io/apimachinery v0.25.4
 	k8s.io/client-go v0.25.4
 	k8s.io/utils v0.0.0-20221011040102-427025108f67
-	sigs.k8s.io/controller-runtime v0.13.1
+	sigs.k8s.io/controller-runtime v0.10.3
 )
 
 require (
-	github.com/evanphx/json-patch/v5 v5.6.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
 	github.com/prometheus/client_golang v1.13.0 // indirect
 )
@@ -33,7 +32,10 @@ require (
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
+	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
+	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/zapr v1.2.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.20.0 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
@@ -56,6 +58,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/net v0.2.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20221006150949-b44042a4b9c1 // indirect
 	golang.org/x/sys v0.2.0 // indirect
