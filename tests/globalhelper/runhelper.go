@@ -56,7 +56,14 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 		cmd.Stderr = outfile
 	}
 
-	return cmd.Run()
+	err = cmd.Run()
+	if err != nil {
+		err = fmt.Errorf("failed to run tc %s: %w", testCaseName, err)
+	}
+
+	CopyClaimFileToTcFolder(testCaseName, tcNameForReport)
+
+	return err
 }
 
 func getTestSuiteName(testCaseName string) string {

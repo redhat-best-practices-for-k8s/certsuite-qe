@@ -109,7 +109,7 @@ func (c *Config) DebugTnf() (bool, error) {
 
 // CreateLogFile creates log file for testSuite.
 func (c *Config) CreateLogFile(testSuite string, tcName string) *os.File {
-	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite)
+	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite, tcName)
 
 	err := os.MkdirAll(folderPath, 0755)
 	if err != nil && !os.IsExist(err) {

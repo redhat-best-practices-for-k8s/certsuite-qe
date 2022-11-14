@@ -3,6 +3,7 @@ package globalhelper
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -276,4 +277,25 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 	glog.V(5).Info("error to query RBAC policy")
 
 	return nil
+}
+
+// CopyFiles copy file from source to destination.
+func CopyFiles(src string, dst string) error {
+	originalFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+
+	defer originalFile.Close()
+
+	newFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+
+	defer newFile.Close()
+
+	_, err = io.Copy(newFile, originalFile)
+
+	return err
 }
