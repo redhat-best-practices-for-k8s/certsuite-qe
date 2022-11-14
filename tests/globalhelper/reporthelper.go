@@ -238,13 +238,13 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
 	dstClaim := path.Join(Configuration.General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName,
 		globalparameters.DefaultClaimFileName)
 
-	if _, err := os.Stat(srcClaim); err == nil {
-		// file exists.
-		err = CopyFiles(srcClaim, dstClaim)
-		if err != nil {
-			glog.Error(fmt.Sprintf("failed to copy %s to %s", srcClaim, dstClaim))
-		}
+	_, err := os.Stat(srcClaim)
+	if err != nil {
+		glog.Error("file does not exist ", srcClaim)
 	}
 
-	glog.Error("file does not exist ", srcClaim)
+	err = CopyFiles(srcClaim, dstClaim)
+	if err != nil {
+		glog.Error(fmt.Sprintf("failed to copy %s to %s", srcClaim, dstClaim))
+	}
 }

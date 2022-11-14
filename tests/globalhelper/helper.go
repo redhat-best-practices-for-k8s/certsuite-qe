@@ -283,19 +283,22 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 func CopyFiles(src string, dst string) error {
 	originalFile, err := os.Open(src)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open file %s: %w", src, err)
 	}
 
 	defer originalFile.Close()
 
 	newFile, err := os.Create(dst)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create file %s: %w", dst, err)
 	}
 
 	defer newFile.Close()
 
 	_, err = io.Copy(newFile, originalFile)
+	if err != nil {
+		return fmt.Errorf("failed to copy file %s - %s : %w", src, dst, err)
+	}
 
-	return err
+	return nil
 }
