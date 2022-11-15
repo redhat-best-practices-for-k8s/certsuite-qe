@@ -290,3 +290,33 @@ func RedefineWith2MiHugepages(deployment *v1.Deployment, hugepages int) {
 		deployment.Spec.Template.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
 	}
 }
+
+func RedefineWithNoExecuteToleration(deployment *v1.Deployment) {
+	tol := corev1.Toleration{
+		Effect:            "NoExecute",
+		Key:               "node.kubernetes.io/not-ready",
+		Operator:          "Equal",
+		TolerationSeconds: pointer.Int64(350),
+	}
+	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
+}
+
+func RedefineWithPreferNoScheduleToleration(deployment *v1.Deployment) {
+	tol := corev1.Toleration{
+		Effect:   "PreferNoSchedule",
+		Key:      "node.kubernetes.io/memory-pressure",
+		Operator: "Equal",
+		Value:    "value1",
+	}
+	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
+}
+
+func RedefineWithNoScheduleToleration(deployment *v1.Deployment) {
+	tol := corev1.Toleration{
+		Effect:   "NoSchedule",
+		Key:      "node.kubernetes.io/memory-pressure",
+		Operator: "Equal",
+		Value:    "value2",
+	}
+	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
+}
