@@ -7,6 +7,7 @@ GINKGO_SEED_FLAG=""
 ALL_TESTS_FOLDERS=$(ls -d ./tests/*/)
 
 if [[ "${GINKGO_SEED_NUMBER}" != "" ]]; then 
+    echo "Using ginkgo seed number: ${GINKGO_SEED_NUMBER}"
     GINKGO_SEED_FLAG="--seed=${GINKGO_SEED_NUMBER}"
 fi
 
