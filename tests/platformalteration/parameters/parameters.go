@@ -40,6 +40,7 @@ const (
 	TnfSysctlConfigName       = "platform-alteration-sysctl-config"
 	TnfHugePages2mOnlyName    = "platform-alteration-hugepages-2m-only"
 	TnfOCPLifecycleName       = "platform-alteration-ocp-lifecycle"
+	TnfOCPNodeOsName          = "platform-alteration-ocp-node-os-lifecycle"
 
 	Getenforce    = `chroot /host getenforce`
 	Enforcing     = "Enforcing"
