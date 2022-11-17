@@ -9,15 +9,15 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 )
 
-var _ = Describe("platform-alteration-ocp-node-os", func() {
+var _ = Describe("platform-alteration-ocp-lifecycle", func() {
 
-	It("Nodes OS should be compatible with OCP version", func() {
-		By("Start platform-alteration-ocp-node-os test")
-		err := globalhelper.LaunchTests(tsparams.TnfOCPNodeOsName,
+	It("OCP version should be supported", func() {
+		By("Start platform-alteration-ocp-lifecycle test")
+		err := globalhelper.LaunchTests(tsparams.TnfOCPLifecycleName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfOCPNodeOsName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfOCPLifecycleName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
