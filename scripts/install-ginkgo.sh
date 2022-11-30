@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-GOPATH="${GOPATH:-~/go}"
+GOPATH="/root/go"
 export PATH=$PATH:$GOPATH/bin
+GINKGO_OLD_VERSION="Ginkgo Version 1.16.5"
 
-if ! which ginkgo ; then
+if ! which ginkgo || ginkgo version -eq "$GINKGO_OLD_VERSION"; then {  
 	echo "Downloading ginkgo tool"
 	go install github.com/onsi/ginkgo/v2/ginkgo@v2.1.4
-fi
+} fi
