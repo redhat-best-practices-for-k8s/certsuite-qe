@@ -360,3 +360,7 @@ func RedefineWithPostStart(deployment *v1.Deployment) {
 		}
 	}
 }
+
+func RedefineWithSecurityContextRunAsUser(deployment *v1.Deployment, uid int64) {
+	deployment.Spec.Template.Spec.SecurityContext.RunAsUser = &uid
+}
