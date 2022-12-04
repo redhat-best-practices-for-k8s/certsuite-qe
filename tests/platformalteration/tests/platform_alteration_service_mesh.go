@@ -28,7 +28,8 @@ var _ = Describe("platform-alteration-service-mesh-usage", func() {
 		err := namespaces.Create(istioNs, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)

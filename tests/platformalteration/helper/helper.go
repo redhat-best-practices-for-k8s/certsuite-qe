@@ -113,5 +113,4 @@ func AppendIstioContainerToPod(pod *corev1.Pod, image string) {
 			Image:   image,
 			Command: []string{"/bin/bash", "-c", "sleep INF"},
 		})
-
 }
