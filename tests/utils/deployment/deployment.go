@@ -59,16 +59,6 @@ func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []s
 	}
 }
 
-// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
-func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
-	for index := range deployment.Spec.Template.Spec.Containers {
-		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Capabilities: &corev1.Capabilities{
-				Add: []corev1.Capability{"ALL"}},
-		}
-	}
-}
-
 // RedefineWithLabels redefines deployment with additional label.
 func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) {
 	newMap := make(map[string]string)
@@ -357,6 +347,18 @@ func RedefineWithPostStart(deployment *v1.Deployment) {
 					Command: []string{"ls"},
 				},
 			},
+		}
+	}
+}
+
+// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
+func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: pointer.Bool(true),
+			RunAsUser:  pointer.Int64(0),
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"ALL"}},
 		}
 	}
 }
