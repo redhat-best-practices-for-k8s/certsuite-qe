@@ -18,6 +18,8 @@ import (
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
 	networkv1client "k8s.io/client-go/kubernetes/typed/networking/v1"
 	nodev1 "k8s.io/client-go/kubernetes/typed/node/v1"
+	policyv1 "k8s.io/client-go/kubernetes/typed/policy/v1"
+	policyv1beta1 "k8s.io/client-go/kubernetes/typed/policy/v1beta1"
 	rbacv1client "k8s.io/client-go/kubernetes/typed/rbac/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -38,6 +40,8 @@ type ClientSet struct {
 	v1alpha1.OperatorsV1alpha1Interface
 	clientmcv1.MachineconfigurationV1Interface
 	nodev1.NodeV1Interface
+	policyv1.PolicyV1Interface
+	policyv1beta1.PolicyV1beta1Interface
 }
 
 // New returns a *ClientBuilder with the given kubeconfig.
@@ -74,6 +78,8 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.ApiextensionsV1Interface = apiextv1client.NewForConfigOrDie(config)
 	clientSet.MachineconfigurationV1Interface = clientmcv1.NewForConfigOrDie(config)
 	clientSet.NodeV1Interface = nodev1.NewForConfigOrDie(config)
+	clientSet.PolicyV1Interface = policyv1.NewForConfigOrDie(config)
+	clientSet.PolicyV1beta1Interface = policyv1beta1.NewForConfigOrDie(config)
 	clientSet.Config = config
 
 	crScheme := runtime.NewScheme()
