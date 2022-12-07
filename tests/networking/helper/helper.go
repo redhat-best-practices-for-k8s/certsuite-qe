@@ -137,11 +137,13 @@ func GetClusterMultusInterfaces() ([]string, error) {
 	var nodesInterfacesList [][]string
 
 	for _, runningPod := range podsList.Items {
-		nodeInterfaces, err := getInterfacesList(runningPod)
-		if err != nil {
-			return nil, err
+		if !strings.Contains(runningPod.Spec.NodeName, "master") {
+			nodeInterfaces, err := getInterfacesList(runningPod)
+			if err != nil {
+				return nil, err
+			}
+			nodesInterfacesList = append(nodesInterfacesList, nodeInterfaces)
 		}
-		nodesInterfacesList = append(nodesInterfacesList, nodeInterfaces)
 	}
 
 	var lastMatch []string
