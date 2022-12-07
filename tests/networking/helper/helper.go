@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nad"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 
@@ -137,7 +138,12 @@ func GetClusterMultusInterfaces() ([]string, error) {
 	var nodesInterfacesList [][]string
 
 	for _, runningPod := range podsList.Items {
-		if !strings.Contains(runningPod.Spec.NodeName, "master") {
+		isMasterNode, err := nodes.IsNodeMaster(runningPod.Spec.NodeName, globalhelper.APIClient)
+		if err != nil {
+			return nil, err
+		}
+
+		if !isMasterNode {
 			nodeInterfaces, err := getInterfacesList(runningPod)
 			if err != nil {
 				return nil, err
