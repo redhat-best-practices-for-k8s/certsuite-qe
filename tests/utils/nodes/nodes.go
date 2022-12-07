@@ -100,8 +100,12 @@ func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
 		return false, err
 	}
 
-	if _, exists := node.Labels["node-role.kubernetes.io/master"]; exists {
-		return true, nil
+	masterLabels := []string{"node-role.kubernetes.io/master", "node-role.kubernetes.io/control-plane"}
+
+	for _, label := range masterLabels {
+		if _, exists := node.Labels[label]; exists {
+			return true, nil
+		}
 	}
 
 	return false, nil
