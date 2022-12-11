@@ -23,7 +23,7 @@ func IsPodDisruptionBudgetCreated(pdbName string, namespace string) (bool, error
 }
 
 // CreatPodDisruptionBudget creates Pod Disruption Budget and wait until pdb is created.
-func CreatPodDisruptionBudget(pdb *v1.PodDisruptionBudget, timeout time.Duration) error {
+func CreatePodDisruptionBudget(pdb *v1.PodDisruptionBudget, timeout time.Duration) error {
 	poddisruptionbudget, err := APIClient.PolicyV1Interface.PodDisruptionBudgets(pdb.Namespace).Create(
 		context.Background(),
 		pdb,
