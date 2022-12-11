@@ -41,7 +41,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, tsparams.TestNamespace,
 			intstr.FromInt(1), tsparams.TnfTargetPodLabels)
 
-		err = globalhelper.CreatPodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
+		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
@@ -70,7 +70,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, tsparams.TestNamespace,
 			intstr.FromInt(1), tsparams.TnfTargetPodLabels)
 
-		err = globalhelper.CreatPodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
+		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
@@ -99,7 +99,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, tsparams.TestNamespace,
 			intstr.FromInt(0), tsparams.TnfTargetPodLabels)
 
-		err = globalhelper.CreatPodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
+		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
@@ -128,7 +128,36 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, tsparams.TestNamespace,
 			intstr.FromInt(2), tsparams.TnfTargetPodLabels)
 
-		err = globalhelper.CreatPodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
+		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start TNF " + tnfTestCaseName + " test case")
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	// 56746
+	It("One deployment, pod disruption budget maxUnavailable is bigger than the replica number [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
+
+		By("Create deployment")
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
+			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+
+		deployment.RedefineWithReplicaNumber(dep, 2)
+
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Create pod disruption budget")
+		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, tsparams.TestNamespace,
+			intstr.FromInt(3), tsparams.TnfTargetPodLabels)
+
+		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tnfTestCaseName + " test case")
