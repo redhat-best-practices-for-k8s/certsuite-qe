@@ -15,7 +15,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 			Name:      statefulSetName,
 			Namespace: namespace},
 		Spec: v1.StatefulSetSpec{
-			Replicas: pointer.Int32Ptr(1),
+			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
@@ -25,7 +25,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+					TerminationGracePeriodSeconds: pointer.Int64(0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -77,7 +77,7 @@ func RedefineWithContainerSpecs(statefulSet *v1.StatefulSet, containerSpecs []co
 }
 
 func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) {
-	statefulSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+	statefulSet.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
 func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) {

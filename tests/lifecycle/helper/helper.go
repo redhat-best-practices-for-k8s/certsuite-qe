@@ -131,7 +131,7 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 
 func DeletePV(persistentVolume string, timeout time.Duration) error {
 	err := globalhelper.APIClient.PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64Ptr(0),
+		GracePeriodSeconds: pointer.Int64(0),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to delete persistent volume %w", err)
@@ -149,7 +149,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 
 func DeleteRunTimeClass(rtcName string) error {
 	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
-		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64Ptr(0)})
+		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
 	}
