@@ -161,7 +161,7 @@ github.com/spf13/pflag
 # github.com/stretchr/testify v1.8.1
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
-# github.com/test-network-function/test-network-function-claim v1.0.8
+# github.com/test-network-function/test-network-function-claim v1.0.9
 ## explicit; go 1.19
 github.com/test-network-function/test-network-function-claim/pkg/claim
 # golang.org/x/net v0.2.0
