@@ -40,7 +40,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 		return buf, err
 	}
 
-	err = exec.Stream(remotecommand.StreamOptions{
+	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
 		Stdin:  os.Stdin,
 		Stdout: &buf,
 		Stderr: os.Stderr,
