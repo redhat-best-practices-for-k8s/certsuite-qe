@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -23,7 +23,6 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
 	})
 
 	BeforeEach(func() {
@@ -36,7 +35,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 	// 53140
 	It("one deployment, one pod, HostIpc false", func() {
 		By("Define deployment with hostIPC set to false")
-		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep, false)
@@ -60,7 +59,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 	// 53141
 	It("one deployment, one pod, HostIpc true [negative]", func() {
 		By("Define deployment with hostIPC set to true")
-		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep, true)
@@ -84,7 +83,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 	// 53142
 	It("two deployments, one pod each, HostIpcs false", func() {
 		By("Define deployments with hostIPC set to false")
-		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep, false)
@@ -92,7 +91,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := helper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep2, false)
@@ -116,7 +115,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 	// 53143
 	It("two deployments, one pod each, one HostIpc true [negative]", func() {
 		By("Define deployments with hostIPC set to different values")
-		dep, err := helper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep, true)
@@ -124,7 +123,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := helper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep2, false)
