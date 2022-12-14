@@ -14,7 +14,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 			Name:      replicaSetName,
 			Namespace: namespace},
 		Spec: v1.ReplicaSetSpec{
-			Replicas: pointer.Int32Ptr(1),
+			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
@@ -24,7 +24,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+					TerminationGracePeriodSeconds: pointer.Int64(0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -34,7 +34,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 
 // RedefineWithReplicaNumber redefines replicaSet with requested replica number.
 func RedefineWithReplicaNumber(replicaSet *v1.ReplicaSet, replicasNumber int32) {
-	replicaSet.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+	replicaSet.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
 func RedefineWithPVC(replicaSet *v1.ReplicaSet, name string, claim string) {
