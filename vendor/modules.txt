@@ -170,8 +170,6 @@ github.com/test-network-function/test-network-function-claim/pkg/claim
 ## explicit; go 1.18
 # go.uber.org/multierr v1.9.0
 ## explicit; go 1.19
-# go.uber.org/zap v1.24.0
-## explicit; go 1.19
 # golang.org/x/net v0.4.0
 ## explicit; go 1.17
 golang.org/x/net/context
@@ -464,8 +462,8 @@ k8s.io/utils/internal/third_party/forked/golang/net
 k8s.io/utils/net
 k8s.io/utils/pointer
 k8s.io/utils/strings/slices
-# sigs.k8s.io/controller-runtime v0.13.1
-## explicit; go 1.17
+# sigs.k8s.io/controller-runtime v0.14.0
+## explicit; go 1.19
 sigs.k8s.io/controller-runtime/pkg/client
 sigs.k8s.io/controller-runtime/pkg/client/apiutil
 sigs.k8s.io/controller-runtime/pkg/internal/objectutil
