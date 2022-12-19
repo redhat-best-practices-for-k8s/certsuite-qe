@@ -41,6 +41,7 @@ const (
 	TnfHugePages2mOnlyName    = "platform-alteration-hugepages-2m-only"
 	TnfOCPLifecycleName       = "platform-alteration-ocp-lifecycle"
 	TnfOCPNodeOsName          = "platform-alteration-ocp-node-os-lifecycle"
+	TnfServiceMeshUsageName   = "platform-alteration-service-mesh-usage"
 
 	Getenforce    = `chroot /host getenforce`
 	Enforcing     = "Enforcing"

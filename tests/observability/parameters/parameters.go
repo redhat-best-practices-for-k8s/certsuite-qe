@@ -9,6 +9,7 @@ const (
 	TnfContainerLoggingTcName      = "observability-container-logging"
 	TnfCrdStatusTcName             = "observability-crd-status"
 	TnfTerminationMsgPolicysTcName = "observability-termination-policy"
+	TnfPodDisruptionBudgetTcName   = "observability-pod-disruption-budget"
 
 	TestNamespace = "observability-ns"
 
@@ -19,6 +20,7 @@ const (
 	TestDaemonSetBaseName   = "observability-ds"
 	TestPodBaseName         = "observability-pod"
 	TestContainerBaseName   = "qe-observability-container"
+	TestPdbBaseName         = "observability-pdb"
 
 	TestPodLabelKey   = "tnf-qe/observability"
 	TestPodLabelValue = "container-logging-tc"
@@ -60,8 +62,10 @@ var (
 	PodDeployTimeoutMins         = 5 * time.Minute
 	DeploymentDeployTimeoutMins  = 5 * time.Minute
 	StatefulSetDeployTimeoutMins = 5 * time.Minute
+	ReplicaSetDeployTimeoutMins  = 5 * time.Minute
 	DaemonSetDeployTimeoutMins   = 5 * time.Minute
 	CrdDeployTimeoutMins         = 1 * time.Minute
+	PdbDeployTimeoutMins         = 5 * time.Minute
 
 	NsResourcesDeleteTimeoutMins = 5 * time.Minute
 )

@@ -22,7 +22,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 			Name:      deploymentName,
 			Namespace: namespace},
 		Spec: v1.DeploymentSpec{
-			Replicas: pointer.Int32Ptr(1),
+			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
@@ -32,7 +32,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+					TerminationGracePeriodSeconds: pointer.Int64(0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -55,16 +55,6 @@ func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []s
 					Command: command,
 				},
 			},
-		}
-	}
-}
-
-// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
-func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
-	for index := range deployment.Spec.Template.Spec.Containers {
-		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Capabilities: &corev1.Capabilities{
-				Add: []corev1.Capability{"ALL"}},
 		}
 	}
 }
@@ -106,7 +96,7 @@ func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deploy
 
 // RedefineWithReplicaNumber redefines deployment with requested replica number.
 func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) {
-	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+	deployment.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
 // RedefineFirstContainerWithPreStopSpec redefines deployment first container with lifecycle/preStop spec.
@@ -363,4 +353,16 @@ func RedefineWithPostStart(deployment *v1.Deployment) {
 
 func RedefineWithSecurityContextRunAsUser(deployment *v1.Deployment, uid int64) {
 	deployment.Spec.Template.Spec.SecurityContext.RunAsUser = &uid
+}
+
+// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
+func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: pointer.Bool(true),
+			RunAsUser:  pointer.Int64(0),
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"ALL"}},
+		}
+	}
 }

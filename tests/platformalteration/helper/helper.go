@@ -104,3 +104,13 @@ func ArgListToMap(lst []string) map[string]string {
 
 	return retval
 }
+
+// AppendIstioContainerToPod appends istio-proxy container to a pod.
+func AppendIstioContainerToPod(pod *corev1.Pod, image string) {
+	pod.Spec.Containers = append(
+		pod.Spec.Containers, corev1.Container{
+			Name:    "istio-proxy",
+			Image:   image,
+			Command: []string{"/bin/bash", "-c", "sleep INF"},
+		})
+}

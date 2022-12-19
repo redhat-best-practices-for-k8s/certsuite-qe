@@ -93,3 +93,20 @@ func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedul
 
 	return nil
 }
+
+func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
+	node, err := clients.Nodes().Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	masterLabels := []string{"node-role.kubernetes.io/master", "node-role.kubernetes.io/control-plane"}
+
+	for _, label := range masterLabels {
+		if _, exists := node.Labels[label]; exists {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}

@@ -28,10 +28,10 @@ gofmt:
 	@echo "Running gofmt"
 	gofmt -s -l `find . -path ./vendor -prune -o -type f -name '*.go' -print`
 
-test-all: update-go
+test-all: update-go install-ginkgo
 	./scripts/run-tests.sh all
 
-test-features: update-go
+test-features: update-go install-ginkgo
 	FEATURES="$(FEATURES)" ./scripts/run-tests.sh features
 
 install-ginkgo:

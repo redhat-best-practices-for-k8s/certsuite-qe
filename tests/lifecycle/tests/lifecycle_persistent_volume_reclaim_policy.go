@@ -141,7 +141,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 		replicaset.RedefineWithPVC(rs, tsparams.TestVolumeName, tsparams.TestPVCName)
 
-		err = tshelper.CreateAndWaitUntilReplicaSetIsReady(rs, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilReplicaSetIsReady(rs, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")

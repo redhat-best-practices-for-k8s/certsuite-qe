@@ -34,7 +34,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 	})
 
 	// 54657
-	It("one deployment, one pod, namespace sharing not enabled", func() {
+	It("one deployment, one pod, namespace sharing not enabled [skip]", func() {
 		By("Define deployment with shareProcessNamespace set to false")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
@@ -53,7 +53,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlSysPtraceCapability,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

@@ -52,7 +52,17 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "Deployment is not ready")
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "Deployment is not ready ",
+		getDeploymentStatus(deployment.Name, deployment.Namespace))
 
 	return nil
+}
+
+func getDeploymentStatus(name, namespaces string) string {
+	dep, err := APIClient.Deployments(namespaces).Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		return time.Now().String() + " " + err.Error()
+	}
+
+	return time.Now().String() + " " + dep.Status.String()
 }
