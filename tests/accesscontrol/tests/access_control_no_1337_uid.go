@@ -61,10 +61,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		var forbiddenUid int64
-		forbiddenUid = 1337
-
-		deployment.RedefineWithPodSecurityContextRunAsUser(dep, forbiddenUid)
+		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1337)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
