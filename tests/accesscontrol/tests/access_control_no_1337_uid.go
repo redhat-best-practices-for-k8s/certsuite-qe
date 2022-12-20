@@ -44,37 +44,40 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 56428
 	It("one deployment, one pod, does have securityContext RunAsUser 1337 [negative]", func() {
-		By("Define deployment with hostPid set to true")
+		By("Define deployment with securityContext RunAsUser set as 1337")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithSecurityContextRunAsUser(dep, 1337)
+		var forbiddenUid int64
+		forbiddenUid = 1337
+
+		deployment.RedefineWithPodSecurityContextRunAsUser(dep, forbiddenUid)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -91,20 +94,20 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithSecurityContextRunAsUser(dep, 1338)
+		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1338)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -115,7 +118,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithSecurityContextRunAsUser(dep, 1337)
+		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1337)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -128,13 +131,13 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlPodHostPid,
+			tsparams.TestCaseNameAccessControlNo1337Uid,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
