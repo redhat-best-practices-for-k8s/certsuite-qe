@@ -351,6 +351,12 @@ func RedefineWithPostStart(deployment *v1.Deployment) {
 	}
 }
 
+func RedefineWithPodSecurityContextRunAsUser(deployment *v1.Deployment, uid int64) {
+	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
+		RunAsUser: pointer.Int64(uid),
+	}
+}
+
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
 func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
