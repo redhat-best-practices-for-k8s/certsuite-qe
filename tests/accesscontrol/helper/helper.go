@@ -11,6 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -50,6 +51,20 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 	return deploymentStruct, nil
 }
 
+func DefineDeploymentWithNamespace(replica int32, containers int, name string, namespace string) (*v1.Deployment, error) {
+	if containers < 1 {
+		return nil, errors.New("invalid containers number")
+	}
+
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
+		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+
+	return deploymentStruct, nil
+}
+
 func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value string) error {
 	var boolVal bool
 
@@ -78,6 +93,15 @@ func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value stri
 
 	_, err = globalhelper.APIClient.ServiceAccounts(parameters.TestAccessControlNameSpace).
 		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
+
+	return err
+}
+
+func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet) error {
+	quota := resourcequota.DefineResourceQuota("quota1", parameters.CPURequest, parameters.MemoryRequest,
+		parameters.CPULimit, parameters.MemoryLimit)
+
+	err := namespaces.ApplyResourceQuota(namespace, clientSet, quota)
 
 	return err
 }

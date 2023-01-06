@@ -354,6 +354,29 @@ func CleanPodDistruptionBudget(namespace string, clientSet *testclient.ClientSet
 	return nil
 }
 
+func CleanResourceQuotas(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.ResourceQuotas(namespace).DeleteCollection(context.Background(),
+		metav1.DeleteOptions{
+			GracePeriodSeconds: pointer.Int64(0),
+		},
+		metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete resource quotas %w", err)
+	}
+
+	return nil
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	err := CleanDeployments(namespace, clientSet)
@@ -411,5 +434,28 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 		return err
 	}
 
+	err = CleanResourceQuotas(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
 	return CleanInstallPlans(namespace, clientSet)
+}
+
+func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota *k8sv1.ResourceQuota) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	_, err1 := clientSet.ResourceQuotas(namespace).Create(context.Background(), quota, metav1.CreateOptions{})
+
+	if err1 != nil {
+		return err1
+	}
+	return nil
 }
