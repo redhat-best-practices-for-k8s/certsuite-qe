@@ -25,6 +25,7 @@ var (
 	TestCaseNameAccessControlPodHostNetwork         = "access-control-pod-host-network"
 	TestCaseNameAccessControlSysPtraceCapability    = "access-control-sys-ptrace-capability"
 	TestCaseNameAccessControlRequestsAndLimits      = "access-control-requests-and-limits"
+	TestCaseNameAccessControlNo1337Uid              = "access-control-no-1337-uid"
 	TestCaseNameAccessControlNamespaceResourceQuota = "access-control-namespace-resource-quota"
 
 	TestDeploymentLabels = map[string]string{
