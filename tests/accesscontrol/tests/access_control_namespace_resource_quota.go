@@ -48,6 +48,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 		By("Apply resource quota to namespace")
 		err = tshelper.DefineAndCreateResourceQuota(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -95,6 +96,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 		By("Apply resource quota to namespace")
 		err = tshelper.DefineAndCreateResourceQuota(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeploymentWithNamespace(1, 1, "accesscontroldeployment2",
 			tsparams.AdditionalNamespaceForResourceQuotas)
@@ -105,6 +107,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 		By("Apply resource quota to namespace")
 		err = tshelper.DefineAndCreateResourceQuota(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -137,6 +140,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 		By("Apply resource quota to namespace")
 		err = tshelper.DefineAndCreateResourceQuota(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

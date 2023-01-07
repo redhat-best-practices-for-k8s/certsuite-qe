@@ -6,13 +6,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var keys = map[string]string{
-	"requests.cpu":    "1",
-	"requests.memory": "500Mi",
-	"limits.cpu":      "2",
-	"limits.memory":   "512Mi",
-}
-
 func DefineResourceQuota(resourceQuotaName, cpuRequest, memoryRequest, cpuLimit, memoryLimit string) *corev1.ResourceQuota {
 	return &corev1.ResourceQuota{
 		ObjectMeta: metav1.ObjectMeta{

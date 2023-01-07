@@ -457,5 +457,6 @@ func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota
 	if err1 != nil {
 		return err1
 	}
+
 	return nil
 }
