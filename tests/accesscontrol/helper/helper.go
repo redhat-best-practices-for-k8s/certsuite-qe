@@ -102,5 +102,4 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 		parameters.CPULimit, parameters.MemoryLimit)
 
 	return namespaces.ApplyResourceQuota(namespace, clientSet, quota)
-
 }
