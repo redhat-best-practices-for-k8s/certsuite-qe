@@ -102,9 +102,9 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage)
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TestTargetLabels)
 		pod.RedefineWithPVC(put, tsparams.TestVolumeName, tsparams.TestPVCName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -141,7 +141,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 		replicaset.RedefineWithPVC(rs, tsparams.TestVolumeName, tsparams.TestPVCName)
 
-		err = tshelper.CreateAndWaitUntilReplicaSetIsReady(rs, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilReplicaSetIsReady(rs, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
@@ -208,9 +208,9 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage)
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TestTargetLabels)
 		pod.RedefineWithPVC(put, tsparams.TestVolumeName, tsparams.TestPVCName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

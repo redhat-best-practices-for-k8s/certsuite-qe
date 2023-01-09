@@ -22,7 +22,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 			Name:      deploymentName,
 			Namespace: namespace},
 		Spec: v1.DeploymentSpec{
-			Replicas: pointer.Int32Ptr(1),
+			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
@@ -32,7 +32,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+					TerminationGracePeriodSeconds: pointer.Int64(0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -55,16 +55,6 @@ func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []s
 					Command: command,
 				},
 			},
-		}
-	}
-}
-
-// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
-func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
-	for index := range deployment.Spec.Template.Spec.Containers {
-		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Capabilities: &corev1.Capabilities{
-				Add: []corev1.Capability{"ALL"}},
 		}
 	}
 }
@@ -106,7 +96,7 @@ func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deploy
 
 // RedefineWithReplicaNumber redefines deployment with requested replica number.
 func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) {
-	deployment.Spec.Replicas = pointer.Int32Ptr(replicasNumber)
+	deployment.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
 // RedefineFirstContainerWithPreStopSpec redefines deployment first container with lifecycle/preStop spec.
@@ -265,6 +255,63 @@ func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req strin
 	}
 }
 
+func RedefineWithAllRequestsAndLimits(deployment *v1.Deployment, memoryLimit string, cpuLimit string,
+	memoryRequest string, cpuRequest string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryLimit),
+				corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(cpuRequest),
+			},
+		}
+	}
+}
+
+func RedefineWithMemoryRequestsAndLimitsAndCPURequest(deployment *v1.Deployment, memoryLimit string,
+	memoryRequest string, cpuRequest string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryLimit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(cpuRequest),
+			},
+		}
+	}
+}
+
+func RedefineWithMemoryRequestAndCPURequestsAndLimits(deployment *v1.Deployment, cpuLimit string,
+	memoryRequest string, cpuRequest string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU: resource.MustParse(cpuLimit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memoryRequest),
+				corev1.ResourceCPU:    resource.MustParse(cpuRequest),
+			},
+		}
+	}
+}
+
+func RedefineWithResourceRequests(deployment *v1.Deployment, memory string, cpu string) {
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(memory),
+				corev1.ResourceCPU:    resource.MustParse(cpu),
+			},
+		}
+	}
+}
+
 func RedefineWithRunTimeClass(deployment *v1.Deployment, rtcName string) {
 	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }
@@ -319,4 +366,35 @@ func RedefineWithNoScheduleToleration(deployment *v1.Deployment) {
 		Value:    "value2",
 	}
 	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
+}
+
+// RedefineWithPostStart adds postStart to deployment manifest.
+func RedefineWithPostStart(deployment *v1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PostStart: &corev1.LifecycleHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
+}
+
+func RedefineWithPodSecurityContextRunAsUser(deployment *v1.Deployment, uid int64) {
+	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
+		RunAsUser: pointer.Int64(uid),
+	}
+}
+
+// RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
+func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: pointer.Bool(true),
+			RunAsUser:  pointer.Int64(0),
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"ALL"}},
+		}
+	}
 }

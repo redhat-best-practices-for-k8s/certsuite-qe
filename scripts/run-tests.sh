@@ -3,7 +3,13 @@
 GOPATH="${GOPATH:-~/go}"
 export PATH=$PATH:$GOPATH/bin
 EXCLUDED_FOLDERS=""
+GINKGO_SEED_FLAG=""
 ALL_TESTS_FOLDERS=$(ls -d ./tests/*/)
+
+if [[ "${GINKGO_SEED_NUMBER}" != "" ]]; then 
+    echo "Using ginkgo seed number: ${GINKGO_SEED_NUMBER}"
+    GINKGO_SEED_FLAG="--seed=${GINKGO_SEED_NUMBER}"
+fi
 
 function run_tests {
     case $1 in
@@ -22,7 +28,7 @@ function run_tests {
                   all_default_suites+=" $folder"
                 fi
             done
-            ginkgo -timeout=24h -v --keep-going --require-suite -r $all_default_suites
+            ginkgo -timeout=24h -v --keep-going ${GINKGO_SEED_FLAG} --require-suite -r $all_default_suites
             ;;
         features)
             if [ -z "$FEATURES" ]; then {
@@ -38,7 +44,7 @@ function run_tests {
                     } fi
                     done
                 done
-            ginkgo -timeout=24h -v --keep-going --require-suite $command
+            ginkgo -timeout=24h -v --keep-going ${GINKGO_SEED_FLAG} --require-suite $command
             ;;
         *)
         echo "Unknown case"

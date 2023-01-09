@@ -25,7 +25,7 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+					TerminationGracePeriodSeconds: pointer.Int64(0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -81,7 +81,12 @@ func RedefineWithPrivilegeAndHostNetwork(daemonSet *v1.DaemonSet) {
 		daemonSet.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{}
 	}
 
-	daemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Privileged = pointer.BoolPtr(true)
+	daemonSet.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{
+		Privileged: pointer.Bool(true),
+		RunAsUser:  pointer.Int64(0),
+		Capabilities: &corev1.Capabilities{
+			Add: []corev1.Capability{"ALL"}},
+	}
 }
 
 func RedefineWithMultus(daemonSet *v1.DaemonSet, nadName string) {

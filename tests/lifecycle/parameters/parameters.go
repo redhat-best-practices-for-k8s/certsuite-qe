@@ -37,6 +37,7 @@ var (
 	TnfCPUIsolationTcName                  = "lifecycle-cpu-isolation"
 	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"
 	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
+	TnfContainerStartUpTcName              = "lifecycle-container-startup"
 )
 
 var (

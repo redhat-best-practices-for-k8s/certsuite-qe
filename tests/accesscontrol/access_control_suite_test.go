@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -33,12 +33,16 @@ var _ = BeforeSuite(func() {
 	By("Create namespace")
 	err := namespaces.Create(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+	err = globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
+	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
 })
 
 var _ = AfterSuite(func() {
 
 	By("Remove test namespaces")
-	err := helper.DeleteNamespaces(
+	err := tshelper.DeleteNamespaces(
 		[]string{parameters.TestAccessControlNameSpace,
 			parameters.AdditionalValidNamespace,
 			parameters.InvalidNamespace},

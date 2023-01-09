@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -78,8 +79,18 @@ var _ = Describe("Networking custom namespace,", func() {
 
 	// 48330
 	It("2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
+		// The NetworkAttachmentDefintion (mcvlan) created for this TC uses an interface that exists only in worker nodes,
+		// so we need to make sure the test pods are not deployed in master nodes.
+		err := globalhelper.EnableMasterScheduling(false)
+		Expect(err).ToNot(HaveOccurred())
+
+		defer func() {
+			err := globalhelper.EnableMasterScheduling(true)
+			Expect(err).To(BeNil(), fmt.Sprintf("failed to enable master scheduling: %v", err))
+		}()
+
 		By("Define and create Network-attachment-definition")
-		err := tshelper.DefineAndCreateNadOnCluster(
+		err = tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 

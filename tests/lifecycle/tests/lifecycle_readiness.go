@@ -100,7 +100,6 @@ var _ = Describe("lifecycle-readiness", func() {
 	It("One pod with a readiness probe", func() {
 		By("Define pod with a readiness probe")
 		put := tshelper.DefinePod(tsparams.TestPodName)
-		pod.RedefinePodWithLabel(put, tsparams.TestTargetLabels)
 		pod.RedefineWithReadinessProbe(put)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)

@@ -78,6 +78,13 @@ Below is an e2e flow example:
 1. export `DEBUG_TNF`=true.
 2. run `make test-all` / `make test-features`.
 3. under reports folder, a `Debug` folder will be generated, containing suites folders with TNF logs for each of the tests. 
+4. on each run, ginkgo is generating a seed number, the seed is used to randomize the execution order of the tests, in order to repeat the exact same run,
+   export `GINKGO_SEED_NUMBER=seed`, and then repeat stage 2 above.
+   when launching stage 2 after exporting the seed, this is an output example - the seed will be different -
+   "Running Suite: CNFCert lifecycle tests - /root/tnf-qe/cnfcert-tests-verification/tests/lifecycle
+   ================================================================================================
+   Random Seed: 1668617625"
+   
 
 
 # cnfcert-tests-verification - How to contribute

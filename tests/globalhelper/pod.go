@@ -40,7 +40,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 		return buf, err
 	}
 
-	err = exec.Stream(remotecommand.StreamOptions{
+	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
 		Stdin:  os.Stdin,
 		Stdout: &buf,
 		Stderr: os.Stderr,
@@ -128,8 +128,17 @@ func AppendContainersToPod(pod *corev1.Pod, containersNum int, image string) {
 }
 
 // AppendLabelsToPod appends labels to given pod manifest.
+// from go documentation : "if you pass a map to a function that changes the contents of the map,
+// the changes will be visible in the caller" - thats the reason for copying the map.
 func AppendLabelsToPod(pod *corev1.Pod, labels map[string]string) {
-	for name, value := range labels {
-		pod.Labels[name] = value
+	newMap := make(map[string]string)
+	for k, v := range pod.Labels {
+		newMap[k] = v
 	}
+
+	for k, v := range labels {
+		newMap[k] = v
+	}
+
+	pod.Labels = newMap
 }

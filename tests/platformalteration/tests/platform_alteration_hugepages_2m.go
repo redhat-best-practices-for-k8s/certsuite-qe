@@ -48,10 +48,10 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 	It("One pod with 2Mi hugepages", func() {
 
 		By("Define pod with 2Mi hugepages")
-		puta := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage)
+		puta := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+			tsparams.TnfTargetPodLabels)
 		pod.RedefineWithCPUResources(puta, "500m", "250m")
 		pod.RedefineWith2MiHugepages(puta, 4)
-		pod.RedefinePodWithLabel(puta, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -95,9 +95,8 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage)
+			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.Configuration.General.TestImage)
-		pod.RedefinePodWithLabel(put, tsparams.TnfTargetPodLabels)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
 		err := pod.RedefineFirstContainerWith2MiHugepages(put, 4)

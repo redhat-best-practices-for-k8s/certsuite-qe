@@ -60,7 +60,7 @@ func DefineStatefulSet(name string) *v1.StatefulSet {
 
 func DefinePod(name string) *corev1.Pod {
 	return pod.DefinePod(name, tsparams.LifecycleNamespace,
-		globalhelper.Configuration.General.TestImage)
+		globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 }
 
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
@@ -86,47 +86,6 @@ func WaitUntilClusterIsStable() error {
 	}
 
 	return nil
-}
-
-// CreateAndWaitUntilReplicaSetIsReady creates replicaSet and waits until all it's replicas are ready.
-func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time.Duration) error {
-	runningReplica, err := globalhelper.APIClient.ReplicaSets(replicaSet.Namespace).Create(context.Background(),
-		replicaSet, metav1.CreateOptions{})
-	if err != nil {
-		return fmt.Errorf("failed to create replicaSet %q (ns %s): %w", replicaSet.Name, replicaSet.Namespace, err)
-	}
-
-	Eventually(func() bool {
-		status, err := isReplicaSetReady(runningReplica.Namespace, runningReplica.Name)
-		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
-				"replicaSet %s is not ready, retry in %d seconds", runningReplica.Name, retryInterval))
-
-			return false
-		}
-
-		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "replicaSet is not ready")
-
-	return nil
-}
-
-// isReplicaSetReady checks if a replicaset is ready.
-func isReplicaSetReady(namespace string, replicaSetName string) (bool, error) {
-	testReplicaSet, err := globalhelper.APIClient.ReplicaSets(namespace).Get(
-		context.Background(),
-		replicaSetName,
-		metav1.GetOptions{},
-	)
-	if err != nil {
-		return false, err
-	}
-
-	if *testReplicaSet.Spec.Replicas == testReplicaSet.Status.ReadyReplicas {
-		return true, nil
-	}
-
-	return false, nil
 }
 
 func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) error {
@@ -172,7 +131,7 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 
 func DeletePV(persistentVolume string, timeout time.Duration) error {
 	err := globalhelper.APIClient.PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64Ptr(0),
+		GracePeriodSeconds: pointer.Int64(0),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to delete persistent volume %w", err)
@@ -190,7 +149,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 
 func DeleteRunTimeClass(rtcName string) error {
 	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
-		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64Ptr(0)})
+		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
 	}

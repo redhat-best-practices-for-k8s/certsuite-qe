@@ -11,23 +11,19 @@ import (
 )
 
 // DefinePod defines pod manifest based on given params.
-func DefinePod(podName string, namespace string, image string) *corev1.Pod {
+func DefinePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
 	return &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      podName,
-			Namespace: namespace},
+			Namespace: namespace,
+			Labels:    label},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: pointer.Int64Ptr(0),
+			TerminationGracePeriodSeconds: pointer.Int64(0),
 			Containers: []corev1.Container{
 				{
 					Name:    "test",
 					Image:   image,
 					Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}
-}
-
-// RedefinePodWithLabel adds label to given pod manifest.
-func RedefinePodWithLabel(pod *corev1.Pod, label map[string]string) {
-	pod.ObjectMeta.Labels = label
 }
 
 // RedefineWithReadinessProbe adds readiness probe to given pod manifest.
@@ -181,4 +177,17 @@ func RedefineSecondContainerWith1GHugepages(pod *corev1.Pod, hugepages int) erro
 	}
 
 	return fmt.Errorf("pod %s does not have enough containers", pod.Name)
+}
+
+// RedefineWithPostStart adds postStart to pod manifest.
+func RedefineWithPostStart(pod *corev1.Pod) {
+	for index := range pod.Spec.Containers {
+		pod.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
+			PostStart: &corev1.LifecycleHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"ls"},
+				},
+			},
+		}
+	}
 }
