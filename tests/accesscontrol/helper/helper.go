@@ -39,7 +39,7 @@ func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout 
 
 func DefineDeployment(replica int32, containers int, name string) (*v1.Deployment, error) {
 	if containers < 1 {
-		return nil, errors.New("invalid containers number")
+		return nil, errors.New("invalid number of containers")
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
@@ -53,7 +53,7 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 
 func DefineDeploymentWithNamespace(replica int32, containers int, name string, namespace string) (*v1.Deployment, error) {
 	if containers < 1 {
-		return nil, errors.New("invalid containers number")
+		return nil, errors.New("invalid number of containers")
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
@@ -101,7 +101,6 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 	quota := resourcequota.DefineResourceQuota("quota1", parameters.CPURequest, parameters.MemoryRequest,
 		parameters.CPULimit, parameters.MemoryLimit)
 
-	err := namespaces.ApplyResourceQuota(namespace, clientSet, quota)
+	return namespaces.ApplyResourceQuota(namespace, clientSet, quota)
 
-	return err
 }

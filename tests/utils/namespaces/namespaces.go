@@ -454,9 +454,5 @@ func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota
 
 	_, err1 := clientSet.ResourceQuotas(namespace).Create(context.Background(), quota, metav1.CreateOptions{})
 
-	if err1 != nil {
-		return err1
-	}
-
-	return nil
+	return err1
 }
