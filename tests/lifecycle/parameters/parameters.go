@@ -38,6 +38,7 @@ var (
 	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"
 	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
 	TnfContainerStartUpTcName              = "lifecycle-container-startup"
+	TnfPodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
 )
 
 var (

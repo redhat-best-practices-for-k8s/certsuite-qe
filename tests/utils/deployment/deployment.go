@@ -342,8 +342,8 @@ func RedefineWithNoExecuteToleration(deployment *v1.Deployment) {
 	tol := corev1.Toleration{
 		Effect:            "NoExecute",
 		Key:               "node.kubernetes.io/not-ready",
-		Operator:          "Equal",
-		TolerationSeconds: pointer.Int64(350),
+		Operator:          "Exists",
+		TolerationSeconds: pointer.Int64(365),
 	}
 	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
 }
