@@ -9,15 +9,10 @@ import (
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Lifecycle pod-toleration-bypass", func() {
-
-	execute.BeforeAll(func() {
-
-	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
