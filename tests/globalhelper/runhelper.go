@@ -27,7 +27,7 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
 	testArgs := []string{
 		"-k", os.Getenv("KUBECONFIG"),
-		"-c", Configuration.General.TnfConfigDir,
+		"-c", Configuration.General.DockerConfigDir + "/config",
 		"-t", Configuration.General.TnfConfigDir,
 		"-o", Configuration.General.TnfReportDir,
 		"-i", fmt.Sprintf("%s:%s", Configuration.General.TnfImage, Configuration.General.TnfImageTag),
