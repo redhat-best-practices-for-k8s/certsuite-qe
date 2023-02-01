@@ -236,9 +236,11 @@ func deployTnfDir(confFileName string, dirName string, yamlTag string, envVar st
 }
 
 func (c *Config) makeDockerConfig() error {
+	var configFile *os.File
+
 	err := os.MkdirAll(c.General.DockerConfigDir, 0777)
 	err = os.Chdir(c.General.DockerConfigDir)
-	configFile, err := os.Create("config")
+	configFile, err = os.Create("config")
 	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
 
 	return err
