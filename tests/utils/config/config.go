@@ -239,8 +239,23 @@ func (c *Config) makeDockerConfig() error {
 	var configFile *os.File
 
 	err := os.MkdirAll(c.General.DockerConfigDir, 0777)
+
+	if err != nil {
+		return err
+	}
+
 	err = os.Chdir(c.General.DockerConfigDir)
+
+	if err != nil {
+		return err
+	}
+
 	configFile, err = os.Create("config")
+
+	if err != nil {
+		return err
+	}
+
 	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
 
 	return err
