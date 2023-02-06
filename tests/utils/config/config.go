@@ -33,6 +33,7 @@ type Config struct {
 		TnfRepoPath          string `envconfig:"TNF_REPO_PATH"`
 		TnfEntryPointScript  string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
 		TnfReportDir         string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
+		DockerConfigDir      string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
 		TnfImage             string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
 		TnfImageTag          string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
 	} `yaml:"general"`
@@ -80,6 +81,11 @@ func NewConfig() (*Config, error) {
 	}
 
 	err = conf.deployTnfReportDir(confFile)
+	if err != nil {
+		return nil, err
+	}
+
+	err = conf.makeDockerConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -225,6 +231,32 @@ func deployTnfDir(confFileName string, dirName string, yamlTag string, envVar st
 			"error in verifying the %s directory. Check if either %s is present in %s or "+
 				"%s env var is set", dirName, yamlTag, envVar, confFileName)
 	}
+
+	return err
+}
+
+func (c *Config) makeDockerConfig() error {
+	var configFile *os.File
+
+	err := os.MkdirAll(c.General.DockerConfigDir, 0777)
+
+	if err != nil {
+		return err
+	}
+
+	err = os.Chdir(c.General.DockerConfigDir)
+
+	if err != nil {
+		return err
+	}
+
+	configFile, err = os.Create("config")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
 
 	return err
 }
