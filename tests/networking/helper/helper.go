@@ -3,6 +3,7 @@ package helper
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -26,6 +27,21 @@ func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, replicaNumber, false, nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+}
+
+func DefineDeploymentWithContainers(replica int32, containers int,
+	name string) (*v1.Deployment, error) {
+	if containers < 1 {
+		return nil, errors.New("invalid containers number")
+	}
+
+	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
+		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+
+	return deploymentStruct, nil
 }
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
@@ -74,6 +90,22 @@ func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
 
 func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, tsparams.NetworkingTestMultusSkipLabel)
+}
+
+// DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
+func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []corev1.ContainerPort) error {
+	deploymentUnderTest, err := DefineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
+
+	if err != nil {
+		return err
+	}
+
+	portSpecs := createContainerSpecsFromContainerPorts(ports)
+	//[]corev1.ContainerPort{{ContainerPort: 22623}})
+
+	deployment.RedefineWithContainerSpecs(deploymentUnderTest, portSpecs)
+
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace.
@@ -293,4 +325,21 @@ func execCmdOnPodsListInNamespace(command []string, execOn string) error {
 	}
 
 	return nil
+}
+
+func createContainerSpecsFromContainerPorts(ports []corev1.ContainerPort) []corev1.Container {
+	numContainers := len(ports)
+	containerSpecs := []corev1.Container{}
+
+	for index := 0; index < numContainers; index++ {
+		container := corev1.Container{
+			Name:  fmt.Sprintf("%s-%d", tsparams.TestDeploymentAName, index),
+			Image: globalhelper.Configuration.General.TestImage,
+			Ports: ports,
+		}
+
+		containerSpecs = append(containerSpecs, container)
+	}
+
+	return containerSpecs
 }
