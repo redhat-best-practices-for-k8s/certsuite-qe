@@ -50,7 +50,7 @@ func formTestTags(tags ...string) string {
 func BuildTestCaseDescription(testID, suiteName, description, remediation, testType, exception, reference string, qe bool, tags ...string) (TestCaseDescription, Identifier) {
 	aID := Identifier{
 		Tags: formTestTags(tags...),
-		Id:   testID,
+		Id:   suiteName + "/" + testID,
 	}
 	aTCDescription := TestCaseDescription{}
 	aTCDescription.Identifier = aID
