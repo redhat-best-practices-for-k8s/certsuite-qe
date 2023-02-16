@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -16,12 +16,12 @@ type MultusAnnotation struct {
 }
 
 // DefineDeployment returns deployment struct.
-func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *v1.Deployment {
-	return &v1.Deployment{
+func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *appsv1.Deployment {
+	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      deploymentName,
 			Namespace: namespace},
-		Spec: v1.DeploymentSpec{
+		Spec: appsv1.DeploymentSpec{
 			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
@@ -47,7 +47,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 }
 
 // RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
-func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []string) {
+func RedefineAllContainersWithPreStopSpec(deployment *appsv1.Deployment, command []string) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
 			PreStop: &corev1.LifecycleHandler{
@@ -60,7 +60,7 @@ func RedefineAllContainersWithPreStopSpec(deployment *v1.Deployment, command []s
 }
 
 // RedefineWithLabels redefines deployment with additional label.
-func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) {
+func RedefineWithLabels(deployment *appsv1.Deployment, label map[string]string) {
 	newMap := make(map[string]string)
 	for k, v := range deployment.Spec.Template.Labels {
 		newMap[k] = v
@@ -74,7 +74,7 @@ func RedefineWithLabels(deployment *v1.Deployment, label map[string]string) {
 }
 
 // RedefineWithMultus redefines deployment with additional labels.
-func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deployment {
+func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) *appsv1.Deployment {
 	if len(nadNames) < 1 {
 		return deployment
 	}
@@ -88,19 +88,19 @@ func RedefineWithMultus(deployment *v1.Deployment, nadNames []string) *v1.Deploy
 	bString, _ := json.Marshal(nadAnnotations)
 
 	deployment.Spec.Template.Annotations = map[string]string{
-		"k8s.v1.cni.cncf.io/networks": string(bString),
+		"k8s.appsv1.cni.cncf.io/networks": string(bString),
 	}
 
 	return deployment
 }
 
 // RedefineWithReplicaNumber redefines deployment with requested replica number.
-func RedefineWithReplicaNumber(deployment *v1.Deployment, replicasNumber int32) {
+func RedefineWithReplicaNumber(deployment *appsv1.Deployment, replicasNumber int32) {
 	deployment.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
 // RedefineFirstContainerWithPreStopSpec redefines deployment first container with lifecycle/preStop spec.
-func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []string) error {
+func RedefineFirstContainerWithPreStopSpec(deployment *appsv1.Deployment, command []string) error {
 	if len(deployment.Spec.Template.Spec.Containers) > 0 {
 		deployment.Spec.Template.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
 			PreStop: &corev1.LifecycleHandler{
@@ -114,12 +114,12 @@ func RedefineFirstContainerWithPreStopSpec(deployment *v1.Deployment, command []
 }
 
 // RedefineWithTerminationGracePeriod redefines deployment with terminationGracePeriod spec.
-func RedefineWithTerminationGracePeriod(deployment *v1.Deployment, terminationGracePeriod *int64) {
+func RedefineWithTerminationGracePeriod(deployment *appsv1.Deployment, terminationGracePeriod *int64) {
 	deployment.Spec.Template.Spec.TerminationGracePeriodSeconds = terminationGracePeriod
 }
 
 // RedefineWithPodAntiAffinity redefines deployment with podAntiAffinity spec.
-func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]string) {
+func RedefineWithPodAntiAffinity(deployment *appsv1.Deployment, label map[string]string) {
 	deployment.Spec.Template.Spec.Affinity = &corev1.Affinity{
 		PodAntiAffinity: &corev1.PodAntiAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
@@ -133,17 +133,17 @@ func RedefineWithPodAntiAffinity(deployment *v1.Deployment, label map[string]str
 		}}
 }
 
-func RedefineWithImagePullPolicy(deployment *v1.Deployment, pullPolicy corev1.PullPolicy) {
+func RedefineWithImagePullPolicy(deployment *appsv1.Deployment, pullPolicy corev1.PullPolicy) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].ImagePullPolicy = pullPolicy
 	}
 }
 
-func RedefineWithNodeSelector(deployment *v1.Deployment, nodeSelector map[string]string) {
+func RedefineWithNodeSelector(deployment *appsv1.Deployment, nodeSelector map[string]string) {
 	deployment.Spec.Template.Spec.NodeSelector = nodeSelector
 }
 
-func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) {
+func RedefineWithNodeAffinity(deployment *appsv1.Deployment, key string) {
 	deployment.Spec.Template.Spec.Affinity = &corev1.Affinity{
 		NodeAffinity: &corev1.NodeAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
@@ -161,7 +161,7 @@ func RedefineWithNodeAffinity(deployment *v1.Deployment, key string) {
 		}}
 }
 
-func RedefineWithReadinessProbe(deployment *v1.Deployment) {
+func RedefineWithReadinessProbe(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -173,7 +173,7 @@ func RedefineWithReadinessProbe(deployment *v1.Deployment) {
 	}
 }
 
-func RedefineWithLivenessProbe(deployment *v1.Deployment) {
+func RedefineWithLivenessProbe(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -186,7 +186,7 @@ func RedefineWithLivenessProbe(deployment *v1.Deployment) {
 }
 
 // RedefineWithStartUpProbe adds startup probe to deployment manifest.
-func RedefineWithStartUpProbe(deployment *v1.Deployment) {
+func RedefineWithStartUpProbe(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].StartupProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -198,11 +198,11 @@ func RedefineWithStartUpProbe(deployment *v1.Deployment) {
 	}
 }
 
-func RedefineWithContainerSpecs(deployment *v1.Deployment, containerSpecs []corev1.Container) {
+func RedefineWithContainerSpecs(deployment *appsv1.Deployment, containerSpecs []corev1.Container) {
 	deployment.Spec.Template.Spec.Containers = containerSpecs
 }
 
-func RedefineWithPriviledgedContainer(deployment *v1.Deployment) {
+func RedefineWithPriviledgedContainer(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),
@@ -213,23 +213,23 @@ func RedefineWithPriviledgedContainer(deployment *v1.Deployment) {
 	}
 }
 
-func RedefineWithHostPid(deployment *v1.Deployment, hostPid bool) {
+func RedefineWithHostPid(deployment *appsv1.Deployment, hostPid bool) {
 	deployment.Spec.Template.Spec.HostPID = hostPid
 }
 
-func RedefineWithHostIpc(deployment *v1.Deployment, hostIpc bool) {
+func RedefineWithHostIpc(deployment *appsv1.Deployment, hostIpc bool) {
 	deployment.Spec.Template.Spec.HostIPC = hostIpc
 }
 
-func RedefineWithAutomountServiceAccountToken(deployment *v1.Deployment, token bool) {
+func RedefineWithAutomountServiceAccountToken(deployment *appsv1.Deployment, token bool) {
 	deployment.Spec.Template.Spec.AutomountServiceAccountToken = &token
 }
 
-func RedefineWithHostNetwork(deployment *v1.Deployment, hostNetwork bool) {
+func RedefineWithHostNetwork(deployment *appsv1.Deployment, hostNetwork bool) {
 	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
 }
 
-func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) {
+func RedefineWithPVC(deployment *appsv1.Deployment, name string, claim string) {
 	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
 		{
 			Name: name,
@@ -242,7 +242,7 @@ func RedefineWithPVC(deployment *v1.Deployment, name string, claim string) {
 	}
 }
 
-func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req string) {
+func RedefineWithCPUResources(deployment *appsv1.Deployment, limit string, req string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
@@ -255,7 +255,7 @@ func RedefineWithCPUResources(deployment *v1.Deployment, limit string, req strin
 	}
 }
 
-func RedefineWithAllRequestsAndLimits(deployment *v1.Deployment, memoryLimit string, cpuLimit string,
+func RedefineWithAllRequestsAndLimits(deployment *appsv1.Deployment, memoryLimit string, cpuLimit string,
 	memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
@@ -271,7 +271,7 @@ func RedefineWithAllRequestsAndLimits(deployment *v1.Deployment, memoryLimit str
 	}
 }
 
-func RedefineWithMemoryRequestsAndLimitsAndCPURequest(deployment *v1.Deployment, memoryLimit string,
+func RedefineWithMemoryRequestsAndLimitsAndCPURequest(deployment *appsv1.Deployment, memoryLimit string,
 	memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
@@ -286,7 +286,7 @@ func RedefineWithMemoryRequestsAndLimitsAndCPURequest(deployment *v1.Deployment,
 	}
 }
 
-func RedefineWithMemoryRequestAndCPURequestsAndLimits(deployment *v1.Deployment, cpuLimit string,
+func RedefineWithMemoryRequestAndCPURequestsAndLimits(deployment *appsv1.Deployment, cpuLimit string,
 	memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
@@ -301,7 +301,7 @@ func RedefineWithMemoryRequestAndCPURequestsAndLimits(deployment *v1.Deployment,
 	}
 }
 
-func RedefineWithResourceRequests(deployment *v1.Deployment, memory string, cpu string) {
+func RedefineWithResourceRequests(deployment *appsv1.Deployment, memory string, cpu string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
 			Requests: corev1.ResourceList{
@@ -312,15 +312,15 @@ func RedefineWithResourceRequests(deployment *v1.Deployment, memory string, cpu 
 	}
 }
 
-func RedefineWithRunTimeClass(deployment *v1.Deployment, rtcName string) {
+func RedefineWithRunTimeClass(deployment *appsv1.Deployment, rtcName string) {
 	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
 }
 
-func RedefineWithShareProcessNamespace(deployment *v1.Deployment, shareProcessNamespace bool) {
+func RedefineWithShareProcessNamespace(deployment *appsv1.Deployment, shareProcessNamespace bool) {
 	deployment.Spec.Template.Spec.ShareProcessNamespace = &shareProcessNamespace
 }
 
-func RedefineWithSysPtrace(deployment *v1.Deployment) {
+func RedefineWithSysPtrace(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Capabilities: &corev1.Capabilities{
@@ -329,7 +329,7 @@ func RedefineWithSysPtrace(deployment *v1.Deployment) {
 	}
 }
 
-func RedefineWith2MiHugepages(deployment *v1.Deployment, hugepages int) {
+func RedefineWith2MiHugepages(deployment *appsv1.Deployment, hugepages int) {
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
 
 	for i := range deployment.Spec.Template.Spec.Containers {
@@ -338,7 +338,7 @@ func RedefineWith2MiHugepages(deployment *v1.Deployment, hugepages int) {
 	}
 }
 
-func RedefineWithNoExecuteToleration(deployment *v1.Deployment) {
+func RedefineWithNoExecuteToleration(deployment *appsv1.Deployment) {
 	tol := corev1.Toleration{
 		Effect:            "NoExecute",
 		Key:               "node.kubernetes.io/not-ready",
@@ -348,7 +348,7 @@ func RedefineWithNoExecuteToleration(deployment *v1.Deployment) {
 	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
 }
 
-func RedefineWithPreferNoScheduleToleration(deployment *v1.Deployment) {
+func RedefineWithPreferNoScheduleToleration(deployment *appsv1.Deployment) {
 	tol := corev1.Toleration{
 		Effect:   "PreferNoSchedule",
 		Key:      "node.kubernetes.io/memory-pressure",
@@ -358,7 +358,7 @@ func RedefineWithPreferNoScheduleToleration(deployment *v1.Deployment) {
 	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
 }
 
-func RedefineWithNoScheduleToleration(deployment *v1.Deployment) {
+func RedefineWithNoScheduleToleration(deployment *appsv1.Deployment) {
 	tol := corev1.Toleration{
 		Effect:   "NoSchedule",
 		Key:      "node.kubernetes.io/memory-pressure",
@@ -369,7 +369,7 @@ func RedefineWithNoScheduleToleration(deployment *v1.Deployment) {
 }
 
 // RedefineWithPostStart adds postStart to deployment manifest.
-func RedefineWithPostStart(deployment *v1.Deployment) {
+func RedefineWithPostStart(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
 			PostStart: &corev1.LifecycleHandler{
@@ -381,14 +381,14 @@ func RedefineWithPostStart(deployment *v1.Deployment) {
 	}
 }
 
-func RedefineWithPodSecurityContextRunAsUser(deployment *v1.Deployment, uid int64) {
+func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid int64) {
 	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
 		RunAsUser: pointer.Int64(uid),
 	}
 }
 
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
-func RedefineWithContainersSecurityContextAll(deployment *v1.Deployment) {
+func RedefineWithContainersSecurityContextAll(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),

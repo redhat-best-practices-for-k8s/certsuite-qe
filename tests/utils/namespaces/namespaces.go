@@ -9,7 +9,7 @@ import (
 	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
-	k8sv1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -33,7 +33,7 @@ func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Durat
 // Create creates a new namespace with the given name.
 // If the namespace exists, it returns.
 func Create(namespace string, cs *testclient.ClientSet) error {
-	_, err := cs.Namespaces().Create(context.Background(), &k8sv1.Namespace{
+	_, err := cs.Namespaces().Create(context.Background(), &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: namespace,
 		}}, metav1.CreateOptions{})
@@ -442,7 +442,7 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	return CleanInstallPlans(namespace, clientSet)
 }
 
-func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota *k8sv1.ResourceQuota) error {
+func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota *corev1.ResourceQuota) error {
 	nsExist, err := Exists(namespace, clientSet)
 	if err != nil {
 		return err

@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
 )
 
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
-func CreateAndWaitUntilDaemonSetIsReady(daemonSet *v1.DaemonSet, timeout time.Duration) error {
+func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := APIClient.DaemonSets(daemonSet.Namespace).Create(
 		context.Background(), daemonSet, metav1.CreateOptions{})
 	if err != nil {

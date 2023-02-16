@@ -11,7 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	v1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var _ = Describe("lifecycle-image-pull-policy", func() {
@@ -29,7 +29,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
+		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -51,7 +51,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
+		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -59,7 +59,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymentb, v1.PullIfNotPresent)
+		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -67,7 +67,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpc")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymentc, v1.PullIfNotPresent)
+		deployment.RedefineWithImagePullPolicy(deploymentc, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -87,7 +87,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSet with ifNotPresent as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -107,19 +107,19 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSets with ifNotPresent as ImagePullPolicy")
 		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSeta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetb := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsb",
-			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetc := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsc",
-			globalhelper.Configuration.General.TestImage, v1.PullIfNotPresent)
+			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -185,7 +185,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullAlways)
+		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullAlways)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -207,7 +207,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullNever)
+		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullNever)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -216,7 +216,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymentb, v1.PullIfNotPresent)
+		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -236,7 +236,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSet with Never as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.Configuration.General.TestImage, v1.PullNever)
+			globalhelper.Configuration.General.TestImage, corev1.PullNever)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -245,7 +245,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithImagePullPolicy(deploymenta, v1.PullIfNotPresent)
+		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
