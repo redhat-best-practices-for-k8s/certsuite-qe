@@ -1,15 +1,15 @@
 # cnfcert-tests-verification [![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
 
 ## Overview
-The repository contains a set of test cases that run different test scenarios from [test-network-function](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
+The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
 The cnfcert-tests-verification project based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
 
 cnfcert-tests-verification project triggers the same test scenario from
-[test-network-function](https://github.com/test-network-function/cnf-certification-test)
-several times using different preconfigured OCP environment. Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
+[cnf-certification-test](https://github.com/test-network-function/cnf-certification-test)
+several times using different pre-configured OCP environment. Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
 
 ## cnfcert-tests-verification
-The cnfcert-tests-verification is designed to test [test-network-function](https://github.com/test-network-function/cnf-certification-test) project using pre-installed OCP cluster with version 4.7 and above. In order to be able to test all test scenarios, the following requirements should be met:
+The cnfcert-tests-verification is designed to test [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project using pre-installed OCP cluster with version 4.7 and above. In order to be able to test all test scenarios, the following requirements should be met:
 
 Mandatory requirements:
 * OCP cluster installed with version >=4.7
@@ -30,7 +30,7 @@ Optional:
 
 #### Environment variables
 * `FEATURES` - select the test scenarios that you are going to test, comma separated
-* `TNF_REPO_PATH` - absolute path to  [test-network-function](https://github.com/test-network-function/cnf-certification-test) on your machine
+* `TNF_REPO_PATH` - absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
 * `TNF_IMAGE` - link to tnf image. Default is quay.io/testnetworkfunction/cnf-certification-test
 * `TNF_IMAGE_TAG` - image tag that is going to be tested. Default is latest
 * `TNF_LOG_LEVEL` - Log level. Default is 4
@@ -45,6 +45,9 @@ The list of available features:
 * *observability*
 * *platform-alteration*
 * *access-control*
+* *performance*
+* *operator*
+* *preflight*
 
 #### Running the tests
 Choose the variant that suits you best:
@@ -64,7 +67,7 @@ Below is an e2e flow example:
 
 3. Download and install needed dependencies - `make install`
 
-4. Define absolute path to [test-network-function](https://github.com/test-network-function/cnf-certification-test) project on you computer by setting environment variable: `export TNF_REPO_PATH=/path/to/project/cnf-certification-test`
+4. Define absolute path to [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project on you computer by setting environment variable: `export TNF_REPO_PATH=/path/to/project/cnf-certification-test`
 
 5. OPTIONAL: Set cnf-certification-test container tag that you are going to test. Default is latest. `export TNF_IMAGE_TAG=unstable` 
 
