@@ -46,7 +46,6 @@ The list of available features:
 * *platform-alteration*
 * *access-control*
 
-
 #### Running the tests
 Choose the variant that suits you best:
 
@@ -54,11 +53,9 @@ Choose the variant that suits you best:
 * `make test-all` - will run the test suite for all features
 
 #### Pre-configuration
-
 `make install` - download and install all required dependencies for the cnfcert-tests-verification project
 
 ## How to run
-
 Below is an e2e flow example:
 
 1. Clone the project to your local computer - `git clone https://github.com/test-network-function/cnfcert-tests-verification.git`
@@ -74,7 +71,6 @@ Below is an e2e flow example:
 6. Run all tests - `make test-all`
 
 # How to debug
-
 1. export `DEBUG_TNF`=true.
 2. run `make test-all` / `make test-features`.
 3. under reports folder, a `Debug` folder will be generated, containing suites folders with TNF logs for each of the tests. 
@@ -84,12 +80,10 @@ Below is an e2e flow example:
    "Running Suite: CNFCert lifecycle tests - /root/tnf-qe/cnfcert-tests-verification/tests/lifecycle
    ================================================================================================
    Random Seed: 1668617625"
-   
-
 
 # cnfcert-tests-verification - How to contribute
-
 The project uses a development method - forking workflow
+
 ### The following is a step-by-step example of forking workflow:
 1) A developer [forks](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork)
    the [cnfcert-tests-verification](https://github.com/test-network-function/cnfcert-tests-verification) project
@@ -106,15 +100,15 @@ The project uses a development method - forking workflow
 # cnfcert-tests-verification - Project structure
     .
     ├── config                         # Config files
-    ├── scripts                        # Makefile Scripts 
+    ├── scripts                        # Makefile Scripts
     ├── tests                          # Test cases directory
     │   ├── networking                 # Networking test cases directory
     │   │   ├── helper                 # Networking common test function
-    │   │   ├── parameters             # Networking constants and parameters 
+    │   │   ├── parameters             # Networking constants and parameters
     │   │   └── tests                  # Networking test suite directory
-    |   ├── affiliatedcertification    # Affiliated Certification test cases directory   
+    |   ├── affiliatedcertification    # Affiliated Certification test cases directory
     |   |   ├── helper                 # Affiliated Certification common test function
-    |   |   ├── parameters             # Affiliated Certification constants and parameters 
+    |   |   ├── parameters             # Affiliated Certification constants and parameters
     |   |   └── tests                  # Affiliated Certification test suite directory
     │   ├── platform                   # Platform test cases directory
     │   │   ├── helper                 # Platform common test function
@@ -124,7 +118,7 @@ The project uses a development method - forking workflow
     │   │   ├── helper                 # Observability common test function
     │   │   ├── parameters             # Observability constant and parameters
     │   │   └── tests                  # Observability test suite directory
-    │   ├── globalhelper               # Common test test function
+    │   ├── globalhelper               # Common test function
     │   ├── globalparameters           # Common test function
     │   └── utils                      # Common utils functions. These utils are based on Kubernetes api calls
     │       ├── client
@@ -132,4 +126,4 @@ The project uses a development method - forking workflow
     │       ├── node
     │       ├── namespace
     │       └── pod
-    └── vendors                        # Dependencies folder 
+    └── vendors                        # Dependencies folder
