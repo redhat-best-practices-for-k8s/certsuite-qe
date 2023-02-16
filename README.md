@@ -1,4 +1,4 @@
-# cnfcert-tests-verification
+# cnfcert-tests-verification [![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
 
 ## Overview
 The repository contains a set of test cases that run different test scenarios from [test-network-function](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
@@ -133,3 +133,8 @@ The project uses a development method - forking workflow
     │       ├── namespace
     │       └── pod
     └── vendors                        # Dependencies folder 
+
+## License
+CNF Certification Test Partner is copyright [Red Hat, Inc.](https://www.redhat.com) and available
+under an
+[Apache 2 license](https://github.com/test-network-function/cnfcert-tests-verification/blob/main/LICENSE).
