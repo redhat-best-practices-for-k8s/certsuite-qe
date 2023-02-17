@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	k8sv1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -13,16 +13,16 @@ func DefineService(name string,
 	namespace string,
 	port int32,
 	targetPort int32,
-	protocol k8sv1.Protocol,
-	labels map[string]string) *k8sv1.Service {
-	return &k8sv1.Service{
+	protocol corev1.Protocol,
+	labels map[string]string) *corev1.Service {
+	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace,
 		},
-		Spec: k8sv1.ServiceSpec{
+		Spec: corev1.ServiceSpec{
 			Selector: labels,
-			Ports: []k8sv1.ServicePort{
+			Ports: []corev1.ServicePort{
 				{
 					Protocol: protocol,
 					Port:     port,
@@ -37,7 +37,7 @@ func DefineService(name string,
 }
 
 // RedefineWithNodePort redefines service struct with NodePort.
-func RedefineWithNodePort(testService *k8sv1.Service) (*k8sv1.Service, error) {
+func RedefineWithNodePort(testService *corev1.Service) (*corev1.Service, error) {
 	testService.Spec.Type = "NodePort"
 	if len(testService.Spec.Ports) < 1 {
 		return nil, fmt.Errorf("service does not have available ports")

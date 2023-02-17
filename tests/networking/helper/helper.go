@@ -17,7 +17,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -215,7 +215,7 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 }
 
 func defineDeploymentBasedOnArgs(
-	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *v1.Deployment {
+	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *appsv1.Deployment {
 	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
 		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)

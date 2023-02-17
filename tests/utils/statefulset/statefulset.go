@@ -1,7 +1,7 @@
 package statefulset
 
 import (
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
@@ -9,12 +9,12 @@ import (
 
 // DefineStatefulSet returns statefulset struct.
 func DefineStatefulSet(statefulSetName string, namespace string,
-	image string, label map[string]string) *v1.StatefulSet {
-	return &v1.StatefulSet{
+	image string, label map[string]string) *appsv1.StatefulSet {
+	return &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      statefulSetName,
 			Namespace: namespace},
-		Spec: v1.StatefulSetSpec{
+		Spec: appsv1.StatefulSetSpec{
 			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
@@ -34,7 +34,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 }
 
 // RedefineWithReadinessProbe adds readiness probe to statefulSet manifest.
-func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) {
+func RedefineWithReadinessProbe(statefulSet *appsv1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].ReadinessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -47,7 +47,7 @@ func RedefineWithReadinessProbe(statefulSet *v1.StatefulSet) {
 }
 
 // RedefineWithLivenessProbe adds liveness probe to statefulSet manifest.
-func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) {
+func RedefineWithLivenessProbe(statefulSet *appsv1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].LivenessProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -60,7 +60,7 @@ func RedefineWithLivenessProbe(statefulSet *v1.StatefulSet) {
 }
 
 // RedefineWithStartUpProbe adds startup probe to statefulSet manifest.
-func RedefineWithStartUpProbe(statefulSet *v1.StatefulSet) {
+func RedefineWithStartUpProbe(statefulSet *appsv1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].StartupProbe = &corev1.Probe{
 			ProbeHandler: corev1.ProbeHandler{
@@ -72,15 +72,15 @@ func RedefineWithStartUpProbe(statefulSet *v1.StatefulSet) {
 	}
 }
 
-func RedefineWithContainerSpecs(statefulSet *v1.StatefulSet, containerSpecs []corev1.Container) {
+func RedefineWithContainerSpecs(statefulSet *appsv1.StatefulSet, containerSpecs []corev1.Container) {
 	statefulSet.Spec.Template.Spec.Containers = containerSpecs
 }
 
-func RedefineWithReplicaNumber(statefulSet *v1.StatefulSet, replicasNumber int32) {
+func RedefineWithReplicaNumber(statefulSet *appsv1.StatefulSet, replicasNumber int32) {
 	statefulSet.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
-func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) {
+func RedefineWithPriviledgedContainer(statefulSet *appsv1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),
@@ -92,7 +92,7 @@ func RedefineWithPriviledgedContainer(statefulSet *v1.StatefulSet) {
 }
 
 // RedefineWithPostStart adds postStart to statefulSet manifest.
-func RedefineWithPostStart(statefulSet *v1.StatefulSet) {
+func RedefineWithPostStart(statefulSet *appsv1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].Lifecycle = &corev1.Lifecycle{
 			PostStart: &corev1.LifecycleHandler{

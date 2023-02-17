@@ -8,12 +8,12 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/golang/glog"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
-func CreateAndWaitUntilStatefulSetIsReady(statefulSet *v1.StatefulSet, timeout time.Duration) error {
+func CreateAndWaitUntilStatefulSetIsReady(statefulSet *appsv1.StatefulSet, timeout time.Duration) error {
 	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(context.Background(),
 		statefulSet, metav1.CreateOptions{})
 	if err != nil {
