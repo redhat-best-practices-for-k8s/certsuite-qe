@@ -13,7 +13,7 @@ require (
 	github.com/operator-framework/api v0.17.3
 	github.com/operator-framework/operator-lifecycle-manager v0.18.3
 	github.com/stretchr/testify v1.8.1
-	github.com/test-network-function/test-network-function-claim v1.0.12
+	github.com/test-network-function/test-network-function-claim v1.0.13
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.26.1
 	k8s.io/apiextensions-apiserver v0.26.1
