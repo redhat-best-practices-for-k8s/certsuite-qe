@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-. $(dirname "$0")/common.sh
+# shellcheck disable=SC1091 # Not following.
+. "$(dirname "$0")"/common.sh
 
 if which golangci-lint; then
 	echo "golint installed"
