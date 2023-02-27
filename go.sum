@@ -1011,8 +1011,8 @@ github.com/syndtr/gocapability v0.0.0-20170704070218-db04d3cc01c8/go.mod h1:hkRG
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/tchap/go-patricia v2.3.0+incompatible/go.mod h1:bmLyhP68RS6kStMGxByiQ23RP/odRBOTVjwp2cDyi6I=
 github.com/tebeka/strftime v0.1.3/go.mod h1:7wJm3dZlpr4l/oVK0t1HYIc4rMzQ2XJlOMIUJUJH6XQ=
-github.com/test-network-function/test-network-function-claim v1.0.12 h1:rLGLz83IwuVy3Sw7wyDmsGfI0eOUkuMCb1s0Osi//CY=
-github.com/test-network-function/test-network-function-claim v1.0.12/go.mod h1:Q+RC2KLFuAPgjr3FUA6QoO4XsPfawtns2l9t7kri2m8=
+github.com/test-network-function/test-network-function-claim v1.0.13 h1:OaKla1P3RPbUqrw9LY3DsVgvEVUNDakT8ikosppmuJg=
+github.com/test-network-function/test-network-function-claim v1.0.13/go.mod h1:bQf39VKyHGtb+ueG59qCnFQCn/xKDh8Jy/eGpIUNoFc=
 github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/timakin/bodyclose v0.0.0-20190721030226-87058b9bfcec/go.mod h1:Qimiffbc6q9tBWlVV6x0P9sat/ao1xEkREYPPj9hphk=
