@@ -28,6 +28,7 @@ function run_tests {
                   all_default_suites+=" $folder"
                 fi
             done
+            # shellcheck disable=SC2086
             ginkgo -timeout=24h -v --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
             ;;
         features)
@@ -44,6 +45,7 @@ function run_tests {
                     } fi
                     done
                 done
+            # shellcheck disable=SC2086
             ginkgo -timeout=24h -v --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
             ;;
         *)
