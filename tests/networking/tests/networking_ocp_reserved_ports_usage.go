@@ -86,8 +86,6 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 
 		By("Define deployment with two containers")
 		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22223}}
-
-		By("Define deployment with two containers")
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, ports)
 		Expect(err).ToNot(HaveOccurred())
 

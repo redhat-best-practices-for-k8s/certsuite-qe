@@ -101,7 +101,6 @@ func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []co
 	}
 
 	portSpecs := createContainerSpecsFromContainerPorts(ports)
-	//[]corev1.ContainerPort{{ContainerPort: 22623}})
 
 	deployment.RedefineWithContainerSpecs(deploymentUnderTest, portSpecs)
 
