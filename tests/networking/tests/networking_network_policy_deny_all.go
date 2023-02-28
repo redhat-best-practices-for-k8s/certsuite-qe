@@ -56,6 +56,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		By("Define and create network policy")
 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 			tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
@@ -81,6 +82,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		By("Define and create network policy")
 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 			tsparams.TestNetworkingNameSpace, []string{"Ingress"}, tsparams.TestDeploymentLabels)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
@@ -106,6 +108,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		By("Define and create network policy")
 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 			tsparams.TestNetworkingNameSpace, []string{"Egress"}, tsparams.TestDeploymentLabels)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
@@ -152,6 +155,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			By("Define and create first network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 				tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
+			Expect(err).ToNot(HaveOccurred())
 
 			By("Define second deployment and create it on cluster")
 			err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
@@ -160,6 +164,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			By("Define and create second network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
 				tsparams.AdditionalNetworkingNamespace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
+			Expect(err).ToNot(HaveOccurred())
 
 			By("Define TNF config file")
 			err = globalhelper.DefineTnfConfig(
@@ -193,6 +198,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			By("Define and create first network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 				tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
+			Expect(err).ToNot(HaveOccurred())
 
 			By("Define second deployment and create it on cluster")
 			err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
@@ -201,6 +207,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			By("Define and create second network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
 				tsparams.AdditionalNetworkingNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
+			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
 			err = globalhelper.LaunchTests(
