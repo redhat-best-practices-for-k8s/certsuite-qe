@@ -5,7 +5,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func DefineDenyAllNetworkPolicy(name, ns string, policyTypes []networkingv1.PolicyType, labels map[string]string) *networkingv1.NetworkPolicy {
+func DefineDenyAllNetworkPolicy(name, ns string, policyTypes []networkingv1.PolicyType,
+	labels map[string]string) *networkingv1.NetworkPolicy {
 	return &networkingv1.NetworkPolicy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
