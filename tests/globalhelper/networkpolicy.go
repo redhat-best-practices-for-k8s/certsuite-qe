@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	v1 "k8s.io/api/networking/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
 )
 
-func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *v1.NetworkPolicy, timeout time.Duration) error {
+func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkPolicy, timeout time.Duration) error {
 	policy, err := APIClient.NetworkPolicies(networkPolicy.Namespace).Create(
 		context.Background(), networkPolicy, metav1.CreateOptions{})
 
@@ -36,13 +36,11 @@ func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *v1.NetworkPolicy, tim
 }
 
 func doesNetworkPolicyExist(namespace, name string) (bool, error) {
-	_, err := APIClient.NetworkPolicies(namespace).Get(
+	if _, err := APIClient.NetworkPolicies(namespace).Get(
 		context.Background(),
 		name,
 		metav1.GetOptions{},
-	)
-
-	if err != nil {
+	); err != nil {
 		return false, err
 	}
 
