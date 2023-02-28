@@ -9,12 +9,12 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 )
@@ -125,7 +125,7 @@ func IsExpectedStatusParamValid(status string) error {
 }
 
 // AppendContainersToDeployment appends containers to a deployment.
-func AppendContainersToDeployment(deployment *v1.Deployment, containersNum int, image string) {
+func AppendContainersToDeployment(deployment *appsv1.Deployment, containersNum int, image string) {
 	containerList := &deployment.Spec.Template.Spec.Containers
 
 	for i := 0; i < containersNum; i++ {

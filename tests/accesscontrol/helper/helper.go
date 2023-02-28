@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -37,7 +37,7 @@ func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout 
 	return nil
 }
 
-func DefineDeployment(replica int32, containers int, name string) (*v1.Deployment, error) {
+func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid number of containers")
 	}
@@ -51,7 +51,7 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 	return deploymentStruct, nil
 }
 
-func DefineDeploymentWithNamespace(replica int32, containers int, name string, namespace string) (*v1.Deployment, error) {
+func DefineDeploymentWithNamespace(replica int32, containers int, name string, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid number of containers")
 	}

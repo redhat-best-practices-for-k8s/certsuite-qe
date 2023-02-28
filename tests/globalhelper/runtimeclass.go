@@ -7,11 +7,11 @@ import (
 
 	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
-	v1 "k8s.io/api/node/v1"
+	nodev1 "k8s.io/api/node/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func CreateRunTimeClass(rtc *v1.RuntimeClass) error {
+func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 	rtc, err := APIClient.RuntimeClasses().Create(context.Background(), rtc, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
@@ -31,7 +31,7 @@ func CreateRunTimeClass(rtc *v1.RuntimeClass) error {
 	return nil
 }
 
-func isRtcCreated(rtc *v1.RuntimeClass) (bool, error) {
+func isRtcCreated(rtc *nodev1.RuntimeClass) (bool, error) {
 	rtc, err := APIClient.RuntimeClasses().Get(context.Background(), rtc.Name, metav1.GetOptions{})
 	if err != nil {
 		return false, err

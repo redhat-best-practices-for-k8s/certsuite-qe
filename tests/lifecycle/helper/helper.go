@@ -19,7 +19,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
@@ -30,7 +30,7 @@ import (
 const retryInterval = 5
 
 // DefineDeployment defines a deployment.
-func DefineDeployment(replica int32, containers int, name string) (*v1.Deployment, error) {
+func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid containers number")
 	}
@@ -44,14 +44,14 @@ func DefineDeployment(replica int32, containers int, name string) (*v1.Deploymen
 	return deploymentStruct, nil
 }
 
-func DefineReplicaSet(name string) *v1.ReplicaSet {
+func DefineReplicaSet(name string) *appsv1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
 		tsparams.LifecycleNamespace,
 		globalhelper.Configuration.General.TestImage,
 		tsparams.TestTargetLabels)
 }
 
-func DefineStatefulSet(name string) *v1.StatefulSet {
+func DefineStatefulSet(name string) *appsv1.StatefulSet {
 	return statefulset.DefineStatefulSet(name,
 		tsparams.LifecycleNamespace,
 		globalhelper.Configuration.General.TestImage,
@@ -63,7 +63,7 @@ func DefinePod(name string) *corev1.Pod {
 		globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 }
 
-func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *v1.DaemonSet {
+func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *appsv1.DaemonSet {
 	daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, image, tsparams.TestTargetLabels, name)
 	daemonset.RedefineWithImagePullPolicy(daemonSet, pullPolicy)
 
