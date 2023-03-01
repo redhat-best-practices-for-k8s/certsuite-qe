@@ -10,6 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/networkpolicy"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -23,14 +24,16 @@ import (
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, replicaNumber, false, nil, nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, tsparams.TestNetworkingNameSpace,
+		replicaNumber, false, nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string, replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(name, replicaNumber, true, nadNames, nil)
+	deploymentUnderTest := defineDeploymentBasedOnArgs(name, tsparams.TestNetworkingNameSpace,
+		replicaNumber, true, nadNames, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
@@ -39,7 +42,8 @@ func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string
 func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
 	name string, nadNames []string, replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(
-		name, replicaNumber,
+		name, tsparams.TestNetworkingNameSpace,
+		replicaNumber,
 		false,
 		nadNames,
 		tsparams.NetworkingTestMultusSkipLabel)
@@ -49,7 +53,8 @@ func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, replicaNumber, true,
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, tsparams.TestNetworkingNameSpace,
+		replicaNumber, true,
 		nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
@@ -57,7 +62,8 @@ func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, replicaNumber,
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, tsparams.TestNetworkingNameSpace,
+		replicaNumber,
 		true, nil, tsparams.NetworkingTestSkipLabel)
 
 	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
@@ -66,6 +72,13 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) err
 	}
 
 	return nil
+}
+
+func DefineAndCreateDeploymentWithNamespace(namespace string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentBName, namespace,
+		replicaNumber, false, nil, nil)
+
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
@@ -165,6 +178,13 @@ func GetClusterMultusInterfaces() ([]string, error) {
 	return lastMatch, nil
 }
 
+func DefineAndCreateNetworkPolicy(name, ns string, policyTypes []string, labels map[string]string) error {
+	types := networkpolicy.DefinePolicyTypes(policyTypes)
+	policy := networkpolicy.DefineDenyAllNetworkPolicy(name, ns, types, labels)
+
+	return globalhelper.CreateAndWaitUntilNetworkPolicyIsReady(policy, tsparams.WaitingTime)
+}
+
 func findListIntersections(listA []string, listB []string) []string {
 	var overlap []string
 
@@ -215,8 +235,8 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 }
 
 func defineDeploymentBasedOnArgs(
-	name string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *appsv1.Deployment {
-	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
+	name string, namespace string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *appsv1.Deployment {
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 

@@ -377,6 +377,29 @@ func CleanResourceQuotas(namespace string, clientSet *testclient.ClientSet) erro
 	return nil
 }
 
+func CleanNetworkPolicies(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.NetworkPolicies(namespace).DeleteCollection(context.Background(),
+		metav1.DeleteOptions{
+			GracePeriodSeconds: pointer.Int64(0),
+		},
+		metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete network policies %w", err)
+	}
+
+	return nil
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	err := CleanDeployments(namespace, clientSet)
@@ -435,6 +458,11 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = CleanResourceQuotas(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	err = CleanNetworkPolicies(namespace, clientSet)
 	if err != nil {
 		return err
 	}
