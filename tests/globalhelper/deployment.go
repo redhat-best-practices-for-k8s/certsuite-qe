@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -33,7 +33,7 @@ func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, e
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
-func CreateAndWaitUntilDeploymentIsReady(deployment *v1.Deployment, timeout time.Duration) error {
+func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment, timeout time.Duration) error {
 	runningDeployment, err := APIClient.Deployments(deployment.Namespace).Create(
 		context.Background(),
 		deployment,

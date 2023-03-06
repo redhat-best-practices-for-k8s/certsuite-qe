@@ -24,11 +24,12 @@ function run_tests {
                     folder=''
                   fi
                 done
-                if ! [ -z "$folder" ]; then
+                if [ -n "$folder" ]; then
                   all_default_suites+=" $folder"
                 fi
             done
-            ginkgo -timeout=24h -v --keep-going ${GINKGO_SEED_FLAG} --require-suite -r $all_default_suites
+            # shellcheck disable=SC2086
+            ginkgo -timeout=24h -v --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
             ;;
         features)
             if [ -z "$FEATURES" ]; then {
@@ -44,7 +45,8 @@ function run_tests {
                     } fi
                     done
                 done
-            ginkgo -timeout=24h -v --keep-going ${GINKGO_SEED_FLAG} --require-suite $command
+            # shellcheck disable=SC2086
+            ginkgo -timeout=24h -v --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
             ;;
         *)
         echo "Unknown case"
@@ -53,4 +55,4 @@ function run_tests {
     esac
 }
 
-run_tests ${1}
+run_tests "${1}"

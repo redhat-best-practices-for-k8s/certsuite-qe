@@ -7,12 +7,12 @@ import (
 
 	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CreateAndWaitUntilReplicaSetIsReady creates replicaSet and waits until all it's replicas are ready.
-func CreateAndWaitUntilReplicaSetIsReady(replicaSet *v1.ReplicaSet, timeout time.Duration) error {
+func CreateAndWaitUntilReplicaSetIsReady(replicaSet *appsv1.ReplicaSet, timeout time.Duration) error {
 	runningReplica, err := APIClient.ReplicaSets(replicaSet.Namespace).Create(context.Background(),
 		replicaSet, metav1.CreateOptions{})
 	if err != nil {

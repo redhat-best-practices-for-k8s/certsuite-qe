@@ -11,11 +11,12 @@ const (
 )
 
 var (
-	TestNetworkingNameSpace = "networking-tests"
-	testPodLabelPrefixName  = "networking-test/test"
-	testPodLabelValue       = "testing"
-	TestPodLabel            = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
-	TestDeploymentLabels    = map[string]string{
+	TestNetworkingNameSpace       = "networking-tests"
+	AdditionalNetworkingNamespace = "net-tests"
+	testPodLabelPrefixName        = "networking-test/test"
+	testPodLabelValue             = "testing"
+	TestPodLabel                  = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	TestDeploymentLabels          = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "networkingput"}
 	TestNadNameA                   = "networking-nada"
@@ -27,6 +28,7 @@ var (
 	TnfDefaultNetworkTcName        = "networking-icmpv4-connectivity"
 	TnfMultusIpv4TcName            = "networking-icmpv4-connectivity-multus"
 	TnfNodePortTcName              = "networking-service-type"
+	TnfNetworkPolicyDenyAllTcName  = "networking-network-policy-deny-all"
 	TnfOcpReservedPortsUsageTcName = "networking-ocp-reserved-ports-usage"
 	NetworkingTestSkipLabel        = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
 	NetworkingTestMultusSkipLabel  = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}

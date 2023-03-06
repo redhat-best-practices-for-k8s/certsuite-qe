@@ -1,15 +1,15 @@
-# cnfcert-tests-verification
+# cnfcert-tests-verification [![makefile ci](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml) [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift) [![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
 
 ## Overview
-The repository contains a set of test cases that run different test scenarios from [test-network-function](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
+The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
 The cnfcert-tests-verification project based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
 
 cnfcert-tests-verification project triggers the same test scenario from
-[test-network-function](https://github.com/test-network-function/cnf-certification-test)
-several times using different preconfigured OCP environment. Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
+[cnf-certification-test](https://github.com/test-network-function/cnf-certification-test)
+several times using different pre-configured OCP environment. Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
 
 ## cnfcert-tests-verification
-The cnfcert-tests-verification is designed to test [test-network-function](https://github.com/test-network-function/cnf-certification-test) project using pre-installed OCP cluster with version 4.7 and above. In order to be able to test all test scenarios, the following requirements should be met:
+The cnfcert-tests-verification is designed to test [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project using pre-installed OCP cluster with version 4.7 and above. In order to be able to test all test scenarios, the following requirements should be met:
 
 Mandatory requirements:
 * OCP cluster installed with version >=4.7
@@ -30,7 +30,7 @@ Optional:
 
 #### Environment variables
 * `FEATURES` - select the test scenarios that you are going to test, comma separated
-* `TNF_REPO_PATH` - absolute path to  [test-network-function](https://github.com/test-network-function/cnf-certification-test) on your machine
+* `TNF_REPO_PATH` - absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
 * `TNF_IMAGE` - link to tnf image. Default is quay.io/testnetworkfunction/cnf-certification-test
 * `TNF_IMAGE_TAG` - image tag that is going to be tested. Default is latest
 * `TNF_LOG_LEVEL` - Log level. Default is 4
@@ -45,7 +45,9 @@ The list of available features:
 * *observability*
 * *platform-alteration*
 * *access-control*
-
+* *performance*
+* *operator*
+* *preflight*
 
 #### Running the tests
 Choose the variant that suits you best:
@@ -54,11 +56,9 @@ Choose the variant that suits you best:
 * `make test-all` - will run the test suite for all features
 
 #### Pre-configuration
-
 `make install` - download and install all required dependencies for the cnfcert-tests-verification project
 
 ## How to run
-
 Below is an e2e flow example:
 
 1. Clone the project to your local computer - `git clone https://github.com/test-network-function/cnfcert-tests-verification.git`
@@ -67,14 +67,13 @@ Below is an e2e flow example:
 
 3. Download and install needed dependencies - `make install`
 
-4. Define absolute path to [test-network-function](https://github.com/test-network-function/cnf-certification-test) project on you computer by setting environment variable: `export TNF_REPO_PATH=/path/to/project/cnf-certification-test`
+4. Define absolute path to [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project on you computer by setting environment variable: `export TNF_REPO_PATH=/path/to/project/cnf-certification-test`
 
 5. OPTIONAL: Set cnf-certification-test container tag that you are going to test. Default is latest. `export TNF_IMAGE_TAG=unstable` 
 
 6. Run all tests - `make test-all`
 
 # How to debug
-
 1. export `DEBUG_TNF`=true.
 2. run `make test-all` / `make test-features`.
 3. under reports folder, a `Debug` folder will be generated, containing suites folders with TNF logs for each of the tests. 
@@ -84,12 +83,10 @@ Below is an e2e flow example:
    "Running Suite: CNFCert lifecycle tests - /root/tnf-qe/cnfcert-tests-verification/tests/lifecycle
    ================================================================================================
    Random Seed: 1668617625"
-   
-
 
 # cnfcert-tests-verification - How to contribute
-
 The project uses a development method - forking workflow
+
 ### The following is a step-by-step example of forking workflow:
 1) A developer [forks](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork)
    the [cnfcert-tests-verification](https://github.com/test-network-function/cnfcert-tests-verification) project
@@ -106,15 +103,15 @@ The project uses a development method - forking workflow
 # cnfcert-tests-verification - Project structure
     .
     ├── config                         # Config files
-    ├── scripts                        # Makefile Scripts 
+    ├── scripts                        # Makefile Scripts
     ├── tests                          # Test cases directory
     │   ├── networking                 # Networking test cases directory
     │   │   ├── helper                 # Networking common test function
-    │   │   ├── parameters             # Networking constants and parameters 
+    │   │   ├── parameters             # Networking constants and parameters
     │   │   └── tests                  # Networking test suite directory
-    |   ├── affiliatedcertification    # Affiliated Certification test cases directory   
+    |   ├── affiliatedcertification    # Affiliated Certification test cases directory
     |   |   ├── helper                 # Affiliated Certification common test function
-    |   |   ├── parameters             # Affiliated Certification constants and parameters 
+    |   |   ├── parameters             # Affiliated Certification constants and parameters
     |   |   └── tests                  # Affiliated Certification test suite directory
     │   ├── platform                   # Platform test cases directory
     │   │   ├── helper                 # Platform common test function
@@ -124,7 +121,7 @@ The project uses a development method - forking workflow
     │   │   ├── helper                 # Observability common test function
     │   │   ├── parameters             # Observability constant and parameters
     │   │   └── tests                  # Observability test suite directory
-    │   ├── globalhelper               # Common test test function
+    │   ├── globalhelper               # Common test function
     │   ├── globalparameters           # Common test function
     │   └── utils                      # Common utils functions. These utils are based on Kubernetes api calls
     │       ├── client
@@ -133,3 +130,8 @@ The project uses a development method - forking workflow
     │       ├── namespace
     │       └── pod
     └── vendors                        # Dependencies folder 
+
+## License
+CNF Certification Test Partner is copyright [Red Hat, Inc.](https://www.redhat.com) and available
+under an
+[Apache 2 license](https://github.com/test-network-function/cnfcert-tests-verification/blob/main/LICENSE).

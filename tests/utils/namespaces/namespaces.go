@@ -9,7 +9,7 @@ import (
 	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
-	k8sv1 "k8s.io/api/core/v1"
+	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -33,7 +33,7 @@ func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Durat
 // Create creates a new namespace with the given name.
 // If the namespace exists, it returns.
 func Create(namespace string, cs *testclient.ClientSet) error {
-	_, err := cs.Namespaces().Create(context.Background(), &k8sv1.Namespace{
+	_, err := cs.Namespaces().Create(context.Background(), &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: namespace,
 		}}, metav1.CreateOptions{})
@@ -377,6 +377,29 @@ func CleanResourceQuotas(namespace string, clientSet *testclient.ClientSet) erro
 	return nil
 }
 
+func CleanNetworkPolicies(namespace string, clientSet *testclient.ClientSet) error {
+	nsExist, err := Exists(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
+	if !nsExist {
+		return nil
+	}
+
+	err = clientSet.NetworkPolicies(namespace).DeleteCollection(context.Background(),
+		metav1.DeleteOptions{
+			GracePeriodSeconds: pointer.Int64(0),
+		},
+		metav1.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("failed to delete network policies %w", err)
+	}
+
+	return nil
+}
+
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, clientSet *testclient.ClientSet) error {
 	err := CleanDeployments(namespace, clientSet)
@@ -439,10 +462,15 @@ func Clean(namespace string, clientSet *testclient.ClientSet) error {
 		return err
 	}
 
+	err = CleanNetworkPolicies(namespace, clientSet)
+	if err != nil {
+		return err
+	}
+
 	return CleanInstallPlans(namespace, clientSet)
 }
 
-func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota *k8sv1.ResourceQuota) error {
+func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota *corev1.ResourceQuota) error {
 	nsExist, err := Exists(namespace, clientSet)
 	if err != nil {
 		return err

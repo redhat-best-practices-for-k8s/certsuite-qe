@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	v1 "k8s.io/api/policy/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -23,7 +23,7 @@ func IsPodDisruptionBudgetCreated(pdbName string, namespace string) (bool, error
 }
 
 // CreatPodDisruptionBudget creates Pod Disruption Budget and wait until pdb is created.
-func CreatePodDisruptionBudget(pdb *v1.PodDisruptionBudget, timeout time.Duration) error {
+func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.Duration) error {
 	poddisruptionbudget, err := APIClient.PolicyV1Interface.PodDisruptionBudgets(pdb.Namespace).Create(
 		context.Background(),
 		pdb,
