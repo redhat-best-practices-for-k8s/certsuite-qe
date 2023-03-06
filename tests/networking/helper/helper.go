@@ -32,7 +32,7 @@ func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 }
 
 func DefineDeploymentWithContainers(replica int32, containers int,
-	name string) (*v1.Deployment, error) {
+	name string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid containers number")
 	}
