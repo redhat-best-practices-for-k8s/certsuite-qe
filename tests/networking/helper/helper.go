@@ -31,21 +31,6 @@ func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
-func DefineDeploymentWithContainers(replica int32, containers int,
-	name string) (*appsv1.Deployment, error) {
-	if containers < 1 {
-		return nil, errors.New("invalid containers number")
-	}
-
-	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
-		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
-
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
-	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
-
-	return deploymentStruct, nil
-}
-
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string, replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(name, tsparams.TestNetworkingNameSpace,
@@ -97,6 +82,13 @@ func DefineAndCreateDeploymentWithNamespace(namespace string, replicaNumber int3
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
+func DefineAndCreateDeployment(deploymentName string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(deploymentName, tsparams.TestNetworkingNameSpace,
+		replicaNumber, false, nil, nil)
+
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+}
+
 func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, nil)
 }
@@ -107,7 +99,7 @@ func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) err
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []corev1.ContainerPort) error {
-	deploymentUnderTest, err := DefineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
+	deploymentUnderTest, err := defineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
 
 	if err != nil {
 		return err
@@ -286,6 +278,20 @@ func defineDeploymentBasedOnArgs(
 	return deploymentStruct
 }
 
+func defineDeploymentWithContainers(replica int32, containers int,
+	name string) (*appsv1.Deployment, error) {
+	if containers < 1 {
+		return nil, errors.New("invalid containers number")
+	}
+
+	deploymentStruct := defineDeploymentBasedOnArgs(name, tsparams.TestNetworkingNameSpace, replica, false, nil, nil)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+
+	return deploymentStruct, nil
+}
+
 func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
 	testDaemonset := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace,
 		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
@@ -351,13 +357,14 @@ func createContainerSpecsFromContainerPorts(ports []corev1.ContainerPort) []core
 	containerSpecs := []corev1.Container{}
 
 	for index := 0; index < numContainers; index++ {
-		container := corev1.Container{
-			Name:  fmt.Sprintf("%s-%d", tsparams.TestDeploymentAName, index),
-			Image: globalhelper.Configuration.General.TestImage,
-			Ports: ports,
-		}
-
-		containerSpecs = append(containerSpecs, container)
+		containerSpecs = append(containerSpecs,
+			corev1.Container{
+				Name:    fmt.Sprintf("%s-%d", tsparams.TestDeploymentAName, index),
+				Image:   globalhelper.Configuration.General.TestImage,
+				Command: []string{"/bin/bash", "-c", "sleep INF"},
+				Ports:   []corev1.ContainerPort{ports[index]},
+			},
+		)
 	}
 
 	return containerSpecs

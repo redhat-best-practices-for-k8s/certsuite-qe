@@ -86,7 +86,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 
 		By("Define deployment with two containers")
 		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22223}}
-		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, ports)
+		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(2, ports)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -107,7 +107,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22623}}
 
 		By("Define deployment with two containers")
-		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, ports)
+		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(2, ports)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -126,8 +126,6 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 
 	// 59540
 	It("one deployment, one pod not listening on reserved ports", func() {
-
-		Skip("Under development")
 
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(3)
@@ -149,14 +147,12 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	// 59541
 	It("one deployment, one pod listening on reserved ports [negative]", func() {
 
-		Skip("Under development")
-
-		By("Define Services with NodePort")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
+		By("Define deployment and create it on cluster")
+		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 22624}})
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		By("Define service and create it on cluster")
+		err = tshelper.DefineAndCreateServiceOnCluster("test-service", 22624, 22624, false)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -176,14 +172,12 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	// 59542
 	It("two deployments, one pod each not listening on reserved ports", func() {
 
-		Skip("Under development")
-
-		By("Define Services with NodePort")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
+		By("Define first deployment and create it on cluster")
+		err := tshelper.DefineAndCreateDeploymentOnCluster(3)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		By("Define second deployment and create it on cluster")
+		err = tshelper.DefineAndCreateDeployment(tsparams.TestDeploymentBName, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -203,41 +197,16 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	// 59543
 	It("two deployments, one pod each, one listening on reserved ports [negative]", func() {
 
-		Skip("Under development")
-
-		By("Define Services with NodePort")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
+		By("Define first deployment and create it on cluster")
+		err := tshelper.DefineAndCreateDeployment(tsparams.TestDeploymentBName, 3)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		By("Define second deployment and create it on cluster")
+		err = tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 22624}})
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start tests")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).To(HaveOccurred())
-
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
-
-	})
-
-	// 59544
-	It("one deployment, one pod, one container on which listening pod check could not be performed [negative]", func() {
-
-		Skip("Under development")
-
-		By("Define Services with NodePort")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		By("Define service and create it on cluster")
+		err = tshelper.DefineAndCreateServiceOnCluster("test-service", 22624, 22624, false)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
