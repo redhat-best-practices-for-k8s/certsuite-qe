@@ -100,7 +100,6 @@ func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) err
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []corev1.ContainerPort) error {
 	deploymentUnderTest, err := defineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
-
 	if err != nil {
 		return err
 	}
