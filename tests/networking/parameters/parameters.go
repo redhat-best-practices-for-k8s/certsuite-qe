@@ -19,18 +19,19 @@ var (
 	TestDeploymentLabels          = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "networkingput"}
-	TestNadNameA                  = "networking-nada"
-	TestIPamIPNetworkA            = "10.255.255.0/25"
-	TestDeploymentAName           = "networkingputa"
-	TestNadNameB                  = "networking-nadb"
-	TestIPamIPNetworkB            = "10.255.128.0/25"
-	TestDeploymentBName           = "networkingputb"
-	TnfDefaultNetworkTcName       = "networking-icmpv4-connectivity"
-	TnfMultusIpv4TcName           = "networking-icmpv4-connectivity-multus"
-	TnfNodePortTcName             = "networking-service-type"
-	TnfNetworkPolicyDenyAllTcName = "networking-network-policy-deny-all"
-	NetworkingTestSkipLabel       = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
-	NetworkingTestMultusSkipLabel = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
+	TestNadNameA                   = "networking-nada"
+	TestIPamIPNetworkA             = "10.255.255.0/25"
+	TestDeploymentAName            = "networkingputa"
+	TestNadNameB                   = "networking-nadb"
+	TestIPamIPNetworkB             = "10.255.128.0/25"
+	TestDeploymentBName            = "networkingputb"
+	TnfDefaultNetworkTcName        = "networking-icmpv4-connectivity"
+	TnfMultusIpv4TcName            = "networking-icmpv4-connectivity-multus"
+	TnfNodePortTcName              = "networking-service-type"
+	TnfNetworkPolicyDenyAllTcName  = "networking-network-policy-deny-all"
+	TnfOcpReservedPortsUsageTcName = "networking-ocp-reserved-ports-usage"
+	NetworkingTestSkipLabel        = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
+	NetworkingTestMultusSkipLabel  = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
 )
 
 type IPOutputInterface struct {
