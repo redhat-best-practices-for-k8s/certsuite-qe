@@ -23,7 +23,7 @@ var (
 		"app":                  "test",
 	}
 
-	NotRedHatRelease = "quay.io/baselibrary/ubuntu:latest"
+	NotRedHatRelease = "quay.io/jitesoft/nginx:1.23.3"
 )
 
 const (
