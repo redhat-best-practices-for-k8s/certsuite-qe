@@ -140,11 +140,11 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/openshift/api v0.0.0-20230120195050-6ba31fa438f2 => github.com/openshift/api v0.0.0-20230223193310-d964c7a58d75
+# github.com/openshift/api v0.0.0-20230120195050-6ba31fa438f2
 ## explicit; go 1.19
 github.com/openshift/api/config/v1
 github.com/openshift/api/config/v1alpha1
-# github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47 => github.com/openshift/client-go v0.0.0-20230120202327-72f107311084
+# github.com/openshift/client-go v0.0.0-20230120202327-72f107311084
 ## explicit; go 1.19
 github.com/openshift/client-go/config/applyconfigurations/config/v1
 github.com/openshift/client-go/config/applyconfigurations/internal
@@ -478,7 +478,7 @@ k8s.io/kube-openapi/pkg/schemamutation
 k8s.io/kube-openapi/pkg/spec3
 k8s.io/kube-openapi/pkg/util/proto
 k8s.io/kube-openapi/pkg/validation/spec
-# k8s.io/utils v0.0.0-20221128185143-99ec85e7a448
+# k8s.io/utils v0.0.0-20230313181309-38a27ef9d749
 ## explicit; go 1.18
 k8s.io/utils/clock
 k8s.io/utils/clock/testing
@@ -507,5 +507,3 @@ sigs.k8s.io/structured-merge-diff/v4/value
 # sigs.k8s.io/yaml v1.3.0
 ## explicit; go 1.12
 sigs.k8s.io/yaml
-# github.com/openshift/api => github.com/openshift/api v0.0.0-20230223193310-d964c7a58d75
-# github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20230120202327-72f107311084

@@ -40,7 +40,6 @@ linters:
     - bidichk
     - bodyclose
     - contextcheck
-    - deadcode
     - depguard
     - durationcheck
     - errcheck
@@ -63,7 +62,6 @@ linters:
     - goprintffuncname
     - gosimple
     - govet
-    - ifshort
     - importas
     - ineffassign
     - ireturn
@@ -79,7 +77,6 @@ linters:
     - revive
     - rowserrcheck
     - staticcheck
-    - structcheck
     - stylecheck
     - tenv
     - thelper
@@ -88,7 +85,6 @@ linters:
     - unconvert
     - unparam
     - unused
-    - varcheck
     - varnamelen
     - wastedassign
     - wsl
