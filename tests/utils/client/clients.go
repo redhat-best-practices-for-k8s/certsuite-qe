@@ -8,7 +8,7 @@ import (
 
 	"github.com/golang/glog"
 	netattdefv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
-	clientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
+	ocpclientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
 	clientmcv1 "github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/typed/machineconfiguration.openshift.io/v1"
 	olm "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme"
 	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
@@ -29,7 +29,7 @@ import (
 // ClientSet provides the struct to talk with relevant API.
 type ClientSet struct {
 	corev1client.CoreV1Interface
-	clientconfigv1.ConfigV1Interface
+	OcpClientInterface ocpclientconfigv1.ConfigV1Interface
 	networkv1client.NetworkingV1Client
 	rbacv1client.RbacV1Interface
 	appsv1client.AppsV1Interface
@@ -69,7 +69,7 @@ func New(kubeconfig string) *ClientSet {
 
 	clientSet := &ClientSet{}
 	clientSet.CoreV1Interface = corev1client.NewForConfigOrDie(config)
-	clientSet.ConfigV1Interface = clientconfigv1.NewForConfigOrDie(config)
+	clientSet.OcpClientInterface = ocpclientconfigv1.NewForConfigOrDie(config)
 	clientSet.AppsV1Interface = appsv1client.NewForConfigOrDie(config)
 	clientSet.RbacV1Interface = rbacv1client.NewForConfigOrDie(config)
 	clientSet.DiscoveryInterface = discovery.NewDiscoveryClientForConfigOrDie(config)
