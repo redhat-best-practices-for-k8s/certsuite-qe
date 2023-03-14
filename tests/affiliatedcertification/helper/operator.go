@@ -177,7 +177,7 @@ func DeleteCatalogSource(name, namespace, displayName string) error {
 }
 
 func setCatalogSource(disable bool, name string) error {
-	_, err := globalhelper.APIClient.OperatorHubs().Patch(context.TODO(),
+	_, err := globalhelper.APIClient.OcpClientInterface.OperatorHubs().Patch(context.TODO(),
 		"cluster",
 		types.MergePatchType,
 		[]byte("{\"spec\":{\"sources\":[{\"disabled\": "+strconv.FormatBool(disable)+",\"name\": \""+name+"\"}]}}"),
