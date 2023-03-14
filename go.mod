@@ -78,3 +78,7 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace github.com/openshift/machine-config-operator => github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
+
+replace github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20230120202327-72f107311084

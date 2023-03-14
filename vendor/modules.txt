@@ -144,13 +144,13 @@ github.com/onsi/gomega/types
 ## explicit; go 1.19
 github.com/openshift/api/config/v1
 github.com/openshift/api/config/v1alpha1
-# github.com/openshift/client-go v0.0.0-20230120202327-72f107311084
+# github.com/openshift/client-go v0.0.0-20230120202327-72f107311084 => github.com/openshift/client-go v0.0.0-20230120202327-72f107311084
 ## explicit; go 1.19
 github.com/openshift/client-go/config/applyconfigurations/config/v1
 github.com/openshift/client-go/config/applyconfigurations/internal
 github.com/openshift/client-go/config/clientset/versioned/scheme
 github.com/openshift/client-go/config/clientset/versioned/typed/config/v1
-# github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
+# github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9 => github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
 ## explicit; go 1.13
 github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1
 github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/scheme
@@ -507,3 +507,5 @@ sigs.k8s.io/structured-merge-diff/v4/value
 # sigs.k8s.io/yaml v1.3.0
 ## explicit; go 1.12
 sigs.k8s.io/yaml
+# github.com/openshift/machine-config-operator => github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
+# github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20230120202327-72f107311084
