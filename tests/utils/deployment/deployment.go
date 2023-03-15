@@ -88,7 +88,7 @@ func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) *appsv
 	bString, _ := json.Marshal(nadAnnotations)
 
 	deployment.Spec.Template.Annotations = map[string]string{
-		"k8s.appsv1.cni.cncf.io/networks": string(bString),
+		"k8s.v1.cni.cncf.io/networks": string(bString),
 	}
 
 	return deployment
