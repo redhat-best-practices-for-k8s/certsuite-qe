@@ -91,7 +91,7 @@ func RedefineWithPrivilegeAndHostNetwork(daemonSet *appsv1.DaemonSet) {
 
 func RedefineWithMultus(daemonSet *appsv1.DaemonSet, nadName string) {
 	daemonSet.Spec.Template.Annotations = map[string]string{
-		"k8s.appsv1.cni.cncf.io/networks": fmt.Sprintf(`[ { "name": "%s" } ]`, nadName),
+		"k8s.v1.cni.cncf.io/networks": fmt.Sprintf(`[ { "name": "%s" } ]`, nadName),
 	}
 }
 
