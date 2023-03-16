@@ -19,7 +19,7 @@ type (
 )
 
 const (
-	Timeout         = 20 * time.Minute
+	Timeout         = 5 * time.Minute
 	TimeoutLabelCsv = 2 * time.Minute
 	PollingInterval = 5 * time.Second
 )
@@ -42,18 +42,18 @@ var (
 	ContainerNameOnlyCockroachDB    = "cockroachdb/cockroach;;;"
 	ContainerRepoOnlyRedHatRegistry = ";registry.connect.redhat.com;;"
 
-	TestCaseOperatorAffiliatedCertName   = "affiliated-certification-operator-is-certified"
-	OperatorGroupName                    = "affiliatedcert-test-operator-group"
-	CertifiedOperatorGroup               = "certified-operators"
-	CertifiedOperatorDisplayName         = "Certified Operators"
-	CommunityOperatorGroup               = "community-operators"
-	OperatorSourceNamespace              = "openshift-marketplace"
-	OperatorLabel                        = map[string]string{"test-network-function.com/operator": "target"}
-	UncertifiedOperatorPrefixFalcon      = "falcon-operator"
-	CertifiedOperatorPrefixInfinibox     = "infinibox-operator"
-	CertifiedOperatorFullInfinibox       = "infinibox-operator.v2.1.2"
-	CertifiedOperatorPrefixArtifactoryHa = "artifactory-ha-operator"
-	CertifiedOperatorFullArtifactoryHa   = "artifactory-ha-operator.v1.1.20"
-	UncertifiedOperatorPrefixSriov       = "sriov-fec"
-	UncertifiedOperatorFullSriov         = "sriov-fec.v1.1.0"
+	TestCaseOperatorAffiliatedCertName = "affiliated-certification-operator-is-certified"
+	OperatorGroupName                  = "affiliatedcert-test-operator-group"
+	CertifiedOperatorGroup             = "certified-operators"
+	CertifiedOperatorDisplayName       = "Certified Operators"
+	CommunityOperatorGroup             = "community-operators"
+	OperatorSourceNamespace            = "openshift-marketplace"
+	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
+	UncertifiedOperatorPrefixFalcon    = "falcon-operator"
+	CertifiedOperatorPrefixInfinibox   = "infinibox-operator"
+	CertifiedOperatorFullInfinibox     = "infinibox-operator.v2.4.0"
+	CertifiedOperatorPrefixInstana     = "instana-agent-operator"
+	CertifiedOperatorFullInstana       = "instana-agent-operator.v2.0.4"
+	UncertifiedOperatorPrefixSriov     = "sriov-fec"
+	UncertifiedOperatorFullSriov       = "sriov-fec.v1.2.1"
 )
