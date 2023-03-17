@@ -77,31 +77,31 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          tsparams.OperatorLabel,
 		})
 
-		By("Deploy openshiftartifactoryha-operator for testing")
-		// openshiftartifactoryha-operator: in certified-operators group and version is certified
+		By("Deploy instana-agent-operator for testing")
+		// instana-agent-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
-			"openshiftartifactoryha-operator",
-			"alpha",
+			"instana-agent-operator",
+			"stable",
 			tsparams.TestCertificationNameSpace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorFullArtifactoryHa,
+			tsparams.CertifiedOperatorFullInstana,
 			v1alpha1.ApprovalManual,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			tsparams.CertifiedOperatorPrefixArtifactoryHa)
+			tsparams.CertifiedOperatorPrefixInstana)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullArtifactoryHa,
+		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixArtifactoryHa,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			tsparams.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInstana+
 			" is not ready")
 
-		// add openshiftartifactoryha operator info to array for cleanup in AfterEach
+		// add instana-agent-operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixArtifactoryHa,
+			OperatorPrefix: tsparams.CertifiedOperatorPrefixInstana,
 			Namespace:      tsparams.TestCertificationNameSpace,
 			Label:          tsparams.OperatorLabel,
 		})
@@ -186,11 +186,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixArtifactoryHa,
+				tsparams.CertifiedOperatorPrefixInstana,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa)
+			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInstana)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -212,11 +212,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operators to be certified")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixArtifactoryHa,
+				tsparams.CertifiedOperatorPrefixInstana,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa)
+			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInstana)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
