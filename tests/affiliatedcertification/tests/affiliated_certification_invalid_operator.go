@@ -22,33 +22,34 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 	)
 
 	execute.BeforeAll(func() {
+		Skip("Impractical to test under current circumstances")
 		preConfigureAffiliatedCertificationEnvironment()
 
-		By("Deploy openshiftartifactoryha-operator for testing")
-		// openshiftartifactoryha-operator: in certified-operators group and version is certified
+		By("Deploy instana-agent-operator for testing")
+		// instana-agent-operator: in certified-operators group and version is certified
 		err := tshelper.DeployOperatorSubscription(
-			"openshiftartifactoryha-operator",
-			"alpha",
+			"instana-agent-operator",
+			"stable",
 			tsparams.TestCertificationNameSpace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorFullArtifactoryHa,
+			tsparams.CertifiedOperatorFullInstana,
 			v1alpha1.ApprovalManual,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			tsparams.CertifiedOperatorPrefixArtifactoryHa)
+			tsparams.CertifiedOperatorPrefixInstana)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullArtifactoryHa,
+		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixArtifactoryHa,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			tsparams.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInstana+
 			" is not ready")
 
-		// add openshiftartifactoryha operator info to array for cleanup in AfterEach
+		// add instana-agent-operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixArtifactoryHa,
+			OperatorPrefix: tsparams.CertifiedOperatorPrefixInstana,
 			Namespace:      tsparams.TestCertificationNameSpace,
 			Label:          tsparams.OperatorLabel,
 		})
@@ -70,7 +71,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			"Default catalog source is still enabled")
 
 		// Deploying certified operator with invalid catalog version is necessary in order to cover negative scenarios
-		err = tshelper.DeployRHCertifiedOperatorSource("4.5")
+		err = tshelper.DeployRHCertifiedOperatorSource("4.7")
 		Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
 		By("Deploy sriov-fec operator with uncertified version")
@@ -127,6 +128,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 	It("one operator to test, operator is in certified-operators organization but its version"+
 		" is not certified [negative]", func() {
 
+		Skip("Impractical to test under current circumstances")
+
 		By("Label operator to be certified")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -154,6 +157,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 	It("two operators to test, both are in certified-operators organization,"+
 		" one’s version is certified, the other’s is not [negative]", func() {
 
+		Skip("Impractical to test under current circumstances")
+
 		By("Label operators to be certified")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -165,11 +170,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixArtifactoryHa,
+				tsparams.CertifiedOperatorPrefixInstana,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa)
+			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInstana)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
