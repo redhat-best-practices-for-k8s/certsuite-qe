@@ -11,7 +11,11 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
+
+	v1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -113,4 +117,38 @@ func AppendIstioContainerToPod(pod *corev1.Pod, image string) {
 			Image:   image,
 			Command: []string{"/bin/bash", "-c", "sleep INF"},
 		})
+}
+
+// Creates deployment with one pod with one non-UBI based container.
+func DefineDeploymentWithNonUBIContainer() *v1.Deployment {
+	dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
+
+	// Workaround as this non-ubi test image needs /bin/sh (busybox) instead of /bin/bash.
+	deployment.RedefineWithContainerSpecs(dep, []corev1.Container{
+		{
+			Name:    "test",
+			Image:   tsparams.NotRedHatRelease,
+			Command: []string{"/bin/sh", "-c", "sleep INF"},
+		},
+	})
+
+	return dep
+}
+
+// Creates statefulset with one pod with one non-UBI based container.
+func DefineStatefulSetWithNonUBIContainer() *v1.StatefulSet {
+	sts := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName, tsparams.PlatformAlterationNamespace,
+		tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
+
+	// Workaround as this non-ubi test image needs /bin/sh (busybox) instead of /bin/bash.
+	statefulset.RedefineWithContainerSpecs(sts, []corev1.Container{
+		{
+			Name:    "test",
+			Image:   tsparams.NotRedHatRelease,
+			Command: []string{"/bin/sh", "-c", "sleep INF"},
+		},
+	})
+
+	return sts
 }
