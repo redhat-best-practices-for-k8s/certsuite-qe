@@ -5,11 +5,11 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
 var _ = Describe("platform-alteration-is-redhat-release", func() {
@@ -73,12 +73,12 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 	It("One deployment, one pod, 2 containers, one running Red Hat release, other is not [negative]", func() {
 
 		By("Define deployment")
-		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
+		dep := tshelper.DefineDeploymentWithNonUBIContainer()
 
-		globalhelper.AppendContainersToDeployment(deployment, 1, globalhelper.Configuration.General.TestImage)
+		// Append UBI-based container.
+		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.Configuration.General.TestImage)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-is-redhat-release test")
@@ -98,8 +98,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 	It("One statefulSet, one pod that is not running Red Hat release [negative]", func() {
 
 		By("Define statefulSet")
-		statefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName, tsparams.PlatformAlterationNamespace,
-			tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
+		statefulSet := tshelper.DefineStatefulSetWithNonUBIContainer()
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
