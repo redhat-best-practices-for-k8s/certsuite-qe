@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -18,21 +17,10 @@ import (
 
 var _ = Describe("Networking custom namespace,", func() {
 
-	var multusInterfaces []string
-
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
 		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
-		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Collect list of available interfaces from the cluster")
-		multusInterfaces, err = tshelper.GetClusterMultusInterfaces()
-		Expect(err).ToNot(HaveOccurred())
-
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -46,17 +34,13 @@ var _ = Describe("Networking custom namespace,", func() {
 		err = globalhelper.RemoveContentsFromReportDir()
 		Expect(err).ToNot(HaveOccurred())
 
-		if len(multusInterfaces) < 1 {
-			Skip("There is no enough Multus interfaces available")
-		}
-
 	})
 
 	// 48328
 	It("custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -91,7 +75,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define and create Network-attachment-definition")
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first deployment and create it on cluster")
@@ -122,11 +106,11 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces", func() {
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, multusInterfaces[0], tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first deployment and create it on cluster")
@@ -155,7 +139,7 @@ var _ = Describe("Networking custom namespace,", func() {
 	// 48334
 	It("custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]", func() {
 		By("Define and create Network-attachment-definition")
-		err := tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameA, multusInterfaces[0], "")
+		err := tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameA, "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -179,16 +163,12 @@ var _ = Describe("Networking custom namespace,", func() {
 	// 48338
 	It("custom deployments 3 pods and 1 pod, standalone IP, connectivity via Multus secondary interface[skip]", func() {
 
-		if len(multusInterfaces) < 2 {
-			Skip("There is not enough secondary network interfaces to run the test case")
-		}
-
 		By("Define and create Network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, multusInterfaces[1], "")
+		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment-a and create it on cluster")
@@ -218,16 +198,12 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment and daemonset 3 pods, daemonset missing ip, 2 NADs, connectivity via Multus "+
 		"secondary interface", func() {
 
-		if len(multusInterfaces) < 2 {
-			Skip("There is not enough secondary network interfaces to run the test case")
-		}
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, multusInterfaces[1], "")
+		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -258,7 +234,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
@@ -283,7 +259,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
@@ -313,7 +289,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
@@ -343,11 +319,11 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, multusInterfaces[0], tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -374,7 +350,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -403,16 +379,12 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment and daemonset 3 pods, 2 NADs, No connectivity on daemonset via Multus secondary "+
 		"interface[negative]", func() {
 
-		if len(multusInterfaces) < 2 {
-			Skip("There is not enough secondary network interfaces to run the test case")
-		}
-
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, multusInterfaces[1], tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -445,17 +417,13 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("custom deployment and daemonset 3 pods, 2 NADs, multiple Multus interfaces on deployment no "+
 		"connectivity via secondary interface[negative]", func() {
 
-		if len(multusInterfaces) < 2 {
-			Skip("There is no enough Multus interfaces available")
-		}
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, multusInterfaces[0], tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, multusInterfaces[1], tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")

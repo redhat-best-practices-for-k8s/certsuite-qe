@@ -149,8 +149,8 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	return nil
 }
 
-func DefineAndCreateNadOnCluster(name string, intName string, network string) error {
-	nadOneInterface := nad.DefineNad(name, tsparams.TestNetworkingNameSpace, intName)
+func DefineAndCreateNadOnCluster(name string, network string) error {
+	nadOneInterface := nad.DefineNad(name, tsparams.TestNetworkingNameSpace)
 
 	if network != "" {
 		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)

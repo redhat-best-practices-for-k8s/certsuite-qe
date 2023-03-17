@@ -9,7 +9,7 @@ import (
 )
 
 // DefineNad returns basic network-attachment-definition manifest.
-func DefineNad(name string, namespace string, interfaceName string) *netattdefv1.NetworkAttachmentDefinition {
+func DefineNad(name string, namespace string) *netattdefv1.NetworkAttachmentDefinition {
 	return &netattdefv1.NetworkAttachmentDefinition{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -17,8 +17,8 @@ func DefineNad(name string, namespace string, interfaceName string) *netattdefv1
 		},
 		Spec: netattdefv1.NetworkAttachmentDefinitionSpec{
 			Config: fmt.Sprintf(
-				`{"cniVersion": "0.4.0", "name": "%s", "type": "macvlan", "master": "%s", "mode": "bridge"}`,
-				name, interfaceName),
+				`{"cniVersion": "0.4.0", "name": "%s", "type": "macvlan", "mode": "bridge"}`,
+				name),
 		},
 	}
 }
