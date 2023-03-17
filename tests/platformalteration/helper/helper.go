@@ -15,7 +15,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -120,7 +120,7 @@ func AppendIstioContainerToPod(pod *corev1.Pod, image string) {
 }
 
 // Creates deployment with one pod with one non-UBI based container.
-func DefineDeploymentWithNonUBIContainer() *v1.Deployment {
+func DefineDeploymentWithNonUBIContainer() *appsv1.Deployment {
 	dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
 		tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
 
@@ -137,7 +137,7 @@ func DefineDeploymentWithNonUBIContainer() *v1.Deployment {
 }
 
 // Creates statefulset with one pod with one non-UBI based container.
-func DefineStatefulSetWithNonUBIContainer() *v1.StatefulSet {
+func DefineStatefulSetWithNonUBIContainer() *appsv1.StatefulSet {
 	sts := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName, tsparams.PlatformAlterationNamespace,
 		tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
 
