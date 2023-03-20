@@ -184,7 +184,7 @@ github.com/spf13/pflag
 # github.com/stretchr/testify v1.8.2
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
-# github.com/test-network-function/test-network-function-claim v1.0.14
+# github.com/test-network-function/test-network-function-claim v1.0.15
 ## explicit; go 1.20
 github.com/test-network-function/test-network-function-claim/pkg/claim
 # go.uber.org/atomic v1.10.0
