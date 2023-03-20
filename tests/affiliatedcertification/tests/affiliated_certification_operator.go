@@ -9,8 +9,8 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+	operatorutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
 var _ = Describe("Affiliated-certification operator certification,", func() {
@@ -24,7 +24,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Deploy falcon-operator for testing")
 		// falcon-operator: not in certified-operators group in catalog, for negative test cases
-		err := tshelper.DeployOperatorSubscription(
+		err := operatorutils.DeployOperatorSubscription(
 			"falcon-operator",
 			"alpha",
 			tsparams.TestCertificationNameSpace,
@@ -36,7 +36,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
 			tsparams.UncertifiedOperatorPrefixFalcon)
 
-		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixFalcon,
+		err = operatorutils.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixFalcon,
 			tsparams.TestCertificationNameSpace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixFalcon+
 			" is not ready")
@@ -50,7 +50,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Deploy infinibox-operator for testing")
 		// infinibox-operator: in certified-operators group and version is certified
-		err = tshelper.DeployOperatorSubscription(
+		err = operatorutils.DeployOperatorSubscription(
 			"infinibox-operator-certified",
 			"stable",
 			tsparams.TestCertificationNameSpace,
@@ -65,7 +65,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInfinibox,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInfinibox,
+		err = operatorutils.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInfinibox,
 			tsparams.TestCertificationNameSpace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInfinibox+
 			" is not ready")
@@ -79,7 +79,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		By("Deploy openshiftartifactoryha-operator for testing")
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
-		err = tshelper.DeployOperatorSubscription(
+		err = operatorutils.DeployOperatorSubscription(
 			"openshiftartifactoryha-operator",
 			"alpha",
 			tsparams.TestCertificationNameSpace,
@@ -94,7 +94,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullArtifactoryHa,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixArtifactoryHa,
+		err = operatorutils.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixArtifactoryHa,
 			tsparams.TestCertificationNameSpace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa+
 			" is not ready")
@@ -110,7 +110,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	AfterEach(func() {
 		By("Remove labels from operators")
 		for _, info := range installedLabeledOperators {
-			err := tshelper.DeleteLabelFromInstalledCSV(
+			err := operatorutils.DeleteLabelFromInstalledCSV(
 				info.OperatorPrefix,
 				info.Namespace,
 				info.Label)
@@ -123,7 +123,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		func() {
 			By("Label operator to be certified")
 			Eventually(func() error {
-				return tshelper.AddLabelToInstalledCSV(
+				return operatorutils.AddLabelToInstalledCSV(
 					tsparams.UncertifiedOperatorPrefixFalcon,
 					tsparams.TestCertificationNameSpace,
 					tsparams.OperatorLabel)
@@ -150,7 +150,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operators to be certified")
 
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixInfinibox,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
@@ -158,7 +158,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInfinibox)
 
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.UncertifiedOperatorPrefixFalcon,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
@@ -185,7 +185,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		By("Label operator to be certified")
 
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixArtifactoryHa,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
@@ -211,7 +211,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 		" versions are certified", func() {
 		By("Label operators to be certified")
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixArtifactoryHa,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
@@ -219,7 +219,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			"Error labeling operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa)
 
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixInfinibox,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)

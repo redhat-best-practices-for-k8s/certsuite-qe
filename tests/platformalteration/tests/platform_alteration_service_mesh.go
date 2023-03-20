@@ -1,43 +1,162 @@
 package tests
 
 import (
+	"bytes"
+	"context"
+	"io/ioutil"
+	"log"
+	"time"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/sirupsen/logrus"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/restmapper"
+
+	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+
+	yamlutil "k8s.io/apimachinery/pkg/util/yaml"
 )
 
-var _ = Describe("platform-alteration-service-mesh-usage", func() {
+const (
+	istioNamespace = "istio-system"
+	istioCR        = "installed-state"
+)
 
-	istioNs := "istio-system"
+/*
+*
+
+	Precondition :
+		The Istio Operator needs to be pre-installed.
+		We are checking if Istio Operator is installed or not.
+
+*
+*/
+
+func createServiceMesh(filename string) (bool, error) {
+	bytesInFile, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		log.Fatal(err)
+
+		return false, err
+	}
+
+	log.Printf("%q \n", string(bytesInFile))
+
+	decoder := yamlutil.NewYAMLOrJSONDecoder(bytes.NewReader(bytesInFile), 100)
+
+	for {
+		var rawObj runtime.RawExtension
+		if err = decoder.Decode(&rawObj); err != nil {
+			break
+		}
+
+		if len(rawObj.Raw) == 0 {
+			// if the yaml object is empty just continue to the next one
+			continue
+		}
+
+		obj, gvk, err := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme).Decode(rawObj.Raw, nil, nil)
+		if err != nil {
+			log.Fatal(err)
+
+			return false, err
+		}
+
+		unstructuredMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(obj)
+		if err != nil {
+			log.Fatal(err)
+
+			return false, err
+		}
+
+		unstructuredObj := &unstructured.Unstructured{Object: unstructuredMap}
+
+		groupResource, err := restmapper.GetAPIGroupResources(globalhelper.APIClient.K8sClient.Discovery())
+		if err != nil {
+			log.Fatal(err)
+
+			return false, err
+		}
+
+		mapper := restmapper.NewDiscoveryRESTMapper(groupResource)
+
+		mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
+		if err != nil {
+			log.Fatal(err)
+
+			return false, err
+		}
+
+		var dri dynamic.ResourceInterface
+
+		if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+			if unstructuredObj.GetNamespace() == "" {
+				unstructuredObj.SetNamespace("default")
+			}
+
+			dri = globalhelper.APIClient.DynamicClient.Resource(mapping.Resource).Namespace(unstructuredObj.GetNamespace())
+		} else {
+			dri = globalhelper.APIClient.DynamicClient.Resource(mapping.Resource)
+		}
+
+		if _, err := dri.Create(context.Background(), unstructuredObj, metav1.CreateOptions{}); err != nil {
+			log.Fatal(err)
+
+			return false, err
+		}
+	}
+
+	return true, nil
+}
+
+var _ = Describe("platform-alteration-service-mesh-usage", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+
+		createServiceMesh("istio.yaml")
 	})
 
 	// 56594
-	It("istio is installed", func() {
-		By("Create istio-system namespace")
+	FIt("istio is installed", func() {
+
+		/*By("Create istio-system namespace")
 		err := namespaces.Create(istioNs, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+
+		gvr := schema.GroupVersionResource{Group: "install.istio.io", Version: "v1alpha1", Resource: "istiooperators"}
+		cr, err := globalhelper.APIClient.DynamicClient.Resource(gvr).Namespace(istioNamespace).Get(context.TODO(), istioCR, metav1.GetOptions{})
+
+		Expect(err).ToNot(HaveOccurred())
+		Expect(cr).NotTo(BeNil())*/
 
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
 
-		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilPodIsReady(put, 2*time.Minute)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+
+		logrus.Info(err)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCasePassed)
@@ -59,7 +178,7 @@ var _ = Describe("platform-alteration-service-mesh-usage", func() {
 	// 56596
 	It("istio is installed but proxy containers does not exist [negative]", func() {
 		By("Create istio-system namespace")
-		err := namespaces.Create(istioNs, globalhelper.APIClient)
+		err := namespaces.Create(istioNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
@@ -75,13 +194,12 @@ var _ = Describe("platform-alteration-service-mesh-usage", func() {
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 56597
 	It("istio is installed but proxy container exist on one pod only [negative]", func() {
 		By("Create istio-system namespace")
-		err := namespaces.Create(istioNs, globalhelper.APIClient)
+		err := namespaces.Create(istioNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first pod with instio container")

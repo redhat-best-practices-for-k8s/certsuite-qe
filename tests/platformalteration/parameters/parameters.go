@@ -10,6 +10,12 @@ const (
 	RetryInterval = 5
 )
 
+const (
+	Timeout         = 20 * time.Minute
+	TimeoutLabelCsv = 2 * time.Minute
+	PollingInterval = 5 * time.Second
+)
+
 var (
 	testPodLabelPrefixName = "test-network-function.com/platform-alteration"
 	testPodLabelValue      = "testing"
@@ -24,6 +30,16 @@ var (
 	}
 
 	NotRedHatRelease = "quay.io/jitesoft/nginx:1.23.3"
+
+	IstioNameSpace                 = "banashri-istio-system"
+	UncertifiedOperatorPrefixIstio = "istio-operator"
+	CommunityOperatorGroup         = "community-operators"
+	OperatorSourceNamespace        = "openshift-marketplace"
+	OperatorLabel                  = map[string]string{"test-network-function.com/operator": "target"}
+
+	OperatorGroupName            = "istio-operator-group"
+	CertifiedOperatorGroup       = "certified-operators"
+	CertifiedOperatorDisplayName = "Certified Operators"
 )
 
 const (
@@ -52,4 +68,17 @@ const (
 	Reboot                = `chroot /host systemctl reboot`
 	FindHugePagesFiles    = "find /host/sys/devices/system/node/ -name nr_hugepages"
 	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
+)
+
+type (
+	OperatorLabelInfo struct {
+		OperatorPrefix string
+		Namespace      string
+		Label          map[string]string
+	}
+
+	CsvInfo struct {
+		OperatorPrefix string
+		Namespace      string
+	}
 )

@@ -18,8 +18,8 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+	operatorutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
 func TestAffiliatedCertification(t *testing.T) {
@@ -40,7 +40,7 @@ var _ = BeforeSuite(func() {
 	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
-	isCloudCasaAlreadyLabeled, err = tshelper.DoesOperatorHaveLabels(tsparams.UnrelatedOperatorPrefixCloudcasa,
+	isCloudCasaAlreadyLabeled, err = operatorutils.DoesOperatorHaveLabels(tsparams.UnrelatedOperatorPrefixCloudcasa,
 		tsparams.UnrelatedNamespace,
 		tsparams.OperatorLabel)
 	if err != nil {
@@ -49,7 +49,7 @@ var _ = BeforeSuite(func() {
 
 	By("Un-label operator used in other suites if labeled")
 	if isCloudCasaAlreadyLabeled {
-		err = tshelper.DeleteLabelFromInstalledCSV(
+		err = operatorutils.DeleteLabelFromInstalledCSV(
 			tsparams.UnrelatedOperatorPrefixCloudcasa,
 			tsparams.UnrelatedNamespace,
 			tsparams.OperatorLabel)
@@ -74,7 +74,7 @@ var _ = AfterSuite(func() {
 
 	if isCloudCasaAlreadyLabeled {
 		By("Re-label operator used in other suites")
-		err = tshelper.AddLabelToInstalledCSV(
+		err = operatorutils.AddLabelToInstalledCSV(
 			tsparams.UnrelatedOperatorPrefixCloudcasa,
 			tsparams.UnrelatedNamespace,
 			tsparams.OperatorLabel)

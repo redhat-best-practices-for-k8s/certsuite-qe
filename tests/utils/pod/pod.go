@@ -19,6 +19,11 @@ func DefinePod(podName string, namespace string, image string, label map[string]
 			Labels:    label},
 		Spec: corev1.PodSpec{
 			TerminationGracePeriodSeconds: pointer.Int64(0),
+			SecurityContext: &corev1.PodSecurityContext{
+				RunAsUser:    pointer.Int64(1000),
+				RunAsGroup:   pointer.Int64(1000),
+				RunAsNonRoot: pointer.Bool(true),
+			},
 			Containers: []corev1.Container{
 				{
 					Name:    "test",

@@ -10,8 +10,8 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
+	operatorutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
@@ -26,7 +26,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 
 		By("Deploy openshiftartifactoryha-operator for testing")
 		// openshiftartifactoryha-operator: in certified-operators group and version is certified
-		err := tshelper.DeployOperatorSubscription(
+		err := operatorutils.DeployOperatorSubscription(
 			"openshiftartifactoryha-operator",
 			"alpha",
 			tsparams.TestCertificationNameSpace,
@@ -41,7 +41,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullArtifactoryHa,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixArtifactoryHa,
+		err = operatorutils.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixArtifactoryHa,
 			tsparams.TestCertificationNameSpace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixArtifactoryHa+
 			" is not ready")
@@ -55,11 +55,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 
 		// sriov-fec.v1.1.0 operator : in certified-operators group, version is not certified
 		By("Deploy alternate operator catalog source")
-		err = tshelper.DisableCatalogSource(tsparams.CertifiedOperatorGroup)
+		err = operatorutils.DisableCatalogSource(tsparams.CertifiedOperatorGroup)
 		Expect(err).ToNot(HaveOccurred(), "Error disabling "+
 			tsparams.CertifiedOperatorGroup+" catalog source")
 		Eventually(func() bool {
-			stillEnabled, err := tshelper.IsCatalogSourceEnabled(
+			stillEnabled, err := operatorutils.IsCatalogSourceEnabled(
 				tsparams.CertifiedOperatorGroup,
 				tsparams.OperatorSourceNamespace,
 				tsparams.CertifiedOperatorDisplayName)
@@ -70,11 +70,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			"Default catalog source is still enabled")
 
 		// Deploying certified operator with invalid catalog version is necessary in order to cover negative scenarios
-		err = tshelper.DeployRHCertifiedOperatorSource("4.5")
+		err = operatorutils.DeployRHCertifiedOperatorSource("4.5")
 		Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
 		By("Deploy sriov-fec operator with uncertified version")
-		err = tshelper.DeployOperatorSubscription(
+		err = operatorutils.DeployOperatorSubscription(
 			tsparams.UncertifiedOperatorPrefixSriov,
 			"stable",
 			tsparams.TestCertificationNameSpace,
@@ -89,18 +89,18 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 		approveInstallPlanWhenReady(tsparams.UncertifiedOperatorFullSriov,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixSriov,
+		err = operatorutils.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixSriov,
 			tsparams.TestCertificationNameSpace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixSriov+
 			" is not ready")
 
 		By("Re-enable default catalog source")
-		err = tshelper.DeleteCatalogSource(tsparams.CertifiedOperatorGroup,
+		err = operatorutils.DeleteCatalogSource(tsparams.CertifiedOperatorGroup,
 			tsparams.TestCertificationNameSpace,
 			"redhat-certified")
 		Expect(err).ToNot(HaveOccurred(), "Error removing alternate catalog source")
 
-		err = tshelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)
+		err = operatorutils.EnableCatalogSource(tsparams.CertifiedOperatorGroup)
 		Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
 
 		// add sriov-fec operator info to array for cleanup in AfterEach
@@ -115,7 +115,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 	AfterEach(func() {
 		By("Remove labels from operators")
 		for _, info := range installedLabeledOperators {
-			err := tshelper.DeleteLabelFromInstalledCSV(
+			err := operatorutils.DeleteLabelFromInstalledCSV(
 				info.OperatorPrefix,
 				info.Namespace,
 				info.Label)
@@ -129,7 +129,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 
 		By("Label operator to be certified")
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.UncertifiedOperatorPrefixSriov,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
@@ -156,7 +156,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 
 		By("Label operators to be certified")
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.UncertifiedOperatorPrefixSriov,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
@@ -164,7 +164,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			"Error labeling operator "+tsparams.UncertifiedOperatorPrefixSriov)
 
 		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
+			return operatorutils.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixArtifactoryHa,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)

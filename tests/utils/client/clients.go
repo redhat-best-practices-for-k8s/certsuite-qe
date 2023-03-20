@@ -13,6 +13,8 @@ import (
 	olm "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme"
 	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	apiextv1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
+	"k8s.io/client-go/dynamic"
+	kubernetes "k8s.io/client-go/kubernetes"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
 	corev1client "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -42,6 +44,8 @@ type ClientSet struct {
 	nodev1.NodeV1Interface
 	policyv1.PolicyV1Interface
 	policyv1beta1.PolicyV1beta1Interface
+	DynamicClient dynamic.Interface
+	K8sClient     kubernetes.Interface
 }
 
 // New returns a *ClientBuilder with the given kubeconfig.
@@ -81,6 +85,8 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.PolicyV1Interface = policyv1.NewForConfigOrDie(config)
 	clientSet.PolicyV1beta1Interface = policyv1beta1.NewForConfigOrDie(config)
 	clientSet.Config = config
+	clientSet.DynamicClient = dynamic.NewForConfigOrDie(config)
+	clientSet.K8sClient = kubernetes.NewForConfigOrDie(config)
 
 	crScheme := runtime.NewScheme()
 

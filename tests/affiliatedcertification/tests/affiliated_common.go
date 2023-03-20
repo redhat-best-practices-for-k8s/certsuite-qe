@@ -12,8 +12,8 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+	operatorutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
@@ -26,7 +26,7 @@ func preConfigureAffiliatedCertificationEnvironment() {
 
 	By("Ensure default catalog source is enabled")
 
-	catalogEnabled, err := tshelper.IsCatalogSourceEnabled(
+	catalogEnabled, err := operatorutils.IsCatalogSourceEnabled(
 		tsparams.CertifiedOperatorGroup,
 		tsparams.OperatorSourceNamespace,
 		tsparams.CertifiedOperatorDisplayName)
@@ -34,10 +34,10 @@ func preConfigureAffiliatedCertificationEnvironment() {
 
 	if !catalogEnabled {
 		Expect(
-			tshelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)).ToNot(
+			operatorutils.EnableCatalogSource(tsparams.CertifiedOperatorGroup)).ToNot(
 			HaveOccurred())
 		Eventually(func() bool {
-			catalogEnabled, err = tshelper.IsCatalogSourceEnabled(
+			catalogEnabled, err = operatorutils.IsCatalogSourceEnabled(
 				tsparams.CertifiedOperatorGroup,
 				tsparams.OperatorSourceNamespace,
 				tsparams.CertifiedOperatorDisplayName)
@@ -51,9 +51,9 @@ func preConfigureAffiliatedCertificationEnvironment() {
 
 	By("Deploy OperatorGroup if not already deployed")
 
-	if tshelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
+	if operatorutils.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
 		tsparams.TestCertificationNameSpace) != nil {
-		err = tshelper.DeployOperatorGroup(tsparams.TestCertificationNameSpace,
+		err = operatorutils.DeployOperatorGroup(tsparams.TestCertificationNameSpace,
 			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
 				tsparams.TestCertificationNameSpace,
 				[]string{tsparams.TestCertificationNameSpace}),
@@ -71,30 +71,9 @@ func preConfigureAffiliatedCertificationEnvironment() {
 	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 }
 
-func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
-	var err error
-
-	var csv *v1alpha1.ClusterServiceVersion
-
-	Eventually(func() bool {
-		csv, err = tshelper.GetCsvByPrefix(csvPrefix, namespace)
-		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
-			return csv.Status.Phase != "InstallReady" &&
-				csv.Status.Phase != "Deleting" &&
-				csv.Status.Phase != "Replacing" &&
-				csv.Status.Phase != "Unknown"
-		}
-
-		return false
-	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
-		csvPrefix+" is not ready.")
-
-	return err
-}
-
 func approveInstallPlanWhenReady(csvName, namespace string) {
 	Eventually(func() bool {
-		installPlan, err := tshelper.GetInstallPlanByCSV(namespace, csvName)
+		installPlan, err := operatorutils.GetInstallPlanByCSV(namespace, csvName)
 		if err != nil {
 			return false
 		}
@@ -104,7 +83,7 @@ func approveInstallPlanWhenReady(csvName, namespace string) {
 		}
 
 		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
-			err = tshelper.ApproveInstallPlan(tsparams.TestCertificationNameSpace,
+			err = operatorutils.ApproveInstallPlan(tsparams.TestCertificationNameSpace,
 				installPlan)
 
 			return err == nil
