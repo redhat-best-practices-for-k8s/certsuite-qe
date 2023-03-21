@@ -1,11 +1,14 @@
 package tests
 
 import (
+	"os/exec"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 
@@ -15,6 +18,14 @@ import (
 var _ = Describe("platform-alteration-service-mesh-usage", func() {
 
 	istioNs := "istio-system"
+
+	execute.BeforeAll(func() {
+		By("Install istio operator")
+		cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 | sh - "+
+			"&& istio-1.17.1/bin/istioctl operator init")
+		err := cmd.Run()
+		Expect(err).ToNot(HaveOccurred(), "Error installing istio operator")
+	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
