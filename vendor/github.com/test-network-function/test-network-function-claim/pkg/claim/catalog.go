@@ -41,13 +41,22 @@ type TestCaseDescription struct {
 
 	// Whether or not automated tests exist for the test case. Not to be rendered.
 	Qe bool `json:"qe" yaml:"qe"`
+	// classification for each test case
+	CategoryClassification map[string]string `json:"categoryclassification" yaml:"categoryclassification"`
+	/* an example to how it CategoryClassification would be
+	   {
+	   	"ForTelco": "Mandatory",
+	   	"FarEdge" : "Optional",
+	   	"ForNonTelco": "Optional",
+	   	"ForVZ": "Mandatory"
+	      }*/
 }
 
 func formTestTags(tags ...string) string {
 	return strings.Join(tags, ",")
 }
 
-func BuildTestCaseDescription(testID, suiteName, description, remediation, testType, exception, reference string, qe bool, tags ...string) (TestCaseDescription, Identifier) {
+func BuildTestCaseDescription(testID, suiteName, description, remediation, testType, exception, reference string, qe bool, categoryclassification map[string]string, tags ...string) (TestCaseDescription, Identifier) {
 	aID := Identifier{
 		Tags:  formTestTags(tags...),
 		Id:    suiteName + "-" + testID,
@@ -62,5 +71,6 @@ func BuildTestCaseDescription(testID, suiteName, description, remediation, testT
 	aTCDescription.BestPracticeReference = reference
 	aTCDescription.Tags = strings.Join(tags, ",")
 	aTCDescription.Qe = qe
+	aTCDescription.CategoryClassification = categoryclassification
 	return aTCDescription, aID
 }
