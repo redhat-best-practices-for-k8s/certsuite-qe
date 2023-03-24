@@ -2,6 +2,7 @@ package container
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"strings"
@@ -29,6 +30,11 @@ func SelectEngine() (string, error) {
 }
 
 func validateDockerDaemonRunning() error {
+	// To make it run on MacOs or Windows
+	if _, isNonLinuxEnv := os.LookupEnv("NON_LINUX_ENV"); isNonLinuxEnv {
+		return nil
+	}
+
 	isDaemonRunning := exec.Command("systemctl", "is-active", "--quiet", "docker")
 
 	if isDaemonRunning.Run() != nil {
