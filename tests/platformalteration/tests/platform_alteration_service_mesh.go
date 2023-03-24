@@ -42,7 +42,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 
 	// 56594
 	It("istio is installed", func() {
-		By("Define a test pod with instio container")
+		By("Define a test pod with istio container")
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
@@ -61,7 +61,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 
 	// 56596
 	It("istio is installed but proxy containers does not exist [negative]", func() {
-		By("Define a test pod without instio container")
+		By("Define a test pod without istio container")
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
@@ -79,7 +79,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 
 	// 56597
 	It("istio is installed but proxy container exist on one pod only [negative]", func() {
-		By("Define first pod with instio container")
+		By("Define first pod with istio container")
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
@@ -138,7 +138,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).NotTo(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
