@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 
-GOPATH="/root/go"
-export PATH=$PATH:$GOPATH/bin
-GINKGO_OLD_VERSION="Ginkgo Version 1.16.5"
+REQUIRED_GINKGO_VERSION="2.9.2"
+INSTALLED_GINKGO_VERSION="$(ginkgo version | { read -r _ _ v _; echo "${v}"; })"
 
-if ! which ginkgo || ginkgo version -eq "$GINKGO_OLD_VERSION"; then {  
-	echo "Downloading ginkgo tool"
-	go install "$(awk '/ginkgo/ {printf "%s/ginkgo@%s", $1, $2}' go.mod)"
-} fi
+GOPATH="${GOPATH:-/root/go}"
+export PATH=$PATH:$GOPATH/bin
+
+function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+
+if [ "$(version "${INSTALLED_GINKGO_VERSION}")" -ge "$(version ${REQUIRED_GINKGO_VERSION})" ]; then
+    echo "Version is up to date"
+else
+        GINKGO_TMP_DIR=$(mktemp -d)
+        cd "$GINKGO_TMP_DIR" || exit
+        go mod init tmp
+        GOFLAGS=-mod=mod go install github.com/onsi/ginkgo/v2/ginkgo@v$REQUIRED_GINKGO_VERSION
+        rm -rf "$GINKGO_TMP_DIR"
+        echo "Downloading ginkgo tool"
+        cd - || exit
+fi
