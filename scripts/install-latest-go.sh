@@ -15,6 +15,6 @@ else
                     rm -rf /usr/local/go && tar -C /usr/local -xzf "${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
                     rm "${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
                     ;;
-        *)          echo "Install go with version ${REQUIRED_GO_VERSION}"
+        *)          echo "Please install go with version ${REQUIRED_GO_VERSION}"
     esac
 fi
