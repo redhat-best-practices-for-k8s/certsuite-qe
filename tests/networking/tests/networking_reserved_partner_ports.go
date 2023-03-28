@@ -48,13 +48,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -69,13 +69,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -91,13 +91,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -112,13 +112,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -133,13 +133,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -157,13 +157,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -182,13 +182,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -211,13 +211,13 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOcpReservedPortsUsageTcName,
+			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
