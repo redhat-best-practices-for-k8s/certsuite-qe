@@ -48,31 +48,31 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			Label:          tsparams.OperatorLabel,
 		})
 
-		By("Deploy infinibox-operator for testing")
-		// infinibox-operator: in certified-operators group and version is certified
+		By("Deploy prometurbo operator for testing")
+		// prometurbo operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
-			"infinibox-operator-certified",
+			"prometurbo-certified",
 			"stable",
 			tsparams.TestCertificationNameSpace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorFullInfinibox,
+			tsparams.CertifiedOperatorFullPrometurbo,
 			v1alpha1.ApprovalManual,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			tsparams.CertifiedOperatorPrefixInfinibox)
+			tsparams.CertifiedOperatorPrefixPrometurbo)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInfinibox,
+		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullPrometurbo,
 			tsparams.TestCertificationNameSpace)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInfinibox,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixPrometurbo,
 			tsparams.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInfinibox+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixPrometurbo+
 			" is not ready")
 
-		// add infinibox operator info to array for cleanup in AfterEach
+		// add prometurbo operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixInfinibox,
+			OperatorPrefix: tsparams.CertifiedOperatorPrefixPrometurbo,
 			Namespace:      tsparams.TestCertificationNameSpace,
 			Label:          tsparams.OperatorLabel,
 		})
@@ -151,11 +151,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixInfinibox,
+				tsparams.CertifiedOperatorPrefixPrometurbo,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInfinibox)
+			"Error labeling operator "+tsparams.CertifiedOperatorPrefixPrometurbo)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -220,11 +220,11 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixInfinibox,
+				tsparams.CertifiedOperatorPrefixPrometurbo,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInfinibox)
+			"Error labeling operator "+tsparams.CertifiedOperatorPrefixPrometurbo)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

@@ -50,8 +50,8 @@ var (
 	OperatorSourceNamespace            = "openshift-marketplace"
 	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
 	UncertifiedOperatorPrefixFalcon    = "falcon-operator"
-	CertifiedOperatorPrefixInfinibox   = "infinibox-operator"
-	CertifiedOperatorFullInfinibox     = "infinibox-operator.v2.4.0"
+	CertifiedOperatorPrefixPrometurbo  = "prometurbo-operator"
+	CertifiedOperatorFullPrometurbo    = "prometurbo-operator.v8.8.2"
 	CertifiedOperatorPrefixInstana     = "instana-agent-operator"
 	CertifiedOperatorFullInstana       = "instana-agent-operator.v2.0.4"
 	UncertifiedOperatorPrefixSriov     = "sriov-fec"
