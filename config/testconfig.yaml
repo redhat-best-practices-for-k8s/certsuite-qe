@@ -14,3 +14,4 @@ general:
   tnf_report_dir: "/path/to/cnfcert-tests-verification/tnf_report"
   tnf_image: "quay.io/testnetworkfunction/cnf-certification-test"
   tnf_image_tag: "unstable"
+  docker_config_dir: "/tmp"
