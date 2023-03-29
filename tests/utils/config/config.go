@@ -17,7 +17,8 @@ import (
 
 const (
 	// FileConfigPath path to config file.
-	FileConfigPath = "config/config.yaml"
+	FileConfigPath        = "config/config.yaml"
+	DevTestFileConfigPath = "config/testconfig.yaml" // Used only for dev/testing purpose only
 )
 
 // Config type keeps general configuration.
@@ -55,7 +56,13 @@ func NewConfig() (*Config, error) {
 
 	_, filename, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(filepath.Dir(filepath.Join(filepath.Dir(filename), "..")))
+
+	var confFile string
 	confFile, err := checkFileExists(baseDir, FileConfigPath)
+
+	if _, exists := os.LookupEnv("LOCAL_TESTING"); exists {
+		confFile, err = checkFileExists(baseDir, DevTestFileConfigPath)
+	}
 
 	if err != nil {
 		glog.Fatal(err)

@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"os"
 	"os/exec"
 	"time"
 
@@ -27,11 +28,13 @@ const (
 var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 
 	execute.BeforeAll(func() {
-		By("Install istio")
-		cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 | sh - "+
-			"&& istio-1.17.1/bin/istioctl install --set profile=demo -y")
-		err := cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing istio")
+		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
+			By("Install istio")
+			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 | sh - "+
+				"&& istio-1.17.1/bin/istioctl install --set profile=demo -y")
+			err := cmd.Run()
+			Expect(err).ToNot(HaveOccurred(), "Error installing istio")
+		}
 	})
 
 	BeforeEach(func() {
@@ -121,10 +124,12 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 
 		if err == nil {
 			By("Uninstall istio")
-			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 | sh - "+
-				"&& istio-1.17.1/bin/istioctl uninstall --purge")
-			err := cmd.Run()
-			Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
+			if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
+				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 | sh - "+
+					"&& istio-1.17.1/bin/istioctl uninstall --purge")
+				err := cmd.Run()
+				Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
+			}
 		}
 
 		By("Define a test pod with istio container")
