@@ -1,136 +1,141 @@
 # cnfcert-tests-verification [![makefile ci](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml) [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift) [![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
 
-## Overview
-The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
-The cnfcert-tests-verification project based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
+## Objective
+> The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
 
-cnfcert-tests-verification project triggers the same test scenario from
+The cnfcert-tests-verification project is based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
+
+`cnfcert-tests-verification` project triggers the same test scenario from
 [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test)
-several times using different pre-configured OCP environment. Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
+several times using different pre-configured OCP environment.
 
-## cnfcert-tests-verification
-The cnfcert-tests-verification is designed to test [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project using pre-installed OCP cluster with version 4.7 and above. In order to be able to test all test scenarios, the following requirements should be met:
+Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
 
-Mandatory requirements:
-* OCP cluster installed with version >=4.7
-* Minimum 3 worker nodes where 2 of them are cnf-workers nodes
-* Performance Addon Operator
-* Machine-config-operator
+## Requirements
 
-Optional:
-* Machine config pool
-* PTP operator
-* SR-IOV operator
-* Performance Addon Operator
+The tests are run on the OCP cluster with certain requirements that are listed below.
 
-### Recommended environment:
-* 3 master nodes
-* 2 cnf-worker nodes
-* 1 worker node
+|  | Conditions | Mandatory |
+| ------ | ------ | ------ |
+| OCP Cluster | Version: >= 4.7, Node Count >= 3 with 2 cnf-worker nodes | Yes
+| Installed Operators | Performance Addon, Machine-config-operator | Yes
+|  | Machine config pool, PTP operator, SR-IOV operator| No
 
-#### Environment variables
-* `FEATURES` - select the test scenarios that you are going to test, comma separated
-* `TNF_REPO_PATH` - absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
-* `TNF_IMAGE` - link to tnf image. Default is quay.io/testnetworkfunction/cnf-certification-test
-* `TNF_IMAGE_TAG` - image tag that is going to be tested. Default is latest
-* `TNF_LOG_LEVEL` - Log level. Default is 4
-* `TEST_IMAGE` - Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
-* `DEBUG_TNF` - Generate `Debug` folder that will contain TNF suites folders with TNF logs for each test.
+> Bare-minimum requirements consists of a OCP cluster with 3 nodes where 2 are cnf-worker nodes and 1 worker node.
+## Overview
 
-#### Available features
-The list of available features:
-* *networking*
-* *affiliated-certification*
+The following test features are can run selectively or altogether.
+
+* *accesscontrol*
+* *affiliatedcertification*
 * *lifecycle*
+* *networking*
 * *observability*
-* *platform-alteration*
-* *access-control*
+* *platformalteration*
 * *performance*
 * *operator*
 * *preflight*
 
-#### Running the tests
 Choose the variant that suits you best:
 
-* `make test-features` - will only run tests for the features that were defined in the `FEATURES` variable
-* `make test-all` - will run the test suite for all features
+> **`make test-features`** - will only run tests for the features that were defined in the `FEATURES` environment variable
 
-#### Pre-configuration
-`make install` - download and install all required dependencies for the cnfcert-tests-verification project
+> **`make test-all`** - will run the test suite for all features
 
-## How to run
-Below is an e2e flow example:
+#### Environment variables
 
-1. Clone the project to your local computer - `git clone https://github.com/test-network-function/cnfcert-tests-verification.git`
+The following environment variables are used to configure the test setup.
 
-2. Change the folder to the project folder - `cd cnfcert-tests-verification`
 
-3. Download and install needed dependencies - `make install`
+| Env Variable Name | Purpose |
+| ------ | ------ |
+| FEATURES | To select the test scenarios that you are going to test, comma separated
+| TNF_REPO_PATH | Points to the absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
+| TNF_IMAGE | Links to the TNF image. Default is quay.io/testnetworkfunction/cnf-certification-test
+| TNF_IMAGE_TAG | image tag that is going to be tested. Default is latest
+| TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
+| DEBUG_TNF | Generate `Debug` folder that will contain TNF suites folders with TNF logs for each test.
+| TNF_LOG_LEVEL | Log level. Default is 4
 
-4. Define absolute path to [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project on you computer by setting environment variable: `export TNF_REPO_PATH=/path/to/project/cnf-certification-test`
+## Steps to run the tests
 
-5. OPTIONAL: Set cnf-certification-test container tag that you are going to test. Default is latest. `export TNF_IMAGE_TAG=unstable` 
+**Pre-requisites**
 
-6. Run all tests - `make test-all`
+Make sure docker or podman is running on the local machine. You could consider using [Colima - container runtime on macOS (and Linux) with minimal setup](https://github.com/abiosoft/colima).
+#### Clone the repo and change directory to the cloned repo
 
-# How to debug
-1. export `DEBUG_TNF`=true.
-2. run `make test-all` / `make test-features`.
-3. under reports folder, a `Debug` folder will be generated, containing suites folders with TNF logs for each of the tests. 
-4. on each run, ginkgo is generating a seed number, the seed is used to randomize the execution order of the tests, in order to repeat the exact same run,
-   export `GINKGO_SEED_NUMBER=seed`, and then repeat stage 2 above.
-   when launching stage 2 after exporting the seed, this is an output example - the seed will be different -
-   "Running Suite: CNFCert lifecycle tests - /root/tnf-qe/cnfcert-tests-verification/tests/lifecycle
-   ================================================================================================
-   Random Seed: 1668617625"
+```sh
+git clone https://github.com/test-network-function/cnfcert-tests-verification.git
+cd cnfcert-tests-verification
+```
+#### Download and install needed dependencies
 
-# cnfcert-tests-verification - How to contribute
-The project uses a development method - forking workflow
 
-### The following is a step-by-step example of forking workflow:
-1) A developer [forks](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork)
-   the [cnfcert-tests-verification](https://github.com/test-network-function/cnfcert-tests-verification) project
-2) A new local feature branch is created
-3) The developer makes changes on the new branch.
-4) New commits are created for the changes.
-5) The branch gets pushed to the developer's own server-side copy.
-6) Changes are tested.
-7) The developer opens a pull request(`PR`) from the new branch to
-   the [cnfcert-tests-verification](https://github.com/test-network-function/cnfcert-tests-verification).
-8) The pull request gets approved for merge and is merged into
-   the [cnfcert-tests-verification](https://github.com/test-network-function/cnfcert-tests-verification).
 
-# cnfcert-tests-verification - Project structure
-    .
-    ├── config                         # Config files
-    ├── scripts                        # Makefile Scripts
-    ├── tests                          # Test cases directory
-    │   ├── networking                 # Networking test cases directory
-    │   │   ├── helper                 # Networking common test function
-    │   │   ├── parameters             # Networking constants and parameters
-    │   │   └── tests                  # Networking test suite directory
-    |   ├── affiliatedcertification    # Affiliated Certification test cases directory
-    |   |   ├── helper                 # Affiliated Certification common test function
-    |   |   ├── parameters             # Affiliated Certification constants and parameters
-    |   |   └── tests                  # Affiliated Certification test suite directory
-    │   ├── platform                   # Platform test cases directory
-    │   │   ├── helper                 # Platform common test function
-    │   │   ├── parameters             # Platform constants and parameters
-    │   │   └── tests                  # Platform test suite directory
-    │   ├── observability              # Observability test cases directory
-    │   │   ├── helper                 # Observability common test function
-    │   │   ├── parameters             # Observability constant and parameters
-    │   │   └── tests                  # Observability test suite directory
-    │   ├── globalhelper               # Common test function
-    │   ├── globalparameters           # Common test function
-    │   └── utils                      # Common utils functions. These utils are based on Kubernetes api calls
-    │       ├── client
-    │       ├── config
-    │       ├── node
-    │       ├── namespace
-    │       └── pod
-    └── vendors                        # Dependencies folder 
+```sh
+make install
+```
 
+#### Set environment variables
+
+- `testconfig.yaml` inside the `config` directory stores the local environment related information.
+Update `tnf_config_dir` and `tnf_report_dir`, and `docker_config_dir` as specific to your local workspace.
+
+Optionally, update `tnf_image`, `test_image`, and `tnf_image_tag` as per needs.
+
+```yaml
+
+# Sample configurations snippet
+general:
+  tnf_config_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_config"
+  tnf_report_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_report"
+  tnf_image: "quay.io/testnetworkfunction/cnf-certification-test"
+  tnf_image_tag: "unstable"
+  docker_config_dir: "/tmp"
+```
+
+- To use this test config file, you need to set `LOCAL_TESTING` environment variable while running the test.
+
+>**Mac Users** :
+Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the non Linux local env.
+
+
+#### Execute tests
+
+* **To run all tests**
+
+```sh
+# Mac User
+TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= NON_LINUX_ENV= make test-all
+# Linux User
+TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-all
+```
+
+* **To run a specific feature**
+
+```sh
+# Mac User
+FEATURES=platformalteration TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= NON_LINUX_ENV= make test-features
+# Linux User
+FEATURES=platformalteration TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
+```
+
+* **To debug**
+
+Use `DEBUG_TNF=true` and `TNF_LOG_LEVEL=trace` while running the above commands.
+This would create a `Debug` folder containing suites folders with TNF logs for each of the tests.
+
+```sh
+# Mac User
+FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= NON_LINUX_ENV= make test-features
+# Linux User
+FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
+```
+
+
+# Contribution Guidelines
+
+Fork the repo, create a new branch and create a PR with your changes.
 ## License
 CNF Certification Test Partner is copyright [Red Hat, Inc.](https://www.redhat.com) and available
 under an
