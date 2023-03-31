@@ -38,9 +38,9 @@ The following test features are can run selectively or altogether.
 
 Choose the variant that suits you best:
 
-> `make test-features` - will only run tests for the features that were defined in the `FEATURES` environment variable
+> **`make test-features`** - will only run tests for the features that were defined in the `FEATURES` environment variable
 
-> `make test-all` - will run the test suite for all features
+> **`make test-all`** - will run the test suite for all features
 
 #### Environment variables
 
@@ -94,14 +94,15 @@ general:
   docker_config_dir: "/tmp"
 ```
 
-To use this config file, you need to set `LOCAL_TESTING` environment variable while running the test.
+- To use this test config file, you need to set `LOCAL_TESTING` environment variable while running the test.
 
-- **Mac Users** : Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the non Linux local env.
+>**Mac Users** :
+Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the non Linux local env.
 
 
 #### Execute tests
 
-* To run all tests
+* **To run all tests**
 
 ```sh
 # Mac User
@@ -110,7 +111,7 @@ TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconf
 TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-all
 ```
 
-* To run a specific feature
+* **To run a specific feature**
 
 ```sh
 # Mac User
@@ -119,14 +120,14 @@ FEATURES=platformalteration TNF_REPO_PATH=/path/to/repo/cnf-certification-test  
 FEATURES=platformalteration TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
 ```
 
-* To debug
+* **To debug**
 
 Use `DEBUG_TNF=true` and `TNF_LOG_LEVEL=trace` while running the above commands.
 This would create a `Debug` folder containing suites folders with TNF logs for each of the tests.
 
 ```sh
 # Mac User
-FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= NON_LINUX_ENV= make test-feature
+FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= NON_LINUX_ENV= make test-features
 # Linux User
 FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
 ```
