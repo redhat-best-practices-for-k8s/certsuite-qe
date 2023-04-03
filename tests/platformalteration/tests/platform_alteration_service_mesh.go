@@ -126,7 +126,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 			By("Uninstall istio")
 			if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.17.1 | sh - "+
-					"&& istio-1.17.1/bin/istioctl uninstall --purge")
+					"&& istio-1.17.1/bin/istioctl uninstall -y --purge")
 				err := cmd.Run()
 				Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
 			}
