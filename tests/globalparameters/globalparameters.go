@@ -92,4 +92,5 @@ var (
 	PlatformAlterationSuiteName      = "platform-alteration"
 	ObservabilitySuiteName           = "observability"
 	AccessControlSuiteName           = "access-control"
+	PerformanceSuiteName             = "performance"
 )
