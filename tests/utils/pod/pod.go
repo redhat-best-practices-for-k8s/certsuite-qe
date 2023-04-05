@@ -96,6 +96,19 @@ func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
 	}
 }
 
+func RedefineWithMemoryResources(pod *corev1.Pod, limit string, req string) {
+	for i := range pod.Spec.Containers {
+		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(limit),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse(req),
+			},
+		}
+	}
+}
+
 func RedefineWithRunTimeClass(pod *corev1.Pod, rtcName string) {
 	pod.Spec.RuntimeClassName = pointer.String(rtcName)
 }
