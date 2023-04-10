@@ -102,7 +102,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 		err := pod.RedefineFirstContainerWith2MiHugepages(put, 4)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = pod.RedefineSecondContainerWith1GHugepages(put, 2)
+		err = pod.RedefineSecondContainerWith1GHugepages(put, 1)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
