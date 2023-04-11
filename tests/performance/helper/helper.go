@@ -54,7 +54,7 @@ func DefineExclusivePod(podName string, namespace string, image string, label ma
 func RedefinePodWithSharedContainer(pod *corev1.Pod, containerIndex int) {
 	totalContainers := len(pod.Spec.Containers)
 	limit := "1"
-	req := "0.75"
+	req := "250m"
 
 	if containerIndex >= 0 && containerIndex < totalContainers {
 		pod.Spec.Containers[containerIndex].Resources = corev1.ResourceRequirements{

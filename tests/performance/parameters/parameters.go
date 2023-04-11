@@ -25,5 +25,6 @@ const (
 	PerformanceNamespace = "performance-ns"
 
 	// TNF test cases names.
-	TnfExclusiveCPUPool = "performance-exclusive-cpu-pool"
+	TnfExclusiveCPUPool              = "performance-exclusive-cpu-pool"
+	TnfSharedCPUPoolSchedulingPolicy = "performance-shared-cpu-pool-non-rt-scheduling-policy"
 )
