@@ -11,9 +11,9 @@ else
     unameOut="$(uname -s)"
     case "${unameOut}" in
         Linux*)
-                    wget https://go.dev/dl/"${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
-                    rm -rf /usr/local/go && tar -C /usr/local -xzf "${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
-                    rm "${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
+                    wget https://go.dev/dl/go"${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
+                    rm -rf /usr/local/go && tar -C /usr/local -xzf go"${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
+                    rm go"${REQUIRED_GO_VERSION}".linux-amd64.tar.gz
                     ;;
         *)          echo "Please install go with version ${REQUIRED_GO_VERSION}"
     esac
