@@ -10,7 +10,7 @@ require (
 	github.com/onsi/gomega v1.27.6
 	github.com/openshift/client-go v0.0.0-20230120202327-72f107311084
 	github.com/openshift/machine-config-operator v0.0.1-0.20200913004441-7eba765c69c9
-	github.com/operator-framework/api v0.17.3
+	github.com/operator-framework/api v0.17.4
 	github.com/operator-framework/operator-lifecycle-manager v0.18.3
 	github.com/stretchr/testify v1.8.2
 	github.com/test-network-function/test-network-function-claim v1.0.17
