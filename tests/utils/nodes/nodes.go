@@ -22,20 +22,21 @@ type resourceSpecs struct {
 
 // WaitForNodesReady waits for all the nodes to become ready.
 func WaitForNodesReady(clients *client.ClientSet, timeout, interval time.Duration) error {
-	return wait.PollImmediate(interval, timeout, func() (bool, error) {
-		nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
-		if err != nil {
-			return false, nil
-		}
-		for _, node := range nodesList.Items {
-			if !IsNodeInCondition(&node, corev1.NodeReady) {
+	return wait.PollUntilContextTimeout(context.Background(), interval, timeout, true,
+		func(ctx context.Context) (bool, error) {
+			nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
+			if err != nil {
 				return false, nil
 			}
-		}
-		glog.V(5).Info("All nodes are Ready")
+			for _, node := range nodesList.Items {
+				if !IsNodeInCondition(&node, corev1.NodeReady) {
+					return false, nil
+				}
+			}
+			glog.V(5).Info("All nodes are Ready")
 
-		return true, nil
-	})
+			return true, nil
+		})
 }
 
 // IsNodeInCondition parses node conditions. Returns true if node is in given condition, otherwise false.

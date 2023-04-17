@@ -18,16 +18,17 @@ import (
 
 // WaitForDeletion waits until the namespace will be removed from the cluster.
 func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Duration) error {
-	return wait.PollImmediate(time.Second, timeout, func() (bool, error) {
-		_, err := cs.Namespaces().Get(context.Background(), nsName, metav1.GetOptions{})
-		if k8serrors.IsNotFound(err) {
-			glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
+	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, true,
+		func(ctx context.Context) (bool, error) {
+			_, err := cs.Namespaces().Get(context.Background(), nsName, metav1.GetOptions{})
+			if k8serrors.IsNotFound(err) {
+				glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
 
-			return true, nil
-		}
+				return true, nil
+			}
 
-		return false, nil
-	})
+			return false, nil
+		})
 }
 
 // Create creates a new namespace with the given name.
