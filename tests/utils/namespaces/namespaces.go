@@ -20,7 +20,7 @@ import (
 func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Duration) error {
 	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, true,
 		func(ctx context.Context) (bool, error) {
-			_, err := cs.Namespaces().Get(context.Background(), nsName, metav1.GetOptions{})
+			_, err := cs.Namespaces().Get(ctx, nsName, metav1.GetOptions{})
 			if k8serrors.IsNotFound(err) {
 				glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
 

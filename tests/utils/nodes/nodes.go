@@ -24,7 +24,7 @@ type resourceSpecs struct {
 func WaitForNodesReady(clients *client.ClientSet, timeout, interval time.Duration) error {
 	return wait.PollUntilContextTimeout(context.Background(), interval, timeout, true,
 		func(ctx context.Context) (bool, error) {
-			nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
+			nodesList, err := clients.Nodes().List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return false, nil
 			}
