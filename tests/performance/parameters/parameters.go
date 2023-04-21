@@ -24,7 +24,10 @@ const (
 	TnfTestSuiteName     = "performance"
 	PerformanceNamespace = "performance-ns"
 
+	RtImageName = "quay.io/testnetworkfunction/debug-partner:latest"
+
 	// TNF test cases names.
 	TnfExclusiveCPUPool              = "performance-exclusive-cpu-pool"
 	TnfSharedCPUPoolSchedulingPolicy = "performance-shared-cpu-pool-non-rt-scheduling-policy"
+	TnfRtAppsNoExecProbes            = "performance-rt-apps-no-exec-probes"
 )
