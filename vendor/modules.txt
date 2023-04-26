@@ -158,7 +158,7 @@ github.com/openshift/client-go/config/clientset/versioned/typed/config/v1
 github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1
 github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/scheme
 github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/typed/machineconfiguration.openshift.io/v1
-# github.com/operator-framework/api v0.17.4
+# github.com/operator-framework/api v0.17.5
 ## explicit; go 1.19
 github.com/operator-framework/api/pkg/lib/version
 github.com/operator-framework/api/pkg/operators

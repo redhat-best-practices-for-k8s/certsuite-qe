@@ -43,7 +43,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 		rtcNames = []string{}
 	})
 
-	It("One pod running in isolated cpu pool with whole cpu unit and rt cpu scheduling policy", func() {
+	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
@@ -110,7 +110,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
-		Expect(err).To(HaveOccurred())
+		Expect(err).NotTo(HaveOccurred())
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
