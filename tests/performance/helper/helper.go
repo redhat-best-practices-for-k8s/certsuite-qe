@@ -13,6 +13,7 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/utils/pointer"
 
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -40,6 +41,7 @@ func DefineExclusivePod(podName string, namespace string, image string, label ma
 			Labels:    label},
 		Spec: corev1.PodSpec{
 			TerminationGracePeriodSeconds: pointer.Int64(0),
+			ServiceAccountName:            tsparams.PriviledgedRoleName,
 			SecurityContext: &corev1.PodSecurityContext{
 				RunAsUser:    pointer.Int64(1000),
 				RunAsGroup:   pointer.Int64(1000),
@@ -87,6 +89,7 @@ func DefineRtPod(podName string, namespace string, image string, label map[strin
 			Namespace: namespace,
 			Labels:    label},
 		Spec: corev1.PodSpec{
+			ServiceAccountName:            tsparams.PriviledgedRoleName,
 			TerminationGracePeriodSeconds: pointer.Int64(0),
 			Containers: []corev1.Container{
 				{
@@ -182,4 +185,14 @@ func ExecCommandContainer(
 	}
 
 	return stdout, stderr, err
+}
+
+func DeleteRunTimeClass(rtcName string) error {
+	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
+		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
+	if err != nil {
+		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
+	}
+
+	return nil
 }
