@@ -27,7 +27,11 @@ const (
 	RtImageName = "quay.io/testnetworkfunction/debug-partner:latest"
 
 	// TNF test cases names.
-	TnfExclusiveCPUPool              = "performance-exclusive-cpu-pool"
-	TnfSharedCPUPoolSchedulingPolicy = "performance-shared-cpu-pool-non-rt-scheduling-policy"
-	TnfRtAppsNoExecProbes            = "performance-rt-apps-no-exec-probes"
+	TnfExclusiveCPUPool                  = "performance-exclusive-cpu-pool"
+	TnfSharedCPUPoolSchedulingPolicy     = "performance-shared-cpu-pool-non-rt-scheduling-policy"
+	TnfRtIsolatedCPUPoolSchedulingPolicy = "performance-isolated-cpu-pool-rt-scheduling-policy"
+	TnfRtAppsNoExecProbes                = "performance-rt-apps-no-exec-probes"
+
+	PriviledgedRoleName = "privileged-role"
+	TnfRunTimeClass     = "performance-rtc"
 )
