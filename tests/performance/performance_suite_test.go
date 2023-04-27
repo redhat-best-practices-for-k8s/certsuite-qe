@@ -13,10 +13,10 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/performance/tests"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/performance/helper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func TestPerformance(t *testing.T) {
@@ -34,6 +34,10 @@ var _ = BeforeSuite(func() {
 
 	By("Create namespace")
 	err := namespaces.Create(tsparams.PerformanceNamespace, globalhelper.APIClient)
+	Expect(err).ToNot(HaveOccurred())
+
+	// Create service account and roles and roles binding
+	err = tshelper.ConfigurePrivilegedServiceAccount(tsparams.PerformanceNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
