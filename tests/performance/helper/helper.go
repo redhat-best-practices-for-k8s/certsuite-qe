@@ -8,6 +8,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/utils/pointer"
@@ -274,4 +276,28 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 	}
 
 	return aRole, aRoleBinding, aServiceAccount
+}
+
+func DefineRtPodInIsolatedCPUPool() (*corev1.Pod, error) {
+	testPod := DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
+		tsparams.RtImageName, tsparams.TnfTargetPodLabels)
+
+	annotationsMap := make(map[string]string)
+	annotationsMap["cpu-load-balancing.crio.io"] = tsparams.DisableStr
+	annotationsMap["irq-load-balancing.crio.io"] = tsparams.DisableStr
+	testPod.SetAnnotations(annotationsMap)
+
+	rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+	err := globalhelper.CreateRunTimeClass(rtc)
+
+	if err != nil {
+		return nil, err
+	}
+
+	tsparams.RtcNames = append(tsparams.RtcNames, tsparams.TnfRunTimeClass)
+
+	pod.RedefineWithRunTimeClass(testPod, rtc.Name)
+	pod.RedefineWithCPUResources(testPod, "1", "1")
+
+	return testPod, nil
 }
