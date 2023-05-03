@@ -39,7 +39,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy",
 			err = globalhelper.ValidateIfReportsAreValid(
 				tsparams.TnfRtExclusiveCPUPoolSchedulingPolicy,
 				globalparameters.TestCasePassed)
-			Expect(err).To(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
 		})
 
 		It("One pod running in exclusive cpu pool and valid rt cpu scheduling policy", func() {
