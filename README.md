@@ -1,6 +1,12 @@
-# cnfcert-tests-verification [![makefile ci](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml) [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift) [![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
+<!-- markdownlint-disable line-length no-bare-urls -->
+# cnfcert-tests-verification
+
+[![makefile ci](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml)
+[![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift)
+[![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
 
 ## Objective
+
 > The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
 
 The cnfcert-tests-verification project is based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
@@ -22,6 +28,7 @@ The tests are run on the OCP cluster with certain requirements that are listed b
 |  | Machine config pool, PTP operator, SR-IOV operator| No
 
 > Bare-minimum requirements consists of a OCP cluster with 3 nodes where 2 are cnf-worker nodes and 1 worker node.
+
 ## Overview
 
 The following test features are can run selectively or altogether.
@@ -39,14 +46,11 @@ The following test features are can run selectively or altogether.
 Choose the variant that suits you best:
 
 > **`make test-features`** - will only run tests for the features that were defined in the `FEATURES` environment variable
-
 > **`make test-all`** - will run the test suite for all features
 
-#### Environment variables
+### Environment variables
 
 The following environment variables are used to configure the test setup.
-
-
 | Env Variable Name | Purpose |
 | ------ | ------ |
 | FEATURES | To select the test scenarios that you are going to test, comma separated
@@ -59,18 +63,18 @@ The following environment variables are used to configure the test setup.
 
 ## Steps to run the tests
 
-**Pre-requisites**
+### Pre-requisites
 
 Make sure docker or podman is running on the local machine. You could consider using [Colima - container runtime on macOS (and Linux) with minimal setup](https://github.com/abiosoft/colima).
+
 #### Clone the repo and change directory to the cloned repo
 
 ```sh
 git clone https://github.com/test-network-function/cnfcert-tests-verification.git
 cd cnfcert-tests-verification
 ```
+
 #### Download and install needed dependencies
-
-
 
 ```sh
 make install
@@ -78,7 +82,7 @@ make install
 
 #### Set environment variables
 
-- `testconfig.yaml` inside the `config` directory stores the local environment related information.
+* `testconfig.yaml` inside the `config` directory stores the local environment related information.
 Update `tnf_config_dir` and `tnf_report_dir`, and `docker_config_dir` as specific to your local workspace.
 
 Optionally, update `tnf_image`, `test_image`, and `tnf_image_tag` as per needs.
@@ -94,11 +98,10 @@ general:
   docker_config_dir: "/tmp"
 ```
 
-- To use this test config file, you need to set `LOCAL_TESTING` environment variable while running the test.
+* To use this test config file, you need to set `LOCAL_TESTING` environment variable while running the test.
 
 >**Mac Users** :
 Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the non Linux local env.
-
 
 #### Execute tests
 
@@ -132,11 +135,12 @@ FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/pa
 FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
 ```
 
-
 # Contribution Guidelines
 
 Fork the repo, create a new branch and create a PR with your changes.
+
 ## License
+
 CNF Certification Test Partner is copyright [Red Hat, Inc.](https://www.redhat.com) and available
 under an
 [Apache 2 license](https://github.com/test-network-function/cnfcert-tests-verification/blob/main/LICENSE).
