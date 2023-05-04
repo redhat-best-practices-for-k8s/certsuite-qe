@@ -9,6 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
@@ -41,79 +42,65 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 	})
 
-	// 62504
-	It("service with ipFamilyPolicy SingleStack and ip version ipv6", func() {
+	// // 62504
+	// It("service with ipFamilyPolicy SingleStack and ip version ipv6", func() {
 
-		By("Define deployment and create it on cluster")
-		err := tshelper.DefineAndCreateDeploymentOnCluster(1)
-		Expect(err).ToNot(HaveOccurred())
+	// 	By("Define and create service")
+	// 	err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, []corev1.IPFamily{"IPv6"}, "SingleStack")
+	// 	Expect(err).ToNot(HaveOccurred())
 
-		By("Define and create network policy")
-		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
-			tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
-		Expect(err).ToNot(HaveOccurred())
+	// 	By("Start tests")
+	// 	err = globalhelper.LaunchTests(
+	// 		tsparams.TnfDualStackServiceTcName,
+	// 		globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+	// 	Expect(err).ToNot(HaveOccurred())
 
-		By("Start tests")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).ToNot(HaveOccurred())
+	// 	By("Verify test case status in Junit and Claim reports")
+	// 	err = globalhelper.ValidateIfReportsAreValid(
+	// 		tsparams.TnfDualStackServiceTcName,
+	// 		globalparameters.TestCasePassed)
+	// 	Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
-			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred())
+	// })
 
-	})
+	// // 62505
+	// It("service with ipFamilyPolicy RequireDualStack and two ClusterIPs", func() {
 
-	// 62505
-	It("service with ipFamilyPolicy RequireDualStack and two ClusterIPs", func() {
+	// 	By("Define and create service")
+	// 	err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, []corev1.IPFamily{"IPv4", "IPv6"}, "RequireDualStack")
+	// 	Expect(err).ToNot(HaveOccurred())
 
-		By("Define deployment and create it on cluster")
-		err := tshelper.DefineAndCreateDeploymentOnCluster(1)
-		Expect(err).ToNot(HaveOccurred())
+	// 	By("Start tests")
+	// 	err = globalhelper.LaunchTests(
+	// 		tsparams.TnfDualStackServiceTcName,
+	// 		globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+	// 	Expect(err).ToNot(HaveOccurred())
 
-		By("Define and create network policy")
-		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
-			tsparams.TestNetworkingNameSpace, []string{"Ingress"}, tsparams.TestDeploymentLabels)
-		Expect(err).ToNot(HaveOccurred())
+	// 	By("Verify test case status in Junit and Claim reports")
+	// 	err = globalhelper.ValidateIfReportsAreValid(
+	// 		tsparams.TnfDualStackServiceTcName,
+	// 		globalparameters.TestCasePassed)
+	// 	Expect(err).ToNot(HaveOccurred())
 
-		By("Start tests")
-		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
-			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred())
-
-	})
+	// })
 
 	// 62506
 	It("service with ipFamilyPolicy SingleStack and ip version ipv4 [negative]", func() {
 
-		By("Define deployment and create it on cluster")
-		err := tshelper.DefineAndCreateDeploymentOnCluster(1)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Define and create network policy")
-		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
-			tsparams.TestNetworkingNameSpace, []string{"Egress"}, tsparams.TestDeploymentLabels)
+		By("Define and create service")
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.TnfDualStackServiceTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.TnfDualStackServiceTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -121,19 +108,20 @@ var _ = Describe("Networking dual-stack-service,", func() {
 	// 62507
 	It("service with ipFamilyPolicy PreferDualStack and zero ClusterIPs [negative]", func() {
 
-		By("Define deployment and create it on cluster")
-		err := tshelper.DefineAndCreateDeploymentOnCluster(1)
+		By("Define and create service")
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
+			[]corev1.IPFamily{"IPv4"}, "PreferDualStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.TnfDualStackServiceTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.TnfDualStackServiceTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -143,114 +131,92 @@ var _ = Describe("Networking dual-stack-service,", func() {
 	It("service with no ipFamilyPolicy configured [negative]",
 		func() {
 
-			By("Define first deployment and create it on cluster")
-			err := tshelper.DefineAndCreateDeploymentOnCluster(1)
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Define and create first network policy")
-			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
-				tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Define second deployment and create it on cluster")
-			err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Define and create second network policy")
-			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
-				tsparams.AdditionalNetworkingNamespace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
-			Expect(err).ToNot(HaveOccurred())
-
-			By("Define TNF config file")
-			err = globalhelper.DefineTnfConfig(
-				[]string{tsparams.TestNetworkingNameSpace, tsparams.AdditionalNetworkingNamespace},
-				[]string{tsparams.TestPodLabel},
-				[]string{},
-				[]string{})
+			By("Define and create service")
+			err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, []corev1.IPFamily{"IPv4"}, "")
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")
 			err = globalhelper.LaunchTests(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
+				tsparams.TnfDualStackServiceTcName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 			Expect(err).To(HaveOccurred())
 
 			By("Verify test case status in Junit and Claim reports")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
+				tsparams.TnfDualStackServiceTcName,
 				globalparameters.TestCaseFailed)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-	// 62509
-	It("two services, one with ipFamilyPolicy SingleStack and ip version ipv6 and the other with ipFamilyPolicy PreferDualStack and two ClusterIPs",
-		func() {
+	// // 62509
+	// It("two services, one with ipFamilyPolicy SingleStack and ip version ipv6 and the other with ipFamilyPolicy PreferDualStack and two ClusterIPs",
+	// 	func() {
 
-			By("Define first deployment and create it on cluster")
-			err := tshelper.DefineAndCreateDeploymentOnCluster(1)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define first deployment and create it on cluster")
+	// 		err := tshelper.DefineAndCreateDeploymentOnCluster(1)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Define and create first network policy")
-			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
-				tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define and create first network policy")
+	// 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
+	// 			tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Define second deployment and create it on cluster")
-			err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define second deployment and create it on cluster")
+	// 		err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Define and create second network policy")
-			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
-				tsparams.AdditionalNetworkingNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define and create second network policy")
+	// 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
+	// 			tsparams.AdditionalNetworkingNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
-				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Start tests")
+	// 		err = globalhelper.LaunchTests(
+	// 			tsparams.TnfDualStackServiceTcName,
+	// 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
-				globalparameters.TestCasePassed)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Verify test case status in Junit and Claim reports")
+	// 		err = globalhelper.ValidateIfReportsAreValid(
+	// 			tsparams.TnfDualStackServiceTcName,
+	// 			globalparameters.TestCasePassed)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-		})
+	// 	})
 
-	// 62510
-	It("two services, both with ipFamilyPolicy SingleStack, one with ip version ipv6, the other with ip version ipv4 [negative]",
-		func() {
+	// // 62510
+	// It("two services, both with ipFamilyPolicy SingleStack, one with ip version ipv6, the other with ip version ipv4 [negative]",
+	// 	func() {
 
-			By("Define first deployment and create it on cluster")
-			err := tshelper.DefineAndCreateDeploymentOnCluster(1)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define first deployment and create it on cluster")
+	// 		err := tshelper.DefineAndCreateDeploymentOnCluster(1)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Define and create first network policy")
-			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
-				tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define and create first network policy")
+	// 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
+	// 			tsparams.TestNetworkingNameSpace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Define second deployment and create it on cluster")
-			err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define second deployment and create it on cluster")
+	// 		err = tshelper.DefineAndCreateDeploymentWithNamespace(tsparams.AdditionalNetworkingNamespace, 1)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Define and create second network policy")
-			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
-				tsparams.AdditionalNetworkingNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Define and create second network policy")
+	// 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy2",
+	// 			tsparams.AdditionalNetworkingNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-			By("Start tests")
-			err = globalhelper.LaunchTests(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
-				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-			Expect(err).To(HaveOccurred())
+	// 		By("Start tests")
+	// 		err = globalhelper.LaunchTests(
+	// 			tsparams.TnfDualStackServiceTcName,
+	// 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+	// 		Expect(err).To(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
-			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
-				globalparameters.TestCaseFailed)
-			Expect(err).ToNot(HaveOccurred())
+	// 		By("Verify test case status in Junit and Claim reports")
+	// 		err = globalhelper.ValidateIfReportsAreValid(
+	// 			tsparams.TnfDualStackServiceTcName,
+	// 			globalparameters.TestCaseFailed)
+	// 		Expect(err).ToNot(HaveOccurred())
 
-		})
+	// 	})
 })

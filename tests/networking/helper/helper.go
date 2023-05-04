@@ -121,14 +121,33 @@ func ExecCmdOnAllPodInNamespace(command []string) error {
 }
 
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
-func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool) error {
-	testService := service.DefineService(
-		name,
-		tsparams.TestNetworkingNameSpace,
-		port,
-		targetPort,
-		corev1.ProtocolTCP,
-		tsparams.TestDeploymentLabels)
+func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool,
+	ipFams []corev1.IPFamily, ipFamPolicy string) error {
+	var testService *corev1.Service
+
+	if ipFamPolicy == "" {
+		testService = service.DefineService(
+			name,
+			tsparams.TestNetworkingNameSpace,
+			port,
+			targetPort,
+			corev1.ProtocolTCP,
+			tsparams.TestDeploymentLabels,
+			ipFams,
+			nil)
+	} else {
+		ipPolicy := corev1.IPFamilyPolicy(ipFamPolicy)
+
+		testService = service.DefineService(
+			name,
+			tsparams.TestNetworkingNameSpace,
+			port,
+			targetPort,
+			corev1.ProtocolTCP,
+			tsparams.TestDeploymentLabels,
+			ipFams,
+			&ipPolicy)
+	}
 
 	if withNodePort {
 		var err error
