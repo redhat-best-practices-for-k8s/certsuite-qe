@@ -27,6 +27,7 @@ var (
 	TestCaseNameAccessControlRequestsAndLimits      = "access-control-requests-and-limits"
 	TestCaseNameAccessControlNo1337Uid              = "access-control-no-1337-uid"
 	TestCaseNameAccessControlNamespaceResourceQuota = "access-control-namespace-resource-quota"
+	TestCaseNameAccessControlNetAdminCapability     = "access-control-net-admin-capability-check"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
