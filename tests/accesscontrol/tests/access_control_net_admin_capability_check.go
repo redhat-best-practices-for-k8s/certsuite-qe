@@ -35,7 +35,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 
 	// 63466
 	It("one deployment, one pod, one container, does not have net admin capability", func() {
-		By("Define deployment with securityContext RunAsUser not specified")
+		By("Define deployment without net admin")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -57,7 +57,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 
 	// 63467
 	It("one deployment, one pod, one container, does have net admin capability [negative]", func() {
-		By("Define deployment with securityContext RunAsUser set as 1337")
+		By("Define deployment with net admin")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -81,7 +81,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 
 	// 63468
 	It("two deployments, one pod each, one container each, does not have net admin capability", func() {
-		By("Define deployments with securityContext RunAsUser not specified or not 1337")
+		By("Define deployments without net admin")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -90,8 +90,6 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
-
-		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1338)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -111,7 +109,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 
 	// 63469
 	It("two deployments, one pod each, one container each, one does have net admin capability [negative]", func() {
-		By("Define deployments with varying securityContext RunAsUser values")
+		By("Define deployments with varying net admin capabilities")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
