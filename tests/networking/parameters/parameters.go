@@ -31,6 +31,7 @@ var (
 	TnfNetworkPolicyDenyAllTcName  = "networking-network-policy-deny-all"
 	TnfOcpReservedPortsUsageTcName = "networking-ocp-reserved-ports-usage"
 	TnfReservedPartnerPortsTcName  = "networking-reserved-partner-ports"
+	TnfDualStackServiceTcName      = "networking-dual-stack-service"
 	NetworkingTestSkipLabel        = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
 	NetworkingTestMultusSkipLabel  = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
 )

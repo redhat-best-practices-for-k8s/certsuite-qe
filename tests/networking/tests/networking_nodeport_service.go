@@ -9,6 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
@@ -63,7 +64,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("2 custom pods, service installed without NodePort, service Should not have type of nodePort", func() {
 
 		By("Define Service")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false)
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -88,10 +90,12 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort", func() {
 
 		By("Define multiple Services")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false)
+		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false)
+		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -115,7 +119,8 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]", func() {
 
 		By("Define Services with NodePort")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true)
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -141,9 +146,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		"nodePort [negative]", func() {
 
 		By("Define Services")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", 30022, 3022, true)
+		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", 30022, 3022, true,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
-		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", 3022, 3022, false)
+		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", 3022, 3022, false,
+			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")

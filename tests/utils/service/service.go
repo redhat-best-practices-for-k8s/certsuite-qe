@@ -14,7 +14,9 @@ func DefineService(name string,
 	port int32,
 	targetPort int32,
 	protocol corev1.Protocol,
-	labels map[string]string) *corev1.Service {
+	labels map[string]string,
+	ipFamilies []corev1.IPFamily,
+	ipFamilyPolicy *corev1.IPFamilyPolicy) *corev1.Service {
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -32,6 +34,8 @@ func DefineService(name string,
 					},
 				},
 			},
+			IPFamilies:     ipFamilies,
+			IPFamilyPolicy: ipFamilyPolicy,
 		},
 	}
 }
