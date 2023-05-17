@@ -36,7 +36,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 	// 63736
 	It("one deployment, one pod, one container, does not have ipc lock capability", func() {
 		By("Define deployment without ipc lock")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -58,7 +58,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 	// 63737
 	It("one deployment, one pod, one container, does have ipc lock capability [negative]", func() {
 		By("Define deployment with ipc lock")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithContainersSecurityContextIpcLock(dep)
@@ -82,13 +82,13 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 	// 63738
 	It("two deployments, one pod each, one container each, does not have ipc lock capability", func() {
 		By("Define deployments without ipc lock")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
@@ -110,7 +110,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 	// 63739
 	It("two deployments, one pod each, one container each, one does have ipc lock capability [negative]", func() {
 		By("Define deployments with varying ipc lock capabilities")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithContainersSecurityContextIpcLock(dep)
@@ -118,7 +118,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
