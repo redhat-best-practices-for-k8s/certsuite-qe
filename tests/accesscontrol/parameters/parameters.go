@@ -29,6 +29,7 @@ var (
 	TestCaseNameAccessControlNamespaceResourceQuota = "access-control-namespace-resource-quota"
 	TestCaseNameAccessControlIpcLockCapability      = "access-control-ipc-lock-capability-check"
 	TestCaseNameAccessControlNetAdminCapability     = "access-control-net-admin-capability-check"
+	TestCaseNameAccessControlNetRawCapability       = "access-control-net-raw-capability-check"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
