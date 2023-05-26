@@ -27,9 +27,6 @@ type TestCaseDescription struct {
 	// Remediation is an optional suggested remediation for passing the test.
 	Remediation string `json:"remediation,omitempty" yaml:"remediation,omitempty"`
 
-	// Type is the type of the test (i.e., normative).
-	Type string `json:"type" yaml:"type"`
-
 	// BestPracticeReference is a helpful best practice references of the test case.
 	BestPracticeReference string `json:"BestPracticeReference" yaml:"BestPracticeReference"`
 
@@ -41,6 +38,7 @@ type TestCaseDescription struct {
 
 	// Whether or not automated tests exist for the test case. Not to be rendered.
 	Qe bool `json:"qe" yaml:"qe"`
+
 	// classification for each test case
 	CategoryClassification map[string]string `json:"categoryclassification" yaml:"categoryclassification"`
 	/* an example to how it CategoryClassification would be
@@ -57,7 +55,7 @@ func formTestTags(tags ...string) string {
 }
 
 //nolint:lll
-func BuildTestCaseDescription(testID, suiteName, description, remediation, testType, exception, reference string, qe bool, categoryclassification map[string]string, tags ...string) (TestCaseDescription, Identifier) {
+func BuildTestCaseDescription(testID, suiteName, description, remediation, exception, reference string, qe bool, categoryclassification map[string]string, tags ...string) (TestCaseDescription, Identifier) {
 	aID := Identifier{
 		Tags:  formTestTags(tags...),
 		Id:    suiteName + "-" + testID,
@@ -65,7 +63,6 @@ func BuildTestCaseDescription(testID, suiteName, description, remediation, testT
 	}
 	aTCDescription := TestCaseDescription{}
 	aTCDescription.Identifier = aID
-	aTCDescription.Type = testType
 	aTCDescription.Description = description
 	aTCDescription.Remediation = remediation
 	aTCDescription.ExceptionProcess = exception

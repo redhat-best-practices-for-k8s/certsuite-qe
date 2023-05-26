@@ -14,7 +14,7 @@ require (
 	github.com/operator-framework/operator-lifecycle-manager v0.18.3
 	github.com/sirupsen/logrus v1.9.2
 	github.com/stretchr/testify v1.8.3
-	github.com/test-network-function/test-network-function-claim v1.0.18
+	github.com/test-network-function/test-network-function-claim v1.0.19
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.27.2
 	k8s.io/apiextensions-apiserver v0.27.2
