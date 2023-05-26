@@ -9,10 +9,12 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -61,6 +63,25 @@ func DefineDeploymentWithNamespace(replica int32, containers int, name string, n
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+
+	return deploymentStruct, nil
+}
+
+func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports []corev1.ContainerPort) (*appsv1.Deployment, error) {
+	if len(ports) < 1 {
+		return nil, errors.New("invalid number of containers")
+	}
+
+	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
+		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
+
+	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports,
+		globalhelper.Configuration.General.TestImage, "test")
+
+	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
 
 	return deploymentStruct, nil
 }
