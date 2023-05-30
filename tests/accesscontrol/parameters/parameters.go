@@ -33,6 +33,7 @@ var (
 	TestCaseNameAccessControlContainerHostPort      = "access-control-container-host-port"
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
 	TnfNodePortTcName                               = "access-control-service-type"
+	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,

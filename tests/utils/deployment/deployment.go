@@ -442,3 +442,13 @@ func RedefineWithContainersSecurityContextSysAdmin(deployment *appsv1.Deployment
 		}
 	}
 }
+
+func RedefineWithContainersSecurityContextAllowPrivilegeEscalation(deployment *appsv1.Deployment,
+	allowPrivilegeEscalation bool) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			RunAsUser:                pointer.Int64(0),
+			AllowPrivilegeEscalation: &allowPrivilegeEscalation,
+		}
+	}
+}
