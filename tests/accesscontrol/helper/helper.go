@@ -13,9 +13,12 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 )
 
 func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout time.Duration) error {
@@ -123,4 +126,52 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 		parameters.CPULimit, parameters.MemoryLimit)
 
 	return namespaces.ApplyResourceQuota(namespace, clientSet, quota)
+}
+
+// DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
+func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool,
+	ipFams []corev1.IPFamily, ipFamPolicy string) error {
+	var testService *corev1.Service
+
+	if ipFamPolicy == "" {
+		testService = service.DefineService(
+			name,
+			tsparams.TestAccessControlNameSpace,
+			port,
+			targetPort,
+			corev1.ProtocolTCP,
+			tsparams.TestDeploymentLabels,
+			ipFams,
+			nil)
+	} else {
+		ipPolicy := corev1.IPFamilyPolicy(ipFamPolicy)
+
+		testService = service.DefineService(
+			name,
+			tsparams.TestAccessControlNameSpace,
+			port,
+			targetPort,
+			corev1.ProtocolTCP,
+			tsparams.TestDeploymentLabels,
+			ipFams,
+			&ipPolicy)
+	}
+
+	if withNodePort {
+		var err error
+
+		testService, err = service.RedefineWithNodePort(testService)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err := globalhelper.APIClient.Services(tsparams.TestAccessControlNameSpace).Create(
+		context.Background(),
+		testService, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create service on cluster: %w", err)
+	}
+
+	return nil
 }
