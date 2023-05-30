@@ -27,7 +27,7 @@ var (
 	TestDeploymentBName            = "networkingputb"
 	TnfDefaultNetworkTcName        = "networking-icmpv4-connectivity"
 	TnfMultusIpv4TcName            = "networking-icmpv4-connectivity-multus"
-	TnfNodePortTcName              = "networking-service-type"
+	TnfNodePortTcName              = "access-control-service-type"
 	TnfNetworkPolicyDenyAllTcName  = "networking-network-policy-deny-all"
 	TnfOcpReservedPortsUsageTcName = "networking-ocp-reserved-ports-usage"
 	TnfReservedPartnerPortsTcName  = "networking-reserved-partner-ports"
