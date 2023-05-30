@@ -17,8 +17,6 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 )
 
 func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout time.Duration) error {
@@ -136,11 +134,11 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	if ipFamPolicy == "" {
 		testService = service.DefineService(
 			name,
-			tsparams.TestAccessControlNameSpace,
+			parameters.TestAccessControlNameSpace,
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
-			tsparams.TestDeploymentLabels,
+			parameters.TestDeploymentLabels,
 			ipFams,
 			nil)
 	} else {
@@ -148,11 +146,11 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 
 		testService = service.DefineService(
 			name,
-			tsparams.TestAccessControlNameSpace,
+			parameters.TestAccessControlNameSpace,
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
-			tsparams.TestDeploymentLabels,
+			parameters.TestDeploymentLabels,
 			ipFams,
 			&ipPolicy)
 	}
@@ -166,7 +164,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		}
 	}
 
-	_, err := globalhelper.APIClient.Services(tsparams.TestAccessControlNameSpace).Create(
+	_, err := globalhelper.APIClient.Services(parameters.TestAccessControlNameSpace).Create(
 		context.Background(),
 		testService, metav1.CreateOptions{})
 	if err != nil {
