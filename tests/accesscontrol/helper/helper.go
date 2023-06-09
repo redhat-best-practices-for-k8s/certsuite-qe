@@ -130,11 +130,13 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 
 func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.ClientSet) error {
 	plan := installplan.DefineInstallPlan(name, namespace)
+
 	return globalhelper.APIClient.Create(context.TODO(), plan)
 }
 
 func DefineAndCreateSubscription(name, namespace string, clientSet *client.ClientSet) error {
 	subscription := subscription.DefineSubscription(name, namespace)
+
 	return globalhelper.APIClient.Create(context.TODO(), subscription)
 }
 

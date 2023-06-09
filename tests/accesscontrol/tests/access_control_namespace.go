@@ -5,7 +5,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
@@ -121,22 +120,22 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("two namespaces, one has invalid prefix [negative]", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.InvalidNamespace, parameters.AdditionalValidNamespace},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.InvalidNamespace, tsparams.AdditionalValidNamespace},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
@@ -145,8 +144,8 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("one custom resource in a valid namespace", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace, "tnf"},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -158,14 +157,14 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
@@ -174,8 +173,8 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("one custom resource in an invalid namespace [negative]", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace, "tnf"},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -186,14 +185,14 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
@@ -202,8 +201,8 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("two custom resources, both in valid namespaces", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace, tsparams.AdditionalValidNamespace, "tnf"},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.TestAccessControlNameSpace, tsparams.AdditionalValidNamespace, "tnf"},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -219,14 +218,14 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
@@ -235,8 +234,8 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("two custom resources, one in invalid namespace [negative]", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace, "tnf"},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -250,14 +249,14 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
@@ -266,8 +265,8 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("two custom resources of different CRDs, both in valid namespace", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace, "tnf"},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -283,14 +282,14 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
@@ -299,8 +298,8 @@ var _ = Describe("Access-control namespace, ", func() {
 	It("two custom resources of different CRDs, one in invalid namespace [negative]", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace, "tnf"},
-			[]string{parameters.TestPodLabel},
+			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -316,14 +315,14 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred(), "Error running "+
-			parameters.TestCaseNameAccessControlNamespace+" test")
+			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlNamespace,
+			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
