@@ -51,7 +51,7 @@ var (
 	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
 	UncertifiedOperatorPrefixFalcon    = "falcon-operator"
 	CertifiedOperatorPrefixPrometurbo  = "prometurbo-operator"
-	CertifiedOperatorFullPrometurbo    = "prometurbo-operator.v8.8.5"
+	CertifiedOperatorFullPrometurbo    = "prometurbo-operator.v8.9.1"
 	CertifiedOperatorPrefixInstana     = "instana-agent-operator"
 	CertifiedOperatorFullInstana       = "instana-agent-operator.v2.0.4"
 	UncertifiedOperatorPrefixSriov     = "sriov-fec"
