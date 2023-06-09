@@ -17,7 +17,6 @@ var (
 	InvalidNamespace                     = "openshift-test"
 	AdditionalValidNamespace             = "ac-test"
 	AdditionalNamespaceForResourceQuotas = "ac-rq-test"
-	OperatorGroupName                    = "accesscontrol-test-operator-group"
 
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
