@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REQUIRED_GO_VERSION="1.20.4"
+REQUIRED_GO_VERSION="1.20.5"
 INSTALLED_GO_VERSION="$(go version | { read -r _ _ v _; echo "${v#go}"; })"
 
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }

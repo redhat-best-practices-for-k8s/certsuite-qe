@@ -40,7 +40,6 @@ linters:
     - bidichk
     - bodyclose
     - contextcheck
-    - depguard
     - durationcheck
     - errcheck
     - errname

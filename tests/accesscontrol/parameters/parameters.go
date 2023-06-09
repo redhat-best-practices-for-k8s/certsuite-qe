@@ -33,6 +33,8 @@ var (
 	TestCaseNameAccessControlNetRawCapability       = "access-control-net-raw-capability-check"
 	TestCaseNameAccessControlContainerHostPort      = "access-control-container-host-port"
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
+	TestCaseNameAccessControlNonRootUser            = "access-control-security-context-non-root-user-check"
+	TnfNodePortTcName                               = "access-control-service-type"
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
 
 	TestDeploymentLabels = map[string]string{

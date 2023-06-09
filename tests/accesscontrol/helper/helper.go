@@ -14,6 +14,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/installplan"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -135,4 +136,52 @@ func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.Client
 func DefineAndCreateSubscription(name, namespace string, clientSet *client.ClientSet) error {
 	subscription := subscription.DefineSubscription(name, namespace)
 	return globalhelper.APIClient.Create(context.TODO(), subscription)
+}
+
+// DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
+func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool,
+	ipFams []corev1.IPFamily, ipFamPolicy string) error {
+	var testService *corev1.Service
+
+	if ipFamPolicy == "" {
+		testService = service.DefineService(
+			name,
+			parameters.TestAccessControlNameSpace,
+			port,
+			targetPort,
+			corev1.ProtocolTCP,
+			parameters.TestDeploymentLabels,
+			ipFams,
+			nil)
+	} else {
+		ipPolicy := corev1.IPFamilyPolicy(ipFamPolicy)
+
+		testService = service.DefineService(
+			name,
+			parameters.TestAccessControlNameSpace,
+			port,
+			targetPort,
+			corev1.ProtocolTCP,
+			parameters.TestDeploymentLabels,
+			ipFams,
+			&ipPolicy)
+	}
+
+	if withNodePort {
+		var err error
+
+		testService, err = service.RedefineWithNodePort(testService)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err := globalhelper.APIClient.Services(parameters.TestAccessControlNameSpace).Create(
+		context.Background(),
+		testService, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create service on cluster: %w", err)
+	}
+
+	return nil
 }
