@@ -242,6 +242,19 @@ func RedefineWithPVC(deployment *appsv1.Deployment, name string, claim string) {
 	}
 }
 
+func RedefineWithHostPath(deployment *appsv1.Deployment, name string, path string) {
+	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: path,
+				},
+			},
+		},
+	}
+}
+
 func RedefineWithCPUResources(deployment *appsv1.Deployment, limit string, req string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
