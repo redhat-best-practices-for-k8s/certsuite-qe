@@ -11,9 +11,11 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/installplan"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -124,6 +126,18 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 		parameters.CPULimit, parameters.MemoryLimit)
 
 	return namespaces.ApplyResourceQuota(namespace, clientSet, quota)
+}
+
+func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.ClientSet) error {
+	plan := installplan.DefineInstallPlan(name, namespace)
+
+	return globalhelper.APIClient.Create(context.TODO(), plan)
+}
+
+func DefineAndCreateSubscription(name, namespace string, clientSet *client.ClientSet) error {
+	subscription := subscription.DefineSubscription(name, namespace)
+
+	return globalhelper.APIClient.Create(context.TODO(), subscription)
 }
 
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
