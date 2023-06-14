@@ -18,7 +18,7 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	TestImageWithValidTag = "httpd:2.4.57" // "alpine:3.18.0"
+	TestImageWithValidTag = "httpd:2.4.57"
 )
 
 const (
