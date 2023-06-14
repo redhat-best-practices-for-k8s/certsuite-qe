@@ -35,9 +35,7 @@ func RedefinePodWithContainerPort(pod *corev1.Pod, containerIndex int, portName 
 	totalContainers := len(pod.Spec.Containers)
 
 	if containerIndex >= 0 && containerIndex < totalContainers {
-
 		container := pod.Spec.Containers[containerIndex]
-
 		container.Ports[0].Name = portName
 	}
 }
