@@ -35,10 +35,6 @@ var _ = BeforeSuite(func() {
 	err := namespaces.Create(tsparams.ManageabilityNamespace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred())
 
-	// Create service account and roles and roles binding
-	// err = tshelper.ConfigurePrivilegedServiceAccount(tsparams.ManageabilityNamespace)
-	// Expect(err).ToNot(HaveOccurred())
-
 	By("Define TNF config file")
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.ManageabilityNamespace},

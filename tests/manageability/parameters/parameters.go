@@ -19,13 +19,12 @@ var (
 		"app":                  "test",
 	}
 	TestImageWithValidTag = "httpd:2.4.57"
+	InvalidPortName       = "sftp"
 )
 
 const (
 	TnfTestSuiteName       = "manageability"
 	ManageabilityNamespace = "manageability-ns"
-
-	RtImageName = "quay.io/testnetworkfunction/debug-partner:latest"
 
 	// TNF test cases names.
 	TnfContainerPortName = "manageability-container-port-name-format"

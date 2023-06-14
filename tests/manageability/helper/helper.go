@@ -22,7 +22,7 @@ func DefineManageabilityPod(podName, namespace, image string, label map[string]s
 					Ports: []corev1.ContainerPort{
 						{
 							Name:          "http",
-							ContainerPort: *pointer.Int32(8080),
+							ContainerPort: *pointer.Int32(80),
 						},
 					},
 				},
@@ -38,6 +38,6 @@ func RedefinePodWithContainerPort(pod *corev1.Pod, containerIndex int, portName 
 
 		container := pod.Spec.Containers[containerIndex]
 
-		container.Ports[0].Name = "non-grpc"
+		container.Ports[0].Name = portName
 	}
 }

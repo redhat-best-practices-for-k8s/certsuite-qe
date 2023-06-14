@@ -44,7 +44,7 @@ var _ = Describe("manageability-container-port-name", func() {
 		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, tsparams.ManageabilityNamespace,
 			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
 
-		tshelper.RedefinePodWithContainerPort(testPod, 0, "sftp")
+		tshelper.RedefinePodWithContainerPort(testPod, 0, tsparams.InvalidPortName)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
