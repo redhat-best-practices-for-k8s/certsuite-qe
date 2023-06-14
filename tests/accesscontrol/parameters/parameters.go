@@ -35,6 +35,7 @@ var (
 	TestCaseNameAccessControlNonRootUser            = "access-control-security-context-non-root-user-check"
 	TnfNodePortTcName                               = "access-control-service-type"
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
+	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
