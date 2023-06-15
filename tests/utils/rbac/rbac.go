@@ -40,7 +40,7 @@ func DefineRbacAuthorizationClusterGroupSubjects(subjectNames []string) *[]rbacv
 }
 
 // DefineRbacAuthorizationClusterGroupSubjects defines RBAC Subject list.
-func DefineRbacAuthorizationClusterServiceAccountSubjects(Namespace, name string) *rbacv1.ClusterRoleBinding {
+func DefineRbacAuthorizationClusterServiceAccountSubjects(namespace, name string) *rbacv1.ClusterRoleBinding {
 	// Define the ClusterRoleBinding
 	clusterRoleBinding := &rbacv1.ClusterRoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
@@ -50,7 +50,7 @@ func DefineRbacAuthorizationClusterServiceAccountSubjects(Namespace, name string
 			{
 				Kind:      "ServiceAccount",
 				Name:      name,
-				Namespace: Namespace,
+				Namespace: namespace,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{
