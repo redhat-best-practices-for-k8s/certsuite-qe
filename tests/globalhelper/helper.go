@@ -279,6 +279,16 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 	return nil
 }
 
+// AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group.
+func CreateClusterRoleBinding(NameSpace, name string) error {
+	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(NameSpace, name)
+	_, err := APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create cluster role binding: %w", err)
+	}
+	return nil
+}
+
 // CopyFiles copy file from source to destination.
 func CopyFiles(src string, dst string) error {
 	originalFile, err := os.Open(src)

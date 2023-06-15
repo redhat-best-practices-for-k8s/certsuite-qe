@@ -33,6 +33,7 @@ var (
 	TestCaseNameAccessControlContainerHostPort      = "access-control-container-host-port"
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
 	TestCaseNameAccessControlNonRootUser            = "access-control-security-context-non-root-user-check"
+	TestCaseNameAccessControlCluterRoleBindings     = "access-control-cluster-role-bindings"
 	TnfNodePortTcName                               = "access-control-service-type"
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
