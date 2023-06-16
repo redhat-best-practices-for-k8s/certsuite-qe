@@ -20,7 +20,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy",
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		FIt("One pod running in exclusive cpu pool and shared cpu scheduling policy", func() {
+		It("One pod running in exclusive cpu pool and shared cpu scheduling policy", func() {
 
 			By("Define RT pod")
 			testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
