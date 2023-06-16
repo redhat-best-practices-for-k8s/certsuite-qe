@@ -242,6 +242,19 @@ func RedefineWithPVC(deployment *appsv1.Deployment, name string, claim string) {
 	}
 }
 
+func RedefineWithHostPath(deployment *appsv1.Deployment, name string, path string) {
+	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: path,
+				},
+			},
+		},
+	}
+}
+
 func RedefineWithCPUResources(deployment *appsv1.Deployment, limit string, req string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
@@ -428,6 +441,27 @@ func RedefineWithContainersSecurityContextNetRaw(deployment *appsv1.Deployment) 
 			RunAsUser:  pointer.Int64(0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"NET_RAW"}},
+		}
+	}
+}
+
+func RedefineWithContainersSecurityContextSysAdmin(deployment *appsv1.Deployment) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: pointer.Bool(true),
+			RunAsUser:  pointer.Int64(0),
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{"SYS_ADMIN"}},
+		}
+	}
+}
+
+func RedefineWithContainersSecurityContextAllowPrivilegeEscalation(deployment *appsv1.Deployment,
+	allowPrivilegeEscalation bool) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			RunAsUser:                pointer.Int64(0),
+			AllowPrivilegeEscalation: &allowPrivilegeEscalation,
 		}
 	}
 }

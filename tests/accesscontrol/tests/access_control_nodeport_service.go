@@ -1,4 +1,4 @@
-package tests
+package accesscontrol
 
 import (
 	"os"
@@ -11,18 +11,18 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	corev1 "k8s.io/api/core/v1"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 )
 
-var _ = Describe("Networking custom namespace, custom deployment,", func() {
+var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestAccessControlNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -30,7 +30,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	BeforeEach(func() {
 
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -43,7 +43,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	It("2 custom pods, no service installed, service Should not have type of nodePort", func() {
 
 		By("Define deployment and create it on cluster")
-		err := tshelper.DefineAndCreateDeploymentOnCluster(3)
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -69,7 +72,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -99,7 +105,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -124,7 +133,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -154,7 +166,10 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
