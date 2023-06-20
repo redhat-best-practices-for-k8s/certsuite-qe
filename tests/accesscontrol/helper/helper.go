@@ -56,7 +56,7 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 	return deploymentStruct, nil
 }
 
-func DefineDeploymentWithClusterRoleBindingwithServiceAccount(replica int32, containers int, name string) (*appsv1.Deployment, error) {
+func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32, containers int, name string) (*appsv1.Deployment, error) {
 	err := globalhelper.CreateClusterRoleBinding(parameters.TestAccessControlNameSpace, "my-serviceaccount")
 	if err != nil {
 		return nil, err
