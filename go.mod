@@ -17,7 +17,7 @@ require (
 	github.com/test-network-function/test-network-function-claim v1.0.20
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.27.3
-	k8s.io/apiextensions-apiserver v0.27.2
+	k8s.io/apiextensions-apiserver v0.27.3
 	k8s.io/apimachinery v0.27.3
 	k8s.io/client-go v0.27.3
 	k8s.io/utils v0.0.0-20230313181309-38a27ef9d749
