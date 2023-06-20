@@ -30,7 +30,6 @@ func CreateServiceAccount(serviceAccountName, namespace string) error {
 }
 
 func DeleteServiceAccount(serviceAccountName, namespace string) error {
-
 	serviceAccount, err := APIClient.ServiceAccounts(namespace).Get(context.Background(), serviceAccountName, metav1.GetOptions{})
 
 	if k8serrors.IsNotFound(err) {

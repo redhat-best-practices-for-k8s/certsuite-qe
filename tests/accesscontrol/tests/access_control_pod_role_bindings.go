@@ -10,25 +10,17 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-const (
-	testServiceAccount  = "my-sa"
-	testRoleBindingName = "my-rb"
-	testRoleName        = "my-r"
-
-	testNamespace = "my-ns"
-)
-
 func setupInitialRbacConfiguration() {
 	By("Create service account")
 
-	err := globalhelper.CreateServiceAccount(testServiceAccount, tsparams.TestAccessControlNameSpace)
+	err := globalhelper.CreateServiceAccount(tsparams.TestServiceAccount, tsparams.TestAccessControlNameSpace)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = globalhelper.CreateRole(testRoleName, tsparams.TestAccessControlNameSpace)
+	err = globalhelper.CreateRole(tsparams.TestRoleName, tsparams.TestAccessControlNameSpace)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = globalhelper.CreateRoleBindingWithServiceAccountSubject(testRoleBindingName, testRoleName,
-		testServiceAccount, tsparams.TestAccessControlNameSpace)
+	err = globalhelper.CreateRoleBindingWithServiceAccountSubject(tsparams.TestRoleBindingName, tsparams.TestRoleName,
+		tsparams.TestServiceAccount, tsparams.TestAccessControlNameSpace)
 	Expect(err).ToNot(HaveOccurred())
 }
 
@@ -39,7 +31,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(testNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.TestAnotherNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 
 		setupInitialRbacConfiguration()
@@ -51,7 +43,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
 			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 
-		pod.RedefineWithServiceAccount(testPod, testServiceAccount)
+		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -65,7 +57,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodRoleBindings,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -75,19 +67,19 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
 			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 
-		pod.RedefineWithServiceAccount(testPod, testServiceAccount)
+		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create namespace")
-		err = namespaces.Create(testNamespace, globalhelper.APIClient)
+		err = namespaces.Create(tsparams.TestAnotherNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		// Delete service account
-		err = globalhelper.DeleteServiceAccount(testServiceAccount, tsparams.TestAccessControlNameSpace)
+		err = globalhelper.DeleteServiceAccount(tsparams.TestServiceAccount, tsparams.TestAccessControlNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 		// Create the service account in a new namespace
-		err = globalhelper.CreateServiceAccount(testServiceAccount, testNamespace)
+		err = globalhelper.CreateServiceAccount(tsparams.TestServiceAccount, tsparams.TestAnotherNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start pod-role-bindings")
@@ -108,19 +100,20 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
 			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 
-		pod.RedefineWithServiceAccount(testPod, testServiceAccount)
+		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create namespace")
-		err = namespaces.Create(testNamespace, globalhelper.APIClient)
+		err = namespaces.Create(tsparams.TestAnotherNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		// Delete role binding
-		err = globalhelper.DeleteRoleBinding(testRoleBindingName, tsparams.TestAccessControlNameSpace)
+		err = globalhelper.DeleteRoleBinding(tsparams.TestRoleBindingName, tsparams.TestAccessControlNameSpace)
 		Expect(err).ToNot(HaveOccurred())
 		// Create role binding in a new namespace
-		err = globalhelper.CreateRoleBindingWithServiceAccountSubject(testServiceAccount, testRoleName, testServiceAccount, testNamespace)
+		err = globalhelper.CreateRoleBindingWithServiceAccountSubject(tsparams.TestRoleBindingName,
+			tsparams.TestRoleName, tsparams.TestServiceAccount, tsparams.TestAnotherNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start pod-role-bindings")

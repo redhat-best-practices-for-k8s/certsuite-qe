@@ -25,7 +25,7 @@ var (
 )
 
 const (
-	// TNF Test case names
+	// TNF Test case names.
 	TnfPodRoleBindings                              = "access-control-pod-role-bindings"
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
@@ -53,4 +53,9 @@ const (
 	MemoryRequest      = "500Mi"
 	CPULimit           = "1"
 	CPURequest         = "1"
+
+	TestServiceAccount   = "my-sa"
+	TestRoleBindingName  = "my-rb"
+	TestRoleName         = "my-r"
+	TestAnotherNamespace = "my-ns"
 )
