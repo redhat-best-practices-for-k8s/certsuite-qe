@@ -31,6 +31,10 @@ func DefinePod(podName string, namespace string, image string, label map[string]
 					Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}
 }
 
+func RedefineWithServiceAccount(pod *corev1.Pod, serviceAccountName string) {
+	pod.Spec.ServiceAccountName = serviceAccountName
+}
+
 // RedefineWithReadinessProbe adds readiness probe to given pod manifest.
 func RedefineWithReadinessProbe(pod *corev1.Pod) {
 	for index := range pod.Spec.Containers {
