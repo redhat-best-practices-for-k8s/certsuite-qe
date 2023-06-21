@@ -93,7 +93,8 @@ func DeleteRoleBinding(bindingName, namespace string) error {
 	return err
 }
 
-func CreateRoleBindingWithServiceAccountSubject(bindingName, roleName, serviceAccountName, namespace string) error {
+func CreateRoleBindingWithServiceAccountSubject(bindingName, roleName, serviceAccountName,
+	serviceAccountNamespace, namespace string) error {
 	aRoleBinding := rbacv1.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "RoleBinding",
@@ -106,7 +107,7 @@ func CreateRoleBindingWithServiceAccountSubject(bindingName, roleName, serviceAc
 		Subjects: []rbacv1.Subject{{
 			Kind:      "ServiceAccount",
 			Name:      serviceAccountName,
-			Namespace: namespace,
+			Namespace: serviceAccountNamespace,
 		}},
 		RoleRef: rbacv1.RoleRef{
 			Kind:     "Role",
