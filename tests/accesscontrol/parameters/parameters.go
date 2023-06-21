@@ -27,6 +27,7 @@ var (
 const (
 	// TNF Test case names.
 	TnfPodRoleBindings                              = "access-control-pod-role-bindings"
+	TnfPodServiceAccount                            = "access-control-pod-service-account"
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
 	TestCaseNameAccessControlPodHostPid             = "access-control-pod-host-pid"
