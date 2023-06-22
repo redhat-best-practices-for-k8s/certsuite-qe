@@ -99,7 +99,7 @@ func RedefineWithReplicaNumber(deployment *appsv1.Deployment, replicasNumber int
 	deployment.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 func AppendServiceAccount(deployment *appsv1.Deployment, serviceAccountName string) {
-	deployment.Spec.Template.Spec.ServiceAccountName = "serviceAccountName"
+	deployment.Spec.Template.Spec.ServiceAccountName = serviceAccountName
 }
 
 // RedefineFirstContainerWithPreStopSpec redefines deployment first container with lifecycle/preStop spec.
