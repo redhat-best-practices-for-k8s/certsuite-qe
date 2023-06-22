@@ -39,7 +39,6 @@ func DefineRbacAuthorizationClusterGroupSubjects(subjectNames []string) *[]rbacv
 	return &Subjects
 }
 
-// DefineRbacAuthorizationClusterGroupSubjects defines RBAC Subject list.
 func DefineRbacAuthorizationClusterServiceAccountSubjects(namespace, name string) *rbacv1.ClusterRoleBinding {
 	// Define the ClusterRoleBinding
 	return &rbacv1.ClusterRoleBinding{
