@@ -61,7 +61,7 @@ var _ = Describe("Access-control security-context,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithContainersSecurityContextIpcLock(dep)
+		deployment.RedefineWithHostPid(dep, true)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
