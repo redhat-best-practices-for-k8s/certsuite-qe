@@ -40,7 +40,6 @@ func DefineRbacAuthorizationClusterGroupSubjects(subjectNames []string) *[]rbacv
 }
 
 func DefineRbacAuthorizationClusterServiceAccountSubjects(namespace, name string) *rbacv1.RoleBinding {
-
 	// Define the RoleBinding
 	return &rbacv1.RoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
