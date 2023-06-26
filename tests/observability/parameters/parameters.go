@@ -6,10 +6,10 @@ const (
 	TnfTestSuiteName = "observability"
 
 	// TNF test cases names.
-	TnfContainerLoggingTcName      = "observability-container-logging"
-	TnfCrdStatusTcName             = "observability-crd-status"
-	TnfTerminationMsgPolicysTcName = "observability-termination-policy"
-	TnfPodDisruptionBudgetTcName   = "observability-pod-disruption-budget"
+	TnfContainerLoggingTcName     = "observability-container-logging"
+	TnfCrdStatusTcName            = "observability-crd-status"
+	TnfTerminationMsgPolicyTcName = "observability-termination-policy"
+	TnfPodDisruptionBudgetTcName  = "observability-pod-disruption-budget"
 
 	TestNamespace = "observability-ns"
 
