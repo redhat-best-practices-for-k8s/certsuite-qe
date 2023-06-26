@@ -9,14 +9,6 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
-)
-
-const disableVar = "disable"
-
-var (
-	// Each tc will save the RTC that was created in order to delete them.
-	rtcNames = []string{}
 )
 
 var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
@@ -33,38 +25,21 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Delete all RTC's that were created by the previous test case.")
-		for _, rtc := range rtcNames {
+		for _, rtc := range tsparams.RtcNames {
 			By("Deleting rtc " + rtc)
 			err := tshelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		}
 
 		// clear the list.
-		rtcNames = []string{}
+		tsparams.RtcNames = []string{}
 	})
 
 	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
 
 		By("Define pod")
-		testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			tsparams.RtImageName, tsparams.TnfTargetPodLabels)
-
-		annotationsMap := make(map[string]string)
-
-		By("Add annotations to the pod")
-		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
-		annotationsMap["irq-load-balancing.crio.io"] = disableVar
-		testPod.SetAnnotations(annotationsMap)
-
-		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
-		err := globalhelper.CreateRunTimeClass(rtc)
-		Expect(err).ToNot(HaveOccurred())
-
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
-
-		pod.RedefineWithRunTimeClass(testPod, rtc.Name)
-		pod.RedefineWithCPUResources(testPod, "1", "1")
+		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool()
+		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -89,25 +64,9 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 
 	It("One pod running in isolated cpu pool and non-rt scheduling policy", func() {
 		By("Define pod")
-		testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			tsparams.RtImageName, tsparams.TnfTargetPodLabels)
 
-		annotationsMap := make(map[string]string)
-
-		By("Add annotations to the pod")
-		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
-		annotationsMap["irq-load-balancing.crio.io"] = disableVar
-		testPod.SetAnnotations(annotationsMap)
-
-		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
-		err := globalhelper.CreateRunTimeClass(rtc)
-		Expect(err).ToNot(HaveOccurred())
-
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
-
-		pod.RedefineWithRunTimeClass(testPod, rtc.Name)
-		pod.RedefineWithCPUResources(testPod, "1", "1")
+		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool()
+		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
 		Expect(err).NotTo(HaveOccurred())
