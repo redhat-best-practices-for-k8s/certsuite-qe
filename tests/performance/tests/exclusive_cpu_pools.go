@@ -19,7 +19,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("One pod with only exlusive containers", func() {
+	It("One pod with only exclusive containers", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, tsparams.PerformanceNamespace,

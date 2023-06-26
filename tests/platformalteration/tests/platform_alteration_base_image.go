@@ -78,7 +78,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
 			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
 
-		deployment.RedefineWithPriviledgedContainer(deploymenta)
+		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -118,7 +118,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 			tsparams.PlatformAlterationNamespace,
 			globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels)
-		statefulset.RedefineWithPriviledgedContainer(statefulSet)
+		statefulset.RedefineWithPrivilegedContainer(statefulSet)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

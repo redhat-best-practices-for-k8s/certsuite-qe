@@ -36,8 +36,8 @@ const (
 	TnfRtExclusiveCPUPoolSchedulingPolicy = "performance-exclusive-cpu-pool-rt-scheduling-policy"
 	TnfRtAppsNoExecProbes                 = "performance-rt-apps-no-exec-probes"
 
-	PriviledgedRoleName = "privileged-role"
-	TnfRunTimeClass     = "performance-rtc"
+	PrivilegedRoleName = "privileged-role"
+	TnfRunTimeClass    = "performance-rtc"
 
 	DisableStr = "disable"
 )
