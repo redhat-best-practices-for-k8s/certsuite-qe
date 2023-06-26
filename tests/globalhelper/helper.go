@@ -280,12 +280,27 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 }
 
 func CreateClusterRoleBinding(nameSpace, name string) error {
+	// Define the service account object
+	serviceAccount := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: nameSpace,
+		},
+	}
+
+	// Create the service account
+	_, err := APIClient.ServiceAccounts(nameSpace).Create(context.Background(), serviceAccount, metav1.CreateOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to create cServiceAccount: %w", err)
+
+	}
 	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
-	if _, err := APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
+	if _, err := APIClient.RoleBindings(nameSpace).Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
 		return fmt.Errorf("failed to create cluster role binding: %w", err)
 	}
 
 	return nil
+
 }
 
 // CopyFiles copy file from source to destination.
