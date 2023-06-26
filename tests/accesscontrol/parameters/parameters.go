@@ -10,14 +10,24 @@ const (
 )
 
 var (
-	TestAccessControlNameSpace           = "accesscontrol-tests"
 	testPodLabelPrefixName               = "accesscontrol-test/test"
 	testPodLabelValue                    = "testing"
+	TestPodName                          = "access-control-pod"
 	TestPodLabel                         = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 	InvalidNamespace                     = "openshift-test"
 	AdditionalValidNamespace             = "ac-test"
 	AdditionalNamespaceForResourceQuotas = "ac-rq-test"
 
+	TestDeploymentLabels = map[string]string{
+		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
+	}
+)
+
+const (
+	// TNF Test case names.
+	TnfPodRoleBindings                              = "access-control-pod-role-bindings"
+	TnfPodServiceAccount                            = "access-control-pod-service-account"
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
 	TestCaseNameAccessControlPodHostPid             = "access-control-pod-host-pid"
@@ -37,14 +47,16 @@ var (
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 
-	TestDeploymentLabels = map[string]string{
-		testPodLabelPrefixName: testPodLabelValue,
-		"app":                  "test",
-	}
+	TestAccessControlNameSpace = "accesscontrol-tests"
 
 	ServiceAccountName = "default"
 	MemoryLimit        = "512Mi"
 	MemoryRequest      = "500Mi"
 	CPULimit           = "1"
 	CPURequest         = "1"
+
+	TestServiceAccount   = "my-sa"
+	TestRoleBindingName  = "my-rb"
+	TestRoleName         = "my-r"
+	TestAnotherNamespace = "my-ns"
 )
