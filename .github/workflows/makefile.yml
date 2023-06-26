@@ -26,6 +26,7 @@ jobs:
       - uses: ludeeus/action-shellcheck@master
         with:
           ignore_paths: vendor
+      - uses: crate-ci/typos@master
       - uses: ibiqlik/action-yamllint@v3
         with:
           file_or_dir: .github/workflows/*.yml
