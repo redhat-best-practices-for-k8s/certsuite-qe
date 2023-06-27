@@ -295,7 +295,7 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 	}
 
 	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
-	if _, err := APIClient.RoleBindings(nameSpace).Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
+	if _, err := APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
 		return fmt.Errorf("failed to create cluster role binding: %w", err)
 	}
 
