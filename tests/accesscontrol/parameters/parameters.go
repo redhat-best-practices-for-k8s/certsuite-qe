@@ -51,7 +51,7 @@ const (
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
-	ServiceAccountName = "default"
+	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "512Mi"
 	MemoryRequest      = "500Mi"
 	CPULimit           = "1"
