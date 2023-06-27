@@ -56,6 +56,22 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 	return deploymentStruct, nil
 }
 
+func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32, containers int, name string) (*appsv1.Deployment, error) {
+	err := globalhelper.CreateClusterRoleBinding(parameters.TestAccessControlNameSpace, "my-service-account")
+	if err != nil {
+		return nil, err
+	}
+
+	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
+		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+	deployment.AppendServiceAccount(deploymentStruct, "my-service-account")
+
+	return deploymentStruct, nil
+}
+
 func DefineDeploymentWithNamespace(replica int32, containers int, name string, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid number of containers")
