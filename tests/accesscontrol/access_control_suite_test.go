@@ -45,7 +45,9 @@ var _ = AfterSuite(func() {
 	err := tshelper.DeleteNamespaces(
 		[]string{parameters.TestAccessControlNameSpace,
 			parameters.AdditionalValidNamespace,
-			parameters.InvalidNamespace},
+			parameters.InvalidNamespace,
+			parameters.TestAnotherNamespace,
+		},
 		globalhelper.APIClient,
 		parameters.Timeout,
 	)

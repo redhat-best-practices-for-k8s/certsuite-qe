@@ -205,7 +205,7 @@ func RedefineWithContainerSpecs(deployment *appsv1.Deployment, containerSpecs []
 	deployment.Spec.Template.Spec.Containers = containerSpecs
 }
 
-func RedefineWithPriviledgedContainer(deployment *appsv1.Deployment) {
+func RedefineWithPrivilegedContainer(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),

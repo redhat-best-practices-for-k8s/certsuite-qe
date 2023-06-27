@@ -12,8 +12,8 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
-var _ = Describe(tsparams.TnfTerminationMsgPolicysTcName, func() {
-	const tnfTestCaseName = tsparams.TnfTerminationMsgPolicysTcName
+var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
+	const tnfTestCaseName = tsparams.TnfTerminationMsgPolicyTcName
 	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 	BeforeEach(func() {
