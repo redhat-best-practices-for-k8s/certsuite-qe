@@ -56,7 +56,7 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
-		daemonset.RedefineWithPriviledgedContainer(daemonSet)
+		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)

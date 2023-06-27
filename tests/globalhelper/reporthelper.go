@@ -33,7 +33,7 @@ func OpenClaimReport() (*claim.Root, error) {
 	err = json.Unmarshal(byteValueClaim, &claimRootReport)
 
 	if err != nil {
-		return nil, fmt.Errorf("error unmarshaling %s report file: %w", globalparameters.DefaultClaimFileName, err)
+		return nil, fmt.Errorf("error unmarshalling %s report file: %w", globalparameters.DefaultClaimFileName, err)
 	}
 
 	return &claimRootReport, nil

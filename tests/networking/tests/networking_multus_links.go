@@ -63,7 +63,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 	// 48330
 	It("2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
-		// The NetworkAttachmentDefintion (mcvlan) created for this TC uses an interface that exists only in worker nodes,
+		// The NetworkAttachmentDefinition (mcvlan) created for this TC uses an interface that exists only in worker nodes,
 		// so we need to make sure the test pods are not deployed in master nodes.
 		err := globalhelper.EnableMasterScheduling(false)
 		Expect(err).ToNot(HaveOccurred())

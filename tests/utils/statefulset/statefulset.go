@@ -80,7 +80,7 @@ func RedefineWithReplicaNumber(statefulSet *appsv1.StatefulSet, replicasNumber i
 	statefulSet.Spec.Replicas = pointer.Int32(replicasNumber)
 }
 
-func RedefineWithPriviledgedContainer(statefulSet *appsv1.StatefulSet) {
+func RedefineWithPrivilegedContainer(statefulSet *appsv1.StatefulSet) {
 	for index := range statefulSet.Spec.Template.Spec.Containers {
 		statefulSet.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
 			Privileged: pointer.Bool(true),

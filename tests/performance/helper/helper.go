@@ -44,7 +44,7 @@ func DefineExclusivePod(podName string, namespace string, image string, label ma
 			Labels:    label},
 		Spec: corev1.PodSpec{
 			TerminationGracePeriodSeconds: pointer.Int64(0),
-			ServiceAccountName:            tsparams.PriviledgedRoleName,
+			ServiceAccountName:            tsparams.PrivilegedRoleName,
 			SecurityContext: &corev1.PodSecurityContext{
 				RunAsUser:    pointer.Int64(1000),
 				RunAsGroup:   pointer.Int64(1000),
@@ -92,7 +92,7 @@ func DefineRtPod(podName string, namespace string, image string, label map[strin
 			Namespace: namespace,
 			Labels:    label},
 		Spec: corev1.PodSpec{
-			ServiceAccountName:            tsparams.PriviledgedRoleName,
+			ServiceAccountName:            tsparams.PrivilegedRoleName,
 			TerminationGracePeriodSeconds: pointer.Int64(0),
 			Containers: []corev1.Container{
 				{
@@ -232,7 +232,7 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 			APIVersion: "v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      tsparams.PriviledgedRoleName,
+			Name:      tsparams.PrivilegedRoleName,
 			Namespace: namespace,
 		},
 		Rules: []rbacv1.PolicyRule{{
@@ -249,17 +249,17 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 			APIVersion: "v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      tsparams.PriviledgedRoleName,
+			Name:      tsparams.PrivilegedRoleName,
 			Namespace: namespace,
 		},
 		Subjects: []rbacv1.Subject{{
 			Kind:      "ServiceAccount",
-			Name:      tsparams.PriviledgedRoleName,
+			Name:      tsparams.PrivilegedRoleName,
 			Namespace: namespace,
 		}},
 		RoleRef: rbacv1.RoleRef{
 			Kind:     "Role",
-			Name:     tsparams.PriviledgedRoleName,
+			Name:     tsparams.PrivilegedRoleName,
 			APIGroup: "rbac.authorization.k8s.io",
 		},
 	}
@@ -270,7 +270,7 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 			APIVersion: "v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      tsparams.PriviledgedRoleName,
+			Name:      tsparams.PrivilegedRoleName,
 			Namespace: namespace,
 		},
 	}

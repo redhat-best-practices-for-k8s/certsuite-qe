@@ -31,7 +31,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 	It("SELinux is enforcing on all nodes", func() {
 		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
-		daemonset.RedefineWithPriviledgedContainer(daemonSet)
+		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -67,7 +67,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 	It("SELinux is permissive on one node [negative]", func() {
 		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
-		daemonset.RedefineWithPriviledgedContainer(daemonSet)
+		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
