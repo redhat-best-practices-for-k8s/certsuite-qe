@@ -175,12 +175,34 @@ func RedefineWith2MiHugepages(pod *corev1.Pod, hugepages int) {
 	}
 }
 
+func RedefineWith1GiHugepages(pod *corev1.Pod, hugepages int) {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
+
+	for i := range pod.Spec.Containers {
+		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+	}
+}
+
 func RedefineFirstContainerWith2MiHugepages(pod *corev1.Pod, hugepages int) error {
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
 
 	if len(pod.Spec.Containers) > 0 {
 		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
 		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+
+		return nil
+	}
+
+	return fmt.Errorf("pod %s does not have enough containers", pod.Name)
+}
+
+func RedefineFirstContainerWith1GiHugepages(pod *corev1.Pod, hugepages int) error {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
+
+	if len(pod.Spec.Containers) > 0 {
+		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
 
 		return nil
 	}

@@ -354,6 +354,15 @@ func RedefineWith2MiHugepages(deployment *appsv1.Deployment, hugepages int) {
 	}
 }
 
+func RedefineWith1GiHugepages(deployment *appsv1.Deployment, hugepages int) {
+	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
+
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		deployment.Spec.Template.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+	}
+}
+
 func RedefineWithNoExecuteToleration(deployment *appsv1.Deployment) {
 	tol := corev1.Toleration{
 		Effect:            "NoExecute",
