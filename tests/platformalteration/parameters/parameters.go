@@ -39,6 +39,7 @@ const (
 	TnfBootParamsName         = "platform-alteration-boot-params"
 	TnfSysctlConfigName       = "platform-alteration-sysctl-config"
 	TnfHugePages2mOnlyName    = "platform-alteration-hugepages-2m-only"
+	TnfHugePages1gOnlyName    = "platform-alteration-hugepages-1g-only"
 	TnfOCPLifecycleName       = "platform-alteration-ocp-lifecycle"
 	TnfOCPNodeOsName          = "platform-alteration-ocp-node-os-lifecycle"
 	TnfServiceMeshUsageName   = "platform-alteration-service-mesh-usage"
