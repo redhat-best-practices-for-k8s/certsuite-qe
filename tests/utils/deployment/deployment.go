@@ -393,6 +393,10 @@ func RedefineWithNoScheduleToleration(deployment *appsv1.Deployment) {
 	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
 }
 
+func RedefineWithServiceAccount(deployment *appsv1.Deployment, serviceAccountName string) {
+	deployment.Spec.Template.Spec.ServiceAccountName = serviceAccountName
+}
+
 // RedefineWithPostStart adds postStart to deployment manifest.
 func RedefineWithPostStart(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
