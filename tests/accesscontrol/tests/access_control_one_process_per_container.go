@@ -60,7 +60,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		By("Define deployment with one container that runs two processes")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
-		deployment.RedefineContainerCommand(dep, 0, commandToLaunchTwoProcesses)
+		err = deployment.RedefineContainerCommand(dep, 0, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -109,7 +109,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.Configuration.General.TestImage)
 
-		deployment.RedefineContainerCommand(dep, 1, commandToLaunchTwoProcesses)
+		err = deployment.RedefineContainerCommand(dep, 1, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)

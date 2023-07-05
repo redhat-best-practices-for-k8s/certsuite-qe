@@ -482,7 +482,6 @@ func RedefineWithContainersSecurityContextAllowPrivilegeEscalation(deployment *a
 	}
 }
 
-// RedefineContainerCommand redefines the command of the deployment's container selected with index
 func RedefineContainerCommand(deployment *appsv1.Deployment, index int, command []string) error {
 	if len(deployment.Spec.Template.Spec.Containers) > index {
 		deployment.Spec.Template.Spec.Containers[index].Command = command
