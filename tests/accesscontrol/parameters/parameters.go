@@ -48,6 +48,7 @@ const (
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 	TnfSecurityContextTcName                        = "access-control-security-context"
+	TestCaseNameAccessControlOneProcessPerContainer = "access-control-one-process-per-container"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
