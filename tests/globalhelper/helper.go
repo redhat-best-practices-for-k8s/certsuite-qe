@@ -288,8 +288,14 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 		},
 	}
 
+	// Exit early if the cluster role binding already exists
+	_, err := APIClient.ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
+	if err == nil {
+		return nil
+	}
+
 	// Create the service account
-	_, err := APIClient.ServiceAccounts(nameSpace).Create(context.Background(), serviceAccount, metav1.CreateOptions{})
+	_, err = APIClient.ServiceAccounts(nameSpace).Create(context.Background(), serviceAccount, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create cServiceAccount: %w", err)
 	}
@@ -297,6 +303,20 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
 	if _, err := APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
 		return fmt.Errorf("failed to create cluster role binding: %w", err)
+	}
+
+	return nil
+}
+
+func DeleteClusterRoleBinding(nameSpace, name string) error {
+	// Exit if the cluster role binding does not exist
+	_, err := APIClient.ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
+	if k8serrors.IsNotFound(err) {
+		return nil
+	}
+
+	if err := APIClient.ClusterRoleBindings().Delete(context.Background(), name, metav1.DeleteOptions{}); err != nil {
+		return fmt.Errorf("failed to delete cluster role binding: %w", err)
 	}
 
 	return nil
