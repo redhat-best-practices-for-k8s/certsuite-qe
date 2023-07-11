@@ -6,6 +6,7 @@ pushd .
 cd "$(dirname "$0")/.."
 
 function finish {
-    popd
+	popd
 }
+
 trap finish EXIT
