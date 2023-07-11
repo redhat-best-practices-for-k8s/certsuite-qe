@@ -14,7 +14,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/networkpolicy"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
@@ -395,8 +394,8 @@ func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports 
 		return nil, errors.New("invalid number of containers")
 	}
 
-	deploymentStruct := deployment.DefineDeployment(name, parameters.TestNetworkingNameSpace,
-		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
+		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.Configuration.General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)

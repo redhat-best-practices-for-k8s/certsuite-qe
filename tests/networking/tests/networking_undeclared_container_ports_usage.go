@@ -168,7 +168,8 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 
 	})
 
-	It("one deployment, one pod, two containers, the first container uses and declares port 8080, the second uses port 8081 but declares 8082 [negative]", func() {
+	//nolint:lll
+	It("one deployment, one pod, two containers, the first one uses and declares port 8080, the second one uses port 8081 but declares 8082 [negative]", func() {
 
 		By("Define deployment and create it on cluster")
 		ports := []corev1.ContainerPort{{ContainerPort: 8080}, {ContainerPort: 8082}}
