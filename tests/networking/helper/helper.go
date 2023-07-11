@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nad"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/networkpolicy"
 
+	"github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
@@ -99,7 +101,7 @@ func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) err
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []corev1.ContainerPort) error {
-	deploymentUnderTest, err := defineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
+	deploymentUnderTest, err := DefineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
 	if err != nil {
 		return err
 	}
@@ -296,7 +298,7 @@ func defineDeploymentBasedOnArgs(
 	return deploymentStruct
 }
 
-func defineDeploymentWithContainers(replica int32, containers int,
+func DefineDeploymentWithContainers(replica int32, containers int,
 	name string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid containers number")
@@ -386,4 +388,22 @@ func createContainerSpecsFromContainerPorts(ports []corev1.ContainerPort) []core
 	}
 
 	return containerSpecs
+}
+
+func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports []corev1.ContainerPort) (*appsv1.Deployment, error) {
+	if len(ports) < 1 {
+		return nil, errors.New("invalid number of containers")
+	}
+
+	deploymentStruct := deployment.DefineDeployment(name, parameters.TestNetworkingNameSpace,
+		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.Configuration.General.TestImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
+
+	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports, globalhelper.Configuration.General.TestImage, "test")
+
+	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
+
+	return deploymentStruct, nil
 }
