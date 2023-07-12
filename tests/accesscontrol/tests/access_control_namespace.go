@@ -39,7 +39,18 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespaces after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51860

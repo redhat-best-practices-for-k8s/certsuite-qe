@@ -43,6 +43,12 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 56594
 	It("istio is installed", func() {
 		By("Define a test pod with istio container")
@@ -110,6 +116,12 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	AfterEach(func() {
+		By("Clean namespace after each test")
 		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 	})

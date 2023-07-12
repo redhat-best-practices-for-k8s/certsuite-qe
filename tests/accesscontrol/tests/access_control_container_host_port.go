@@ -31,7 +31,12 @@ var _ = Describe("Access-control container-host-port,", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 63884

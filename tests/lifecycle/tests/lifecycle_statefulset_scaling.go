@@ -29,6 +29,16 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Disable intrusive tests")
+		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 45439
 	It("One statefulSet, one pod", func() {
 		By("Define statefulSet")

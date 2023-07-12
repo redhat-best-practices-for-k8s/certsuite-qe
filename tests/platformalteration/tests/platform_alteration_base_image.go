@@ -22,6 +22,12 @@ var _ = Describe("platform-alteration-base-image", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 51297
 	It("One deployment, one pod, running test image", func() {
 

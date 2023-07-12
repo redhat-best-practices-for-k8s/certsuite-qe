@@ -18,6 +18,12 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	It("one pod with valid service account", func() {
 
 		By("Create service account")

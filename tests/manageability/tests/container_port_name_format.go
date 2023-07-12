@@ -18,6 +18,12 @@ var _ = Describe("manageability-container-port-name", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	It("One pod with valid port name", func() {
 
 		By("Define pod")

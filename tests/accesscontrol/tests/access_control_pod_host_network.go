@@ -23,14 +23,18 @@ var _ = Describe("Access-control pod-host-network ", func() {
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
 	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53293

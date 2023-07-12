@@ -32,6 +32,12 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 48492
 	It("One deployment, replicas are more than 1, podAntiAffinity is set", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)

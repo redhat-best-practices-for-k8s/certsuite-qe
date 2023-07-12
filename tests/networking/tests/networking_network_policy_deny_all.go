@@ -32,7 +32,6 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 	})
 
 	BeforeEach(func() {
-
 		By("Clean namespaces before each test")
 		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
@@ -43,7 +42,19 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		By("Remove reports from report directory")
 		err = globalhelper.RemoveContentsFromReportDir()
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespaces after each test")
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Remove reports from report directory")
+		err = globalhelper.RemoveContentsFromReportDir()
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 59740

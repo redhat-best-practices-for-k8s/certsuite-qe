@@ -18,7 +18,12 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 54984

@@ -18,6 +18,12 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	It("One pod with valid image tag", func() {
 
 		By("Define pod")

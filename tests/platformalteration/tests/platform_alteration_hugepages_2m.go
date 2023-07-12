@@ -18,7 +18,12 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 55865

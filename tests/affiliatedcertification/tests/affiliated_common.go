@@ -23,7 +23,6 @@ func preConfigureAffiliatedCertificationEnvironment() {
 	err := namespaces.Clean(tsparams.TestCertificationNameSpace, globalhelper.APIClient)
 	Expect(err).ToNot(HaveOccurred(),
 		"Error cleaning namespace "+tsparams.TestCertificationNameSpace)
-
 	By("Ensure default catalog source is enabled")
 
 	catalogEnabled, err := tshelper.IsCatalogSourceEnabled(

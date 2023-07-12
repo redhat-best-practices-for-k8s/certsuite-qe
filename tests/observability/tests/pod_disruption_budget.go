@@ -22,6 +22,12 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	const tnfTestCaseName = tsparams.TnfPodDisruptionBudgetTcName
 
 	// 56635

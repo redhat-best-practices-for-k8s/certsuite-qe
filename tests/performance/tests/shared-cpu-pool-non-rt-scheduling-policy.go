@@ -18,6 +18,12 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	It("One pod with container running in shared cpu pool", func() {
 
 		By("Define pod")

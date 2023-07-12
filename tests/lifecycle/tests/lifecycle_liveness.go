@@ -27,6 +27,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 50053
 	It("One deployment, one pod with a liveness probe", func() {
 		By("Define deployment with a liveness probe")
