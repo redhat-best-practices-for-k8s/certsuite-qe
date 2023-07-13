@@ -18,7 +18,12 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("One deployment, one pod with 1Gi hugepages", func() {

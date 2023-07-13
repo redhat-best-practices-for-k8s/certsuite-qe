@@ -22,6 +22,12 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace " + tsparams.TestNamespace + " after each test")
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// Positive #1.
 	It("One deployment one pod one container with terminationMessagePolicy set to FallbackToLogsOnError", func() {
 

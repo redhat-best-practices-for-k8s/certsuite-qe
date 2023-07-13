@@ -19,6 +19,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	It("Rt app pod with no exec probes", func() {
 
 		By("Define pod")

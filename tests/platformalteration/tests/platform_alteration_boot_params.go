@@ -21,12 +21,16 @@ var _ = Describe("platform-alteration-boot-params", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51302
 	It("unchanged boot params", func() {
-
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)

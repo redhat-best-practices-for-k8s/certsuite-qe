@@ -20,8 +20,13 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy",
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("One pod running in exclusive cpu pool and shared cpu scheduling policy", func() {
+		AfterEach(func() {
+			By("Clean namespace after each test")
+			err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
+		It("One pod running in exclusive cpu pool and shared cpu scheduling policy", func() {
 			By("Define RT pod")
 			testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
 				tsparams.RtImageName, tsparams.TnfTargetPodLabels)

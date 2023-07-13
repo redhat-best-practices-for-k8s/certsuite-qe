@@ -34,6 +34,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 48120
 	It("One deployment, no nodeSelector nor nodeAffinity", func() {
 

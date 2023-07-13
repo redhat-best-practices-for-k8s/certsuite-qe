@@ -525,3 +525,13 @@ func RedefineContainerCommand(deployment *appsv1.Deployment, index int, command 
 
 	return fmt.Errorf("deployment %s does not have container index %d", deployment.Name, index)
 }
+
+func RedefineContainerEnvVarList(deployment *appsv1.Deployment, index int, envVars []corev1.EnvVar) error {
+	if len(deployment.Spec.Template.Spec.Containers) > index {
+		deployment.Spec.Template.Spec.Containers[index].Env = envVars
+
+		return nil
+	}
+
+	return fmt.Errorf("deployment %s does not have container index %d", deployment.Name, index)
+}

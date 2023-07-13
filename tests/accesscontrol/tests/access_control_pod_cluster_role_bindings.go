@@ -29,11 +29,17 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
+
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 56427
 	It("one deployment, one pod, does not have cluster role binding", func() {
-		By("Define deployment  that dont have rolebinfing")
+		By("Define deployment that do not have rolebinding")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -42,13 +48,13 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlCluterRoleBindings,
+			tsparams.TestCaseNameAccessControlClusterRoleBindings,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlCluterRoleBindings,
+			tsparams.TestCaseNameAccessControlClusterRoleBindings,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -63,15 +69,22 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlCluterRoleBindings,
+			tsparams.TestCaseNameAccessControlClusterRoleBindings,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlCluterRoleBindings,
+			tsparams.TestCaseNameAccessControlClusterRoleBindings,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-	})
 
+		By("Delete service account")
+		err = globalhelper.DeleteClusterRoleBinding(tsparams.TestAccessControlNameSpace, "my-cluster-role-binding")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Delete cluster role binding")
+		err = globalhelper.DeleteServiceAccount(tsparams.TestAccessControlNameSpace, "my-service-account")
+		Expect(err).ToNot(HaveOccurred())
+	})
 })

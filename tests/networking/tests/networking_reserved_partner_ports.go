@@ -28,7 +28,6 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	BeforeEach(func() {
-
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
@@ -36,7 +35,16 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Remove reports from report directory")
 		err = globalhelper.RemoveContentsFromReportDir()
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Remove reports from report directory")
+		err = globalhelper.RemoveContentsFromReportDir()
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 61487

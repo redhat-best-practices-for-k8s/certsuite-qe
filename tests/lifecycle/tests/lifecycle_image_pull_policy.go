@@ -22,6 +22,12 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 48473
 	It("One deployment with ifNotPresent as ImagePullPolicy", func() {
 

@@ -29,7 +29,12 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		By("Clean namespace before each test")
 		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 53140

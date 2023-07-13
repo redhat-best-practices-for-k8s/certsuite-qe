@@ -18,17 +18,14 @@ import (
 var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 	execute.BeforeAll(func() {
-
 		By("Clean namespace before all tests")
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
 		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestAccessControlNameSpace)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	BeforeEach(func() {
-
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred())
@@ -36,7 +33,16 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		By("Remove reports from report directory")
 		err = globalhelper.RemoveContentsFromReportDir()
 		Expect(err).ToNot(HaveOccurred())
+	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Remove reports from report directory")
+		err = globalhelper.RemoveContentsFromReportDir()
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 45447

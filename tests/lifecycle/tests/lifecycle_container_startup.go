@@ -25,6 +25,12 @@ var _ = Describe("lifecycle-container-startup", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 55910
 	It("One deployment, one pod with postStart spec", func() {
 		By("Define deployment with postStart spec")

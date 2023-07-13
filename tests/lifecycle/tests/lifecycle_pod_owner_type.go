@@ -24,6 +24,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 47409
 	It("One ReplicaSet, several pods", func() {
 

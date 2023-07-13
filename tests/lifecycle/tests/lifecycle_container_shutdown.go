@@ -24,6 +24,12 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 47311
 	It("One deployment, one pod with preStop field configured", func() {
 

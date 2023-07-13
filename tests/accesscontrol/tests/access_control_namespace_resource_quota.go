@@ -37,6 +37,15 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespaces after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = namespaces.Clean(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 56469
 	It("one deployment, one pod in a namespace with resource quota", func() {
 		By("Define deployment")
