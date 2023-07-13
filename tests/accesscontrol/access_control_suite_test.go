@@ -11,7 +11,6 @@ import (
 	"runtime"
 	"testing"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -42,18 +41,18 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 
 	By("Remove test namespaces")
-	err := tshelper.DeleteNamespaces(
-		[]string{parameters.TestAccessControlNameSpace,
-			parameters.AdditionalValidNamespace,
-			parameters.InvalidNamespace,
-			parameters.TestAnotherNamespace,
-		},
-		globalhelper.APIClient,
-		parameters.Timeout,
-	)
-	Expect(err).ToNot(HaveOccurred())
+	// err := tshelper.DeleteNamespaces(
+	// 	[]string{parameters.TestAccessControlNameSpace,
+	// 		parameters.AdditionalValidNamespace,
+	// 		parameters.InvalidNamespace,
+	// 		parameters.TestAnotherNamespace,
+	// 	},
+	// 	globalhelper.APIClient,
+	// 	parameters.Timeout,
+	// )
+	// Expect(err).ToNot(HaveOccurred())
 
 	By("Remove reports from report directory")
-	err = globalhelper.RemoveContentsFromReportDir()
+	err := globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
 })

@@ -49,14 +49,16 @@ const (
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 	TnfSecurityContextTcName                        = "access-control-security-context"
 	TestCaseNameAccessControlOneProcessPerContainer = "access-control-one-process-per-container"
+	TnfProjectedVolumeServiceAccountTcName          = "access-control-projected-volume-service-account-token"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
-	ServiceAccountName = "automount-test-sa"
-	MemoryLimit        = "512Mi"
-	MemoryRequest      = "500Mi"
-	CPULimit           = "1"
-	CPURequest         = "1"
+	ServiceAccountName             = "automount-test-sa"
+	ProjectedVolumeServiceAcctName = "proj-vol-sa"
+	MemoryLimit                    = "512Mi"
+	MemoryRequest                  = "500Mi"
+	CPULimit                       = "1"
+	CPURequest                     = "1"
 
 	TestServiceAccount   = "my-sa"
 	TestRoleBindingName  = "my-rb"

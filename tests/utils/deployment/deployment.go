@@ -416,6 +416,40 @@ func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid 
 	}
 }
 
+func RedefineWithProjectedVolume(deployment *appsv1.Deployment, name, serviceAcctName string) {
+	projection := corev1.VolumeProjection{
+		ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
+			Path: serviceAcctName,
+		},
+	}
+
+	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources: []corev1.VolumeProjection{projection},
+				},
+			},
+		},
+	}
+}
+
+func RedefineWithProjectedVolumeSATokenNil(deployment *appsv1.Deployment, name string) {
+	projection := corev1.VolumeProjection{}
+
+	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+		{
+			Name: name,
+			VolumeSource: corev1.VolumeSource{
+				Projected: &corev1.ProjectedVolumeSource{
+					Sources: []corev1.VolumeProjection{projection},
+				},
+			},
+		},
+	}
+}
+
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
 func RedefineWithContainersSecurityContextAll(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
