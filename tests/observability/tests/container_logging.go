@@ -21,6 +21,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace " + tsparams.TestNamespace + " after each test")
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 51747
 	It("One deployment one pod one container that prints two log lines", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())

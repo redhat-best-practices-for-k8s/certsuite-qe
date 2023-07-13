@@ -29,6 +29,16 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Disable intrusive tests")
+		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 47398
 	It("One deployment, one pod, one container, scale in and out", func() {
 

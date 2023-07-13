@@ -27,6 +27,12 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 54808
 	It("One deployment, one pod with a startup probe", func() {
 		By("Define deployment with a startup probe")

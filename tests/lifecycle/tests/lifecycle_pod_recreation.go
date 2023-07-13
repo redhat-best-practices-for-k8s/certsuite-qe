@@ -38,6 +38,12 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 47405
 	It("One deployment with PodAntiAffinity, replicas are less than schedulable nodes", func() {
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)

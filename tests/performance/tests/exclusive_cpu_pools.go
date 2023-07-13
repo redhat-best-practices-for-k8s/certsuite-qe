@@ -19,8 +19,13 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("One pod with only exclusive containers", func() {
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
 
+	It("One pod with only exclusive containers", func() {
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
 			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
