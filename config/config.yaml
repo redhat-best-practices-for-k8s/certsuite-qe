@@ -1,13 +1,13 @@
-# General configurations
+---
 general:
-  report: reports/
-  cnf_worker_label: "node-role.kubernetes.io/worker-cnf"
-  worker_label: "node-role.kubernetes.io/worker"
+  report: reports
+  cnf_worker_label: node-role.kubernetes.io/worker-cnf
+  worker_label: node-role.kubernetes.io/worker
   verification_log_level: 4
-  test_image: "quay.io/testnetworkfunction/cnf-test-partner"
-  tnf_entry_point_script: "run-tnf-container.sh"
-  tnf_config_dir: "/tmp/tnf_config"
-  tnf_report_dir: "/tmp/tnf_report"
-  docker_config_dir: "/home/runner/.docker"
-  tnf_image: "quay.io/testnetworkfunction/cnf-certification-test"
-  tnf_image_tag: "latest"
+  test_image: quay.io/testnetworkfunction/cnf-test-partner
+  tnf_entry_point_script: run-tnf-container.sh
+  tnf_config_dir: /tmp/tnf_config
+  tnf_report_dir: /tmp/tnf_report
+  docker_config_dir: /home/runner/.docker
+  tnf_image: quay.io/testnetworkfunction/cnf-certification-test
+  tnf_image_tag: latest
