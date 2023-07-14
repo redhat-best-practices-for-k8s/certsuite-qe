@@ -35,7 +35,7 @@ test-features: update-go install-ginkgo
 	FEATURES="$(FEATURES)" ./scripts/run-tests.sh features
 
 install-ginkgo:
-	scripts/install-ginkgo.sh
+	go install "$$(awk '/ginkgo/ {printf "%s/ginkgo@%s", $$1, $$2}' go.mod)"
 
 install: deps-update install-ginkgo
 	@echo "Installing needed dependencies"
