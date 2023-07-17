@@ -56,6 +56,8 @@ const (
 
 	SSHDaemonImageName = "quay.io/testnetworkfunction/debug-partner:latest"
 
+	SSHDaemonStartContainerCommand = "/usr/sbin/sshd -f /home/tnf-user/sshd/sshd_config -D -d"
+
 	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "512Mi"
 	MemoryRequest      = "500Mi"

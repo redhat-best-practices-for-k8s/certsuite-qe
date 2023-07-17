@@ -40,13 +40,16 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("one pod with ssh daemon running", func() {
+	FIt("one pod with ssh daemon running", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			tsparams.SSHDaemonImageName, tsparams.TestDeploymentLabels)
+			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
+		err := pod.RedefineWithContainerExecCommand(testPod, tsparams.SSHDaemonStartContainerCommand, 0)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start ssh-daemons")
