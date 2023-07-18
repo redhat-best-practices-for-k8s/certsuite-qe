@@ -34,7 +34,7 @@ func DefineCustomResourceDefinition(names apiextv1.CustomResourceDefinitionNames
 		},
 	}
 
-	// Add the status schema property & the status subresource.
+	// Add the status schema property and the status subresource.
 	if addStatusSubresource {
 		version.Schema.OpenAPIV3Schema.Properties["status"] = apiextv1.JSONSchemaProps{
 			Type: "object",
