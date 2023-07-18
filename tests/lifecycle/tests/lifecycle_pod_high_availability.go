@@ -47,7 +47,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define & create deployment")
+		By("Define and create deployment")
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -75,7 +75,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define & create first deployment")
+		By("Define and create first deployment")
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -84,7 +84,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define & create second deployment")
+		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -112,7 +112,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define & create deployment")
+		By("Define and create deployment")
 		deployment, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -138,14 +138,14 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define & create first deployment")
+		By("Define and create first deployment")
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define & create second deployment")
+		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -171,7 +171,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define & create deployment")
+		By("Define and create deployment")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -160,7 +160,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 	// 50761
 	It("Two deployments, several pods, several containers that do not have preStop field configured [negative]", func() {
 
-		By("Define & create first deployment")
+		By("Define and create first deployment")
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -168,7 +168,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define & create second deployment")
+		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 

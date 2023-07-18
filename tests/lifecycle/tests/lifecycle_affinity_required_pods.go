@@ -41,7 +41,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 	// 55327
 	It("One pod, label is set, Affinity rules are set", func() {
-		By("Define & create pod")
+		By("Define and create pod")
 		put := tshelper.DefinePod(tsparams.TestPodName)
 		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
@@ -64,7 +64,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 	// 55328
 	It("Two pods, labels are set for both, Affinity rules are set", func() {
-		By("Define & create pods")
+		By("Define and create pods")
 		putA := tshelper.DefinePod(tsparams.TestPodName)
 		globalhelper.AppendLabelsToPod(putA, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(putA, tsparams.AffinityRequiredPodLabels)
@@ -96,7 +96,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 	// 55329
 	It("One pod, label is set, affinity rules are not set [negative]", func() {
-		By("Define & create pod")
+		By("Define and create pod")
 		put := tshelper.DefinePod(tsparams.TestPodName)
 		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
@@ -138,7 +138,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 	// 55333
 	It("Two pods, labels are set for both, affinity rules are not set for one of the pods [negative]", func() {
-		By("Define & create pods")
+		By("Define and create pods")
 		putA := tshelper.DefinePod(tsparams.TestPodName)
 		globalhelper.AppendLabelsToPod(putA, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(putA, tsparams.AffinityRequiredPodLabels)
