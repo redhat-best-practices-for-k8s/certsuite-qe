@@ -10,6 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Access-control projected-volume-service-account-token,", func() {
@@ -22,27 +23,20 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
-		err = globalhelper.CreateServiceAccount(tsparams.ProjectedVolumeServiceAcctName, tsparams.TestAccessControlNameSpace)
-		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		// err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
-		// Expect(err).ToNot(HaveOccurred())
-
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 56427
+	// 65603
 	It("one deployment, one pod not using a projected volume for service account access", func() {
-		By("Define deployment with securityContext RunAsUser not specified")
-		dep, err := tshelper.DefineDeployment(1, 1, "projvoldepPos")
-		Expect(err).ToNot(HaveOccurred())
+		By("Define deployment without projected volume service account access")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 
-		deployment.RedefineWithProjectedVolumeSATokenNil(dep, "lla")
-		By("deployment spec is " + dep.Spec.Template.Spec.String())
+		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -60,14 +54,13 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 56428
+	// 65605
 	It("one deployment, one pod using a projected volume for service account access [negative]", func() {
-		By("Define deployment with projected volume service account")
-		dep, err := tshelper.DefineDeployment(1, 1, "projvoldepNeg")
+		By("Define deployment with projected volume service account access")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithProjectedVolume(dep, "la", tsparams.ProjectedVolumeServiceAcctName)
-		By("deployment spec is " + dep.Spec.Template.Spec.String())
+		deployment.RedefineWithProjectedVolume(dep, "test-volume", "token-path")
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -85,11 +78,13 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 56429
+	// 65607
 	It("two deployments, one pod each, neither using a projected volume for service account access", func() {
-		By("Define deployments with securityContext RunAsUser not specified or not 1337")
+		By("Define deployments without projected volumeservice account access")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
+
+		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -97,7 +92,7 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1338)
+		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -115,19 +110,19 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 56430
+	// 65608
 	It("two deployments, one pod each, one using a projected volume for service account access [negative]", func() {
-		By("Define deployments with varying securityContext RunAsUser values")
+		By("Define deployments with varying projected volume service account access")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
 		Expect(err).ToNot(HaveOccurred())
-
-		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1337)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
 		Expect(err).ToNot(HaveOccurred())
+
+		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())

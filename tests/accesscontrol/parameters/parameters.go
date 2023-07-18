@@ -53,12 +53,11 @@ const (
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
-	ServiceAccountName             = "automount-test-sa"
-	ProjectedVolumeServiceAcctName = "proj-vol-sa"
-	MemoryLimit                    = "512Mi"
-	MemoryRequest                  = "500Mi"
-	CPULimit                       = "1"
-	CPURequest                     = "1"
+	ServiceAccountName = "automount-test-sa"
+	MemoryLimit        = "512Mi"
+	MemoryRequest      = "500Mi"
+	CPULimit           = "1"
+	CPURequest         = "1"
 
 	TestServiceAccount   = "my-sa"
 	TestRoleBindingName  = "my-rb"
