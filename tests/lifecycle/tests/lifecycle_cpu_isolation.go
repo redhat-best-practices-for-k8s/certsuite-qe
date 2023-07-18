@@ -53,7 +53,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 	It("One pod with conditions met", func() {
 		annotationsMap := make(map[string]string)
 
-		By("Define pod with resources & runTimeClass")
+		By("Define pod with resources and runTimeClass")
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TestTargetLabels)
 
@@ -90,7 +90,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 	It("One pod two containers with conditions met", func() {
 		annotationsMap := make(map[string]string)
 
-		By("Define pod with resources & runTimeClass")
+		By("Define pod with resources and runTimeClass")
 		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TestTargetLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.Configuration.General.TestImage)
@@ -128,7 +128,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		annotationsMap := make(map[string]string)
 
-		By("Define deployment with resources & runTimeClass")
+		By("Define deployment with resources and runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
 			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 
@@ -166,7 +166,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 	It("One daemonSet with conditions met", func() {
 		annotationsMap := make(map[string]string)
 
-		By("Define daemonSet with resources & runTimeClass")
+		By("Define daemonSet with resources and runTimeClass")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
@@ -201,7 +201,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 	// 54734
 	It("One daemonSet no annotations [negative]", func() {
-		By("Define daemonSet with resources & runTimeClass")
+		By("Define daemonSet with resources and runTimeClass")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
@@ -233,7 +233,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		annotationsMap := make(map[string]string)
 
-		By("Define deployment with resources & runTimeClass")
+		By("Define deployment with resources and runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
 			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
 
@@ -262,7 +262,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 	It("Two pods one with conditions met, other lacks runTimeClass [negative]", func() {
 		annotationsMap := make(map[string]string)
 
-		By("Define pod with resources & runTimeClass")
+		By("Define pod with resources and runTimeClass")
 		puta := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
 			tsparams.TestTargetLabels)
 		putb := pod.DefinePod("lifecycle-podb", tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,

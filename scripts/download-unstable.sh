@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check for LOCAL_TESTING environment variable and exit early
+if [[ -z "$FORCE_DOWNLOAD_UNSTABLE" ]]; then
+	echo "Skipping download of unstable image"
+	exit 0
+fi
+
 # Set the image name and tag
 image_name=quay.io/testnetworkfunction/cnf-certification-test
 image_tag=unstable
