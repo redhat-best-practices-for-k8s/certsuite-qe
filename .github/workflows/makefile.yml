@@ -31,7 +31,7 @@ jobs:
       - uses: crate-ci/typos@master
       - uses: ibiqlik/action-yamllint@v3
         with:
-          file_or_dir: .github/workflows/*.yml
+          file_or_dir: .github/workflows/*.yml config/*.yaml
           strict: true
 
       - name: Run lint
