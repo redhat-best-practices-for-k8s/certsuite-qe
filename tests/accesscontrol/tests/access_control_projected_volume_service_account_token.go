@@ -35,6 +35,7 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 	It("one deployment, one pod not using a projected volume for service account access", func() {
 		By("Define deployment without projected volume service account access")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
