@@ -16,40 +16,40 @@ var _ = Describe("Access-control namespace, ", func() {
 
 	execute.BeforeAll(func() {
 		By("Clean test suite namespace before tests")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create additional namespaces for testing")
 		// these namespaces will only be used for the access-control-namespace tests
-		err = namespaces.Create(tsparams.AdditionalValidNamespace, globalhelper.APIClient)
+		err = namespaces.Create(tsparams.AdditionalValidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Create(tsparams.InvalidNamespace, globalhelper.APIClient)
+		err = namespaces.Create(tsparams.InvalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 	})
 
 	BeforeEach(func() {
 		By("Clean namespaces before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespaces after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -163,7 +163,7 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Create custom resource")
 		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -191,7 +191,7 @@ var _ = Describe("Access-control namespace, ", func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resource")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.InvalidNamespace, globalhelper.APIClient)
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.InvalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -220,11 +220,11 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Create custom resources")
 		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", tsparams.AdditionalValidNamespace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -252,10 +252,10 @@ var _ = Describe("Access-control namespace, ", func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", tsparams.InvalidNamespace, globalhelper.APIClient)
+		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", tsparams.InvalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -284,11 +284,11 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Create custom resources")
 		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		err = tshelper.DefineAndCreateSubscription("test-sub", tsparams.TestAccessControlNameSpace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating subscription")
 
 		By("Start test")
@@ -317,11 +317,11 @@ var _ = Describe("Access-control namespace, ", func() {
 
 		By("Create custom resources")
 		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		err = tshelper.DefineAndCreateSubscription("test-sub", tsparams.AdditionalValidNamespace,
-			globalhelper.APIClient)
+			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating subscription")
 
 		By("Start test")

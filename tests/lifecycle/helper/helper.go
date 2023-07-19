@@ -36,9 +36,9 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, tsparams.LifecycleNamespace,
-		globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -47,20 +47,20 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 func DefineReplicaSet(name string) *appsv1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
 		tsparams.LifecycleNamespace,
-		globalhelper.Configuration.General.TestImage,
+		globalhelper.GetConfiguration().General.TestImage,
 		tsparams.TestTargetLabels)
 }
 
 func DefineStatefulSet(name string) *appsv1.StatefulSet {
 	return statefulset.DefineStatefulSet(name,
 		tsparams.LifecycleNamespace,
-		globalhelper.Configuration.General.TestImage,
+		globalhelper.GetConfiguration().General.TestImage,
 		tsparams.TestTargetLabels)
 }
 
 func DefinePod(name string) *corev1.Pod {
 	return pod.DefinePod(name, tsparams.LifecycleNamespace,
-		globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 }
 
 func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *appsv1.DaemonSet {
@@ -73,13 +73,13 @@ func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy co
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
 func WaitUntilClusterIsStable() error {
 	Eventually(func() bool {
-		isClusterReady, err := cluster.IsClusterStable(globalhelper.APIClient)
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		return isClusterReady
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
-	err := nodes.WaitForNodesReady(globalhelper.APIClient,
+	err := nodes.WaitForNodesReady(globalhelper.GetAPIClient(),
 		tsparams.WaitingTime, tsparams.RetryInterval*time.Second)
 	if err != nil {
 		return fmt.Errorf("failed to wait for node to become ready: %w", err)
@@ -89,7 +89,7 @@ func WaitUntilClusterIsStable() error {
 }
 
 func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) error {
-	_, err := globalhelper.APIClient.PersistentVolumes().Create(context.Background(), pv, metav1.CreateOptions{})
+	_, err := globalhelper.GetAPIClient().PersistentVolumes().Create(context.Background(), pv, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create persistent volume: %w", err)
 	}
@@ -98,7 +98,7 @@ func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) 
 }
 
 func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace string, timeout time.Duration, pvName string) error {
-	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Create(context.Background(), pvc, metav1.CreateOptions{})
+	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Create(context.Background(), pvc, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create persistent volume claim: %w", err)
 	}
@@ -121,7 +121,7 @@ func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace s
 }
 
 func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
-	pvc, err := globalhelper.APIClient.PersistentVolumeClaims(namespace).Get(context.Background(), pvcName, metav1.GetOptions{})
+	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Get(context.Background(), pvcName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -130,7 +130,7 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 }
 
 func DeletePV(persistentVolume string, timeout time.Duration) error {
-	err := globalhelper.APIClient.PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
+	err := globalhelper.GetAPIClient().PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 
 	Eventually(func() bool {
 		// if the pv was deleted, we will get an error.
-		_, err := globalhelper.APIClient.PersistentVolumes().Get(context.Background(), persistentVolume, metav1.GetOptions{})
+		_, err := globalhelper.GetAPIClient().PersistentVolumes().Get(context.Background(), persistentVolume, metav1.GetOptions{})
 
 		return err != nil
 	}, timeout, tsparams.RetryInterval*time.Second).Should(Equal(true), "PV is not removed yet.")
@@ -148,7 +148,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 }
 
 func DeleteRunTimeClass(rtcName string) error {
-	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
+	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.Background(), rtcName,
 		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)

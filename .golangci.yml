@@ -97,7 +97,3 @@ issues:
   new: false
   include:
     - EXC0002 # disable excluding of issues about comments from golint
-  exclude-rules:
-    - path: tests/globalhelper/init.go
-      linters:
-        - gochecknoinits

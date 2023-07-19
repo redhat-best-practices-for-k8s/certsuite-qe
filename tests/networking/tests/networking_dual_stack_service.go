@@ -19,7 +19,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 	execute.BeforeAll(func() {
 		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
 		Expect(err).ToNot(HaveOccurred())
@@ -27,10 +27,10 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 	BeforeEach(func() {
 		By("Clean namespaces before each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -40,10 +40,10 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 	AfterEach(func() {
 		By("Clean namespaces after each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")

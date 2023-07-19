@@ -19,13 +19,13 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -59,7 +59,7 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)

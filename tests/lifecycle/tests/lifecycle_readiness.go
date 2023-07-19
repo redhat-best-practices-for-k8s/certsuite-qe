@@ -23,13 +23,13 @@ var _ = Describe("lifecycle-readiness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -125,7 +125,7 @@ var _ = Describe("lifecycle-readiness", func() {
 	It("One daemonSet without a readiness probe [negative]", func() {
 		By("Define daemonSet without a readiness probe")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

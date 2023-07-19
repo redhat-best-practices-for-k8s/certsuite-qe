@@ -77,7 +77,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
 func DefineTnfConfig(namespaces []string, targetPodLabels []string,
 	certifiedContainerInfo []string, crdFilters []string) error {
-	tnfConfigFilePath := path.Join(Configuration.General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
+	tnfConfigFilePath := path.Join(GetConfiguration().General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
 
 	configFile, err := os.OpenFile(tnfConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -112,7 +112,7 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string,
 	}
 
 	glog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
-		globalparameters.DefaultTnfConfigFileName, Configuration.General.TnfConfigDir))
+		globalparameters.DefaultTnfConfigFileName, GetConfiguration().General.TnfConfigDir))
 
 	return nil
 }
@@ -249,7 +249,7 @@ func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []s
 
 // AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group.
 func AllowAuthenticatedUsersRunPrivilegedContainers() error {
-	_, err := APIClient.ClusterRoleBindings().Get(
+	_, err := GetAPIClient().ClusterRoleBindings().Get(
 		context.Background(),
 		"system:openshift:scc:privileged",
 		metav1.GetOptions{},
@@ -262,7 +262,7 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 			*rbac.DefineRbacAuthorizationClusterGroupSubjects([]string{"system:authenticated"}),
 		)
 
-		_, err = APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{})
+		_, err = GetAPIClient().ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to create cluster role binding: %w", err)
 		}
@@ -289,19 +289,19 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 	}
 
 	// Exit early if the cluster role binding already exists
-	_, err := APIClient.ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
+	_, err := GetAPIClient().ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
 	if err == nil {
 		return nil
 	}
 
 	// Create the service account
-	_, err = APIClient.ServiceAccounts(nameSpace).Create(context.Background(), serviceAccount, metav1.CreateOptions{})
+	_, err = GetAPIClient().ServiceAccounts(nameSpace).Create(context.Background(), serviceAccount, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create cServiceAccount: %w", err)
 	}
 
 	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
-	if _, err := APIClient.ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
+	if _, err := GetAPIClient().ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
 		return fmt.Errorf("failed to create cluster role binding: %w", err)
 	}
 
@@ -310,12 +310,12 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 
 func DeleteClusterRoleBinding(nameSpace, name string) error {
 	// Exit if the cluster role binding does not exist
-	_, err := APIClient.ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
+	_, err := GetAPIClient().ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
 	if k8serrors.IsNotFound(err) {
 		return nil
 	}
 
-	if err := APIClient.ClusterRoleBindings().Delete(context.Background(), name, metav1.DeleteOptions{}); err != nil {
+	if err := GetAPIClient().ClusterRoleBindings().Delete(context.Background(), name, metav1.DeleteOptions{}); err != nil {
 		return fmt.Errorf("failed to delete cluster role binding: %w", err)
 	}
 

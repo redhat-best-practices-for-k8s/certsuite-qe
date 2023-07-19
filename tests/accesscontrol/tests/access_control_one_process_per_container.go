@@ -30,13 +30,13 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -89,7 +89,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -112,7 +112,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
 		err = deployment.RedefineContainerCommand(dep, 1, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())

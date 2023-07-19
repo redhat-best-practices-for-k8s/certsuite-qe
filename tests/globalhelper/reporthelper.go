@@ -18,7 +18,7 @@ import (
 
 // OpenClaimReport opens claim.json file and returns struct.
 func OpenClaimReport() (*claim.Root, error) {
-	dataClaim, err := os.Open(path.Join(Configuration.General.TnfReportDir, globalparameters.DefaultClaimFileName))
+	dataClaim, err := os.Open(path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName))
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultClaimFileName, err)
 	}
@@ -57,7 +57,7 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 // OpenJunitTestReport returns junit struct.
 func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
 	junitReportFile, err := os.Open(
-		path.Join(Configuration.General.TnfReportDir, globalparameters.DefaultJunitReportName),
+		path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultJunitReportName),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultJunitReportName, err)
@@ -96,7 +96,7 @@ func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, te
 
 // RemoveContentsFromReportDir removes all files from report dir.
 func RemoveContentsFromReportDir() error {
-	tnfReportDir, err := os.Open(Configuration.General.TnfReportDir)
+	tnfReportDir, err := os.Open(GetConfiguration().General.TnfReportDir)
 	if err != nil {
 		return fmt.Errorf("failed to open report directory: %w", err)
 	}
@@ -109,14 +109,14 @@ func RemoveContentsFromReportDir() error {
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(Configuration.General.TnfReportDir, name))
+		err = os.RemoveAll(filepath.Join(GetConfiguration().General.TnfReportDir, name))
 		if err != nil {
 			return fmt.Errorf("failed to remove content from report directory: %w", err)
 		}
 
 		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
-			Configuration.General.TnfReportDir))
+			GetConfiguration().General.TnfReportDir))
 	}
 
 	return nil
@@ -234,8 +234,8 @@ func containsString(list []string, item string) bool {
 }
 
 func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
-	srcClaim := path.Join(Configuration.General.TnfReportDir, globalparameters.DefaultClaimFileName)
-	dstClaim := path.Join(Configuration.General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName,
+	srcClaim := path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName)
+	dstClaim := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName,
 		globalparameters.DefaultClaimFileName)
 
 	_, err := os.Stat(srcClaim)

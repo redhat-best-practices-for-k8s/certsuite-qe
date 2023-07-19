@@ -39,22 +39,22 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 56594
 	It("istio is installed", func() {
 		By("Define a test pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
-		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
+		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -71,7 +71,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 	// 56596
 	It("istio is installed but proxy containers does not exist [negative]", func() {
 		By("Define a test pod without istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
@@ -89,14 +89,14 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 	// 56597
 	It("istio is installed but proxy container exist on one pod only [negative]", func() {
 		By("Define first pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
-		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
+		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		putb := pod.DefinePod("lifecycle-putb", tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		putb := pod.DefinePod("lifecycle-putb", tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, WaitingTime)
@@ -116,13 +116,13 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -131,7 +131,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 		By("Check if Istio resource exists")
 		gvr := schema.GroupVersionResource{Group: "install.istio.io", Version: "v1alpha1", Resource: "istiooperators"}
 
-		_, err := globalhelper.APIClient.DynamicClient.Resource(gvr).Namespace(istioNamespace).Get(context.TODO(),
+		_, err := globalhelper.GetAPIClient().DynamicClient.Resource(gvr).Namespace(istioNamespace).Get(context.TODO(),
 			"installed-state", metav1.GetOptions{})
 
 		if err == nil {
@@ -145,9 +145,9 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
 		}
 
 		By("Define a test pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
-		tshelper.AppendIstioContainerToPod(put, globalhelper.Configuration.General.TestImage)
+		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

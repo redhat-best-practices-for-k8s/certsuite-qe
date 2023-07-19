@@ -122,7 +122,7 @@ func DoesOperatorHaveLabels(prefixCsvName string, namespace string, labels map[s
 
 // GetCsvByPrefix returns csv object based on given prefix.
 func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
-	csvs, err := globalhelper.APIClient.ClusterServiceVersions(namespace).List(
+	csvs, err := globalhelper.GetAPIClient().ClusterServiceVersions(namespace).List(
 		context.TODO(), metav1.ListOptions{},
 	)
 	if err != nil {
@@ -166,7 +166,7 @@ func DeployOperatorSubscription(operatorPackage, channel, namespace, group,
 }
 
 func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
-	_, err := globalhelper.APIClient.ClusterServiceVersions(namespace).Update(
+	_, err := globalhelper.GetAPIClient().ClusterServiceVersions(namespace).Update(
 		context.TODO(), csv, metav1.UpdateOptions{},
 	)
 

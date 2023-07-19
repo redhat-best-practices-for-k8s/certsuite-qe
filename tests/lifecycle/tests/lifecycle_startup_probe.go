@@ -23,13 +23,13 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -128,7 +128,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
@@ -148,7 +148,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 	It("One daemonSet without a startup probe [negative]", func() {
 		By("Define daemonSet without a startup probe")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace,
-			globalhelper.Configuration.General.TestImage,
+			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -199,7 +199,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
-		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

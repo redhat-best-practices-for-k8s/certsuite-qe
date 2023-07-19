@@ -21,7 +21,7 @@ const (
 	DevTestFileConfigPath = "config/testconfig.yaml" // Used only for dev/testing purpose only
 )
 
-// Config type keeps general configuration.
+// Config type keeps general GetConfiguration().
 type Config struct {
 	General struct {
 		ReportDirAbsPath     string `yaml:"report" envconfig:"REPORT_DIR_NAME"`

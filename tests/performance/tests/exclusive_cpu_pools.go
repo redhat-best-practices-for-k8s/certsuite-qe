@@ -15,20 +15,20 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("One pod with only exclusive containers", func() {
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -48,7 +48,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		tshelper.RedefinePodWithSharedContainer(testPod, 0)
 
@@ -70,7 +70,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "0.75", "0.5")
 

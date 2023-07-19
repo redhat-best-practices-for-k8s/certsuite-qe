@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/golang/glog"
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
@@ -10,27 +9,36 @@ import (
 )
 
 var (
-	APIClient     *testclient.ClientSet
-	Configuration *config.Config
+	apiclient *testclient.ClientSet
+	conf      *config.Config
 )
 
-func init() {
-	if os.Getenv("UNIT_TEST") != "" {
-		Configuration = &config.Config{}
-
-		return
+func GetAPIClient() *testclient.ClientSet {
+	if apiclient != nil {
+		return apiclient
 	}
 
-	var err error
-	APIClient, err = config.DefineClients()
-
+	tempClient, err := config.DefineClients()
 	if err != nil {
 		glog.Fatal(fmt.Sprintf("can not load api client. Please check KUBECONFIG env var - %s", err))
 	}
 
-	Configuration, err = config.NewConfig()
+	apiclient = tempClient
 
+	return tempClient
+}
+
+func GetConfiguration() *config.Config {
+	if conf != nil {
+		return conf
+	}
+
+	Configuration, err := config.NewConfig()
 	if err != nil {
 		glog.Fatal(fmt.Sprintf("can not load configuration - %s", err))
 	}
+
+	conf = Configuration
+
+	return Configuration
 }

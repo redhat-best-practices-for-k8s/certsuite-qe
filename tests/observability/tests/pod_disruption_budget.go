@@ -18,13 +18,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -36,7 +36,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -65,7 +65,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -94,7 +94,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create statefulSet")
 		sf := statefulset.DefineStatefulSet(tsparams.TestStatefulSetBaseName, tsparams.TestNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		statefulset.RedefineWithReplicaNumber(sf, 1)
 
@@ -123,7 +123,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -152,7 +152,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 

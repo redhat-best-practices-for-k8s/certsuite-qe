@@ -19,20 +19,20 @@ var _ = Describe("platform-alteration-boot-params", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51302
 	It("unchanged boot params", func() {
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -53,10 +53,10 @@ var _ = Describe("platform-alteration-boot-params", func() {
 
 	// 51305
 	It("change boot params using MCO", func() {
-		machineConfigList, err := globalhelper.APIClient.MachineConfigs().List(context.Background(), metav1.ListOptions{})
+		machineConfigList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.Background(), metav1.ListOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
-		machineConfigPoolList, err := globalhelper.APIClient.MachineConfigPools().List(context.Background(),
+		machineConfigPoolList, err := globalhelper.GetAPIClient().MachineConfigPools().List(context.Background(),
 			metav1.ListOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -66,7 +66,7 @@ var _ = Describe("platform-alteration-boot-params", func() {
 					machineConfig.Spec.KernelArguments = []string{"skew_tick=1", "nohz=off"}
 
 					By("Update the current machineConfig")
-					_, err := globalhelper.APIClient.MachineConfigs().Update(context.TODO(), &machineConfig, metav1.UpdateOptions{})
+					_, err := globalhelper.GetAPIClient().MachineConfigs().Update(context.TODO(), &machineConfig, metav1.UpdateOptions{})
 					Expect(err).ToNot(HaveOccurred())
 				}
 			}

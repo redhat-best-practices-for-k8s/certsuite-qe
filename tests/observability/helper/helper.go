@@ -56,7 +56,7 @@ func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *apps
 }
 
 func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
@@ -66,7 +66,7 @@ func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
 
 func DefineDeploymentWithoutTargetLabels(name string) *appsv1.Deployment {
 	return deployment.DefineDeployment(name, tsparams.TestNamespace,
-		globalhelper.Configuration.General.TestImage,
+		globalhelper.GetConfiguration().General.TestImage,
 		map[string]string{"fakeLabelKey": "fakeLabelValue"})
 }
 
@@ -89,7 +89,7 @@ func DefineCrdWithoutStatusSubresource(kind, group string) *apiextv1.CustomResou
 }
 
 func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeout time.Duration) error {
-	_, err := globalhelper.APIClient.CustomResourceDefinitions().Create(
+	_, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Create(
 		context.Background(),
 		crd,
 		metav1.CreateOptions{},
@@ -99,7 +99,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 	}
 
 	Eventually(func() bool {
-		runningCrd, err := globalhelper.APIClient.CustomResourceDefinitions().Get(
+		runningCrd, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Get(
 			context.Background(),
 			crd.Name,
 			metav1.GetOptions{},
@@ -124,14 +124,14 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 }
 
 func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
-	err := globalhelper.APIClient.CustomResourceDefinitions().Delete(
+	err := globalhelper.GetAPIClient().CustomResourceDefinitions().Delete(
 		context.Background(),
 		crd,
 		metav1.DeleteOptions{})
 	Expect(err).ToNot(HaveOccurred())
 
 	Eventually(func() bool {
-		_, err := globalhelper.APIClient.CustomResourceDefinitions().Get(
+		_, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Get(
 			context.Background(),
 			crd,
 			metav1.GetOptions{})
@@ -185,7 +185,7 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 		containerSpecs = append(containerSpecs,
 			corev1.Container{
 				Name:    fmt.Sprintf("%s-%d", tsparams.TestContainerBaseName, index),
-				Image:   globalhelper.Configuration.General.TestImage,
+				Image:   globalhelper.GetConfiguration().General.TestImage,
 				Command: getContainerCommandWithStdout(stdoutLines),
 			},
 		)
@@ -201,7 +201,7 @@ func createContainerSpecsFromTerminationMsgPolicies(policies []corev1.Terminatio
 	for index := 0; index < numContainers; index++ {
 		container := corev1.Container{
 			Name:    fmt.Sprintf("%s-%d", tsparams.TestContainerBaseName, index),
-			Image:   globalhelper.Configuration.General.TestImage,
+			Image:   globalhelper.GetConfiguration().General.TestImage,
 			Command: tsparams.TestContainerNormalCommand,
 		}
 
@@ -220,7 +220,7 @@ func defineDeploymentWithContainerSpecs(name string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.Deployment {
 	// Define base deployment
 	dep := deployment.DefineDeployment(name, tsparams.TestNamespace,
-		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	deployment.RedefineWithReplicaNumber(dep, int32(replicas))
@@ -233,7 +233,7 @@ func defineStatefulSetWithContainerSpecs(name string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.StatefulSet {
 	// Define base statefulSet
 	sts := statefulset.DefineStatefulSet(name, tsparams.TestNamespace,
-		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
@@ -246,7 +246,7 @@ func defineDaemonSetWithContainerSpecs(name string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
 	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNamespace,
-		globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels, name)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels, name)
 
 	// Customize its container specs.
 	daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)

@@ -15,13 +15,13 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -78,7 +78,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")

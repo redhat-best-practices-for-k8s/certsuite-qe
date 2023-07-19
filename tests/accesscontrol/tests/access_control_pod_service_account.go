@@ -14,13 +14,13 @@ var _ = Describe("Access-control pod-service-account,", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -32,7 +32,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 
 		By("Define pod with service account")
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 
@@ -57,7 +57,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		By("Define pod with empty service account")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
@@ -81,7 +81,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		By("Define pod with empty service account")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "default")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)

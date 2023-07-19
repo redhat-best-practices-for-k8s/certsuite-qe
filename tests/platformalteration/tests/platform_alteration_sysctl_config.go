@@ -21,13 +21,13 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -35,7 +35,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 	It("unchanged sysctl config", func() {
 
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -56,7 +56,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 	It("change sysctl config using MCO", func() {
 
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -67,15 +67,15 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		node, err := globalhelper.APIClient.Nodes().Get(context.Background(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
+		node, err := globalhelper.GetAPIClient().Nodes().Get(context.Background(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
-		value, exists := node.Annotations["machineconfiguration.openshift.io/currentConfig"]
+		value, exists := node.Annotations["machineGetConfiguration().openshift.io/currentConfig"]
 		if !exists {
 			Fail("didn't get node's machine config")
 		}
 
-		mcObj, err := globalhelper.APIClient.MachineConfigs().Get(context.Background(), value, metav1.GetOptions{})
+		mcObj, err := globalhelper.GetAPIClient().MachineConfigs().Get(context.Background(), value, metav1.GetOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
 		mcKernelArgs := mcObj.Spec.KernelArguments
@@ -94,7 +94,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		}
 		mcObj.Spec.KernelArguments = mcKernelArgs
 
-		_, err = globalhelper.APIClient.MachineConfigs().Update(context.TODO(), mcObj, metav1.UpdateOptions{})
+		_, err = globalhelper.GetAPIClient().MachineConfigs().Update(context.TODO(), mcObj, metav1.UpdateOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-sysctl-config test")
