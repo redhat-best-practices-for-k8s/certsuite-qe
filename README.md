@@ -100,6 +100,8 @@ general:
 
 * To use this test config file, you need to set `LOCAL_TESTING` environment variable while running the test.
 
+* If you need to force the download of the `unstable` image, set the `FORCE_DOWNLOAD_UNSTABLE=true` environment variable.
+
 >**Mac Users** :
 Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the non Linux local env.
 
@@ -112,6 +114,8 @@ Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the n
 TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= NON_LINUX_ENV= make test-all
 # Linux User
 TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-all
+# Linux User with force download unstable image
+TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= FORCE_DOWNLOAD_UNSTABLE=true make test-all
 ```
 
 * **To run a specific feature**

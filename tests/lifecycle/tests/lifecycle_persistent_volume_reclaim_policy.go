@@ -229,7 +229,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 	// 54207
 	It("Two deployments, one with reclaim policy of delete, other with recycle [negative]", func() {
 
-		By("Define & create first pv")
+		By("Define and create first pv")
 		persistentVolumea := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumea, corev1.PersistentVolumeReclaimDelete)
 
@@ -238,7 +238,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 
 		pvNames = append(pvNames, tsparams.TestPVName)
 
-		By("Define & create second pv")
+		By("Define and create second pv")
 		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb", tsparams.LifecycleNamespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumeb, corev1.PersistentVolumeReclaimRecycle)
 
@@ -247,13 +247,13 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
 
 		pvNames = append(pvNames, "lifecycle-pvb")
 
-		By("Define & create first pvc")
+		By("Define and create first pvc")
 		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvca, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolumea.Name)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define & create second pvc")
+		By("Define and create second pvc")
 		pvcb := persistentvolumeclaim.DefinePersistentVolumeClaim("lifecycle-pvcb", tsparams.LifecycleNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvcb, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolumeb.Name)
