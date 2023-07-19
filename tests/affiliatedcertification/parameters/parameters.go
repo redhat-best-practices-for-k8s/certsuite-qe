@@ -43,6 +43,7 @@ var (
 	ContainerRepoOnlyRedHatRegistry = ";registry.connect.redhat.com;;"
 
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification-operator-is-certified"
+	TestHelmChartCertified             = "affiliated-certification-helmchart-is-certified"
 	OperatorGroupName                  = "affiliatedcert-test-operator-group"
 	CertifiedOperatorGroup             = "certified-operators"
 	CertifiedOperatorDisplayName       = "Certified Operators"
