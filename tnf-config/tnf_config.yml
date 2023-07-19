@@ -1,0 +1,9 @@
+targetNameSpaces:
+    - name: affiliated-certification-helmchart-is-certified
+targetPodLabels:
+    - prefix: affiliatedcert-test
+      name: test
+      value: testing
+certifiedcontainerinfo: []
+certifiedoperatorinfo: []
+targetCrdFilters: []
