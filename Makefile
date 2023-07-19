@@ -28,14 +28,17 @@ gofmt:
 	@echo "Running gofmt"
 	gofmt -s -l `find . -path ./vendor -prune -o -type f -name '*.go' -print`
 
-test-all: update-go install-ginkgo
+test-all: update-go install-ginkgo download-unstable
 	./scripts/run-tests.sh all
 
-test-features: update-go install-ginkgo
+test-features: update-go install-ginkgo download-unstable
 	FEATURES="$(FEATURES)" ./scripts/run-tests.sh features
 
+download-unstable:
+	./scripts/download-unstable.sh
+
 install-ginkgo:
-	scripts/install-ginkgo.sh
+	go install "$$(awk '/ginkgo/ {printf "%s/ginkgo@%s", $$1, $$2}' go.mod)"
 
 install: deps-update install-ginkgo
 	@echo "Installing needed dependencies"

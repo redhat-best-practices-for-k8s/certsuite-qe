@@ -55,7 +55,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
 
-		By("Define & create deployment")
+		By("Define and create deployment")
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -85,7 +85,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := (schedulableNodes / 2) - 1
 
-		By("Define & create first deployment")
+		By("Define and create first deployment")
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -94,7 +94,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define & create second deployment")
+		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -122,7 +122,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define & create deployment")
+		By("Define and create deployment")
 		deploymenta, err := tshelper.DefineDeployment(schedulableNodes, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -153,7 +153,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		maxPodsPerDeploymentPerFirstDeployment := (schedulableNodes / 2)
 		maxPodsPerDeploymentPerSecondDeployment := schedulableNodes - maxPodsPerDeploymentPerFirstDeployment
 
-		By("Define & create first deployment")
+		By("Define and create first deployment")
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerFirstDeployment, 1, tsparams.TestDeploymentName)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -162,7 +162,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define & create second deployment")
+		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(maxPodsPerDeploymentPerSecondDeployment, 1, "lifecycle-dpb")
 		Expect(err).ToNot(HaveOccurred())
 
