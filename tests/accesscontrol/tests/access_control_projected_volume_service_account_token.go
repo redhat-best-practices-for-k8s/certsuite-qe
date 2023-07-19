@@ -31,6 +31,12 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		By("Clean namespace after each test")
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 65603
 	It("one deployment, one pod not using a projected volume for service account access", func() {
 		By("Define deployment without projected volume service account access")
