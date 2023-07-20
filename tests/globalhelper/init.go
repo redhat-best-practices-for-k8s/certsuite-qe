@@ -18,14 +18,14 @@ func GetAPIClient() *testclient.ClientSet {
 		return apiclient
 	}
 
-	tempClient, err := config.DefineClients()
+	var err error
+	apiclient, err = config.DefineClients()
+
 	if err != nil {
 		glog.Fatal(fmt.Sprintf("can not load api client. Please check KUBECONFIG env var - %s", err))
 	}
 
-	apiclient = tempClient
-
-	return tempClient
+	return apiclient
 }
 
 func GetConfiguration() *config.Config {
@@ -33,12 +33,12 @@ func GetConfiguration() *config.Config {
 		return conf
 	}
 
-	Configuration, err := config.NewConfig()
+	var err error
+	conf, err = config.NewConfig()
+
 	if err != nil {
 		glog.Fatal(fmt.Sprintf("can not load configuration - %s", err))
 	}
 
-	conf = Configuration
-
-	return Configuration
+	return conf
 }
