@@ -20,10 +20,16 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
+		By("Installing helm")
+		cmd := exec.Command("/bin/bash", "-c",
+			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
+				"&& chmod 700 get_helm.sh"+
+				"&& ./get_helm.sh")
+		err = cmd.Run()
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm")
 	})
 
-	FIt("one helm to test,  are certified", func() {
+	It("one helm to test,  are certified", func() {
 		By("Install a helm chart")
 		cmd := exec.Command("/bin/bash", "-c", "oc new-project affiliated-certification-helmchart-is-certified"+
 			"&& helm repo add openshift-helm-charts https://charts.openshift.io/ "+
@@ -49,7 +55,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
 
-	FIt("one helm to test,  are not certified", func() {
+	It("one helm to test,  are not certified", func() {
 		By("Install a helm chart")
 		cmd := exec.Command("/bin/bash", "-c", "oc new-project affiliated-certification-helmchart-is-certified"+
 			"&& helm repo add istio https://istio-release.storage.googleapis.com/charts "+
