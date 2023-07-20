@@ -24,12 +24,12 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	FIt("one helm to test,  are certified", func() {
-		By("Install a hellm chart")
+		By("Install a helm chart")
 		cmd := exec.Command("/bin/bash", "-c", "oc new-project affiliated-certification-helmchart-is-certified"+
 			"&& helm repo add openshift-helm-charts https://charts.openshift.io/ "+
 			"&& helm repo update && helm install example-vault1 openshift-helm-charts/hashicorp-vault")
 		err := cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing hellm chart")
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -50,12 +50,12 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	FIt("one helm to test,  are not certified", func() {
-		By("Install a hellm chart")
+		By("Install a helm chart")
 		cmd := exec.Command("/bin/bash", "-c", "oc new-project affiliated-certification-helmchart-is-certified"+
 			"&& helm repo add istio https://istio-release.storage.googleapis.com/charts "+
 			"&& helm repo update && oc create ns istio-system && helm install istio-base istio/base --set defaultRevision=default")
 		err := cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing hellm chart")
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -70,7 +70,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 		By("remove the project")
-		cmd = exec.Command("/bin/bash", "-c", "oc delete ns affiliated-certification-helmchart-is-certified")
+		cmd = exec.Command("/bin/bash", "-c", "oc delete ns affiliated-certification-helmchart-is-certified istio-system")
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
