@@ -1,0 +1,64 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    # Note: Keeping docker packages separate just for organization
+    docker_package_names: [docker-ce, docker-ce-cli, containerd.io, docker-compose-plugin, docker-buildx-plugin]
+    pip3_packages: [j2cli]
+    dnf_packages: [dnf-plugins-core, python3, python3-pip, golang]
+
+  tasks:
+    - name: Install dnf-plugins-core
+      dnf:
+        name: "{{item}}"
+        state: present
+        update_cache: yes
+      with_items: "{{ dnf_packages }}"
+      when: ansible_distribution == "Fedora"
+
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Ensure user 'tnf' is added to group 'docker'
+      ansible.builtin.user:
+        name: tnf
+        groups: docker
+        append: yes
+        state: present
+      when: ansible_distribution == "Fedora"
+
+    - name: Add docker repository to DNF
+      command: sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+      when: ansible_distribution == "Fedora"
+
+    - name: Install Required Docker Packages
+      dnf:
+        name: "{{item}}"
+        state: present
+      with_items: "{{ docker_package_names }}"
+      when: ansible_distribution == "Fedora"
+
+    - name: Start Docker Service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Fedora"
+
+    - name: Install Kind
+      shell: |
+        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+        chmod +x ./kind
+        mv ./kind /usr/local/bin/kind
+      when: ansible_distribution == "Fedora"
+
+    - name: Install Pip3 Packages
+      pip:
+        name: "{{item}}"
+        state: present
+      with_items: "{{ pip3_packages }}"
+      when: ansible_distribution == "Fedora"
