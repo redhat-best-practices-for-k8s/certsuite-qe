@@ -21,7 +21,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
@@ -31,7 +31,7 @@ var _ = Describe("lifecycle-deployment-scaling", func() {
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Disable intrusive tests")

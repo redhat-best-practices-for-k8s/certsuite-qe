@@ -16,13 +16,13 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy",
 
 		BeforeEach(func() {
 			By("Clean namespace before each test")
-			err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+			err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 			Expect(err).ToNot(HaveOccurred())
 		})
 
 		AfterEach(func() {
 			By("Clean namespace after each test")
-			err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+			err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -104,7 +104,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy",
 		It("One pod running in shared cpu pool", func() {
 			By("Define pod")
 			testPod := pod.DefinePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-				globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+				globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 			err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 			Expect(err).ToNot(HaveOccurred())

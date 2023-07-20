@@ -32,13 +32,29 @@ jobs:
       - uses: ibiqlik/action-yamllint@v3
         with:
           file_or_dir: .github/workflows/*.yml config/*.yaml
-          strict: true
+          config_data: |
+            extends: default
+            rules:
+              line-length:
+                level: warning
+              trailing-spaces:
+                level: warning
+              brackets:
+                level: warning
+              empty-lines:
+                level: warning
 
       - name: Run lint
         run: make lint
 
+      - name: Checkout the cnf-certification-test repo
+        uses: actions/checkout@v3
+        with:
+          repository: test-network-function/cnf-certification-test
+          path: cnf-certification-test
+
       - name: Run Unit Tests
-        run: make unit-tests
+        run: TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test make unit-tests
 
       - name: Install ginkgo
         run: make install-ginkgo

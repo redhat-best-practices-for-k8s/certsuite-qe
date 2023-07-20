@@ -19,7 +19,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 	execute.BeforeAll(func() {
 		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestAccessControlNameSpace)
 		Expect(err).ToNot(HaveOccurred())
@@ -27,7 +27,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -37,7 +37,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")

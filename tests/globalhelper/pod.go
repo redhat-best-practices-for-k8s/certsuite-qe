@@ -20,7 +20,7 @@ import (
 func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
 
-	req := APIClient.CoreV1Interface.RESTClient().
+	req := GetAPIClient().CoreV1Interface.RESTClient().
 		Post().
 		Namespace(pod.Namespace).
 		Resource("pods").
@@ -35,7 +35,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 			TTY:       true,
 		}, scheme.ParameterCodec)
 
-	exec, err := remotecommand.NewSPDYExecutor(APIClient.Config, "POST", req.URL())
+	exec, err := remotecommand.NewSPDYExecutor(GetAPIClient().Config, "POST", req.URL())
 	if err != nil {
 		return buf, err
 	}
@@ -55,7 +55,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 
 // GetListOfPodsInNamespace returns list of pods for given namespace.
 func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
-	runningPods, err := APIClient.Pods(namespace).List(context.Background(), metav1.ListOptions{})
+	runningPods, err := GetAPIClient().Pods(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 
 // CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
-	createdPod, err := APIClient.Pods(pod.Namespace).Create(context.Background(), pod, metav1.CreateOptions{})
+	createdPod, err := GetAPIClient().Pods(pod.Namespace).Create(context.Background(), pod, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
@@ -88,7 +88,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 
 // isPodReady checks if a pod is ready.
 func isPodReady(namespace string, podName string) (bool, error) {
-	podObject, err := APIClient.Pods(namespace).Get(
+	podObject, err := GetAPIClient().Pods(namespace).Get(
 		context.Background(),
 		podName,
 		metav1.GetOptions{},

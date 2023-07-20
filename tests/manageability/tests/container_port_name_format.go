@@ -14,13 +14,13 @@ var _ = Describe("manageability-container-port-name", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 

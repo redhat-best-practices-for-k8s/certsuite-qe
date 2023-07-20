@@ -12,7 +12,7 @@ import (
 )
 
 func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
-	rtc, err := APIClient.RuntimeClasses().Create(context.Background(), rtc, metav1.CreateOptions{})
+	rtc, err := GetAPIClient().RuntimeClasses().Create(context.Background(), rtc, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
 	}
@@ -32,7 +32,7 @@ func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 }
 
 func isRtcCreated(rtc *nodev1.RuntimeClass) (bool, error) {
-	rtc, err := APIClient.RuntimeClasses().Get(context.Background(), rtc.Name, metav1.GetOptions{})
+	rtc, err := GetAPIClient().RuntimeClasses().Get(context.Background(), rtc.Name, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}

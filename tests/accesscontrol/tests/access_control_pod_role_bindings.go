@@ -31,16 +31,16 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 
 		By("Create additional namespace for testing")
 		// these namespaces will only be used for the access-control-namespace tests
-		err := namespaces.Create(tsparams.TestAnotherNamespace, globalhelper.APIClient)
+		err := namespaces.Create(tsparams.TestAnotherNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		err = namespaces.Clean(tsparams.TestAnotherNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.TestAnotherNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		setupInitialRbacConfiguration()
@@ -50,7 +50,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 
@@ -74,7 +74,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -96,7 +96,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
@@ -125,7 +125,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 	It("one pod with role binding in different namespace", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)

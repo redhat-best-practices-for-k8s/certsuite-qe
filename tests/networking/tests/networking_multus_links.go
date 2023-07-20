@@ -20,13 +20,13 @@ var _ = Describe("Networking custom namespace,", func() {
 	execute.BeforeAll(func() {
 
 		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")
@@ -36,7 +36,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove reports from report directory")

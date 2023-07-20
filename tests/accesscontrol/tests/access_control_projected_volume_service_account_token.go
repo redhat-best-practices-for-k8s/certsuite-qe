@@ -27,13 +27,13 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 

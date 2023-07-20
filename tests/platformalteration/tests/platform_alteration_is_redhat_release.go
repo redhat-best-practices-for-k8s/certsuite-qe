@@ -16,13 +16,13 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -31,9 +31,9 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
-		globalhelper.AppendContainersToDeployment(deployment, 3, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(deployment, 3, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -56,7 +56,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage,
+			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -82,7 +82,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		dep := tshelper.DefineDeploymentWithNonUBIContainer()
 
 		// Append UBI-based container.
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

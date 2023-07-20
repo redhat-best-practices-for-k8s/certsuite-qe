@@ -14,7 +14,7 @@ import (
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *appsv1.StatefulSet, timeout time.Duration) error {
-	runningStatefulSet, err := APIClient.StatefulSets(statefulSet.Namespace).Create(context.Background(),
+	runningStatefulSet, err := GetAPIClient().StatefulSets(statefulSet.Namespace).Create(context.Background(),
 		statefulSet, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create statefulSet %q (ns %s): %w", statefulSet.Name, statefulSet.Namespace, err)
@@ -37,7 +37,7 @@ func CreateAndWaitUntilStatefulSetIsReady(statefulSet *appsv1.StatefulSet, timeo
 
 // isStatefulSetReady checks if a statefulset is ready.
 func isStatefulSetReady(namespace string, statefulSetName string) (bool, error) {
-	testStatefulSet, err := APIClient.StatefulSets(namespace).Get(
+	testStatefulSet, err := GetAPIClient().StatefulSets(namespace).Get(
 		context.Background(),
 		statefulSetName,
 		metav1.GetOptions{},

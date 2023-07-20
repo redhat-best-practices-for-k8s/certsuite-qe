@@ -48,9 +48,9 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
-		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -63,9 +63,9 @@ func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32, con
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
-		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 	deployment.AppendServiceAccount(deploymentStruct, "my-service-account")
 
@@ -78,9 +78,9 @@ func DefineDeploymentWithNamespace(replica int32, containers int, name string, n
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -92,13 +92,13 @@ func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports 
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
-		globalhelper.Configuration.General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
 	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports,
-		globalhelper.Configuration.General.TestImage, "test")
+		globalhelper.GetConfiguration().General.TestImage, "test")
 
 	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
 
@@ -108,7 +108,7 @@ func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports 
 func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value string) error {
 	var boolVal bool
 
-	serviceacct, err := globalhelper.APIClient.ServiceAccounts(namespace).
+	serviceacct, err := globalhelper.GetAPIClient().ServiceAccounts(namespace).
 		Get(context.TODO(), saname, metav1.GetOptions{})
 
 	if err != nil {
@@ -131,7 +131,7 @@ func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value stri
 		return fmt.Errorf("invalid value for token value")
 	}
 
-	_, err = globalhelper.APIClient.ServiceAccounts(parameters.TestAccessControlNameSpace).
+	_, err = globalhelper.GetAPIClient().ServiceAccounts(parameters.TestAccessControlNameSpace).
 		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
 
 	return err
@@ -147,13 +147,13 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.ClientSet) error {
 	plan := installplan.DefineInstallPlan(name, namespace)
 
-	return globalhelper.APIClient.Create(context.TODO(), plan)
+	return globalhelper.GetAPIClient().Create(context.TODO(), plan)
 }
 
 func DefineAndCreateSubscription(name, namespace string, clientSet *client.ClientSet) error {
 	subscription := subscription.DefineSubscription(name, namespace)
 
-	return globalhelper.APIClient.Create(context.TODO(), subscription)
+	return globalhelper.GetAPIClient().Create(context.TODO(), subscription)
 }
 
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
@@ -194,7 +194,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		}
 	}
 
-	_, err := globalhelper.APIClient.Services(parameters.TestAccessControlNameSpace).Create(
+	_, err := globalhelper.GetAPIClient().Services(parameters.TestAccessControlNameSpace).Create(
 		context.Background(),
 		testService, metav1.CreateOptions{})
 	if err != nil {

@@ -23,19 +23,19 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51310
 	It("SELinux is enforcing on all nodes", func() {
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -71,7 +71,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 	// 51311
 	It("SELinux is permissive on one node [negative]", func() {
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)

@@ -17,13 +17,13 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace " + tsparams.TestNamespace + " before each test")
-		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace " + tsparams.TestNamespace + " after each test")
-		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 

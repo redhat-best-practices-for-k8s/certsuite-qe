@@ -28,19 +28,19 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 48492
 	It("One deployment, replicas are more than 1, podAntiAffinity is set", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 2 {
@@ -68,7 +68,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	// 48495
 	It("Two deployments, replicas are more than 1, podAntiAffinity is set", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
@@ -105,7 +105,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	// 48499
 	It("One deployment, replicas are more than 1, podAntiAffinity is not set [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 2 {
@@ -131,7 +131,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	// 48500
 	It("Two deployments, replicas are more than 1, podAntiAffinity is not set [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
@@ -164,7 +164,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 	// 48869
 	It("One deployment, replicas equal to 1, podAntiAffinity is set [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {

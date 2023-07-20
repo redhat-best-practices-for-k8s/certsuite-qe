@@ -27,7 +27,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 	})

@@ -18,13 +18,13 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -34,7 +34,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName,
 			tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage,
+			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
@@ -58,7 +58,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage,
+			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -82,7 +82,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Define first deployment")
 		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
@@ -99,7 +99,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define second deployment")
 		deploymentb := deployment.DefineDeployment("platform-alteration-dpb",
 			tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -122,7 +122,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define statefulSet")
 		statefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
 			tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage,
+			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		statefulset.RedefineWithPrivilegedContainer(statefulSet)
 

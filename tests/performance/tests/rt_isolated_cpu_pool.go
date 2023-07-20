@@ -15,13 +15,13 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test in order to enable RunTimeClass deletion.")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Delete all RTC's that were created by the previous test case.")
@@ -87,7 +87,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 	It("One pod running in shared cpu pool", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
