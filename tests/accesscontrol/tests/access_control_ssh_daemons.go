@@ -1,9 +1,6 @@
 package accesscontrol
 
 import (
-	"fmt"
-	"time"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
@@ -17,7 +14,7 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -25,7 +22,7 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -47,12 +44,10 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		err := pod.RedefineWithContainerExecCommand(testPod, tsparams.SSHDaemonStartContainerCommand, 0)
 		Expect(err).ToNot(HaveOccurred())
-
-		fmt.Println("Image name is ", testPod.Spec.Containers[0].Image)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -62,7 +57,6 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 			tsparams.TnfNoSSHDaemonsAllowed,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 
-		time.Sleep(5 * time.Minute)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

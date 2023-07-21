@@ -236,12 +236,12 @@ func RedefineWithPostStart(pod *corev1.Pod) {
 	}
 }
 
-func RedefineWithContainerExecCommand(pod *corev1.Pod, commandStr string, containerIndex int) error {
+func RedefineWithContainerExecCommand(pod *corev1.Pod, commandArgs []string, containerIndex int) error {
 	if len(pod.Spec.Containers) <= containerIndex {
 		return fmt.Errorf("pod %s does not have enough containers", pod.Name)
 	}
 
-	pod.Spec.Containers[containerIndex].Command[0] = commandStr
+	pod.Spec.Containers[containerIndex].Command = commandArgs
 
 	return nil
 }

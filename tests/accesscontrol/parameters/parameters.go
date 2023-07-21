@@ -22,6 +22,8 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
+
+	SSHDaemonStartContainerCommand = []string{"/usr/sbin/sshd", "-f", "/home/tnf-user/sshd/sshd_config", "-D", "-d"}
 )
 
 const (
@@ -55,8 +57,6 @@ const (
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
 	SSHDaemonImageName = "quay.io/testnetworkfunction/debug-partner:latest"
-
-	SSHDaemonStartContainerCommand = "/usr/sbin/sshd -f /home/tnf-user/sshd/sshd_config -D -d"
 
 	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "512Mi"

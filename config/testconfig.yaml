@@ -10,8 +10,10 @@ general:
   tnf_image_tag: unstable
   docker_config_dir: /tmp
   # Example
+  # yamllint disable-line rule:line-length
   # tnf_config_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_config"
   tnf_config_dir: "/path/to/cnfcert-tests-verification/tnf-config"
   # Example
+  # yamllint disable-line rule:line-length
   # tnf_report_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_report"
   tnf_report_dir: "/path/to/cnfcert-tests-verification/tnf_report"
