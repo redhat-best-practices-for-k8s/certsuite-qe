@@ -6,8 +6,12 @@ general:
   verification_log_level: 4
   test_image: quay.io/testnetworkfunction/cnf-test-partner
   tnf_entry_point_script: run-tnf-container.sh
-  tnf_config_dir: /tmp/tnf-config
-  tnf_report_dir: /tmp/tnf_report
   tnf_image: quay.io/testnetworkfunction/cnf-certification-test
   tnf_image_tag: unstable
   docker_config_dir: /tmp
+  # Example
+  # tnf_config_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_config"
+  tnf_config_dir: "/path/to/cnfcert-tests-verification/tnf-config"
+  # Example
+  # tnf_report_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_report"
+  tnf_report_dir: "/path/to/cnfcert-tests-verification/tnf_report"
