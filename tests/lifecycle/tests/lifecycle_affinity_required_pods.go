@@ -11,6 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
@@ -30,6 +31,10 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Clean namespace before each test")
 		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all nodes are labeled with 'worker-cnf' label")
+		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
