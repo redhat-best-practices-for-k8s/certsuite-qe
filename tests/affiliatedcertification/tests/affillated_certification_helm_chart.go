@@ -9,6 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Affiliated-certification helm chart certification,", func() {
@@ -50,17 +51,20 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 		By("remove the project")
-		cmd = exec.Command("/bin/bash", "-c", "oc delete ns affiliated-certification-helmchart-is-certified")
-		err = cmd.Run()
+		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
 
 	It("one helm to test,  are not certified", func() {
+		By("Create ns istio-system")
+		err := namespaces.Create("istio-system", globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Install a helm chart")
 		cmd := exec.Command("/bin/bash", "-c", "oc new-project affiliated-certification-helmchart-is-certified"+
 			"&& helm repo add istio https://istio-release.storage.googleapis.com/charts "+
-			"&& helm repo update && oc create ns istio-system && helm install istio-base istio/base --set defaultRevision=default")
-		err := cmd.Run()
+			"&& helm repo update && helm install istio-base istio/base --set defaultRevision=default")
+		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
 		By("Start test")
@@ -75,9 +79,13 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			tsparams.TestHelmChartCertified,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
+
 		By("remove the project")
-		cmd = exec.Command("/bin/bash", "-c", "oc delete ns affiliated-certification-helmchart-is-certified istio-system")
-		err = cmd.Run()
+		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.APIClient)
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
+
+		err = namespaces.Clean("istio-system", globalhelper.APIClient)
+		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
+
 	})
 })
