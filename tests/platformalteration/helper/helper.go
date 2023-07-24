@@ -26,7 +26,7 @@ const WaitingTime = 5 * time.Minute
 // WaitForSpecificNodeCondition waits for a given node to become ready or not.
 func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval time.Duration, nodeName string,
 	ready bool) error {
-	return wait.PollUntilContextTimeout(context.Background(), interval, timeout, true,
+	return wait.PollUntilContextTimeout(context.TODO(), interval, timeout, true,
 		func(ctx context.Context) (bool, error) {
 			nodesList, err := clients.Nodes().List(ctx, metav1.ListOptions{})
 			if err != nil {
