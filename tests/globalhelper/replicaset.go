@@ -13,7 +13,7 @@ import (
 
 // CreateAndWaitUntilReplicaSetIsReady creates replicaSet and waits until all it's replicas are ready.
 func CreateAndWaitUntilReplicaSetIsReady(replicaSet *appsv1.ReplicaSet, timeout time.Duration) error {
-	runningReplica, err := APIClient.ReplicaSets(replicaSet.Namespace).Create(context.Background(),
+	runningReplica, err := GetAPIClient().ReplicaSets(replicaSet.Namespace).Create(context.Background(),
 		replicaSet, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create replicaSet %q (ns %s): %w", replicaSet.Name, replicaSet.Namespace, err)
@@ -36,7 +36,7 @@ func CreateAndWaitUntilReplicaSetIsReady(replicaSet *appsv1.ReplicaSet, timeout 
 
 // isReplicaSetReady checks if a replicaset is ready.
 func isReplicaSetReady(namespace, replicaSetName string) (bool, error) {
-	testReplicaSet, err := APIClient.ReplicaSets(namespace).Get(
+	testReplicaSet, err := GetAPIClient().ReplicaSets(namespace).Get(
 		context.Background(),
 		replicaSetName,
 		metav1.GetOptions{},

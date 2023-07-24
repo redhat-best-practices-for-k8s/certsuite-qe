@@ -34,19 +34,19 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 47405
 	It("One deployment with PodAntiAffinity, replicas are less than schedulable nodes", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
@@ -76,7 +76,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 
 	// 47406
 	It("Two deployments with PodAntiAffinity, replicas are less than schedulable nodes", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
@@ -115,7 +115,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 
 	// 47407
 	It("One deployment with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
@@ -143,7 +143,7 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 
 	// 47408
 	It("Two deployments with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.APIClient)
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		// all nodes will be scheduled with a pod.

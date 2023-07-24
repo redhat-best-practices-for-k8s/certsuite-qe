@@ -27,24 +27,24 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
 	testArgs := []string{
 		"-k", os.Getenv("KUBECONFIG"),
-		"-c", Configuration.General.DockerConfigDir + "/config",
-		"-t", Configuration.General.TnfConfigDir,
-		"-o", Configuration.General.TnfReportDir,
-		"-i", fmt.Sprintf("%s:%s", Configuration.General.TnfImage, Configuration.General.TnfImageTag),
+		"-c", GetConfiguration().General.DockerConfigDir + "/config",
+		"-t", GetConfiguration().General.TnfConfigDir,
+		"-o", GetConfiguration().General.TnfReportDir,
+		"-i", fmt.Sprintf("%s:%s", GetConfiguration().General.TnfImage, GetConfiguration().General.TnfImageTag),
 		"-l", testCaseName,
 	}
 
-	cmd := exec.Command(fmt.Sprintf("./%s", Configuration.General.TnfEntryPointScript))
+	cmd := exec.Command(fmt.Sprintf("./%s", GetConfiguration().General.TnfEntryPointScript))
 	cmd.Args = append(cmd.Args, testArgs...)
-	cmd.Dir = Configuration.General.TnfRepoPath
+	cmd.Dir = GetConfiguration().General.TnfRepoPath
 
-	debugTnf, err := Configuration.DebugTnf()
+	debugTnf, err := GetConfiguration().DebugTnf()
 	if err != nil {
 		return fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
 	}
 
 	if debugTnf {
-		outfile := Configuration.CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
+		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
 

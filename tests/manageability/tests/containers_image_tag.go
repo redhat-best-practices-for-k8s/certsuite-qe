@@ -14,13 +14,13 @@ var _ = Describe("manageability-containers-image-tag", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -48,7 +48,7 @@ var _ = Describe("manageability-containers-image-tag", func() {
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.ManageabilityNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

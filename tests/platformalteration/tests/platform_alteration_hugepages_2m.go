@@ -16,13 +16,13 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -31,7 +31,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith2MiHugepages(dep, 4)
 
@@ -53,7 +53,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 	It("One pod with 2Mi hugepages", func() {
 
 		By("Define pod with 2Mi hugepages")
-		puta := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		puta := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		pod.RedefineWithCPUResources(puta, "500m", "250m")
 		pod.RedefineWith2MiHugepages(puta, 4)
@@ -76,10 +76,10 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith2MiHugepages(dep, 4)
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -100,8 +100,8 @@ var _ = Describe("platform-alteration-hugepages-2m-only", func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TnfTargetPodLabels)
-		globalhelper.AppendContainersToPod(put, 1, globalhelper.Configuration.General.TestImage)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
 		err := pod.RedefineFirstContainerWith2MiHugepages(put, 4)

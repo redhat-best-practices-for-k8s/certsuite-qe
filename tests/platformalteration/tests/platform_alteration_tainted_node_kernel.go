@@ -15,13 +15,13 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -44,7 +44,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 	It("Tainted node [negative]", func() {
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -78,12 +78,12 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Wait for the node to become not ready")
-		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
+		err = tshelper.WaitForSpecificNodeCondition(globalhelper.GetAPIClient(),
 			tsparams.RebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, false)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Wait for the node to become ready")
-		err = tshelper.WaitForSpecificNodeCondition(globalhelper.APIClient,
+		err = tshelper.WaitForSpecificNodeCondition(globalhelper.GetAPIClient(),
 			tsparams.RebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
 		Expect(err).ToNot(HaveOccurred())
 

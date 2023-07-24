@@ -27,13 +27,13 @@ var _ = Describe("Access-control pod-host-network ", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.APIClient)
+		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 

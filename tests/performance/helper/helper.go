@@ -148,7 +148,7 @@ func ExecCommandContainer(
 	logrus.Trace(fmt.Sprintf("execute command on ns=%s, pod=%s container=%s, cmd: %s",
 		podNamespace, podName, container, strings.Join(commandStr, " ")))
 
-	req := globalhelper.APIClient.CoreV1Interface.RESTClient().
+	req := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().
 		Post().
 		Namespace(podNamespace).
 		Resource("pods").
@@ -163,7 +163,7 @@ func ExecCommandContainer(
 			TTY:       false,
 		}, scheme.ParameterCodec)
 
-	exec, err := remotecommand.NewSPDYExecutor(globalhelper.APIClient.Config, "POST", req.URL())
+	exec, err := remotecommand.NewSPDYExecutor(globalhelper.GetAPIClient().Config, "POST", req.URL())
 	if err != nil {
 		logrus.Error(err)
 
@@ -191,7 +191,7 @@ func ExecCommandContainer(
 }
 
 func DeleteRunTimeClass(rtcName string) error {
-	err := globalhelper.APIClient.RuntimeClasses().Delete(context.Background(), rtcName,
+	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.Background(), rtcName,
 		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
@@ -203,19 +203,20 @@ func DeleteRunTimeClass(rtcName string) error {
 func ConfigurePrivilegedServiceAccount(namespace string) error {
 	aRole, aRoleBinding, aServiceAccount := getPrivilegedServiceAccountObjects(namespace)
 	// create role
-	_, err := globalhelper.APIClient.RbacV1Interface.Roles(namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
+	_, err := globalhelper.GetAPIClient().RbacV1Interface.Roles(namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("error creating role, err=%w", err)
 	}
 
 	// create rolebinding
-	_, err = globalhelper.APIClient.RbacV1Interface.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
+	//nolint:lll
+	_, err = globalhelper.GetAPIClient().RbacV1Interface.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("error creating role bindings, err=%w", err)
 	}
 
 	// create service account
-	_, err = globalhelper.APIClient.CoreV1Interface.ServiceAccounts(namespace).Create(context.TODO(),
+	_, err = globalhelper.GetAPIClient().CoreV1Interface.ServiceAccounts(namespace).Create(context.TODO(),
 		&aServiceAccount, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("error creating service account, err=%w", err)

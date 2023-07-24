@@ -159,7 +159,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		}
 	}
 
-	_, err := globalhelper.APIClient.Services(tsparams.TestNetworkingNameSpace).Create(
+	_, err := globalhelper.GetAPIClient().Services(tsparams.TestNetworkingNameSpace).Create(
 		context.Background(),
 		testService, metav1.CreateOptions{})
 	if err != nil {
@@ -176,7 +176,7 @@ func DefineAndCreateNadOnCluster(name string, network string) error {
 		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
 	}
 
-	return globalhelper.APIClient.Create(context.Background(), nadOneInterface)
+	return globalhelper.GetAPIClient().Create(context.Background(), nadOneInterface)
 }
 
 func GetClusterMultusInterfaces() ([]string, error) {
@@ -193,7 +193,7 @@ func GetClusterMultusInterfaces() ([]string, error) {
 	var nodesInterfacesList [][]string
 
 	for _, runningPod := range podsList.Items {
-		isMasterNode, err := nodes.IsNodeMaster(runningPod.Spec.NodeName, globalhelper.APIClient)
+		isMasterNode, err := nodes.IsNodeMaster(runningPod.Spec.NodeName, globalhelper.GetAPIClient())
 		if err != nil {
 			return nil, err
 		}
@@ -279,7 +279,7 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 func defineDeploymentBasedOnArgs(
 	name string, namespace string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *appsv1.Deployment {
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
 	if privileged {
@@ -305,7 +305,7 @@ func DefineDeploymentWithContainers(replica int32, containers int,
 
 	deploymentStruct := defineDeploymentBasedOnArgs(name, tsparams.TestNetworkingNameSpace, replica, false, nil, nil)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -313,9 +313,10 @@ func DefineDeploymentWithContainers(replica int32, containers int,
 
 func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
 	testDaemonset := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace,
-		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 	daemonset.RedefineWithMultus(testDaemonset, nadName)
-	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.Configuration.General.CnfNodeLabel: ""})
+	//nolint:lll
+	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.GetConfiguration().General.CnfNodeLabel: ""})
 
 	if labels != nil {
 		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
@@ -325,9 +326,9 @@ func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error 
 }
 
 func defineAndCreatePrivilegedDaemonset() error {
-	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, globalhelper.Configuration.General.TestImage,
+	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, globalhelper.GetConfiguration().General.TestImage,
 		tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
-	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.Configuration.General.WorkerNodeLabel: ""})
+	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.GetConfiguration().General.WorkerNodeLabel: ""})
 	daemonset.RedefineWithPrivilegeAndHostNetwork(daemonSet)
 
 	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -339,7 +340,7 @@ func defineAndCreatePrivilegedDaemonset() error {
 }
 
 func execCmdOnPodsListInNamespace(command []string, execOn string) error {
-	runningTestPods, err := globalhelper.APIClient.Pods(tsparams.TestNetworkingNameSpace).List(
+	runningTestPods, err := globalhelper.GetAPIClient().Pods(tsparams.TestNetworkingNameSpace).List(
 		context.Background(),
 		metav1.ListOptions{})
 	if err != nil {
@@ -379,7 +380,7 @@ func createContainerSpecsFromContainerPorts(ports []corev1.ContainerPort) []core
 		containerSpecs = append(containerSpecs,
 			corev1.Container{
 				Name:    fmt.Sprintf("%s-%d", tsparams.TestDeploymentAName, index),
-				Image:   globalhelper.Configuration.General.TestImage,
+				Image:   globalhelper.GetConfiguration().General.TestImage,
 				Command: []string{"/bin/bash", "-c", "sleep INF"},
 				Ports:   []corev1.ContainerPort{ports[index]},
 			},
@@ -395,12 +396,12 @@ func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports 
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
-		globalhelper.Configuration.General.TestImage, tsparams.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.Configuration.General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
-	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports, globalhelper.Configuration.General.TestImage, "test")
+	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports, globalhelper.GetConfiguration().General.TestImage, "test")
 
 	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
 

@@ -24,9 +24,9 @@ import (
 func TestNetworking(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)
+	_ = flag.Lookup("v").Value.Set(globalhelper.GetConfiguration().General.VerificationLogLevel)
 	_, reporterConfig := GinkgoConfiguration()
-	reporterConfig.JUnitReport = globalhelper.Configuration.GetReportPath(currentFile)
+	reporterConfig.JUnitReport = globalhelper.GetConfiguration().GetReportPath(currentFile)
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "CNFCert networking tests", reporterConfig)
@@ -36,18 +36,18 @@ var _ = BeforeSuite(func() {
 
 	By("Validate that cluster is Schedulable")
 	Eventually(func() bool {
-		isClusterReady, err := cluster.IsClusterStable(globalhelper.APIClient)
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		return isClusterReady
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err := nodes.WaitForNodesReady(globalhelper.APIClient, tsparams.WaitingTime, tsparams.RetryInterval)
+	err := nodes.WaitForNodesReady(globalhelper.GetAPIClient(), tsparams.WaitingTime, tsparams.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
 	By(fmt.Sprintf("Create %s namespace", tsparams.TestNetworkingNameSpace))
-	err = namespaces.Create(tsparams.TestNetworkingNameSpace, globalhelper.APIClient)
+	err = namespaces.Create(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
@@ -67,14 +67,14 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 	By("Remove networking test namespaces")
 	err := namespaces.DeleteAndWait(
-		globalhelper.APIClient,
+		globalhelper.GetAPIClient(),
 		tsparams.TestNetworkingNameSpace,
 		tsparams.WaitingTime,
 	)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = namespaces.DeleteAndWait(
-		globalhelper.APIClient,
+		globalhelper.GetAPIClient(),
 		tsparams.AdditionalNetworkingNamespace,
 		tsparams.WaitingTime,
 	)

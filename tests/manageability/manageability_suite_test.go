@@ -21,9 +21,9 @@ import (
 func TestPerformance(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
 	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.Configuration.General.VerificationLogLevel)
+	_ = flag.Lookup("v").Value.Set(globalhelper.GetConfiguration().General.VerificationLogLevel)
 	_, reporterConfig := GinkgoConfiguration()
-	reporterConfig.JUnitReport = globalhelper.Configuration.GetReportPath(currentFile)
+	reporterConfig.JUnitReport = globalhelper.GetConfiguration().GetReportPath(currentFile)
 
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "CNFCert performance tests", reporterConfig)
@@ -32,7 +32,7 @@ func TestPerformance(t *testing.T) {
 var _ = BeforeSuite(func() {
 
 	By("Create namespace")
-	err := namespaces.Create(tsparams.ManageabilityNamespace, globalhelper.APIClient)
+	err := namespaces.Create(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
@@ -48,7 +48,7 @@ var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.ManageabilityNamespace))
 	err := namespaces.DeleteAndWait(
-		globalhelper.APIClient,
+		globalhelper.GetAPIClient(),
 		tsparams.ManageabilityNamespace,
 		tsparams.WaitingTime,
 	)

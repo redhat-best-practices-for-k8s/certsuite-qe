@@ -26,14 +26,14 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test in order to enable RunTimeClass deletion.")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Delete all RTC's that were created by the previous test case.")
@@ -54,7 +54,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
@@ -91,9 +91,9 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
-		globalhelper.AppendContainersToPod(put, 1, globalhelper.Configuration.General.TestImage)
+		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -130,7 +130,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		By("Define deployment with resources and runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -167,7 +167,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define daemonSet with resources and runTimeClass")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Add annotations to the pod")
@@ -202,7 +202,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 	// 54734
 	It("One daemonSet no annotations [negative]", func() {
 		By("Define daemonSet with resources and runTimeClass")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Define runTimeClass")
@@ -235,7 +235,7 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		By("Define deployment with resources and runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
-			globalhelper.Configuration.General.TestImage, tsparams.TestTargetLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -263,9 +263,9 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		puta := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+		puta := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
-		putb := pod.DefinePod("lifecycle-podb", tsparams.LifecycleNamespace, globalhelper.Configuration.General.TestImage,
+		putb := pod.DefinePod("lifecycle-podb", tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")

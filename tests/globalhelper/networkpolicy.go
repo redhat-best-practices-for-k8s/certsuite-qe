@@ -13,7 +13,7 @@ import (
 )
 
 func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkPolicy, timeout time.Duration) error {
-	policy, err := APIClient.NetworkPolicies(networkPolicy.Namespace).Create(
+	policy, err := GetAPIClient().NetworkPolicies(networkPolicy.Namespace).Create(
 		context.Background(), networkPolicy, metav1.CreateOptions{})
 
 	if err != nil {
@@ -36,7 +36,7 @@ func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkP
 }
 
 func doesNetworkPolicyExist(namespace, name string) (bool, error) {
-	if _, err := APIClient.NetworkPolicies(namespace).Get(
+	if _, err := GetAPIClient().NetworkPolicies(namespace).Get(
 		context.Background(),
 		name,
 		metav1.GetOptions{},

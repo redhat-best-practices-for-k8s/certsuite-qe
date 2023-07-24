@@ -18,13 +18,13 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.APIClient)
+		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -93,7 +93,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSet with ifNotPresent as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
+			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -113,19 +113,19 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSets with ifNotPresent as ImagePullPolicy")
 		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
+			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSeta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetb := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsb",
-			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
+			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetc := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsc",
-			globalhelper.Configuration.General.TestImage, corev1.PullIfNotPresent)
+			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -242,7 +242,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		By("Define DaemonSet with Never as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.Configuration.General.TestImage, corev1.PullNever)
+			globalhelper.GetConfiguration().General.TestImage, corev1.PullNever)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
