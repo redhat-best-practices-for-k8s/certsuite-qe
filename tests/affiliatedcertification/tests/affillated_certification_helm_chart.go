@@ -51,13 +51,13 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 		By("remove the project")
-		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.APIClient)
+		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
 
 	It("one helm to test,  are not certified", func() {
 		By("Create ns istio-system")
-		err := namespaces.Create("istio-system", globalhelper.APIClient)
+		err := namespaces.Create("istio-system", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Install a helm chart")
@@ -81,10 +81,10 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("remove the project")
-		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.APIClient)
+		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 
-		err = namespaces.Clean("istio-system", globalhelper.APIClient)
+		err = namespaces.Clean("istio-system", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
 
 	})
