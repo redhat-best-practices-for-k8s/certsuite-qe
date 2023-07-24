@@ -24,6 +24,8 @@ deps-update:
 	go mod tidy && \
 	go mod vendor
 
+test: unit-tests
+
 gofmt:
 	@echo "Running gofmt"
 	gofmt -s -l `find . -path ./vendor -prune -o -type f -name '*.go' -print`

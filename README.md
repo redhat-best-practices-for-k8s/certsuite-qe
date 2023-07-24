@@ -143,6 +143,14 @@ FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/pa
 
 Fork the repo, create a new branch and create a PR with your changes.
 
+## Running the unit tests
+
+To execute the unit tests in the repository, run the following:
+
+```sh
+make test
+```
+
 ## License
 
 CNF Certification Test Partner is copyright [Red Hat, Inc.](https://www.redhat.com) and available
