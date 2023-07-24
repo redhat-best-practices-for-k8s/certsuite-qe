@@ -22,12 +22,15 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
+
+	SSHDaemonStartContainerCommand = []string{"/usr/sbin/sshd", "-f", "/home/tnf-user/sshd/sshd_config", "-D", "-d"}
 )
 
 const (
 	// TNF Test case names.
 	TnfPodRoleBindings                              = "access-control-pod-role-bindings"
 	TnfPodServiceAccount                            = "access-control-pod-service-account"
+	TnfNoSSHDaemonsAllowed                          = "access-control-ssh-daemons"
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
 	TestCaseNameAccessControlPodHostPid             = "access-control-pod-host-pid"
@@ -52,6 +55,8 @@ const (
 	TnfProjectedVolumeServiceAccountTcName          = "access-control-projected-volume-service-account-token"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
+
+	SSHDaemonImageName = "quay.io/testnetworkfunction/debug-partner:latest"
 
 	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "512Mi"
