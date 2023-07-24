@@ -30,6 +30,18 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm")
 	})
 
+	AfterEach(func() {
+		By("remove the project")
+		err := namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
+	})
+
+	AfterAll(func() {
+		By("remove the istio-system")
+		err := namespaces.Clean("istio-system", globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
+	})
+
 	It("one helm to test,  are certified", func() {
 		By("Install a helm chart")
 		err := namespaces.Create("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
@@ -52,12 +64,9 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			tsparams.TestHelmChartCertified,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-		By("remove the project")
-		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
 
-	It("one helm to test,  are not certified", func() {
+	It("one helm to test, chart not certified", func() {
 		By("Create ns istio-system")
 		err := namespaces.Create("istio-system", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
@@ -83,13 +92,5 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			tsparams.TestHelmChartCertified,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
-		By("remove the project")
-		err = namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
-
-		err = namespaces.Clean("istio-system", globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
-
 	})
 })
