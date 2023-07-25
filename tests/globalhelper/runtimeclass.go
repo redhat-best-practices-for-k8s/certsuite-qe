@@ -12,7 +12,19 @@ import (
 )
 
 func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
-	rtc, err := GetAPIClient().RuntimeClasses().Create(context.TODO(), rtc, metav1.CreateOptions{})
+	// Check for existing runtimeclass first
+	rtcCreated, err := isRtcCreated(rtc)
+	if err != nil {
+		return fmt.Errorf("failed to check if runtimeclass %q (ns %s) exists: %w", rtc.Name, rtc.Namespace, err)
+	}
+
+	if rtcCreated {
+		glog.V(5).Info(fmt.Sprintf("runtimeclass %q (ns %s) already exists", rtc.Name, rtc.Namespace))
+
+		return nil
+	}
+
+	rtc, err = GetAPIClient().RuntimeClasses().Create(context.Background(), rtc, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
 	}
