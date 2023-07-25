@@ -36,8 +36,6 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		By("remove the project")
 		err := namespaces.Clean(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
-		By("remove the istio-system")
-		namespaces.Clean("istio-system", globalhelper.GetAPIClient())
 	})
 
 	It("one helm to test,  are certified", func() {
@@ -88,5 +86,9 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			tsparams.TestHelmChartCertified,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("remove the istio-system")
+		err = namespaces.Clean("istio-system", globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
 	})
 })
