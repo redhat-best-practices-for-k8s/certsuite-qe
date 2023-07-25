@@ -8,10 +8,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	controlPlaneTaintKey = "node-role.kubernetes.io/control-plane"
+	masterTaintKey       = "node-role.kubernetes.io/master"
+)
+
 // EnableMasterScheduling enables/disables master nodes scheduling.
 func EnableMasterScheduling(scheduleable bool) error {
 	// Get all nodes in the cluster
-	nodes, err := GetAPIClient().CoreV1Interface.Nodes().List(context.Background(), metav1.ListOptions{})
+	nodes, err := GetAPIClient().CoreV1Interface.Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get nodes: %w", err)
 	}
@@ -39,11 +44,11 @@ func EnableMasterScheduling(scheduleable bool) error {
 func addControlPlaneTaint(node *corev1.Node) error {
 	// add the control-plane:NoSchedule taint to the master
 	node.Spec.Taints = append(node.Spec.Taints, corev1.Taint{
-		Key:    "node-role.kubernetes.io/control-plane",
+		Key:    controlPlaneTaintKey,
 		Effect: corev1.TaintEffectNoSchedule,
 	})
 
-	_, err := GetAPIClient().CoreV1Interface.Nodes().Update(context.Background(), node, metav1.UpdateOptions{})
+	_, err := GetAPIClient().CoreV1Interface.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to update node %s - error: %w", node.Name, err)
@@ -54,13 +59,21 @@ func addControlPlaneTaint(node *corev1.Node) error {
 
 func removeControlPlaneTaint(node *corev1.Node) error {
 	// remove the control-plane:NoSchedule taint from the master
-	for i, taint := range node.Spec.Taints {
-		if taint.Key == "node-role.kubernetes.io/master" || taint.Key == "node-role.kubernetes.io/control-plane" {
-			node.Spec.Taints = append(node.Spec.Taints[:i], node.Spec.Taints[i+1:]...)
+	var updatedTaints []corev1.Taint
+
+	for _, taint := range node.Spec.Taints {
+		switch taint.Key {
+		case masterTaintKey, controlPlaneTaintKey:
+			// Skip the taints that need to be removed
+			continue
+		default:
+			updatedTaints = append(updatedTaints, taint)
 		}
 	}
 
-	_, err := GetAPIClient().CoreV1Interface.Nodes().Update(context.Background(), node, metav1.UpdateOptions{})
+	node.Spec.Taints = updatedTaints
+
+	_, err := GetAPIClient().CoreV1Interface.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to update node %s - error: %w", node.Name, err)
@@ -70,7 +83,7 @@ func removeControlPlaneTaint(node *corev1.Node) error {
 }
 
 func isMasterNode(node *corev1.Node) bool {
-	masterLabels := []string{"node-role.kubernetes.io/master", "node-role.kubernetes.io/control-plane"}
+	masterLabels := []string{masterTaintKey, controlPlaneTaintKey}
 	for _, label := range masterLabels {
 		if _, exists := node.Labels[label]; exists {
 			return true
