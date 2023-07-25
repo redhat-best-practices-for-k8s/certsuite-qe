@@ -14,7 +14,7 @@ import (
 
 // IsClusterStable tests if cluster is stable.
 func IsClusterStable(clients *testclient.ClientSet) (bool, error) {
-	nodes, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
+	nodes, err := clients.Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return false, err
 	}

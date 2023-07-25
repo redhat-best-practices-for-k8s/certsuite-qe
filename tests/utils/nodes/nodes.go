@@ -22,7 +22,7 @@ type resourceSpecs struct {
 
 // WaitForNodesReady waits for all the nodes to become ready.
 func WaitForNodesReady(clients *client.ClientSet, timeout, interval time.Duration) error {
-	return wait.PollUntilContextTimeout(context.Background(), interval, timeout, true,
+	return wait.PollUntilContextTimeout(context.TODO(), interval, timeout, true,
 		func(ctx context.Context) (bool, error) {
 			nodesList, err := clients.Nodes().List(ctx, metav1.ListOptions{})
 			if err != nil {
@@ -52,7 +52,7 @@ func IsNodeInCondition(node *corev1.Node, condition corev1.NodeConditionType) bo
 
 // GetNumOfReadyNodesInCluster gets the number of ready nodes in the cluster.
 func GetNumOfReadyNodesInCluster(clients *client.ClientSet) (int32, error) {
-	nodesList, err := clients.Nodes().List(context.Background(), metav1.ListOptions{})
+	nodesList, err := clients.Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return 0, err
 	}
@@ -86,7 +86,7 @@ func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedul
 		return err
 	}
 
-	_, err = clients.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
+	_, err = clients.Nodes().Patch(context.TODO(), nodeName, types.JSONPatchType,
 		cordonPatchBytes, metav1.PatchOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to patch node unschedulable value: %w", err)
@@ -96,7 +96,7 @@ func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedul
 }
 
 func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
-	node, err := clients.Nodes().Get(context.Background(), name, metav1.GetOptions{})
+	node, err := clients.Nodes().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}

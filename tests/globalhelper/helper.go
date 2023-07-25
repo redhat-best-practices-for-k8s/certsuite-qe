@@ -250,7 +250,7 @@ func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []s
 // AllowAuthenticatedUsersRunPrivilegedContainers adds all authenticated users to privileged group.
 func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 	_, err := GetAPIClient().ClusterRoleBindings().Get(
-		context.Background(),
+		context.TODO(),
 		"system:openshift:scc:privileged",
 		metav1.GetOptions{},
 	)
@@ -262,7 +262,7 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 			*rbac.DefineRbacAuthorizationClusterGroupSubjects([]string{"system:authenticated"}),
 		)
 
-		_, err = GetAPIClient().ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{})
+		_, err = GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to create cluster role binding: %w", err)
 		}
@@ -289,19 +289,19 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 	}
 
 	// Exit early if the cluster role binding already exists
-	_, err := GetAPIClient().ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
+	_, err := GetAPIClient().ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
 	if err == nil {
 		return nil
 	}
 
 	// Create the service account
-	_, err = GetAPIClient().ServiceAccounts(nameSpace).Create(context.Background(), serviceAccount, metav1.CreateOptions{})
+	_, err = GetAPIClient().ServiceAccounts(nameSpace).Create(context.TODO(), serviceAccount, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create cServiceAccount: %w", err)
 	}
 
 	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
-	if _, err := GetAPIClient().ClusterRoleBindings().Create(context.Background(), roleBind, metav1.CreateOptions{}); err != nil {
+	if _, err := GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{}); err != nil {
 		return fmt.Errorf("failed to create cluster role binding: %w", err)
 	}
 
@@ -310,12 +310,12 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 
 func DeleteClusterRoleBinding(nameSpace, name string) error {
 	// Exit if the cluster role binding does not exist
-	_, err := GetAPIClient().ClusterRoleBindings().Get(context.Background(), name, metav1.GetOptions{})
+	_, err := GetAPIClient().ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
 	if k8serrors.IsNotFound(err) {
 		return nil
 	}
 
-	if err := GetAPIClient().ClusterRoleBindings().Delete(context.Background(), name, metav1.DeleteOptions{}); err != nil {
+	if err := GetAPIClient().ClusterRoleBindings().Delete(context.TODO(), name, metav1.DeleteOptions{}); err != nil {
 		return fmt.Errorf("failed to delete cluster role binding: %w", err)
 	}
 

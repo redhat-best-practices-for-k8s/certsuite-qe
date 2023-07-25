@@ -15,7 +15,7 @@ import (
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := GetAPIClient().DaemonSets(daemonSet.Namespace).Create(
-		context.Background(), daemonSet, metav1.CreateOptions{})
+		context.TODO(), daemonSet, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create daemonset %q (ns %s): %w", daemonSet.Name, daemonSet.Namespace, err)
 	}
@@ -37,7 +37,7 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout tim
 
 func isDaemonSetReady(namespace string, name string) (bool, error) {
 	daemonSet, err := GetAPIClient().DaemonSets(namespace).Get(
-		context.Background(),
+		context.TODO(),
 		name,
 		metav1.GetOptions{},
 	)

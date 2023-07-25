@@ -160,7 +160,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	}
 
 	_, err := globalhelper.GetAPIClient().Services(tsparams.TestNetworkingNameSpace).Create(
-		context.Background(),
+		context.TODO(),
 		testService, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create service on cluster: %w", err)
@@ -176,7 +176,7 @@ func DefineAndCreateNadOnCluster(name string, network string) error {
 		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
 	}
 
-	return globalhelper.GetAPIClient().Create(context.Background(), nadOneInterface)
+	return globalhelper.GetAPIClient().Create(context.TODO(), nadOneInterface)
 }
 
 func GetClusterMultusInterfaces() ([]string, error) {
@@ -341,7 +341,7 @@ func defineAndCreatePrivilegedDaemonset() error {
 
 func execCmdOnPodsListInNamespace(command []string, execOn string) error {
 	runningTestPods, err := globalhelper.GetAPIClient().Pods(tsparams.TestNetworkingNameSpace).List(
-		context.Background(),
+		context.TODO(),
 		metav1.ListOptions{})
 	if err != nil {
 		return err

@@ -53,10 +53,10 @@ var _ = Describe("platform-alteration-boot-params", func() {
 
 	// 51305
 	It("change boot params using MCO", func() {
-		machineConfigList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.Background(), metav1.ListOptions{})
+		machineConfigList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
-		machineConfigPoolList, err := globalhelper.GetAPIClient().MachineConfigPools().List(context.Background(),
+		machineConfigPoolList, err := globalhelper.GetAPIClient().MachineConfigPools().List(context.TODO(),
 			metav1.ListOptions{})
 		Expect(err).ToNot(HaveOccurred())
 

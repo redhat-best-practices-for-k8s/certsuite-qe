@@ -195,7 +195,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	}
 
 	_, err := globalhelper.GetAPIClient().Services(parameters.TestAccessControlNameSpace).Create(
-		context.Background(),
+		context.TODO(),
 		testService, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create service on cluster: %w", err)
