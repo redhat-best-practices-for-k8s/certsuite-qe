@@ -23,6 +23,8 @@ var (
 	AffinityRequiredPodLabels = map[string]string{
 		"AffinityRequired": "true",
 	}
+
+	TestLocalStorageClassName = "local-storage"
 )
 
 const (

@@ -24,6 +24,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
+	storagev1 "k8s.io/api/storage/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
@@ -155,4 +158,24 @@ func DeleteRunTimeClass(rtcName string) error {
 	}
 
 	return nil
+}
+
+func CreateStorageClass(storageClassName string) error {
+	storageClassTemplate := storagev1.StorageClass{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: storageClassName,
+		},
+		Provisioner: "kubernetes.io/no-provisioner",
+	}
+
+	_, err := globalhelper.GetAPIClient().K8sClient.StorageV1().StorageClasses().Create(context.Background(),
+		&storageClassTemplate, metav1.CreateOptions{})
+
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("storageclass %s already installed", storageClassName))
+
+		return nil
+	}
+
+	return err
 }

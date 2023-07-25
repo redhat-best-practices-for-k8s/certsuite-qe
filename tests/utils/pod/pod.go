@@ -74,13 +74,13 @@ func RedefineWithStartUpProbe(pod *corev1.Pod) {
 	}
 }
 
-func RedefineWithPVC(pod *corev1.Pod, name string, claim string) {
+func RedefineWithPVC(pod *corev1.Pod, volumeName string, claimName string) {
 	pod.Spec.Volumes = []corev1.Volume{
 		{
-			Name: name,
+			Name: volumeName,
 			VolumeSource: corev1.VolumeSource{
 				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-					ClaimName: claim,
+					ClaimName: claimName,
 				},
 			},
 		},
