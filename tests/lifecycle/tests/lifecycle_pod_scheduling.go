@@ -23,7 +23,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file"))
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
 	}
 
 	BeforeEach(func() {

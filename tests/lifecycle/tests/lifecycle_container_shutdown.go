@@ -22,7 +22,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file"))
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
 	}
 
 	BeforeEach(func() {

@@ -53,6 +53,9 @@ func TestEnsureAllNodesAreLabeled(t *testing.T) {
 		err = EnsureAllNodesAreLabeled(client.CoreV1(), "worker-cnf")
 		assert.Nil(t, err)
 
+		err = EnsureAllNodesAreLabeled(client.CoreV1(), "node-role.kubernetes.io/worker-cnf")
+		assert.Nil(t, err)
+
 		// Get all of the nodes from the fake client and test their labels
 		nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
 		assert.Nil(t, err)
@@ -62,6 +65,7 @@ func TestEnsureAllNodesAreLabeled(t *testing.T) {
 			assert.Equal(t, "test", node.Labels["test"])
 			assert.Equal(t, testCase.testLabelValue, node.Labels["testValue"])
 			assert.Equal(t, "", node.Labels["worker-cnf"])
+			assert.Equal(t, "", node.Labels["node-role.kubernetes.io/worker-cnf"])
 		}
 	}
 }

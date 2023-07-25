@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/golang/glog"
@@ -128,7 +129,9 @@ func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) 
 
 	for _, node := range nodesList.Items {
 		if _, exists := node.Labels[label]; !exists {
+			label = strings.ReplaceAll(label, "/", "~1")
 			err = LabelNode(client, node.Name, label, "")
+
 			if err != nil {
 				return err
 			}
