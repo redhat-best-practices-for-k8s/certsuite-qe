@@ -28,28 +28,25 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 				"&& ./get_helm.sh")
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm")
+		err = namespaces.Create(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 	})
 
 	AfterEach(func() {
 		By("remove the project")
-		err := namespaces.Clean("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
+		err := namespaces.Clean(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
-	})
-
-	AfterAll(func() {
 		By("remove the istio-system")
-		err := namespaces.Clean("istio-system", globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
+		namespaces.Clean("istio-system", globalhelper.GetAPIClient())
 	})
 
 	It("one helm to test,  are certified", func() {
 		By("Install a helm chart")
-		err := namespaces.Create("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm repo add openshift-helm-charts https://charts.openshift.io/ "+
-				"&& helm repo update && helm install example-vault1 openshift-helm-charts/hashicorp-vault")
-		err = cmd.Run()
+				"&& helm repo update && "+
+				"helm install example-vault1 openshift-helm-charts/hashicorp-vault -n "+tsparams.TestHelmChartCertified)
+		err := cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
 		By("Start test")
@@ -70,13 +67,12 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		By("Create ns istio-system")
 		err := namespaces.Create("istio-system", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
-		err = namespaces.Create("affiliated-certification-helmchart-is-certified", globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		By("Install a helm chart")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm repo add istio https://istio-release.storage.googleapis.com/charts "+
-				"&& helm repo update && helm install istio-base istio/base --set defaultRevision=default")
+				"&& helm repo update &&"+
+				"helm install istio-base istio/base --set defaultRevision=default -n "+tsparams.TestHelmChartCertified)
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
