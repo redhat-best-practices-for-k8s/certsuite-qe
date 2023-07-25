@@ -11,6 +11,21 @@ const (
 )
 
 var (
+	LifecycleNamespace     = "lifecycle-tests"
+	testPodLabelPrefixName = "test-network-function.com/lifecycle"
+	testPodLabelValue      = "testing"
+	PreStopCommand         = []string{"/bin/sh", "-c", "killall -0 tail"}
+	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	TestTargetLabels       = map[string]string{
+		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
+	}
+	AffinityRequiredPodLabels = map[string]string{
+		"AffinityRequired": "true",
+	}
+)
+
+const (
 	TestDeploymentName  = "lifecycle-dpa"
 	TestDaemonSetName   = "lifecycle-dsa"
 	TestStatefulSetName = "lifecycle-sfa"
@@ -20,9 +35,8 @@ var (
 	TestPVCName         = "lifecycle-pvc"
 	TestVolumeName      = "lifecycle-storage"
 	TnfRunTimeClass     = "lifecycle-rtc"
-)
 
-var (
+	// Test Case names.
 	TnfShutdownTcName                      = "lifecycle-container-shutdown"
 	TnfDeploymentScalingTcName             = "lifecycle-deployment-scaling"
 	TnfPodOwnerTypeTcName                  = "lifecycle-pod-owner-type"
@@ -39,19 +53,5 @@ var (
 	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
 	TnfContainerStartUpTcName              = "lifecycle-container-startup"
 	TnfPodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
-)
-
-var (
-	LifecycleNamespace     = "lifecycle-tests"
-	testPodLabelPrefixName = "test-network-function.com/lifecycle"
-	testPodLabelValue      = "testing"
-	PreStopCommand         = []string{"/bin/sh", "-c", "killall -0 tail"}
-	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
-	TestTargetLabels       = map[string]string{
-		testPodLabelPrefixName: testPodLabelValue,
-		"app":                  "test",
-	}
-	AffinityRequiredPodLabels = map[string]string{
-		"AffinityRequired": "true",
-	}
+	TnfStorageRequiredPods                 = "lifecycle-storage-required-pods"
 )
