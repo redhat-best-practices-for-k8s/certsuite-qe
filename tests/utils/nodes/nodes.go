@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/golang/glog"
@@ -20,12 +19,6 @@ type resourceSpecs struct {
 	Operation string `json:"op"`
 	Path      string `json:"path"`
 	Value     bool   `json:"value"`
-}
-
-type resourceSpecsLabel struct {
-	Operation string `json:"op"`
-	Path      string `json:"path"`
-	Value     string `json:"value"`
 }
 
 // WaitForNodesReady waits for all the nodes to become ready.
@@ -122,15 +115,15 @@ func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
 
 // EnsureAllNodesAreLabeled ensures that all nodes are labeled with the given label.
 func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) error {
-	nodesList, err := client.Nodes().List(context.Background(), metav1.ListOptions{})
+	nodesList, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, node := range nodesList.Items {
 		if _, exists := node.Labels[label]; !exists {
-			label = strings.ReplaceAll(label, "/", "~1")
-			err = LabelNode(client, node.Name, label, "")
+			// label = strings.ReplaceAll(label, "/", "~1")
+			err = LabelNode(client, &node, label, "")
 
 			if err != nil {
 				return err
@@ -142,23 +135,13 @@ func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) 
 }
 
 // LabelNode labels a node by a given node name.
-func LabelNode(client corev1Typed.CoreV1Interface, nodeName, label, value string) error {
-	labelPatchBytes, err := json.Marshal(
-		[]resourceSpecsLabel{{
-			Operation: "add",
-			Path:      "/metadata/labels/" + label,
-			Value:     value,
-		}})
+func LabelNode(client corev1Typed.CoreV1Interface, node *corev1.Node, label, value string) error {
+	// Set the label
+	node.Labels[label] = value
 
-	if err != nil {
-		return err
-	}
+	var err error
 
-	_, err = client.Nodes().Patch(context.Background(), nodeName, types.JSONPatchType,
-		labelPatchBytes, metav1.PatchOptions{})
-	if err != nil {
-		return fmt.Errorf("failed to patch node label: %w", err)
-	}
+	_, err = client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
 
-	return nil
+	return err
 }
