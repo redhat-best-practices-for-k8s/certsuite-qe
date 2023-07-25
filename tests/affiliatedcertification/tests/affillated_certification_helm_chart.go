@@ -23,9 +23,9 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 		By("Installing helm")
 		cmd := exec.Command("/bin/bash", "-c",
-			"git clone https://github.com/helm/helm.git"+
-				"&& cd helm	"+
-				"&& make")
+			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 "+
+				"&&chmod +x get_helm.sh "+
+				"&&./get_helm.sh")
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm")
 		err = namespaces.Create(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
