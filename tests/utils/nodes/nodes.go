@@ -12,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type resourceSpecs struct {
@@ -110,4 +111,37 @@ func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// EnsureAllNodesAreLabeled ensures that all nodes are labeled with the given label.
+func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) error {
+	nodesList, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, node := range nodesList.Items {
+		if _, exists := node.Labels[label]; !exists {
+			// label = strings.ReplaceAll(label, "/", "~1")
+			err = LabelNode(client, &node, label, "")
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// LabelNode labels a node by a given node name.
+func LabelNode(client corev1Typed.CoreV1Interface, node *corev1.Node, label, value string) error {
+	// Set the label
+	node.Labels[label] = value
+
+	var err error
+
+	_, err = client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
+
+	return err
 }
