@@ -34,7 +34,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	It("one helm to test,  are certified", func() {
 		By("check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
-			"hel vesrion")
+			"helm vesrion")
 		err := cmd.Run()
 		if err != nil {
 			Skip("helm does not exist please install it to run the test.")
@@ -65,7 +65,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	It("one helm to test, chart not certified", func() {
 		By("check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
-			"hel vesrion")
+			"helm vesrion")
 		err := cmd.Run()
 		if err != nil {
 			Skip("helm does not exist please install it to run the test.")
