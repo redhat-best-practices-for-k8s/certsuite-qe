@@ -14,7 +14,7 @@ import (
 
 // IsPodDisruptionBudgetCreated checks if a pod disruption budget is created.
 func IsPodDisruptionBudgetCreated(pdbName string, namespace string) (bool, error) {
-	pdb, err := GetAPIClient().PolicyV1Interface.PodDisruptionBudgets(namespace).Get(context.Background(), pdbName, metav1.GetOptions{})
+	pdb, err := GetAPIClient().PolicyV1Interface.PodDisruptionBudgets(namespace).Get(context.TODO(), pdbName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -25,7 +25,7 @@ func IsPodDisruptionBudgetCreated(pdbName string, namespace string) (bool, error
 // CreatPodDisruptionBudget creates Pod Disruption Budget and wait until pdb is created.
 func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.Duration) error {
 	poddisruptionbudget, err := GetAPIClient().PolicyV1Interface.PodDisruptionBudgets(pdb.Namespace).Create(
-		context.Background(),
+		context.TODO(),
 		pdb,
 		metav1.CreateOptions{})
 	if err != nil {

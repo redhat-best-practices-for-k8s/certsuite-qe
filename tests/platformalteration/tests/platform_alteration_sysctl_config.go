@@ -67,7 +67,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		node, err := globalhelper.GetAPIClient().Nodes().Get(context.Background(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
+		node, err := globalhelper.GetAPIClient().Nodes().Get(context.TODO(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
 		value, exists := node.Annotations["machineGetConfiguration().openshift.io/currentConfig"]
@@ -75,7 +75,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 			Fail("didn't get node's machine config")
 		}
 
-		mcObj, err := globalhelper.GetAPIClient().MachineConfigs().Get(context.Background(), value, metav1.GetOptions{})
+		mcObj, err := globalhelper.GetAPIClient().MachineConfigs().Get(context.TODO(), value, metav1.GetOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
 		mcKernelArgs := mcObj.Spec.KernelArguments

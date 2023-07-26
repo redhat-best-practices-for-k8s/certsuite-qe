@@ -89,7 +89,7 @@ func WaitUntilClusterIsStable() error {
 }
 
 func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) error {
-	_, err := globalhelper.GetAPIClient().PersistentVolumes().Create(context.Background(), pv, metav1.CreateOptions{})
+	_, err := globalhelper.GetAPIClient().PersistentVolumes().Create(context.TODO(), pv, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create persistent volume: %w", err)
 	}
@@ -98,7 +98,7 @@ func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) 
 }
 
 func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace string, timeout time.Duration, pvName string) error {
-	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Create(context.Background(), pvc, metav1.CreateOptions{})
+	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Create(context.TODO(), pvc, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create persistent volume claim: %w", err)
 	}
@@ -121,7 +121,7 @@ func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace s
 }
 
 func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
-	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Get(context.Background(), pvcName, metav1.GetOptions{})
+	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Get(context.TODO(), pvcName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -130,7 +130,7 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 }
 
 func DeletePV(persistentVolume string, timeout time.Duration) error {
-	err := globalhelper.GetAPIClient().PersistentVolumes().Delete(context.Background(), persistentVolume, metav1.DeleteOptions{
+	err := globalhelper.GetAPIClient().PersistentVolumes().Delete(context.TODO(), persistentVolume, metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 
 	Eventually(func() bool {
 		// if the pv was deleted, we will get an error.
-		_, err := globalhelper.GetAPIClient().PersistentVolumes().Get(context.Background(), persistentVolume, metav1.GetOptions{})
+		_, err := globalhelper.GetAPIClient().PersistentVolumes().Get(context.TODO(), persistentVolume, metav1.GetOptions{})
 
 		return err != nil
 	}, timeout, tsparams.RetryInterval*time.Second).Should(Equal(true), "PV is not removed yet.")
@@ -148,7 +148,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 }
 
 func DeleteRunTimeClass(rtcName string) error {
-	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.Background(), rtcName,
+	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtcName,
 		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)

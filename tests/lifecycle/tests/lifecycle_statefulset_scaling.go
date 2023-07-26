@@ -1,20 +1,29 @@
 package tests
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 var _ = Describe("lifecycle-statefulset-scaling", func() {
+
+	configSuite, err := config.NewConfig()
+	if err != nil {
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+	}
 
 	BeforeEach(func() {
 		err := tshelper.WaitUntilClusterIsStable()
@@ -26,6 +35,10 @@ var _ = Describe("lifecycle-statefulset-scaling", func() {
 
 		By("Enable intrusive tests")
 		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all nodes are labeled with 'worker-cnf' label")
+		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

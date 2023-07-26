@@ -65,7 +65,7 @@ func DefineCustomResourceDefinition(names apiextv1.CustomResourceDefinitionNames
 }
 
 func EnsureCrdExists(name string) (bool, error) {
-	_, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Get(context.Background(),
+	_, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Get(context.TODO(),
 		name, metav1.GetOptions{})
 
 	if err != nil {

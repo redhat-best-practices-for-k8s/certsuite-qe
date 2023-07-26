@@ -18,7 +18,7 @@ import (
 
 // WaitForDeletion waits until the namespace will be removed from the cluster.
 func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Duration) error {
-	return wait.PollUntilContextTimeout(context.Background(), time.Second, timeout, true,
+	return wait.PollUntilContextTimeout(context.TODO(), time.Second, timeout, true,
 		func(ctx context.Context) (bool, error) {
 			_, err := cs.Namespaces().Get(ctx, nsName, metav1.GetOptions{})
 			if k8serrors.IsNotFound(err) {
@@ -34,7 +34,7 @@ func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Durat
 // Create creates a new namespace with the given name.
 // If the namespace exists, it returns.
 func Create(namespace string, cs *testclient.ClientSet) error {
-	_, err := cs.Namespaces().Create(context.Background(), &corev1.Namespace{
+	_, err := cs.Namespaces().Create(context.TODO(), &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: namespace,
 		}}, metav1.CreateOptions{})
@@ -50,7 +50,7 @@ func Create(namespace string, cs *testclient.ClientSet) error {
 
 // DeleteAndWait deletes a namespace and waits until delete.
 func DeleteAndWait(clientSet *testclient.ClientSet, namespace string, timeout time.Duration) error {
-	err := clientSet.Namespaces().Delete(context.Background(), namespace, metav1.DeleteOptions{})
+	err := clientSet.Namespaces().Delete(context.TODO(), namespace, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete namespace: %w", err)
 	}
@@ -59,7 +59,7 @@ func DeleteAndWait(clientSet *testclient.ClientSet, namespace string, timeout ti
 }
 
 func Exists(namespace string, cs *testclient.ClientSet) (bool, error) {
-	_, err := cs.Namespaces().Get(context.Background(), namespace, metav1.GetOptions{})
+	_, err := cs.Namespaces().Get(context.TODO(), namespace, metav1.GetOptions{})
 	if err == nil {
 		return true, nil
 	}
@@ -82,7 +82,7 @@ func CleanPods(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.Pods(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+	err = clientSet.Pods(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	}, metav1.ListOptions{})
 
@@ -104,7 +104,7 @@ func CleanDeployments(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.Deployments(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+	err = clientSet.Deployments(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	}, metav1.ListOptions{})
 
@@ -126,7 +126,7 @@ func CleanDaemonSets(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.DaemonSets(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+	err = clientSet.DaemonSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	}, metav1.ListOptions{})
 
@@ -149,7 +149,7 @@ func CleanNetworkAttachmentDefinition(namespace string, clientSet *testclient.Cl
 
 	nadList := &v1.NetworkAttachmentDefinitionList{}
 
-	err = clientSet.List(context.Background(), nadList)
+	err = clientSet.List(context.TODO(), nadList)
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,7 @@ func CleanNetworkAttachmentDefinition(namespace string, clientSet *testclient.Cl
 	if len(nadList.Items) > 1 {
 		for _, nad := range nadList.Items {
 			if nad.Name != "dummy-dhcp-network" {
-				err = clientSet.Delete(context.Background(), &nad)
+				err = clientSet.Delete(context.TODO(), &nad)
 				if err != nil {
 					return err
 				}
@@ -179,7 +179,7 @@ func CleanReplicaSets(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.ReplicaSets(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+	err = clientSet.ReplicaSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	}, metav1.ListOptions{})
 
@@ -201,7 +201,7 @@ func CleanStatefulSets(namespace string, clientSet *testclient.ClientSet) error 
 		return nil
 	}
 
-	err = clientSet.StatefulSets(namespace).DeleteCollection(context.Background(), metav1.DeleteOptions{
+	err = clientSet.StatefulSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
 		GracePeriodSeconds: pointer.Int64(0),
 	}, metav1.ListOptions{})
 
@@ -223,13 +223,13 @@ func CleanServices(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	serviceList, err := clientSet.Services(namespace).List(context.Background(), metav1.ListOptions{})
+	serviceList, err := clientSet.Services(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	for _, s := range serviceList.Items {
-		err = clientSet.Services(namespace).Delete(context.Background(), s.Name, metav1.DeleteOptions{
+		err = clientSet.Services(namespace).Delete(context.TODO(), s.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		})
 		if err != nil {
@@ -250,7 +250,7 @@ func CleanSubscriptions(namespace string, clientSet *testclient.ClientSet) error
 		return nil
 	}
 
-	err = clientSet.Subscriptions(namespace).DeleteCollection(context.Background(),
+	err = clientSet.Subscriptions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -273,7 +273,7 @@ func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.ClusterServiceVersions(namespace).DeleteCollection(context.Background(),
+	err = clientSet.ClusterServiceVersions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -296,7 +296,7 @@ func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error 
 		return nil
 	}
 
-	err = clientSet.InstallPlans(namespace).DeleteCollection(context.Background(),
+	err = clientSet.InstallPlans(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -319,7 +319,7 @@ func CleanPVCs(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.PersistentVolumeClaims(namespace).DeleteCollection(context.Background(),
+	err = clientSet.PersistentVolumeClaims(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -342,7 +342,7 @@ func CleanPodDistruptionBudget(namespace string, clientSet *testclient.ClientSet
 		return nil
 	}
 
-	err = clientSet.PolicyV1Interface.PodDisruptionBudgets(namespace).DeleteCollection(context.Background(),
+	err = clientSet.PolicyV1Interface.PodDisruptionBudgets(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -365,7 +365,7 @@ func CleanResourceQuotas(namespace string, clientSet *testclient.ClientSet) erro
 		return nil
 	}
 
-	err = clientSet.ResourceQuotas(namespace).DeleteCollection(context.Background(),
+	err = clientSet.ResourceQuotas(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -388,7 +388,7 @@ func CleanNetworkPolicies(namespace string, clientSet *testclient.ClientSet) err
 		return nil
 	}
 
-	err = clientSet.NetworkPolicies(namespace).DeleteCollection(context.Background(),
+	err = clientSet.NetworkPolicies(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: pointer.Int64(0),
 		},
@@ -481,7 +481,7 @@ func ApplyResourceQuota(namespace string, clientSet *testclient.ClientSet, quota
 		return nil
 	}
 
-	_, err1 := clientSet.ResourceQuotas(namespace).Create(context.Background(), quota, metav1.CreateOptions{})
+	_, err1 := clientSet.ResourceQuotas(namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
 
 	return err1
 }

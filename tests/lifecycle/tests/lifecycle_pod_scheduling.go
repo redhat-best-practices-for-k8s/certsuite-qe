@@ -13,6 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
@@ -22,7 +23,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file"))
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
 	}
 
 	BeforeEach(func() {
@@ -31,6 +32,10 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Clean namespace before each test")
 		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all nodes are labeled with 'worker-cnf' label")
+		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
