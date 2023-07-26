@@ -22,7 +22,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})
-	
+
 	BeforeEach(func() {
 		By("Create namespace")
 		err := namespaces.Create(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
