@@ -55,7 +55,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 
 // GetListOfPodsInNamespace returns list of pods for given namespace.
 func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
-	runningPods, err := GetAPIClient().Pods(namespace).List(context.Background(), metav1.ListOptions{})
+	runningPods, err := GetAPIClient().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 
 // CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
-	createdPod, err := GetAPIClient().Pods(pod.Namespace).Create(context.Background(), pod, metav1.CreateOptions{})
+	createdPod, err := GetAPIClient().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
@@ -89,7 +89,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 // isPodReady checks if a pod is ready.
 func isPodReady(namespace string, podName string) (bool, error) {
 	podObject, err := GetAPIClient().Pods(namespace).Get(
-		context.Background(),
+		context.TODO(),
 		podName,
 		metav1.GetOptions{},
 	)

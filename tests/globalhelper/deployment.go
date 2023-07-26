@@ -15,7 +15,7 @@ import (
 // IsDeploymentReady checks if a deployment is ready.
 func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, error) {
 	testDeployment, err := GetAPIClient().Deployments(operatorNamespace).Get(
-		context.Background(),
+		context.TODO(),
 		deploymentName,
 		metav1.GetOptions{},
 	)
@@ -35,7 +35,7 @@ func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, e
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
 func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment, timeout time.Duration) error {
 	runningDeployment, err := GetAPIClient().Deployments(deployment.Namespace).Create(
-		context.Background(),
+		context.TODO(),
 		deployment,
 		metav1.CreateOptions{})
 	if err != nil {
@@ -59,7 +59,7 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment, timeout 
 }
 
 func getDeploymentStatus(name, namespaces string) string {
-	dep, err := GetAPIClient().Deployments(namespaces).Get(context.Background(), name, metav1.GetOptions{})
+	dep, err := GetAPIClient().Deployments(namespaces).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return time.Now().String() + " " + err.Error()
 	}

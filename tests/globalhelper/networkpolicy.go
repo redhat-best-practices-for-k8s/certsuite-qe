@@ -14,7 +14,7 @@ import (
 
 func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkPolicy, timeout time.Duration) error {
 	policy, err := GetAPIClient().NetworkPolicies(networkPolicy.Namespace).Create(
-		context.Background(), networkPolicy, metav1.CreateOptions{})
+		context.TODO(), networkPolicy, metav1.CreateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to create Network Policy %q (ns %s): %w", networkPolicy.Name, networkPolicy.Namespace, err)
@@ -37,7 +37,7 @@ func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkP
 
 func doesNetworkPolicyExist(namespace, name string) (bool, error) {
 	if _, err := GetAPIClient().NetworkPolicies(namespace).Get(
-		context.Background(),
+		context.TODO(),
 		name,
 		metav1.GetOptions{},
 	); err != nil {

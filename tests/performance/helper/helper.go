@@ -191,7 +191,7 @@ func ExecCommandContainer(
 }
 
 func DeleteRunTimeClass(rtcName string) error {
-	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.Background(), rtcName,
+	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtcName,
 		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)

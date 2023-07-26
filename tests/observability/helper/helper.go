@@ -90,7 +90,7 @@ func DefineCrdWithoutStatusSubresource(kind, group string) *apiextv1.CustomResou
 
 func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeout time.Duration) error {
 	_, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Create(
-		context.Background(),
+		context.TODO(),
 		crd,
 		metav1.CreateOptions{},
 	)
@@ -100,7 +100,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 
 	Eventually(func() bool {
 		runningCrd, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Get(
-			context.Background(),
+			context.TODO(),
 			crd.Name,
 			metav1.GetOptions{},
 		)
@@ -125,14 +125,14 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 
 func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
 	err := globalhelper.GetAPIClient().CustomResourceDefinitions().Delete(
-		context.Background(),
+		context.TODO(),
 		crd,
 		metav1.DeleteOptions{})
 	Expect(err).ToNot(HaveOccurred())
 
 	Eventually(func() bool {
 		_, err := globalhelper.GetAPIClient().CustomResourceDefinitions().Get(
-			context.Background(),
+			context.TODO(),
 			crd,
 			metav1.GetOptions{})
 
