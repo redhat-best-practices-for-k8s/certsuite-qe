@@ -34,7 +34,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	It("one helm to test,  are certified", func() {
 		By("check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
-			"helm vesrion")
+			"helm version")
 		err := cmd.Run()
 		if err != nil {
 			Skip("helm does not exist please install it to run the test.")
@@ -65,7 +65,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	It("one helm to test, chart not certified", func() {
 		By("check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
-			"helm vesrion")
+			"helm version")
 		err := cmd.Run()
 		if err != nil {
 			Skip("helm does not exist please install it to run the test.")
@@ -96,7 +96,11 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("remove the istio-system")
+		By("remove the istio-system ns and istio chart")
+		cmd = exec.Command("/bin/bash", "-c", // uinstall the chart
+			"helm uninstall istio-base -n "+tsparams.TestHelmChartCertified)
+		err = cmd.Run()
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 		err = namespaces.Clean("istio-system", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
 	})
