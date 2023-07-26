@@ -21,13 +21,6 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-		By("Installing helm")
-		cmd := exec.Command("/bin/bash", "-c",
-			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 "+
-				"&&chmod +x get_helm.sh "+
-				"&&./get_helm.sh")
-		err = cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing helm")
 		err = namespaces.Create(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 	})
@@ -39,12 +32,20 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	It("one helm to test,  are certified", func() {
-		By("Install a helm chart")
+		By("check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
+			"hel vesrion")
+		err := cmd.Run()
+		if err != nil {
+			Skip("helm does not exist please install it to run the test.")
+		}
+
+		By("Install a helm chart")
+		cmd = exec.Command("/bin/bash", "-c",
 			"helm repo add openshift-helm-charts https://charts.openshift.io/ "+
 				"&& helm repo update && "+
 				"helm install example-vault1 openshift-helm-charts/hashicorp-vault -n "+tsparams.TestHelmChartCertified)
-		err := cmd.Run()
+		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
 		By("Start test")
@@ -62,12 +63,20 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	It("one helm to test, chart not certified", func() {
+		By("check if helm is installed")
+		cmd := exec.Command("/bin/bash", "-c",
+			"hel vesrion")
+		err := cmd.Run()
+		if err != nil {
+			Skip("helm does not exist please install it to run the test.")
+		}
+
 		By("Create ns istio-system")
-		err := namespaces.Create("istio-system", globalhelper.GetAPIClient())
+		err = namespaces.Create("istio-system", globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Install a helm chart")
-		cmd := exec.Command("/bin/bash", "-c",
+		cmd = exec.Command("/bin/bash", "-c",
 			"helm repo add istio https://istio-release.storage.googleapis.com/charts "+
 				"&& helm repo update &&"+
 				"helm install istio-base istio/base --set defaultRevision=default -n "+tsparams.TestHelmChartCertified)
