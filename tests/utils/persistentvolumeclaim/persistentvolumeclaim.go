@@ -25,3 +25,7 @@ func DefinePersistentVolumeClaim(pvcName string, namespace string) *corev1.Persi
 		},
 	}
 }
+
+func RedefineWithStorageClass(pvc *corev1.PersistentVolumeClaim, storageClassName string) {
+	pvc.Spec.StorageClassName = &storageClassName
+}
