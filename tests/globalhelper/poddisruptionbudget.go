@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	policyv1 "k8s.io/api/policy/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -28,7 +29,9 @@ func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.D
 		context.TODO(),
 		pdb,
 		metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("Pod Disruption Budget %s already exists", pdb.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create Pod Disruption Budget %q (ns %s): %w", pdb.Name, pdb.Namespace, err)
 	}
 

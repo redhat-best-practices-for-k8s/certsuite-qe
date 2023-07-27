@@ -263,8 +263,10 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 		)
 
 		_, err = GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{})
-		if err != nil {
-			return fmt.Errorf("failed to create cluster role binding: %w", err)
+		if k8serrors.IsAlreadyExists(err) {
+			glog.V(5).Info("RBAC policy already exists")
+		} else if err != nil {
+			return fmt.Errorf("failed to create RBAC policy: %w", err)
 		}
 
 		glog.V(5).Info("RBAC policy created")
@@ -296,12 +298,18 @@ func CreateClusterRoleBinding(nameSpace, name string) error {
 
 	// Create the service account
 	_, err = GetAPIClient().ServiceAccounts(nameSpace).Create(context.TODO(), serviceAccount, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("service account %s already exists", name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create cServiceAccount: %w", err)
 	}
 
 	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
-	if _, err := GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{}); err != nil {
+
+	_, err = GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{})
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("cluster role binding %s already exists", name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create cluster role binding: %w", err)
 	}
 
