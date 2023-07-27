@@ -30,13 +30,13 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	AfterEach(func() {
-		By("remove the project")
+		By("Remove the project")
 		err := namespaces.DeleteAndWait(globalhelper.GetAPIClient(), tsparams.TestHelmChartCertified, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
 
-	It("one helm to test,  are certified", func() {
-		By("check if helm is installed")
+	It("One helm to test, are certified", func() {
+		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
 		err := cmd.Run()
@@ -66,8 +66,8 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("one helm to test, chart not certified", func() {
-		By("check if helm is installed")
+	It("One helm to test, chart not certified", func() {
+		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
 		err := cmd.Run()
@@ -100,7 +100,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("remove the istio-system ns and istio chart")
+		By("Remove the istio-system ns and istio chart")
 		cmd = exec.Command("/bin/bash", "-c", // uinstall the chart
 			"helm uninstall istio-base -n "+tsparams.TestHelmChartCertified)
 		err = cmd.Run()
