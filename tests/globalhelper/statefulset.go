@@ -9,6 +9,7 @@ import (
 
 	"github.com/golang/glog"
 	appsv1 "k8s.io/api/apps/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -16,7 +17,9 @@ import (
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *appsv1.StatefulSet, timeout time.Duration) error {
 	runningStatefulSet, err := GetAPIClient().StatefulSets(statefulSet.Namespace).Create(context.TODO(),
 		statefulSet, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("statefulSet %s already exists", statefulSet.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create statefulSet %q (ns %s): %w", statefulSet.Name, statefulSet.Namespace, err)
 	}
 

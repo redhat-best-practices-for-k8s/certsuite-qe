@@ -91,9 +91,11 @@ func WaitUntilClusterIsStable() error {
 	return nil
 }
 
-func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) error {
-	_, err := globalhelper.GetAPIClient().PersistentVolumes().Create(context.TODO(), pv, metav1.CreateOptions{})
-	if err != nil {
+func CreatePersistentVolume(persistentVolume *corev1.PersistentVolume, timeout time.Duration) error {
+	_, err := globalhelper.GetAPIClient().PersistentVolumes().Create(context.TODO(), persistentVolume, metav1.CreateOptions{})
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("persistent volume %s already created", persistentVolume.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create persistent volume: %w", err)
 	}
 
@@ -102,7 +104,9 @@ func CreatePersistentVolume(pv *corev1.PersistentVolume, timeout time.Duration) 
 
 func CreateAndWaitUntilPVCIsBound(pvc *corev1.PersistentVolumeClaim, namespace string, timeout time.Duration, pvName string) error {
 	pvc, err := globalhelper.GetAPIClient().PersistentVolumeClaims(namespace).Create(context.TODO(), pvc, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("persistent volume claim %s already created", pvc.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create persistent volume claim: %w", err)
 	}
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	networkingv1 "k8s.io/api/networking/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -16,7 +17,9 @@ func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkP
 	policy, err := GetAPIClient().NetworkPolicies(networkPolicy.Namespace).Create(
 		context.TODO(), networkPolicy, metav1.CreateOptions{})
 
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("Network Policy %s already exists", networkPolicy.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create Network Policy %q (ns %s): %w", networkPolicy.Name, networkPolicy.Namespace, err)
 	}
 

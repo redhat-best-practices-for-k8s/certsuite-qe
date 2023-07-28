@@ -8,12 +8,15 @@ import (
 	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
 	nodev1 "k8s.io/api/node/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 	rtc, err := GetAPIClient().RuntimeClasses().Create(context.TODO(), rtc, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("runtimeclass %s already created", rtc.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
 	}
 

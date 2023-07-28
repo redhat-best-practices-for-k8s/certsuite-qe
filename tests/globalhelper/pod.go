@@ -11,6 +11,7 @@ import (
 
 	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
@@ -66,7 +67,9 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 // CreateAndWaitUntilPodIsReady creates a pod and waits until all it's containers are ready.
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
 	createdPod, err := GetAPIClient().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("pod %s already exists", pod.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
 

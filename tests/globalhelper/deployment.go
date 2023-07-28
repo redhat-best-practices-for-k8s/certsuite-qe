@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	appsv1 "k8s.io/api/apps/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -38,7 +39,10 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment, timeout 
 		context.TODO(),
 		deployment,
 		metav1.CreateOptions{})
-	if err != nil {
+
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("deployment %s already exists", deployment.Name))
+	} else if err != nil {
 		return fmt.Errorf("failed to create deployment %q (ns %s): %w", deployment.Name, deployment.Namespace, err)
 	}
 
