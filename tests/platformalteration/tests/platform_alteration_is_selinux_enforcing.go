@@ -17,7 +17,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 	execute.BeforeAll(func() {
 		By("Make masters schedulable")
-		err := globalhelper.EnableMasterScheduling(true)
+		err := globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
