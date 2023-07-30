@@ -60,7 +60,7 @@ var _ = AfterSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove masters scheduling")
-	err = globalhelper.EnableMasterScheduling(false)
+	err = globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, false)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")

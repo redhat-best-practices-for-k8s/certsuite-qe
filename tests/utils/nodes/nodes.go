@@ -122,7 +122,6 @@ func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) 
 
 	for _, node := range nodesList.Items {
 		if _, exists := node.Labels[label]; !exists {
-			// label = strings.ReplaceAll(label, "/", "~1")
 			err = LabelNode(client, &node, label, "")
 
 			if err != nil {
