@@ -73,11 +73,11 @@ var _ = Describe("Networking custom namespace,", func() {
 	It("2 custom deployments 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		// The NetworkAttachmentDefinition (mcvlan) created for this TC uses an interface that exists only in worker nodes,
 		// so we need to make sure the test pods are not deployed in master nodes.
-		err := globalhelper.EnableMasterScheduling(false)
+		err := globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, false)
 		Expect(err).ToNot(HaveOccurred())
 
 		defer func() {
-			err := globalhelper.EnableMasterScheduling(true)
+			err := globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
 			Expect(err).To(BeNil(), fmt.Sprintf("failed to enable master scheduling: %v", err))
 		}()
 
