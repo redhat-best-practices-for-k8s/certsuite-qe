@@ -70,7 +70,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("one pod with no specified service account", func() {
+	It("one pod with no specified service account (default SA) [negative]", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
@@ -83,12 +83,12 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfPodRoleBindings,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodRoleBindings,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
