@@ -157,7 +157,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	// 48480
 	It("One DaemonSet without ImagePullPolicy, image tag is not specified [negative]", func() {
 		// if you omit the imagePullPolicy field,
-		// and you don't specify the tag for the container image,
+		// and you do not specify the tag for the container image,
 		// imagePullPolicy is automatically set to Always;
 		By("Define DaemonSet without ImagePullPolicy")
 		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, "registry.access.redhat.com/ubi8/ubi",

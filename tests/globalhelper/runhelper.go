@@ -100,5 +100,5 @@ func getTestSuiteName(testCaseName string) string {
 		return globalparameters.ManageabilitySuiteName
 	}
 
-	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
+	panic(fmt.Sprintf("unable to retrieve test suite name from test case name %s", testCaseName))
 }
