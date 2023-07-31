@@ -183,6 +183,10 @@ func readFile(cfg *Config, cfgFile string) error {
 		return err
 	}
 
+	cfg.General.TnfConfigDir = os.ExpandEnv(cfg.General.TnfConfigDir)
+	cfg.General.TnfReportDir = os.ExpandEnv(cfg.General.TnfReportDir)
+	cfg.General.DockerConfigDir = os.ExpandEnv(cfg.General.DockerConfigDir)
+
 	return nil
 }
 
