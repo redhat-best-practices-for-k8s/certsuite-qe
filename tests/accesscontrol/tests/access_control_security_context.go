@@ -43,6 +43,7 @@ var _ = Describe("Access-control security-context,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment")
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create and wait until deployment is ready")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -51,7 +51,11 @@ func Create(namespace string, cs *testclient.ClientSet) error {
 // DeleteAndWait deletes a namespace and waits until delete.
 func DeleteAndWait(clientSet *testclient.ClientSet, namespace string, timeout time.Duration) error {
 	err := clientSet.Namespaces().Delete(context.TODO(), namespace, metav1.DeleteOptions{})
-	if err != nil {
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", namespace))
+
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("failed to delete namespace: %w", err)
 	}
 
@@ -403,6 +407,13 @@ func CleanNetworkPolicies(namespace string, clientSet *testclient.ClientSet) err
 
 // Clean cleans all dangling objects from the given namespace.
 func Clean(namespace string, clientSet *testclient.ClientSet) error {
+	// check if the namespace exists first
+	if _, err := clientSet.Namespaces().Get(context.Background(), namespace, metav1.GetOptions{}); err != nil {
+		if k8serrors.IsNotFound(err) {
+			return nil
+		}
+	}
+
 	err := CleanDeployments(namespace, clientSet)
 	if err != nil {
 		return err
