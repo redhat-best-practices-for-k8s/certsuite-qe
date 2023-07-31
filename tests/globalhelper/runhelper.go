@@ -100,5 +100,9 @@ func getTestSuiteName(testCaseName string) string {
 		return globalparameters.ManageabilitySuiteName
 	}
 
+	if strings.Contains(testCaseName, globalparameters.OperatorSuiteName) {
+		return globalparameters.OperatorSuiteName
+	}
+
 	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
 }

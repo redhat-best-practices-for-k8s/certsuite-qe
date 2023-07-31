@@ -156,7 +156,7 @@ func DeployOperatorSubscription(operatorPackage, channel, namespace, group,
 		startingCSV,
 		installApproval)
 
-	err := DeployOperator(operatorSubscription)
+	err := globalhelper.DeployOperator(operatorSubscription)
 
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
