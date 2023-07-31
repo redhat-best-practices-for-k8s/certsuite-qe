@@ -183,3 +183,18 @@ func CreateStorageClass(storageClassName string) error {
 
 	return err
 }
+
+func DeleteStorageClass(storageClassName string) error {
+	err := globalhelper.GetAPIClient().K8sClient.StorageV1().StorageClasses().Delete(context.Background(),
+		storageClassName, metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
+
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info(fmt.Sprintf("storageclass %s already deleted", storageClassName))
+
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("failed to delete storageclass %w", err)
+	}
+
+	return nil
+}
