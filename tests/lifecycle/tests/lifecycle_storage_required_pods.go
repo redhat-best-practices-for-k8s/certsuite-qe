@@ -25,7 +25,7 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create local PVC")
+		By("Create local-storage storageclass")
 		err = tshelper.CreateStorageClass("local-storage")
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -41,6 +41,10 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 			err := tshelper.DeletePV(pv, tsparams.WaitingTime)
 			Expect(err).ToNot(HaveOccurred())
 		}
+
+		By("Delete local-storage storageclass")
+		err = tshelper.DeleteStorageClass("local-storage")
+		Expect(err).ToNot(HaveOccurred())
 
 		// clear the list.
 		pvNames = []string{}
