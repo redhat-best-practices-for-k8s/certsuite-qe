@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
-var _ = Describe("Operator install-source, ", func() {
+var _ = Describe("Operator install-source,", func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo
@@ -34,26 +34,69 @@ var _ = Describe("Operator install-source, ", func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
-			tsparams.UncertifiedOperatorPrefixCloudbees)
+			tsparams.OperatorPrefixCloudbees)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCloudbees,
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
 			tsparams.OperatorNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCloudbees+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
 			" is not ready")
 
 		// add cloudbees operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.UncertifiedOperatorPrefixCloudbees,
+			OperatorPrefix: tsparams.OperatorPrefixCloudbees,
 			Namespace:      tsparams.OperatorNamespace,
 			Label:          tsparams.OperatorLabel,
 		})
 
-	})
+		By("Deploy anchore-engine operator for testing")
+		err = tshelper.DeployOperatorSubscription(
+			"anchore-engine",
+			"alpha",
+			tsparams.OperatorNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			tsparams.OperatorPrefixAnchore)
 
-	BeforeEach(func() {
-		// By("Clean namespace before each test")
-		// err := namespaces.Clean(tsparams.OperatorNamespace, globalhelper.GetAPIClient())
-		// Expect(err).ToNot(HaveOccurred())
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixAnchore,
+			tsparams.OperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixAnchore+
+			" is not ready")
+
+		// add anchore-engine operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
+			OperatorPrefix: tsparams.OperatorPrefixAnchore,
+			Namespace:      tsparams.OperatorNamespace,
+			Label:          tsparams.OperatorLabel,
+		})
+
+		By("Deploy openvino operator for testing")
+		err = tshelper.DeployOperatorSubscription(
+			"ovms-operator",
+			"alpha",
+			tsparams.OperatorNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+			tsparams.OperatorPrefixOpenvino)
+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
+			tsparams.OperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
+			" is not ready")
+
+		// add openvino operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
+			OperatorPrefix: tsparams.OperatorPrefixOpenvino,
+			Namespace:      tsparams.OperatorNamespace,
+			Label:          tsparams.OperatorLabel,
+		})
 
 	})
 
@@ -68,16 +111,16 @@ var _ = Describe("Operator install-source, ", func() {
 		}
 	})
 
-	// 53939
+	// 66142
 	It("one operator installed with OLM", func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.UncertifiedOperatorPrefixCloudbees,
+				tsparams.OperatorPrefixCloudbees,
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.UncertifiedOperatorPrefixCloudbees)
+			"Error labeling operator "+tsparams.OperatorPrefixCloudbees)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -92,12 +135,25 @@ var _ = Describe("Operator install-source, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 53940
+	// 66143
 	It("one operator not installed with OLM [negative]", func() {
 		By("Label operator")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				tsparams.OperatorPrefixOpenvino,
+				tsparams.OperatorNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+tsparams.OperatorPrefixOpenvino)
+
+		By("Delete operator's subscription")
+		err := globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
+			tsparams.SubscriptionNameOpenvino,
+			globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallSource,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
@@ -109,9 +165,24 @@ var _ = Describe("Operator install-source, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 53941
+	// 66144
 	It("two operators, both installed with OLM", func() {
 		By("Label operators")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				tsparams.OperatorPrefixCloudbees,
+				tsparams.OperatorNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+tsparams.OperatorPrefixCloudbees)
+
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				tsparams.OperatorPrefixAnchore,
+				tsparams.OperatorNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+tsparams.OperatorPrefixAnchore)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -126,9 +197,29 @@ var _ = Describe("Operator install-source, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 53946
+	// 66145
 	It("two operators, one not installed with OLM [negative]", func() {
 		By("Label operators")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				tsparams.OperatorPrefixAnchore,
+				tsparams.OperatorNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+tsparams.OperatorPrefixAnchore)
+
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				tsparams.OperatorPrefixOpenvino,
+				tsparams.OperatorNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			"Error labeling operator "+tsparams.OperatorPrefixOpenvino)
+
+		By("Delete operator's subscription")
+		globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
+			tsparams.SubscriptionNameOpenvino,
+			globalhelper.GetAPIClient())
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

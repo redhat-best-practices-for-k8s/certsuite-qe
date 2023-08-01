@@ -33,11 +33,14 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	OperatorGroupName                  = "operator-test-operator-group"
-	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
-	CertifiedOperatorGroup             = "certified-operators"
-	OperatorSourceNamespace            = "openshift-marketplace"
-	UncertifiedOperatorPrefixCloudbees = "cloudbees-ci"
+	OperatorGroupName        = "operator-test-operator-group"
+	OperatorLabel            = map[string]string{"test-network-function.com/operator": "target"}
+	CertifiedOperatorGroup   = "certified-operators"
+	OperatorSourceNamespace  = "openshift-marketplace"
+	OperatorPrefixCloudbees  = "cloudbees-ci"
+	OperatorPrefixAnchore    = "anchore-engine"
+	OperatorPrefixOpenvino   = "openvino-operator"
+	SubscriptionNameOpenvino = "ovms-operator-subscription"
 )
 
 const (
