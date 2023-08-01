@@ -34,7 +34,9 @@ func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) e
 		},
 	)
 
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("can not deploy operatorGroup %w", err)
 	}
 
@@ -72,7 +74,9 @@ func DeployOperator(subscription *v1alpha1.Subscription) error {
 		},
 	)
 
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("can not install Subscription %w", err)
 	}
 
@@ -132,7 +136,10 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 			},
 		},
 	)
-	if err != nil {
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("can not deploy catalog source %w", err)
 	}
 

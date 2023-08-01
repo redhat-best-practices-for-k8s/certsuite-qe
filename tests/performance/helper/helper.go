@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/golang/glog"
 	"github.com/sirupsen/logrus"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
@@ -17,6 +18,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -204,21 +206,30 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 	aRole, aRoleBinding, aServiceAccount := getPrivilegedServiceAccountObjects(namespace)
 	// create role
 	_, err := globalhelper.GetAPIClient().RbacV1Interface.Roles(namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		// role already exists
+		glog.V(5).Info(fmt.Sprintf("role %s already exists", aRole.Name))
+	} else if err != nil {
 		return fmt.Errorf("error creating role, err=%w", err)
 	}
 
 	// create rolebinding
 	//nolint:lll
 	_, err = globalhelper.GetAPIClient().RbacV1Interface.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
-	if err != nil {
-		return fmt.Errorf("error creating role bindings, err=%w", err)
+	if k8serrors.IsAlreadyExists(err) {
+		// rolebinding already exists
+		glog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", aRoleBinding.Name))
+	} else if err != nil {
+		return fmt.Errorf("error creating rolebinding, err=%w", err)
 	}
 
 	// create service account
 	_, err = globalhelper.GetAPIClient().CoreV1Interface.ServiceAccounts(namespace).Create(context.TODO(),
 		&aServiceAccount, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		// service account already exists
+		glog.V(5).Info(fmt.Sprintf("service account %s already exists", aServiceAccount.Name))
+	} else if err != nil {
 		return fmt.Errorf("error creating service account, err=%w", err)
 	}
 

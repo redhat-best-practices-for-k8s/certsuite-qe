@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	appsv1 "k8s.io/api/apps/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -16,8 +17,12 @@ import (
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := GetAPIClient().DaemonSets(daemonSet.Namespace).Create(
 		context.TODO(), daemonSet, metav1.CreateOptions{})
-	if err != nil {
-		return fmt.Errorf("failed to create daemonset %q (ns %s): %w", daemonSet.Name, daemonSet.Namespace, err)
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("daemonset %s already exists", daemonSet.Name))
+
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("failed to create daemonset: %w", err)
 	}
 
 	Eventually(func() bool {

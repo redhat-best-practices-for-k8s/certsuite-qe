@@ -59,7 +59,8 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 
 	err = cmd.Run()
 	if err != nil {
-		err = fmt.Errorf("failed to run tc %s: %w", testCaseName, err)
+		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s",
+			testCaseName, err, cmd.String())
 	}
 
 	CopyClaimFileToTcFolder(testCaseName, tcNameForReport)
@@ -104,5 +105,5 @@ func getTestSuiteName(testCaseName string) string {
 		return globalparameters.OperatorSuiteName
 	}
 
-	panic(fmt.Sprintf("can't retrieve test suite name from test case name %s", testCaseName))
+	panic(fmt.Sprintf("unable to retrieve test suite name from test case name %s", testCaseName))
 }
