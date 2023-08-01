@@ -110,18 +110,31 @@ Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the n
 ```sh
 # Mac user
  \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  export TNF_CONTAINER_CLIENT=docker &&
+  DOCKER_CONFIG_DIR=$HOME/.docker \
   KUBECONFIG=$HOME/.kube/config \
-  TNF_CONTAINER_CLIENT=docker \
-  LOCAL_TESTING= \
   NON_LINUX_ENV= \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
+```
 
+```sh
 # Linux user
-TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-all
+ \
+  KUBECONFIG=$HOME/.kube/config \
+  LOCAL_TESTING= \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  make test-all
+```
 
+```sh
 # Linux user with force download unstable image
-TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= FORCE_DOWNLOAD_UNSTABLE=true make test-all
+ \
+  FORCE_DOWNLOAD_UNSTABLE=true \
+  KUBECONFIG=$HOME/.kube/config \
+  LOCAL_TESTING= \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  make test-all
 ```
 
 * To run a specific feature
@@ -129,16 +142,23 @@ TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconf
 ```sh
 # Mac user
  \
+  export TNF_CONTAINER_CLIENT=docker &&
+  DOCKER_CONFIG_DIR=$HOME/.docker \
   FEATURES=platformalteration \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   KUBECONFIG=$HOME/.kube/config \
-  TNF_CONTAINER_CLIENT=docker \
-  LOCAL_TESTING= \
   NON_LINUX_ENV= \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
+```
 
+```sh
 # Linux user
-FEATURES=platformalteration TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
+ \
+  FEATURES=platformalteration \
+  KUBECONFIG=$HOME/.kube/config \
+  LOCAL_TESTING= \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  make test-features
 ```
 
 * To debug
@@ -149,18 +169,27 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
 ```sh
 # Mac user
  \
-  FEATURES=platformalteration \
-  TNF_LOG_LEVEL=trace \
+  export TNF_CONTAINER_CLIENT=docker &&
   DEBUG_TNF=true \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  DOCKER_CONFIG_DIR=$HOME/.docker \
+  FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
-  TNF_CONTAINER_CLIENT=docker \
-  LOCAL_TESTING= \
   NON_LINUX_ENV= \
+  TNF_LOG_LEVEL=trace \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
+```
 
+```sh
 # Linux user
-FEATURES=platformalteration TNF_LOG_LEVEL=trace DEBUG_TNF=true TNF_REPO_PATH=/path/to/repo/cnf-certification-test  KUBECONFIG=/path/to/kubeconfig LOCAL_TESTING= make test-features
+ \
+  DEBUG_TNF=true \
+  FEATURES=platformalteration \
+  KUBECONFIG=$HOME/.kube/config \
+  LOCAL_TESTING= \
+  TNF_LOG_LEVEL=trace \
+  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  make test-features
 ```
 
 # Contribution Guidelines
