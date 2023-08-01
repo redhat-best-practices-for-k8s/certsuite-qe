@@ -5,9 +5,24 @@ import (
 	"time"
 )
 
+type (
+	OperatorLabelInfo struct {
+		OperatorPrefix string
+		Namespace      string
+		Label          map[string]string
+	}
+
+	CsvInfo struct {
+		OperatorPrefix string
+		Namespace      string
+	}
+)
+
 const (
-	WaitingTime = 5 * time.Minute
-	Timeout     = 5 * time.Minute
+	WaitingTime     = 5 * time.Minute
+	Timeout         = 5 * time.Minute
+	TimeoutLabelCsv = 2 * time.Minute
+	PollingInterval = 5 * time.Second
 )
 
 var (
@@ -18,11 +33,16 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
+	OperatorGroupName                  = "operator-test-operator-group"
+	OperatorLabel                      = map[string]string{"test-network-function.com/operator": "target"}
+	CertifiedOperatorGroup             = "certified-operators"
+	OperatorSourceNamespace            = "openshift-marketplace"
+	UncertifiedOperatorPrefixCloudbees = "cloudbees-ci"
 )
 
 const (
 	OperatorNamespace = "operator-ns"
 
-	// TNF test cases names.
+	// TNF test cases names
 	TnfOperatorInstallSource = "operator-install-source"
 )
