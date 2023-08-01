@@ -217,12 +217,13 @@ var _ = Describe("Operator install-source,", func() {
 			"Error labeling operator "+tsparams.OperatorPrefixOpenvino)
 
 		By("Delete operator's subscription")
-		globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
+		err := globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
 			tsparams.SubscriptionNameOpenvino,
 			globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallSource,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())

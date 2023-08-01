@@ -24,6 +24,7 @@ func DeployTestOperatorGroup() error {
 				[]string{tsparams.OperatorNamespace}),
 		)
 	}
+
 	return nil
 }
 

@@ -46,6 +46,6 @@ var (
 const (
 	OperatorNamespace = "operator-ns"
 
-	// TNF test cases names
+	// TNF test cases names.
 	TnfOperatorInstallSource = "operator-install-source"
 )
