@@ -25,6 +25,8 @@ var (
 	}
 
 	TestLocalStorageClassName = "local-storage"
+
+	TestCrdNamespace = "lifecycle-crd-scaling"
 )
 
 const (
