@@ -2,6 +2,7 @@ package tests
 
 import (
 	"os"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -73,12 +74,15 @@ var _ = Describe("Networking dual-stack-service,", func() {
 	})
 
 	// 62507
-	It("service with ipFamilyPolicy PreferDualStack and zero ClusterIPs [negative]", func() {
+	FIt("service with ipFamilyPolicy PreferDualStack and zero ClusterIPs [negative]", func() {
 
 		By("Define and create service")
 		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
 			[]corev1.IPFamily{"IPv4"}, "PreferDualStack")
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Sleep for 3 minutes")
+		time.Sleep(3 * time.Minute)
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(

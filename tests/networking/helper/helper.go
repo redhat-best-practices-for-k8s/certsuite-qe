@@ -21,6 +21,7 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	appsv1 "k8s.io/api/apps/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -162,7 +163,9 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	_, err := globalhelper.GetAPIClient().Services(tsparams.TestNetworkingNameSpace).Create(
 		context.TODO(),
 		testService, metav1.CreateOptions{})
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("failed to create service on cluster: %w", err)
 	}
 
@@ -176,7 +179,15 @@ func DefineAndCreateNadOnCluster(name string, network string) error {
 		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
 	}
 
-	return globalhelper.GetAPIClient().Create(context.TODO(), nadOneInterface)
+	err := globalhelper.GetAPIClient().Create(context.TODO(), nadOneInterface)
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("failed to create nad on cluster: %w", err)
+	}
+
+	return nil
 }
 
 func GetClusterMultusInterfaces() ([]string, error) {
