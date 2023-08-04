@@ -6,7 +6,7 @@
     # Note: Keeping docker packages separate just for organization
     docker_package_names: [docker-ce, docker-ce-cli, containerd.io, docker-compose-plugin, docker-buildx-plugin]
     pip3_packages: [j2cli]
-    dnf_packages: [dnf-plugins-core, python3, python3-pip, golang]
+    dnf_packages: [dnf-plugins-core, python3, python3-pip, golang, cronie, cronie-anacron]
 
   tasks:
     - name: Install dnf-plugins-core
@@ -61,4 +61,12 @@
         name: "{{item}}"
         state: present
       with_items: "{{ pip3_packages }}"
+      when: ansible_distribution == "Fedora"
+
+    - name: Add daily cron job to run docker system prune
+      cron:
+        name: "docker system prune"
+        minute: 0
+        hour: 0
+        job: "docker system prune -f"
       when: ansible_distribution == "Fedora"
