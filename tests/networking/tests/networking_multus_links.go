@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -107,7 +106,6 @@ var _ = Describe("Networking custom namespace,", func() {
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-		time.Sleep(30 * time.Second)
 	})
 
 	// 48331

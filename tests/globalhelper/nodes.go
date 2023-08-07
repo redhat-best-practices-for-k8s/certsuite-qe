@@ -44,6 +44,13 @@ func EnableMasterScheduling(client corev1Typed.CoreV1Interface, scheduleable boo
 
 func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node) error {
 	// add the control-plane:NoSchedule taint to the master
+	// check if the tainted already exists to avoid duplicate key error
+	for _, taint := range node.Spec.Taints {
+		if taint.Key == masterTaintKey || taint.Key == controlPlaneTaintKey {
+			return nil
+		}
+	}
+
 	node.Spec.Taints = append(node.Spec.Taints, corev1.Taint{
 		Key:    controlPlaneTaintKey,
 		Effect: corev1.TaintEffectNoSchedule,
@@ -60,19 +67,12 @@ func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node)
 
 func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node) error {
 	// remove the control-plane:NoSchedule taint from the master
-	var updatedTaints []corev1.Taint
-
-	for _, taint := range node.Spec.Taints {
-		switch taint.Key {
-		case masterTaintKey, controlPlaneTaintKey:
-			// Skip the taints that need to be removed
-			continue
-		default:
-			updatedTaints = append(updatedTaints, taint)
+	// remove the control-plane:NoSchedule taint from the master
+	for i, taint := range node.Spec.Taints {
+		if taint.Key == masterTaintKey || taint.Key == controlPlaneTaintKey {
+			node.Spec.Taints = append(node.Spec.Taints[:i], node.Spec.Taints[i+1:]...)
 		}
 	}
-
-	node.Spec.Taints = updatedTaints
 
 	_, err := client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
 

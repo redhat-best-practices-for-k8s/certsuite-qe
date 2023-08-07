@@ -55,7 +55,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 	It("service with ipFamilyPolicy SingleStack and ip version ipv4 [negative]", func() {
 
 		By("Define and create service")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -76,8 +76,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 	It("service with ipFamilyPolicy PreferDualStack and zero ClusterIPs [negative]", func() {
 
 		By("Define and create service")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
-			[]corev1.IPFamily{"IPv4"}, "PreferDualStack")
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, true, []corev1.IPFamily{"IPv4"}, "PreferDualStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -99,7 +98,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 		func() {
 
 			By("Define and create service")
-			err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, []corev1.IPFamily{"IPv4"}, "")
+			err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, false, []corev1.IPFamily{"IPv4"}, "")
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")

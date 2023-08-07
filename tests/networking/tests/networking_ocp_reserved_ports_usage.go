@@ -159,7 +159,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define service and create it on cluster")
-		err = tshelper.DefineAndCreateServiceOnCluster("test-service", 22624, 22624, false,
+		err = tshelper.DefineAndCreateServiceOnCluster("test-service", 22624, 22624, false, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -214,7 +214,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define service and create it on cluster")
-		err = tshelper.DefineAndCreateServiceOnCluster("test-service", 22624, 22624, false,
+		err = tshelper.DefineAndCreateServiceOnCluster("test-service", 22624, 22624, false, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
