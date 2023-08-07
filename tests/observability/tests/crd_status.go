@@ -19,8 +19,6 @@ var (
 )
 
 var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
-	const tnfTestCaseName = tsparams.TnfCrdStatusTcName
-
 	AfterEach(func() {
 		By("Removing all CRDs created by previous test case.")
 		for _, crd := range crdNames {
@@ -44,12 +42,12 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		// Save CRD to be removed after the TC has finished.
 		crdNames = append(crdNames, crd1.Name)
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -73,12 +71,12 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 		crdNames = append(crdNames, crd2.Name)
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -95,12 +93,12 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		// Save CRD to be removed after the TC has finished.
 		crdNames = append(crdNames, crd1.Name)
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -124,12 +122,12 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 		crdNames = append(crdNames, crd2.Name)
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -153,12 +151,12 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 		crdNames = append(crdNames, crd2.Name)
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -176,12 +174,12 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		// Save CRD to be removed after the TC has finished.
 		crdNames = append(crdNames, crd1.Name)
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseSkipped)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
