@@ -122,8 +122,12 @@ func ExecCmdOnAllPodInNamespace(command []string) error {
 	return execCmdOnPodsListInNamespace(command, "all")
 }
 
+func RedefineServiceToHeadless(service *corev1.Service) {
+	service.Spec.ClusterIP = corev1.ClusterIPNone
+}
+
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
-func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool,
+func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort, headless bool,
 	ipFams []corev1.IPFamily, ipFamPolicy string) error {
 	var testService *corev1.Service
 
@@ -158,6 +162,10 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		if err != nil {
 			return err
 		}
+	}
+
+	if headless {
+		RedefineServiceToHeadless(testService)
 	}
 
 	_, err := globalhelper.GetAPIClient().Services(tsparams.TestNetworkingNameSpace).Create(
