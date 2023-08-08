@@ -1,14 +1,18 @@
 package tests
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
@@ -16,6 +20,11 @@ import (
 )
 
 var _ = Describe("Networking dual-stack-service,", func() {
+
+	configSuite, err := config.NewConfig()
+	if err != nil {
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+	}
 
 	execute.BeforeAll(func() {
 		By("Clean namespace before all tests")
@@ -35,6 +44,10 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 		By("Remove reports from report directory")
 		err = globalhelper.RemoveContentsFromReportDir()
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all nodes are labeled with 'worker-cnf' label")
+		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
