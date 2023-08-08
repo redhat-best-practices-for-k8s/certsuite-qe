@@ -2,14 +2,16 @@ package tests
 
 import (
 	"fmt"
-	"time"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
@@ -17,8 +19,12 @@ import (
 
 var _ = Describe("Networking custom namespace,", func() {
 
-	execute.BeforeAll(func() {
+	configSuite, err := config.NewConfig()
+	if err != nil {
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+	}
 
+	execute.BeforeAll(func() {
 		By("Clean namespace before all tests")
 		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
@@ -31,6 +37,10 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Remove reports from report directory")
 		err = globalhelper.RemoveContentsFromReportDir()
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all nodes are labeled with 'worker-cnf' label")
+		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -107,7 +117,6 @@ var _ = Describe("Networking custom namespace,", func() {
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-		time.Sleep(30 * time.Second)
 	})
 
 	// 48331
