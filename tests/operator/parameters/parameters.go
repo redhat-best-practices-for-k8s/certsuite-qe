@@ -1,0 +1,51 @@
+package parameters
+
+import (
+	"fmt"
+	"time"
+)
+
+type (
+	OperatorLabelInfo struct {
+		OperatorPrefix string
+		Namespace      string
+		Label          map[string]string
+	}
+
+	CsvInfo struct {
+		OperatorPrefix string
+		Namespace      string
+	}
+)
+
+const (
+	WaitingTime     = 5 * time.Minute
+	Timeout         = 5 * time.Minute
+	TimeoutLabelCsv = 2 * time.Minute
+	PollingInterval = 5 * time.Second
+)
+
+var (
+	testPodLabelPrefixName = "test-network-function.com/operator"
+	testPodLabelValue      = "testing"
+	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	TnfTargetPodLabels     = map[string]string{
+		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
+	}
+	OperatorGroupName        = "operator-test-operator-group"
+	OperatorLabel            = map[string]string{"test-network-function.com/operator": "target"}
+	CertifiedOperatorGroup   = "certified-operators"
+	OperatorSourceNamespace  = "openshift-marketplace"
+	OperatorPrefixCloudbees  = "cloudbees-ci"
+	OperatorPrefixAnchore    = "anchore-engine"
+	OperatorPrefixOpenvino   = "openvino-operator"
+	SubscriptionNameOpenvino = "ovms-operator-subscription"
+)
+
+const (
+	OperatorNamespace = "operator-ns"
+
+	// TNF test cases names.
+	TnfOperatorInstallSource = "operator-install-source"
+)

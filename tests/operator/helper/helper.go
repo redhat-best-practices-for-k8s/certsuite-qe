@@ -8,56 +8,45 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/onsi/ginkgo/v2"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+	. "github.com/onsi/gomega"
+
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
-func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expectedResult string) error {
-	var err error
-
-	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
-
-	err = globalhelper.DefineTnfConfig(
-		[]string{tsparams.TestCertificationNameSpace},
-		[]string{tsparams.TestPodLabel},
-		containersInfo,
-		[]string{})
-
-	if err != nil {
-		return fmt.Errorf("error defining tnf config file: %w", err)
-	}
-
-	ginkgo.By("Start test")
-
-	err = globalhelper.LaunchTests(
-		tsparams.TestCaseContainerAffiliatedCertName,
-		tcName)
-
-	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
-		return fmt.Errorf("error running %s test",
-			tsparams.TestCaseContainerAffiliatedCertName)
-	}
-
-	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
-		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
-		return fmt.Errorf("error running %s test: %w",
-			tsparams.TestCaseContainerAffiliatedCertName, err)
-	}
-
-	ginkgo.By("Verify test case status in Junit and Claim reports")
-
-	err = globalhelper.ValidateIfReportsAreValid(
-		tsparams.TestCaseContainerAffiliatedCertName,
-		expectedResult)
-
-	if err != nil {
-		return fmt.Errorf("error validating test reports: %w", err)
+func DeployTestOperatorGroup() error {
+	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
+		tsparams.OperatorNamespace) != nil {
+		return globalhelper.DeployOperatorGroup(tsparams.OperatorNamespace,
+			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
+				tsparams.OperatorNamespace,
+				[]string{tsparams.OperatorNamespace}),
+		)
 	}
 
 	return nil
+}
+
+func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
+	var err error
+
+	var csv *v1alpha1.ClusterServiceVersion
+
+	Eventually(func() bool {
+		csv, err = GetCsvByPrefix(csvPrefix, namespace)
+		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
+			return csv.Status.Phase != "InstallReady" &&
+				csv.Status.Phase != "Deleting" &&
+				csv.Status.Phase != "Replacing" &&
+				csv.Status.Phase != "Unknown"
+		}
+
+		return false
+	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
+		csvPrefix+" is not ready.")
+
+	return err
 }
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
@@ -101,23 +90,6 @@ func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label m
 	csv.SetLabels(newMap)
 
 	return updateCsv(namespace, csv)
-}
-
-func DoesOperatorHaveLabels(prefixCsvName string, namespace string, labels map[string]string) (bool, error) {
-	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
-	if err != nil {
-		return false, err
-	}
-
-	csvLabels := csv.GetLabels()
-	for k, v := range labels {
-		csvLabelValue, csvLabelExists := csvLabels[k]
-		if !csvLabelExists || csvLabelValue != v {
-			return false, nil
-		}
-	}
-
-	return true, nil
 }
 
 // GetCsvByPrefix returns csv object based on given prefix.

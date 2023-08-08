@@ -94,4 +94,5 @@ var (
 	AccessControlSuiteName           = "access-control"
 	PerformanceSuiteName             = "performance"
 	ManageabilitySuiteName           = "manageability"
+	OperatorSuiteName                = "operator"
 )
