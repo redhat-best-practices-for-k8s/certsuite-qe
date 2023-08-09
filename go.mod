@@ -3,7 +3,7 @@ module github.com/test-network-function/cnfcert-tests-verification
 go 1.20
 
 require (
-	github.com/golang/glog v1.1.1
+	github.com/golang/glog v1.1.2
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.11.0
