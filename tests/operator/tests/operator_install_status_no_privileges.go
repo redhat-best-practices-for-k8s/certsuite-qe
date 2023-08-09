@@ -23,7 +23,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		err := tshelper.DeployTestOperatorGroup()
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		//cloudbees operator has clusterPermissions but no resourceNames
+		// cloudbees operator has clusterPermissions but no resourceNames
 		By("Deploy cloudbees-ci operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"cloudbees-ci",
@@ -49,7 +49,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			Label:          tsparams.OperatorLabel,
 		})
 
-		//quay operator has no clusterPermissions
+		// quay operator has no clusterPermissions
 		By("Deploy quay operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"project-quay",
@@ -75,7 +75,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			Label:          tsparams.OperatorLabel,
 		})
 
-		//kiali operator has resourceNames under its rules
+		// kiali operator has resourceNames under its rules
 		By("Deploy kiali operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"kiali",
