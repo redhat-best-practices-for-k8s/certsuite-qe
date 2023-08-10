@@ -56,11 +56,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 
 		// sriov-fec.v1.1.0 operator : in certified-operators group, version is not certified
 		By("Deploy alternate operator catalog source")
-		err = tshelper.DisableCatalogSource(tsparams.CertifiedOperatorGroup)
+		err = globalhelper.DisableCatalogSource(tsparams.CertifiedOperatorGroup)
 		Expect(err).ToNot(HaveOccurred(), "Error disabling "+
 			tsparams.CertifiedOperatorGroup+" catalog source")
 		Eventually(func() bool {
-			stillEnabled, err := tshelper.IsCatalogSourceEnabled(
+			stillEnabled, err := globalhelper.IsCatalogSourceEnabled(
 				tsparams.CertifiedOperatorGroup,
 				tsparams.OperatorSourceNamespace,
 				tsparams.CertifiedOperatorDisplayName)
@@ -71,7 +71,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			"Default catalog source is still enabled")
 
 		// Deploying certified operator with invalid catalog version is necessary in order to cover negative scenarios
-		err = tshelper.DeployRHCertifiedOperatorSource("4.7")
+		err = globalhelper.DeployRHCertifiedOperatorSource("4.7")
 		Expect(err).ToNot(HaveOccurred(), "Error deploying catalog source")
 
 		By("Deploy sriov-fec operator with uncertified version")
@@ -96,12 +96,12 @@ var _ = Describe("Affiliated-certification invalid operator certification,", fun
 			" is not ready")
 
 		By("Re-enable default catalog source")
-		err = tshelper.DeleteCatalogSource(tsparams.CertifiedOperatorGroup,
+		err = globalhelper.DeleteCatalogSource(tsparams.CertifiedOperatorGroup,
 			tsparams.TestCertificationNameSpace,
 			"redhat-certified")
 		Expect(err).ToNot(HaveOccurred(), "Error removing alternate catalog source")
 
-		err = tshelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)
+		err = globalhelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)
 		Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
 
 		// add sriov-fec operator info to array for cleanup in AfterEach

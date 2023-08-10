@@ -25,7 +25,7 @@ func preConfigureAffiliatedCertificationEnvironment() {
 		"Error cleaning namespace "+tsparams.TestCertificationNameSpace)
 	By("Ensure default catalog source is enabled")
 
-	catalogEnabled, err := tshelper.IsCatalogSourceEnabled(
+	catalogEnabled, err := globalhelper.IsCatalogSourceEnabled(
 		tsparams.CertifiedOperatorGroup,
 		tsparams.OperatorSourceNamespace,
 		tsparams.CertifiedOperatorDisplayName)
@@ -33,10 +33,10 @@ func preConfigureAffiliatedCertificationEnvironment() {
 
 	if !catalogEnabled {
 		Expect(
-			tshelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)).ToNot(
+			globalhelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)).ToNot(
 			HaveOccurred())
 		Eventually(func() bool {
-			catalogEnabled, err = tshelper.IsCatalogSourceEnabled(
+			catalogEnabled, err = globalhelper.IsCatalogSourceEnabled(
 				tsparams.CertifiedOperatorGroup,
 				tsparams.OperatorSourceNamespace,
 				tsparams.CertifiedOperatorDisplayName)
@@ -50,9 +50,9 @@ func preConfigureAffiliatedCertificationEnvironment() {
 
 	By("Deploy OperatorGroup if not already deployed")
 
-	if tshelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
+	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
 		tsparams.TestCertificationNameSpace) != nil {
-		err = tshelper.DeployOperatorGroup(tsparams.TestCertificationNameSpace,
+		err = globalhelper.DeployOperatorGroup(tsparams.TestCertificationNameSpace,
 			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
 				tsparams.TestCertificationNameSpace,
 				[]string{tsparams.TestCertificationNameSpace}),
@@ -93,7 +93,7 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 
 func approveInstallPlanWhenReady(csvName, namespace string) {
 	Eventually(func() bool {
-		installPlan, err := tshelper.GetInstallPlanByCSV(namespace, csvName)
+		installPlan, err := globalhelper.GetInstallPlanByCSV(namespace, csvName)
 		if err != nil {
 			return false
 		}
@@ -103,7 +103,7 @@ func approveInstallPlanWhenReady(csvName, namespace string) {
 		}
 
 		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
-			err = tshelper.ApproveInstallPlan(tsparams.TestCertificationNameSpace,
+			err = globalhelper.ApproveInstallPlan(tsparams.TestCertificationNameSpace,
 				installPlan)
 
 			return err == nil

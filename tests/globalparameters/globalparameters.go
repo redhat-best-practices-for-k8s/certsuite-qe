@@ -26,8 +26,8 @@ type (
 	}
 
 	CertifiedContainerRepoInfo struct {
-		Name       string `yaml:"name" json:"name"`
 		Repository string `yaml:"repository" json:"repository"`
+		Registry   string `yaml:"registry" json:"registry"`
 		Tag        string `yaml:"tag" json:"tag"`
 		Digest     string `yaml:"digest" json:"digest"`
 	}
@@ -94,4 +94,5 @@ var (
 	AccessControlSuiteName           = "access-control"
 	PerformanceSuiteName             = "performance"
 	ManageabilitySuiteName           = "manageability"
+	OperatorSuiteName                = "operator"
 )
