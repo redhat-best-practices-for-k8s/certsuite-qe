@@ -13,11 +13,12 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/utils/pointer"
 )
 
 // WaitForDeletion waits until the namespace will be removed from the cluster.
-func WaitForDeletion(cs *testclient.ClientSet, nsName string, timeout time.Duration) error {
+func WaitForDeletion(cs corev1Typed.CoreV1Interface, nsName string, timeout time.Duration) error {
 	return wait.PollUntilContextTimeout(context.TODO(), time.Second, timeout, true,
 		func(ctx context.Context) (bool, error) {
 			_, err := cs.Namespaces().Get(ctx, nsName, metav1.GetOptions{})
@@ -49,7 +50,7 @@ func Create(namespace string, cs *testclient.ClientSet) error {
 }
 
 // DeleteAndWait deletes a namespace and waits until delete.
-func DeleteAndWait(clientSet *testclient.ClientSet, namespace string, timeout time.Duration) error {
+func DeleteAndWait(clientSet corev1Typed.CoreV1Interface, namespace string, timeout time.Duration) error {
 	err := clientSet.Namespaces().Delete(context.TODO(), namespace, metav1.DeleteOptions{})
 	if k8serrors.IsNotFound(err) {
 		glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", namespace))

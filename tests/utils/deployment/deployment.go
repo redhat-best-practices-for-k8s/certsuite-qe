@@ -20,7 +20,8 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      deploymentName,
-			Namespace: namespace},
+			Namespace: namespace,
+		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: pointer.Int32(1),
 			Selector: &metav1.LabelSelector{
@@ -28,8 +29,9 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:   "testpod-",
-					Labels: label,
+					Name:      "testpod-",
+					Labels:    label,
+					Namespace: namespace,
 				},
 				Spec: corev1.PodSpec{
 					TerminationGracePeriodSeconds: pointer.Int64(0),

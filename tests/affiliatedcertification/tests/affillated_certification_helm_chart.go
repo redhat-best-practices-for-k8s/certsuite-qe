@@ -31,7 +31,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 
 	AfterEach(func() {
 		By("Remove the project")
-		err := namespaces.DeleteAndWait(globalhelper.GetAPIClient(), tsparams.TestHelmChartCertified, tsparams.Timeout)
+		err := namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, tsparams.TestHelmChartCertified, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
 	})
 
