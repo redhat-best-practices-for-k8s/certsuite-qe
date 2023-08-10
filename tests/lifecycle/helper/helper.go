@@ -24,13 +24,32 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	crscaleoperator "github.com/test-network-function/cr-scale-operator/api/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 const retryInterval = 5
+
+// Define a custom resource
+func DefineCustomResource() crscaleoperator.Memcached {
+	return crscaleoperator.Memcached{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "memcached",
+		},
+		Spec: crscaleoperator.MemcachedSpec{
+			Size: 0,
+		},
+		Status: crscaleoperator.MemcachedStatus{
+			Selector: "cnf/test: cr-scale-operator",
+		},
+	}
+}
+
+func RedefineCustomResourceWithReplica(aCustomResource crscaleoperator.Memcached, replicas int) {
+	aCustomResource.Spec.Size = int32(replicas)
+}
 
 // DefineDeployment defines a deployment.
 func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deployment, error) {

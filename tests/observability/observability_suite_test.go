@@ -41,6 +41,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.TestNamespace},
 		tshelper.GetTnfTargetPodLabelsSlice(),
 		[]string{},
+		[]string{},
 		[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2})
 	Expect(err).ToNot(HaveOccurred())
 })

@@ -40,6 +40,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.ManageabilityNamespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })

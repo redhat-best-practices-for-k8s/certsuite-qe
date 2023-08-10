@@ -19,6 +19,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			[]string{tsparams.TestHelmChartCertified},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})

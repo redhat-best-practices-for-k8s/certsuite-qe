@@ -55,6 +55,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.TestNetworkingNameSpace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 

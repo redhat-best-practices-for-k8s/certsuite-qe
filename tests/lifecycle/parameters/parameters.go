@@ -23,6 +23,7 @@ var (
 	AffinityRequiredPodLabels = map[string]string{
 		"AffinityRequired": "true",
 	}
+	TnfTargetOperatorLabels = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
 
 	TestLocalStorageClassName = "local-storage"
 
@@ -41,6 +42,7 @@ const (
 	TnfRunTimeClass     = "lifecycle-rtc"
 
 	// Test Case names.
+	TnfCrdScaling                          = "lifecycle-crd-scaling"
 	TnfShutdownTcName                      = "lifecycle-container-shutdown"
 	TnfDeploymentScalingTcName             = "lifecycle-deployment-scaling"
 	TnfPodOwnerTypeTcName                  = "lifecycle-pod-owner-type"

@@ -20,6 +20,7 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 			[]string{tsparams.TestAccessControlNameSpace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 

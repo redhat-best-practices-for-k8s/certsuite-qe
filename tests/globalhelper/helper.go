@@ -75,7 +75,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 }
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string,
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
 	certifiedContainerInfo []string, crdFilters []string) error {
 	tnfConfigFilePath := path.Join(GetConfiguration().General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
 
@@ -96,6 +96,11 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string,
 	err = defineTargetPodLabels(&tnfConfig, targetPodLabels)
 	if err != nil {
 		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
+	}
+
+	err = defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
+	if err != nil {
+		return fmt.Errorf("failed to create target operator labels section in tnf yaml config file: %w", err)
 	}
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
@@ -221,6 +226,35 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 			Prefix: prefix,
 			Name:   name,
 			Value:  value,
+		})
+	}
+
+	return nil
+}
+
+func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) error {
+	if len(operatorsUnderTestLabels) < 1 {
+		return fmt.Errorf("target operator labels cannot be empty list")
+	}
+
+	for _, operatorsUnderTestLabel := range operatorsUnderTestLabels {
+		prefixNameValue := strings.Split(operatorsUnderTestLabel, "/")
+		if len(prefixNameValue) != 2 {
+			return fmt.Errorf(fmt.Sprintf("target operator label %s is invalid", operatorsUnderTestLabel))
+		}
+
+		nameValue := strings.Split(prefixNameValue[0], ":")
+
+		if len(nameValue) != 2 {
+			return fmt.Errorf(fmt.Sprintf("target operator label %s is invalid", operatorsUnderTestLabel))
+		}
+
+		name := strings.TrimSpace(nameValue[0])
+		value := strings.TrimSpace(nameValue[1])
+
+		config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, globalparameters.Label{
+			Name:  name,
+			Value: value,
 		})
 	}
 

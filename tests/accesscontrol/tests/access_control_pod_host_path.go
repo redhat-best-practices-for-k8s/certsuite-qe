@@ -21,6 +21,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 			[]string{parameters.TestAccessControlNameSpace},
 			[]string{parameters.TestPodLabel},
 			[]string{},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})

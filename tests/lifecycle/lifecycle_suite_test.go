@@ -44,6 +44,7 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.LifecycleNamespace},
 		[]string{tsparams.TestPodLabel},
+		[]string{tsparams.TnfTargetOperatorLabels}, // some operator labels are added here
 		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
@@ -59,9 +60,9 @@ var _ = AfterSuite(func() {
 	err = namespaces.DeleteAndWait(globalhelper.GetAPIClient(), tsparams.TestCrdNamespace, tsparams.WaitingTime)
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Remove reports from reports directory")
+	/*By("Remove reports from reports directory")
 	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())
+	Expect(err).ToNot(HaveOccurred())*/
 
 	By("Remove masters scheduling")
 	err = globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, false)
