@@ -238,12 +238,7 @@ func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operator
 	}
 
 	for _, operatorsUnderTestLabel := range operatorsUnderTestLabels {
-		prefixNameValue := strings.Split(operatorsUnderTestLabel, "/")
-		if len(prefixNameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("target operator label %s is invalid", operatorsUnderTestLabel))
-		}
-
-		nameValue := strings.Split(prefixNameValue[0], ":")
+		nameValue := strings.Split(operatorsUnderTestLabel, ":")
 
 		if len(nameValue) != 2 {
 			return fmt.Errorf(fmt.Sprintf("target operator label %s is invalid", operatorsUnderTestLabel))

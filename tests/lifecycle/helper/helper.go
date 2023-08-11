@@ -2,6 +2,7 @@ package helper
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -33,22 +34,45 @@ import (
 const retryInterval = 5
 
 // Define a custom resource
-func DefineCustomResource() crscaleoperator.Memcached {
-	return crscaleoperator.Memcached{
+func DefineCustomResource() *crscaleoperator.Memcached {
+	return &crscaleoperator.Memcached{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "cache.example.com/v1",
+			Kind:       "Memcached",
+		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "memcached",
+			Name:   "memcached-sample-banashri",
+			Labels: tsparams.TnfTargetOperatorLabelsMap,
 		},
 		Spec: crscaleoperator.MemcachedSpec{
 			Size: 0,
 		},
 		Status: crscaleoperator.MemcachedStatus{
-			Selector: "cnf/test: cr-scale-operator",
+			Selector: tsparams.TnfTargetOperatorLabels,
 		},
 	}
 }
 
 func RedefineCustomResourceWithReplica(aCustomResource crscaleoperator.Memcached, replicas int) {
 	aCustomResource.Spec.Size = int32(replicas)
+}
+
+func CreateCustomResourceScale() (string, error) {
+	aCustomResource := DefineCustomResource()
+	body, err := json.Marshal(aCustomResource)
+
+	if err != nil {
+		return "", fmt.Errorf("error during marshaling the custom resource definition: %v\n", err)
+	}
+
+	data, err := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().
+		Post().AbsPath("/apis/cache.example.com/v1/namespaces/default/memcacheds").
+		Body(body).DoRaw(context.TODO())
+	if err != nil {
+		return "", fmt.Errorf("return data %v and err %w", data, err)
+	}
+
+	return "success", nil
 }
 
 // DefineDeployment defines a deployment.

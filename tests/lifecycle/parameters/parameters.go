@@ -23,7 +23,10 @@ var (
 	AffinityRequiredPodLabels = map[string]string{
 		"AffinityRequired": "true",
 	}
-	TnfTargetOperatorLabels = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
+	TnfTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
+	TnfTargetOperatorLabelsMap = map[string]string{
+		"cnf/test": "cr-scale-operator",
+	}
 
 	TestLocalStorageClassName = "local-storage"
 
