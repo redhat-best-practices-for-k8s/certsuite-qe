@@ -35,3 +35,26 @@ func DefineSubscription(subName, namespace, channel, operatorName, catalogSource
 		},
 	}
 }
+
+// DefineSubscriptionWithNodeSelector returns a subscription struct with a node selector set.
+func DefineSubscriptionWithNodeSelector(subName, namespace, channel, operatorName, catalogSource,
+	catalogSourceNamespace, startingCSV string, installPlanApproval v1alpha1.Approval,
+	nodeSelector map[string]string) *v1alpha1.Subscription {
+	return &v1alpha1.Subscription{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      subName,
+			Namespace: namespace,
+		},
+		Spec: &v1alpha1.SubscriptionSpec{
+			Channel:                channel,
+			Package:                operatorName,
+			CatalogSource:          catalogSource,
+			CatalogSourceNamespace: catalogSourceNamespace,
+			StartingCSV:            startingCSV,
+			InstallPlanApproval:    installPlanApproval,
+			Config: &v1alpha1.SubscriptionConfig{
+				NodeSelector: nodeSelector,
+			},
+		},
+	}
+}
