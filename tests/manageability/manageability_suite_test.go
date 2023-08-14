@@ -49,7 +49,7 @@ var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.ManageabilityNamespace))
 	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		tsparams.ManageabilityNamespace,
 		tsparams.WaitingTime,
 	)

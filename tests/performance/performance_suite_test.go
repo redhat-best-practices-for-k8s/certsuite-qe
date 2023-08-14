@@ -54,7 +54,7 @@ var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.PerformanceNamespace))
 	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		tsparams.PerformanceNamespace,
 		tsparams.WaitingTime,
 	)
