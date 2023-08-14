@@ -60,8 +60,12 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 	})
 
 	It("one deployment, one pod, does  have cluster role binding [negative]", func() {
+		By("Create cluster role binding")
+		err := globalhelper.CreateClusterRoleBinding(tsparams.TestAccessControlNameSpace, "my-service-account")
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Define deployment with cluster role binding ")
-		dep, err := tshelper.DefineDeploymentWithClusterRoleBindingWithServiceAccount(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeploymentWithClusterRoleBindingWithServiceAccount(1, 1, "accesscontroldeployment", "my-service-account")
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
