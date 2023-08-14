@@ -33,7 +33,7 @@ import (
 
 const retryInterval = 5
 
-// Define a custom resource
+// Define a custom resource.
 func DefineCustomResource(name, namespace string) *crscaleoperator.Memcached {
 	return &crscaleoperator.Memcached{
 		TypeMeta: metav1.TypeMeta{
@@ -64,7 +64,7 @@ func CreateCustomResourceScale(name, namespace string) (string, error) {
 	body, err := json.Marshal(aCustomResource)
 
 	if err != nil {
-		return "", fmt.Errorf("error during marshaling the custom resource definition: %v\n", err)
+		return "", fmt.Errorf("error during marshaling the custom resource definition: %w", err)
 	}
 
 	data, err := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().

@@ -1,9 +1,6 @@
 package tests
 
 import (
-	"fmt"
-	"os/exec"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -63,15 +60,3 @@ var _ = Describe("lifecycle-crd-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
-
-func installScaleOperator() error {
-	command := "rm -rf cr-scale-operator && git clone https://github.com/test-network-function/cr-scale-operator && cd cr-scale-operator && " +
-		"export IMG=quay.io/testnetworkfunction/cr-scale-operator:latest && make deploy"
-
-	fmt.Println(command)
-
-	cmd := exec.Command("/bin/bash", "-c", command)
-	err := cmd.Run()
-
-	return err
-}
