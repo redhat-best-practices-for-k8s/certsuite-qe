@@ -24,8 +24,13 @@ var _ = Describe("lifecycle-crd-scaling", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{})
+			[]string{tsparams.TnfTargetCrdFilters})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+
+		By("Check if crd-scaling-operator is installed")
+		exists, err := namespaces.Exists(tsparams.TnfTargetOperatorNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error installing crd-scaling-operator")
+		Expect(exists).To(BeTrue())
 	})
 
 	BeforeEach(func() {
@@ -37,16 +42,12 @@ var _ = Describe("lifecycle-crd-scaling", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	FIt("Crd deployed, scale in and out", func() {
-		// Install crd operator
-		By("Install crd-scaling-operator")
-		err := installScaleOperator()
-		Expect(err).ToNot(HaveOccurred(), "Error installing crd-scaling-operator")
-
+	It("Crd deployed, scale in and out", func() {
 		By("Create a scale custom resource")
+		_, err := tshelper.CreateCustomResourceScale(tsparams.TnfCustomResourceName, tsparams.LifecycleNamespace)
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-crd-scaling test")
-
 		err = globalhelper.LaunchTests(tsparams.TnfCrdScaling,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
@@ -64,10 +65,8 @@ var _ = Describe("lifecycle-crd-scaling", func() {
 })
 
 func installScaleOperator() error {
-	command := "git clone https://github.com/bnshr/cnf-operator && cd cnf-operator && " +
-		"export IMG=quay.io/rh_ee_bmandal/cnf-collector:latest && export NAMESPACE=bmandal && make deploy"
-
-	// commandStr := fmt.Sprintf("rm -rf cnf-operator && %s", command)
+	command := "rm -rf cr-scale-operator && git clone https://github.com/test-network-function/cr-scale-operator && cd cr-scale-operator && " +
+		"export IMG=quay.io/testnetworkfunction/cr-scale-operator:latest && make deploy"
 
 	fmt.Println(command)
 

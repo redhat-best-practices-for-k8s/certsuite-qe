@@ -27,10 +27,11 @@ var (
 	TnfTargetOperatorLabelsMap = map[string]string{
 		"cnf/test": "cr-scale-operator",
 	}
+	TnfTargetCrdFilters        = "memcacheds.cache.example.com"
+	TnfTargetOperatorNamespace = "cr-scale-operator-system"
+	TnfCustomResourceName      = "memcached-sample"
 
 	TestLocalStorageClassName = "local-storage"
-
-	TestCrdNamespace = "lifecycle-crd-scaling"
 )
 
 const (

@@ -56,13 +56,9 @@ var _ = AfterSuite(func() {
 	err := namespaces.DeleteAndWait(globalhelper.GetAPIClient(), tsparams.LifecycleNamespace, tsparams.WaitingTime)
 	Expect(err).ToNot(HaveOccurred())
 
-	By(fmt.Sprintf("Remove %s namespace", tsparams.TestCrdNamespace))
-	err = namespaces.DeleteAndWait(globalhelper.GetAPIClient(), tsparams.TestCrdNamespace, tsparams.WaitingTime)
-	Expect(err).ToNot(HaveOccurred())
-
-	/*By("Remove reports from reports directory")
+	By("Remove reports from reports directory")
 	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())*/
+	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove masters scheduling")
 	err = globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, false)

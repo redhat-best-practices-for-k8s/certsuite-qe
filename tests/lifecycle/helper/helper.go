@@ -34,18 +34,19 @@ import (
 const retryInterval = 5
 
 // Define a custom resource
-func DefineCustomResource() *crscaleoperator.Memcached {
+func DefineCustomResource(name, namespace string) *crscaleoperator.Memcached {
 	return &crscaleoperator.Memcached{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "cache.example.com/v1",
 			Kind:       "Memcached",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   "memcached-sample-banashri",
-			Labels: tsparams.TnfTargetOperatorLabelsMap,
+			Name:      name,
+			Namespace: namespace,
+			Labels:    tsparams.TnfTargetOperatorLabelsMap,
 		},
 		Spec: crscaleoperator.MemcachedSpec{
-			Size: 0,
+			Size: 1,
 		},
 		Status: crscaleoperator.MemcachedStatus{
 			Selector: tsparams.TnfTargetOperatorLabels,
@@ -57,8 +58,9 @@ func RedefineCustomResourceWithReplica(aCustomResource crscaleoperator.Memcached
 	aCustomResource.Spec.Size = int32(replicas)
 }
 
-func CreateCustomResourceScale() (string, error) {
-	aCustomResource := DefineCustomResource()
+func CreateCustomResourceScale(name, namespace string) (string, error) {
+	aCustomResource := DefineCustomResource(name, namespace)
+
 	body, err := json.Marshal(aCustomResource)
 
 	if err != nil {
@@ -66,9 +68,14 @@ func CreateCustomResourceScale() (string, error) {
 	}
 
 	data, err := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().
-		Post().AbsPath("/apis/cache.example.com/v1/namespaces/default/memcacheds").
+		Post().AbsPath("/apis/cache.example.com/v1/namespaces/" + namespace + "/memcacheds").
 		Body(body).DoRaw(context.TODO())
+
 	if err != nil {
+		if k8serrors.IsAlreadyExists(err) {
+			return "success", nil
+		}
+
 		return "", fmt.Errorf("return data %v and err %w", data, err)
 	}
 

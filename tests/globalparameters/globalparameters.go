@@ -6,7 +6,7 @@ type (
 	TnfConfig struct {
 		TargetNameSpaces         []TargetNameSpace            `yaml:"targetNameSpaces" json:"targetNameSpaces"`
 		TargetPodLabels          []PodLabel                   `yaml:"targetPodLabels" json:"targetPodLabels"`
-		OperatorsUnderTestLabels []Label                      `yaml:"operatorsUnderTestLabels" json:"operatorsUnderTestLabels"`
+		OperatorsUnderTestLabels []string                     `yaml:"operatorsUnderTestLabels" json:"operatorsUnderTestLabels"`
 		Certifiedcontainerinfo   []CertifiedContainerRepoInfo `yaml:"certifiedcontainerinfo" json:"certifiedcontainerinfo"`
 		Certifiedoperatorinfo    []CertifiedOperatorRepoInfo  `yaml:"certifiedoperatorinfo" json:"certifiedoperatorinfo"`
 		TargetCrdFilters         []TargetCrdFilter            `yaml:"targetCrdFilters" json:"targetCrdFilters"`

@@ -237,21 +237,7 @@ func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operator
 		return fmt.Errorf("target operator labels cannot be empty list")
 	}
 
-	for _, operatorsUnderTestLabel := range operatorsUnderTestLabels {
-		nameValue := strings.Split(operatorsUnderTestLabel, ":")
-
-		if len(nameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("target operator label %s is invalid", operatorsUnderTestLabel))
-		}
-
-		name := strings.TrimSpace(nameValue[0])
-		value := strings.TrimSpace(nameValue[1])
-
-		config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, globalparameters.Label{
-			Name:  name,
-			Value: value,
-		})
-	}
+	config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
 
 	return nil
 }
