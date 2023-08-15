@@ -98,10 +98,7 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
 	}
 
-	err = defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
-	if err != nil {
-		return fmt.Errorf("failed to create target operator labels section in tnf yaml config file: %w", err)
-	}
+	defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
 	if err != nil {
@@ -232,14 +229,10 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	return nil
 }
 
-func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) error {
-	if len(operatorsUnderTestLabels) < 1 {
-		return fmt.Errorf("target operator labels cannot be empty list")
+func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) {
+	if len(operatorsUnderTestLabels) > 0 {
+		config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
 	}
-
-	config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
-
-	return nil
 }
 
 func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) {
