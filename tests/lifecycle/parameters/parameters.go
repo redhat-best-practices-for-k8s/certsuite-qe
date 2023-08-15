@@ -23,6 +23,13 @@ var (
 	AffinityRequiredPodLabels = map[string]string{
 		"AffinityRequired": "true",
 	}
+	TnfTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
+	TnfTargetOperatorLabelsMap = map[string]string{
+		"cnf/test": "cr-scale-operator",
+	}
+	TnfTargetCrdFilters        = "memcacheds.cache.example.com"
+	TnfTargetOperatorNamespace = "cr-scale-operator-system"
+	TnfCustomResourceName      = "memcached-sample"
 
 	TestLocalStorageClassName = "local-storage"
 )
@@ -39,6 +46,7 @@ const (
 	TnfRunTimeClass     = "lifecycle-rtc"
 
 	// Test Case names.
+	TnfCrdScaling                          = "lifecycle-crd-scaling"
 	TnfShutdownTcName                      = "lifecycle-container-shutdown"
 	TnfDeploymentScalingTcName             = "lifecycle-deployment-scaling"
 	TnfPodOwnerTypeTcName                  = "lifecycle-pod-owner-type"

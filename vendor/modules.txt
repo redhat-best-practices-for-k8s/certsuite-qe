@@ -186,6 +186,9 @@ github.com/spf13/pflag
 # github.com/stretchr/testify v1.8.4
 ## explicit; go 1.20
 github.com/stretchr/testify/assert
+# github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
+## explicit; go 1.19
+github.com/test-network-function/cr-scale-operator/api/v1
 # github.com/test-network-function/test-network-function-claim v1.0.25
 ## explicit; go 1.20
 github.com/test-network-function/test-network-function-claim/pkg/claim
