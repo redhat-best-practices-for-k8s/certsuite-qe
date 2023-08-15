@@ -44,6 +44,7 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.LifecycleNamespace},
 		[]string{tsparams.TestPodLabel},
+		[]string{tsparams.TnfTargetOperatorLabels}, // some operator labels are added here
 		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())

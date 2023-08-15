@@ -40,6 +40,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.OperatorNamespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })

@@ -75,7 +75,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 }
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string,
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
 	certifiedContainerInfo []string, crdFilters []string) error {
 	tnfConfigFilePath := path.Join(GetConfiguration().General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
 
@@ -96,6 +96,11 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string,
 	err = defineTargetPodLabels(&tnfConfig, targetPodLabels)
 	if err != nil {
 		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
+	}
+
+	err = defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
+	if err != nil {
+		return fmt.Errorf("failed to create target operator labels section in tnf yaml config file: %w", err)
 	}
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
@@ -223,6 +228,16 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 			Value:  value,
 		})
 	}
+
+	return nil
+}
+
+func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) error {
+	if len(operatorsUnderTestLabels) < 1 {
+		return fmt.Errorf("target operator labels cannot be empty list")
+	}
+
+	config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
 
 	return nil
 }

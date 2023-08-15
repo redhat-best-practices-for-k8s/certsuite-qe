@@ -45,6 +45,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.PerformanceNamespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })

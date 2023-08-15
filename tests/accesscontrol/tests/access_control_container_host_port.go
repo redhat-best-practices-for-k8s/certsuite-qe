@@ -22,6 +22,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 			[]string{tsparams.TestAccessControlNameSpace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
