@@ -233,8 +233,8 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 }
 
 func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) error {
-	if len(operatorsUnderTestLabels) < 1 {
-		return fmt.Errorf("target operator labels cannot be empty list")
+	if len(operatorsUnderTestLabels) == 0 {
+		return nil
 	}
 
 	config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
