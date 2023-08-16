@@ -235,7 +235,7 @@ func containsString(list []string, item string) bool {
 
 func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
 	srcClaim := path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName)
-	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName))
+	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName)
 	dstClaim := path.Join(dstDir, globalparameters.DefaultClaimFileName)
 
 	_, err := os.Stat(srcClaim)
