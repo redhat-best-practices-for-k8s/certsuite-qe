@@ -18,6 +18,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
@@ -94,7 +95,11 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		crd,
 		metav1.CreateOptions{},
 	)
-	if err != nil {
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("crd %s already exists", crd.Name))
+
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("failed to create crd: %w", err)
 	}
 
