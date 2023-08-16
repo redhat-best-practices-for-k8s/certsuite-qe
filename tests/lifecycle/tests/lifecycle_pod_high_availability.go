@@ -11,7 +11,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
@@ -25,12 +24,6 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 	if err != nil {
 		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
 	}
-
-	execute.BeforeAll(func() {
-		By("Make masters schedulable")
-		err := globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
-		Expect(err).ToNot(HaveOccurred())
-	})
 
 	BeforeEach(func() {
 		err := tshelper.WaitUntilClusterIsStable()
