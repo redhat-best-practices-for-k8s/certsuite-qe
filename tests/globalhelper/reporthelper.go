@@ -235,12 +235,18 @@ func containsString(list []string, item string) bool {
 
 func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
 	srcClaim := path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName)
-	dstClaim := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName,
-		globalparameters.DefaultClaimFileName)
+	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName))
+	dstClaim := path.Join(dstDir, globalparameters.DefaultClaimFileName)
 
 	_, err := os.Stat(srcClaim)
 	if err != nil {
 		glog.Error("file does not exist ", srcClaim)
+	}
+
+	// create destination folder
+	err = os.MkdirAll(dstDir, os.ModePerm)
+	if err != nil {
+		glog.Error("could not create dest directory= %s, err=%s", dstDir, err)
 	}
 
 	err = CopyFiles(srcClaim, dstClaim)
