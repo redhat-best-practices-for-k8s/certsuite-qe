@@ -75,7 +75,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 }
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string,
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
 	certifiedContainerInfo []string, crdFilters []string) error {
 	tnfConfigFilePath := path.Join(GetConfiguration().General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
 
@@ -97,6 +97,8 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string,
 	if err != nil {
 		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
 	}
+
+	defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
 	if err != nil {
@@ -225,6 +227,12 @@ func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels [
 	}
 
 	return nil
+}
+
+func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) {
+	if len(operatorsUnderTestLabels) > 0 {
+		config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
+	}
 }
 
 func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) {

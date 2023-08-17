@@ -23,6 +23,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 			[]string{tsparams.TestAccessControlNameSpace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 

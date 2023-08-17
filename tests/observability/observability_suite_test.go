@@ -41,6 +41,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.TestNamespace},
 		tshelper.GetTnfTargetPodLabelsSlice(),
 		[]string{},
+		[]string{},
 		[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2})
 	Expect(err).ToNot(HaveOccurred())
 })
@@ -49,7 +50,7 @@ var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestNamespace))
 	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		tsparams.TestNamespace,
 		tsparams.NsResourcesDeleteTimeoutMins,
 	)

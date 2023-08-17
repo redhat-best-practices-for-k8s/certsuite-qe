@@ -41,6 +41,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.PlatformAlterationNamespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 })
@@ -49,7 +50,7 @@ var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.PlatformAlterationNamespace))
 	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		tsparams.PlatformAlterationNamespace,
 		tsparams.WaitingTime,
 	)

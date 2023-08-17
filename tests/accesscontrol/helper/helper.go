@@ -19,14 +19,15 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
-func DeleteNamespaces(nsToDelete []string, clientSet *client.ClientSet, timeout time.Duration) error {
+func DeleteNamespaces(nsToDelete []string, client corev1Typed.CoreV1Interface, timeout time.Duration) error {
 	failedNs := make(map[string]error)
 
 	for _, namespace := range nsToDelete {
 		err := namespaces.DeleteAndWait(
-			clientSet,
+			client,
 			namespace,
 			timeout,
 		)
@@ -56,18 +57,14 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 	return deploymentStruct, nil
 }
 
-func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32, containers int, name string) (*appsv1.Deployment, error) {
-	err := globalhelper.CreateClusterRoleBinding(parameters.TestAccessControlNameSpace, "my-service-account")
-	if err != nil {
-		return nil, err
-	}
-
+func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32,
+	containers int, name, serviceAccountName string) (*appsv1.Deployment, error) {
 	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
 		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
-	deployment.AppendServiceAccount(deploymentStruct, "my-service-account")
+	deployment.AppendServiceAccount(deploymentStruct, serviceAccountName)
 
 	return deploymentStruct, nil
 }

@@ -44,6 +44,7 @@ var _ = BeforeSuite(func() {
 	err = globalhelper.DefineTnfConfig(
 		[]string{tsparams.LifecycleNamespace},
 		[]string{tsparams.TestPodLabel},
+		[]string{tsparams.TnfTargetOperatorLabels}, // some operator labels are added here
 		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
@@ -52,7 +53,7 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.LifecycleNamespace))
-	err := namespaces.DeleteAndWait(globalhelper.GetAPIClient(), tsparams.LifecycleNamespace, tsparams.WaitingTime)
+	err := namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, tsparams.LifecycleNamespace, tsparams.WaitingTime)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Remove reports from reports directory")

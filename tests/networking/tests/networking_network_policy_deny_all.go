@@ -193,6 +193,7 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 				[]string{tsparams.TestNetworkingNameSpace, tsparams.AdditionalNetworkingNamespace},
 				[]string{tsparams.TestPodLabel},
 				[]string{},
+				[]string{},
 				[]string{})
 			Expect(err).ToNot(HaveOccurred())
 

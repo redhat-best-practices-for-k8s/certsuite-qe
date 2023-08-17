@@ -2,6 +2,7 @@ package helper
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -24,13 +25,62 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	crscaleoperator "github.com/test-network-function/cr-scale-operator/api/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 const retryInterval = 5
+
+// Define a custom resource.
+func DefineCustomResource(name, namespace string) *crscaleoperator.Memcached {
+	return &crscaleoperator.Memcached{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "cache.example.com/v1",
+			Kind:       "Memcached",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+			Labels:    tsparams.TnfTargetOperatorLabelsMap,
+		},
+		Spec: crscaleoperator.MemcachedSpec{
+			Size: 1,
+		},
+		Status: crscaleoperator.MemcachedStatus{
+			Selector: tsparams.TnfTargetOperatorLabels,
+		},
+	}
+}
+
+func RedefineCustomResourceWithReplica(aCustomResource crscaleoperator.Memcached, replicas int) {
+	aCustomResource.Spec.Size = int32(replicas)
+}
+
+func CreateCustomResourceScale(name, namespace string) (string, error) {
+	aCustomResource := DefineCustomResource(name, namespace)
+
+	body, err := json.Marshal(aCustomResource)
+
+	if err != nil {
+		return "", fmt.Errorf("error during marshaling the custom resource definition: %w", err)
+	}
+
+	data, err := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().
+		Post().AbsPath("/apis/cache.example.com/v1/namespaces/" + namespace + "/memcacheds").
+		Body(body).DoRaw(context.TODO())
+
+	if err != nil {
+		if k8serrors.IsAlreadyExists(err) {
+			return "success", nil
+		}
+
+		return "", fmt.Errorf("return data %v and err %w", data, err)
+	}
+
+	return "success", nil
+}
 
 // DefineDeployment defines a deployment.
 func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deployment, error) {

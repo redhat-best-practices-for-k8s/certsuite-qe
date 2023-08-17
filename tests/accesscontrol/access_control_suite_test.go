@@ -48,7 +48,7 @@ var _ = AfterSuite(func() {
 			parameters.InvalidNamespace,
 			parameters.TestAnotherNamespace,
 		},
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		parameters.Timeout,
 	)
 	Expect(err).ToNot(HaveOccurred())
