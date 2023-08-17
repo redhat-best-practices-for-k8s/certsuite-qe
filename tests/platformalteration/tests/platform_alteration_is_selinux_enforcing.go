@@ -9,17 +9,10 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
-
-	execute.BeforeAll(func() {
-		By("Make masters schedulable")
-		err := globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
-		Expect(err).ToNot(HaveOccurred())
-	})
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")
