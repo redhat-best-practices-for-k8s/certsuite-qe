@@ -29,11 +29,16 @@ var (
 	testPodLabelPrefixName     = "affiliatedcert-test/test"
 	testPodLabelValue          = "testing"
 	TestPodLabel               = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	TestDeploymentLabels       = map[string]string{
+		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
+	}
 
 	UnrelatedOperatorPrefixCloudcasa = "cloudcasa"
 	UnrelatedNamespace               = "tnf"
 
 	TestCaseContainerAffiliatedCertName = "affiliated-certification-container-is-certified"
+	TestCaseNameContainerDigest         = "affiliated-certification-container-is-certified-digest"
 	CertifiedContainerCockroachDB       = "cockroachdb/cockroach;registry.connect.redhat.com;v20.1.8;" +
 		"sha256:6667919a41d304d5d4ade3ded4f11b42d722a995a4283e11e15320529f7f9abf"
 	CertifiedContainer5gc           = "5gc/vru-sig-mp;artnj.zte.com.cn;2021010510011609815594;"
