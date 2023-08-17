@@ -50,7 +50,7 @@ const (
 	OperatorNamespace = "operator-ns"
 
 	// TNF test cases names.
-	TnfOperatorInstallSource = "operator-install-source"
+	TnfOperatorInstallSource             = "operator-install-source"
 	TnfOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
-	TnfOperatorInstallStatus = "operator-install-status-succeeded"
+	TnfOperatorInstallStatus             = "operator-install-status-succeeded"
 )
