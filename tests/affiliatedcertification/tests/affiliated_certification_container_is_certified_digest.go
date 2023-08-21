@@ -43,7 +43,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 	It("one container to test, container is certified", func() {
 		By("Define deployment with certified container")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
-			tsparams.CertifiedContainerUrlNodeJs, tsparams.TestDeploymentLabels)
+			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -66,7 +66,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		By("Define deployment with uncertified container")
 
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
-			tsparams.UncertifiedContainerUrlCnfTest, tsparams.TestDeploymentLabels)
+			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -88,13 +88,13 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 	It("two containers to test, both are certified", func() {
 		By("Define deployments with certified containers")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
-			tsparams.CertifiedContainerUrlNodeJs, tsparams.TestDeploymentLabels)
+			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", tsparams.TestCertificationNameSpace,
-			tsparams.CertifiedContainerUrlCockroachDB, tsparams.TestDeploymentLabels)
+			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -116,13 +116,13 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 	It("two containers to test, one is certified, one is not [negative]", func() {
 		By("Define deployments with different container certification statuses")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
-			tsparams.UncertifiedContainerUrlCnfTest, tsparams.TestDeploymentLabels)
+			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", tsparams.TestCertificationNameSpace,
-			tsparams.CertifiedContainerUrlCockroachDB, tsparams.TestDeploymentLabels)
+			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
