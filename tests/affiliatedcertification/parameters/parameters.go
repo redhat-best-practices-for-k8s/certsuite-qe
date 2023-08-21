@@ -46,9 +46,9 @@ var (
 	EmptyFieldsContainer             = ";;;"
 	ContainerNameOnlyCockroachDB     = "cockroachdb/cockroach;;;"
 	ContainerRepoOnlyRedHatRegistry  = ";registry.connect.redhat.com;;"
-	CertifiedContainerUrlNodeJs      = "registry.access.redhat.com/ubi8/nodejs-12:latest"
-	CertifiedContainerUrlCockroachDB = "registry.connect.redhat.com/cockroachdb/cockroach:latest"
-	UncertifiedContainerUrlCnfTest   = "quay.io/testnetworkfunction/cnf-test-partner:latest"
+	CertifiedContainerURLNodeJs      = "registry.access.redhat.com/ubi8/nodejs-12:latest"
+	CertifiedContainerURLCockroachDB = "registry.connect.redhat.com/cockroachdb/cockroach:latest"
+	UncertifiedContainerURLCnfTest   = "quay.io/testnetworkfunction/cnf-test-partner:latest"
 
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification-operator-is-certified"
 	TestHelmChartCertified             = "affiliated-certification-helmchart-is-certified"
