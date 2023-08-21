@@ -55,6 +55,7 @@ var _ = BeforeSuite(func() {
 		[]string{tsparams.TestNetworkingNameSpace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
+		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
 
@@ -67,14 +68,14 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 	By("Remove networking test namespaces")
 	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		tsparams.TestNetworkingNameSpace,
 		tsparams.WaitingTime,
 	)
 	Expect(err).ToNot(HaveOccurred())
 
 	err = namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient(),
+		globalhelper.GetAPIClient().CoreV1Interface,
 		tsparams.AdditionalNetworkingNamespace,
 		tsparams.WaitingTime,
 	)

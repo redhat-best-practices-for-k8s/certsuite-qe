@@ -14,34 +14,6 @@ const (
 	masterTaintKey       = "node-role.kubernetes.io/master"
 )
 
-// EnableMasterScheduling enables/disables master nodes scheduling.
-func EnableMasterScheduling(client corev1Typed.CoreV1Interface, scheduleable bool) error {
-	// Get all nodes in the cluster
-	nodes, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return fmt.Errorf("failed to get nodes: %w", err)
-	}
-
-	// Loop through the nodes and modify the taints
-	for _, node := range nodes.Items {
-		if isMasterNode(&node) {
-			if scheduleable {
-				err = removeControlPlaneTaint(client, &node)
-				if err != nil {
-					return fmt.Errorf("failed to set node %s schedulable value: %w", node.Name, err)
-				}
-			} else {
-				err = addControlPlaneTaint(client, &node)
-				if err != nil {
-					return fmt.Errorf("failed to set node %s schedulable value: %w", node.Name, err)
-				}
-			}
-		}
-	}
-
-	return nil
-}
-
 func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node) error {
 	// add the control-plane:NoSchedule taint to the master
 	// check if the tainted already exists to avoid duplicate key error
@@ -81,15 +53,4 @@ func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.No
 	}
 
 	return nil
-}
-
-func isMasterNode(node *corev1.Node) bool {
-	masterLabels := []string{masterTaintKey, controlPlaneTaintKey}
-	for _, label := range masterLabels {
-		if _, exists := node.Labels[label]; exists {
-			return true
-		}
-	}
-
-	return false
 }

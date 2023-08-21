@@ -21,6 +21,7 @@ var _ = Describe("Access-control projected-volume-service-account-token,", func(
 			[]string{tsparams.TestAccessControlNameSpace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
+			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})

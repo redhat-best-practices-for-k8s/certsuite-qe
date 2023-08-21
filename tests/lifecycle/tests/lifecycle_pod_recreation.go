@@ -28,10 +28,6 @@ var _ = Describe("lifecycle-pod-recreation", func() {
 	}
 
 	execute.BeforeAll(func() {
-		By("Make masters schedulable")
-		err := globalhelper.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
-		Expect(err).ToNot(HaveOccurred())
-
 		By("Enable intrusive tests")
 		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())

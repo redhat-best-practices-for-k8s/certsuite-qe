@@ -36,9 +36,12 @@ var (
 	OperatorGroupName        = "operator-test-operator-group"
 	OperatorLabel            = map[string]string{"test-network-function.com/operator": "target"}
 	CertifiedOperatorGroup   = "certified-operators"
+	CommunityOperatorGroup   = "community-operators"
 	OperatorSourceNamespace  = "openshift-marketplace"
 	OperatorPrefixCloudbees  = "cloudbees-ci"
 	OperatorPrefixAnchore    = "anchore-engine"
+	OperatorPrefixQuay       = "quay-operator"
+	OperatorPrefixKiali      = "kiali-operator"
 	OperatorPrefixOpenvino   = "openvino-operator"
 	SubscriptionNameOpenvino = "ovms-operator-subscription"
 )
@@ -47,5 +50,7 @@ const (
 	OperatorNamespace = "operator-ns"
 
 	// TNF test cases names.
-	TnfOperatorInstallSource = "operator-install-source"
+	TnfOperatorInstallSource             = "operator-install-source"
+	TnfOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
+	TnfOperatorInstallStatus             = "operator-install-status-succeeded"
 )
