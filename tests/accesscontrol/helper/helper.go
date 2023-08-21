@@ -207,8 +207,9 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 // synchronization mechanism like sync.Once.
 func IsKindCluster() bool {
 	cmd := exec.Command(
-		"co", 
+		"co",
 		"cluster-info", "--context", "kind-kind",
 		">/dev/null", "2>&1")
+
 	return cmd.Run() == nil
 }
