@@ -52,4 +52,5 @@ const (
 	// TNF test cases names.
 	TnfOperatorInstallSource             = "operator-install-source"
 	TnfOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
+	TnfOperatorInstallStatus             = "operator-install-status-succeeded"
 )

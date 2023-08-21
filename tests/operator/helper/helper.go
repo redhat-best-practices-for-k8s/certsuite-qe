@@ -38,6 +38,7 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
 			return csv.Status.Phase != "InstallReady" &&
 				csv.Status.Phase != "Deleting" &&
+				csv.Status.Phase != "Installing" &&
 				csv.Status.Phase != "Replacing" &&
 				csv.Status.Phase != "Unknown"
 		}
@@ -130,6 +131,27 @@ func DeployOperatorSubscription(operatorPackage, channel, namespace, group,
 
 	err := globalhelper.DeployOperator(operatorSubscription)
 
+	if err != nil {
+		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
+	}
+
+	return nil
+}
+
+func DeployOperatorSubscriptionWithNodeSelector(operatorPackage, channel, namespace, group,
+	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval, nodeSelector map[string]string) error {
+	operatorSubscription := utils.DefineSubscriptionWithNodeSelector(
+		operatorPackage+"-subscription",
+		namespace,
+		channel,
+		operatorPackage,
+		group,
+		sourceNamespace,
+		startingCSV,
+		installApproval,
+		nodeSelector)
+
+	err := globalhelper.DeployOperator(operatorSubscription)
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
 	}
