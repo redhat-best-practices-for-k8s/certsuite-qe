@@ -10,6 +10,7 @@ import (
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Operator install-status-no-privileges,", func() {
@@ -19,8 +20,12 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 	)
 
 	execute.BeforeAll(func() {
+		By("Clean namespace")
+		err := namespaces.Clean(tsparams.OperatorNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Deploy operator group")
-		err := tshelper.DeployTestOperatorGroup()
+		err = tshelper.DeployTestOperatorGroup()
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		// cloudbees operator has clusterPermissions but no resourceNames
