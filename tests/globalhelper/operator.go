@@ -57,23 +57,7 @@ func IsOperatorGroupInstalled(operatorGroupName, namespace string) error {
 }
 
 func DeployOperator(subscription *v1alpha1.Subscription) error {
-	err := GetAPIClient().Create(context.TODO(),
-		&v1alpha1.Subscription{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      subscription.Name,
-				Namespace: subscription.Namespace,
-			},
-			Spec: &v1alpha1.SubscriptionSpec{
-				Channel:                subscription.Spec.Channel,
-				Package:                subscription.Spec.Package,
-				CatalogSource:          subscription.Spec.CatalogSource,
-				CatalogSourceNamespace: subscription.Spec.CatalogSourceNamespace,
-				StartingCSV:            subscription.Spec.StartingCSV,
-				InstallPlanApproval:    subscription.Spec.InstallPlanApproval,
-			},
-		},
-	)
-
+	err := GetAPIClient().Create(context.TODO(), subscription)
 	if k8serrors.IsAlreadyExists(err) {
 		return nil
 	} else if err != nil {
