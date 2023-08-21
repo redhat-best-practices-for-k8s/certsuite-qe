@@ -38,11 +38,11 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 46562
-	FIt("one container to test, container is certified", func() {
+	// 66765
+	It("one container to test, container is certified", func() {
 		By("Define deployment with certified container")
-		dep := deployment.DefineDeployment("name", tsparams.TestCertificationNameSpace,
-			"registry.access.redhat.com/ubi8/nodejs-12:1-113", tsparams.TestDeploymentLabels)
+		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
+			tsparams.CertifiedContainerUrlNodeJs, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -60,12 +60,12 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 46563
-	FIt("one container to test, container is not certified [negative]", func() {
+	// 66766
+	It("one container to test, container is not certified [negative]", func() {
 		By("Define deployment with uncertified container")
 
-		dep := deployment.DefineDeployment("name", tsparams.TestCertificationNameSpace,
-			"quay.io/testnetworkfunction/cnf-certification-test:latest", tsparams.TestDeploymentLabels)
+		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
+			tsparams.UncertifiedContainerUrlCnfTest, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -83,17 +83,17 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 46564
-	FIt("two containers to test, both are certified", func() {
+	// 66767
+	It("two containers to test, both are certified", func() {
 		By("Define deployments with certified containers")
-		dep := deployment.DefineDeployment("name", tsparams.TestCertificationNameSpace,
-			"registry.access.redhat.com/ubi8/nodejs-12:1-113", tsparams.TestDeploymentLabels)
+		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
+			tsparams.CertifiedContainerUrlNodeJs, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2 := deployment.DefineDeployment("name", tsparams.TestCertificationNameSpace,
-			"registry.connect.redhat.com/cockroachdb/cockroach:latest", tsparams.TestDeploymentLabels)
+		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", tsparams.TestCertificationNameSpace,
+			tsparams.CertifiedContainerUrlCockroachDB, tsparams.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -111,17 +111,17 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 46565
-	FIt("two containers to test, one is certified, one is not [negative]", func() {
+	// 66768
+	It("two containers to test, one is certified, one is not [negative]", func() {
 		By("Define deployments with different container certification statuses")
-		dep := deployment.DefineDeployment("name", tsparams.TestCertificationNameSpace,
-			"quay.io/testnetworkfunction/cnf-certification-test:latest", tsparams.TestDeploymentLabels)
+		dep := deployment.DefineDeployment("affiliated-cert-deployment", tsparams.TestCertificationNameSpace,
+			tsparams.UncertifiedContainerUrlCnfTest, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2 := deployment.DefineDeployment("name", tsparams.TestCertificationNameSpace,
-			"registry.connect.redhat.com/cockroachdb/cockroach:latest", tsparams.TestDeploymentLabels)
+		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", tsparams.TestCertificationNameSpace,
+			tsparams.CertifiedContainerUrlCockroachDB, tsparams.TestDeploymentLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
