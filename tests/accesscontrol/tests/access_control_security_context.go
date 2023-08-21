@@ -40,7 +40,7 @@ var _ = Describe("Access-control security-context,", func() {
 
 	// 63736
 	It("one deployment, one pod, one container, has allowed security context", func() {
-		if !tshelper.IsKindCluster() {
+		if tshelper.IsKindCluster() {
 			Skip("Skip on kind cluster")
 		}
 
@@ -91,7 +91,7 @@ var _ = Describe("Access-control security-context,", func() {
 
 	// 63738
 	It("two deployments, one pod each, one container each, both have allowed security context", func() {
-		if !tshelper.IsKindCluster() {
+		if tshelper.IsKindCluster() {
 			Skip("Skip on kind cluster")
 		}
 
