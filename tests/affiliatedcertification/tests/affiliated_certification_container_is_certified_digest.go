@@ -14,7 +14,6 @@ import (
 )
 
 var _ = Describe("Affiliated-certification container-is-certified-digest,", func() {
-
 	execute.BeforeAll(func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
@@ -24,7 +23,6 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
 	})
 
 	BeforeEach(func() {
