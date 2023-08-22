@@ -192,10 +192,6 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
   make test-features
 ```
 
-# Contribution Guidelines
-
-Fork the repo, create a new branch and create a PR with your changes.
-
 ## Running the unit tests
 
 To execute the unit tests in the repository, run the following:
@@ -203,6 +199,14 @@ To execute the unit tests in the repository, run the following:
 ```sh
 make test
 ```
+
+## Test exceptions on local kind cluster
+
+* access-control-security-context
+
+## Contribution Guidelines
+
+Fork the repo, create a new branch and create a PR with your changes.
 
 ## License
 
