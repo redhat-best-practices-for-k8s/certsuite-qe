@@ -224,7 +224,7 @@ var _ = Describe("Networking custom namespace,", func() {
 
 		By("Define daemonset and create it on cluster")
 
-		err = tshelper.DefineAndCreateDeamonsetWithMultusOnCluster(tsparams.TestNadNameB)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -249,7 +249,7 @@ var _ = Describe("Networking custom namespace,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -274,7 +274,7 @@ var _ = Describe("Networking custom namespace,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -304,7 +304,7 @@ var _ = Describe("Networking custom namespace,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
@@ -408,7 +408,7 @@ var _ = Describe("Networking custom namespace,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDeamonsetWithMultusOnCluster(tsparams.TestNadNameB)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -447,7 +447,7 @@ var _ = Describe("Networking custom namespace,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDeamonsetWithMultusOnCluster(tsparams.TestNadNameB)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
