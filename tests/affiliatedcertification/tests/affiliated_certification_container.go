@@ -12,7 +12,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
-var _ = Describe("Affiliated-certification container certification,", func() {
+var _ = Describe("Affiliated-certification container certification,", Serial, func() {
 
 	execute.BeforeAll(func() {
 

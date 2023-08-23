@@ -13,7 +13,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
-var _ = Describe("Affiliated-certification container-is-certified-digest,", func() {
+var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, func() {
 	execute.BeforeAll(func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(

@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() {
+var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

@@ -12,7 +12,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
-var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
+var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 	const tnfTestCaseName = tsparams.TnfContainerLoggingTcName
 
 	BeforeEach(func() {

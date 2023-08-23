@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
+var _ = Describe("platform-alteration-is-selinux-enforcing", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

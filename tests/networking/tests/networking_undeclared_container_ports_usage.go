@@ -20,7 +20,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
-var _ = Describe("Networking undeclared-container-ports-usage,", func() {
+var _ = Describe("Networking undeclared-container-ports-usage,", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

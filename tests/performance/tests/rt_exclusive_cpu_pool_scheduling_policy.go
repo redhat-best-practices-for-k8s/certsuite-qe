@@ -12,7 +12,7 @@ import (
 )
 
 var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy",
-	func() {
+	Serial, func() {
 
 		BeforeEach(func() {
 			By("Clean namespace before each test")

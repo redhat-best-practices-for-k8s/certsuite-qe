@@ -19,7 +19,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("lifecycle-image-pull-policy", func() {
+var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

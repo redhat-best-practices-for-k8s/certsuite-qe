@@ -19,7 +19,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
-var _ = Describe("lifecycle-container-startup", func() {
+var _ = Describe("lifecycle-container-startup", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("platform-alteration-hugepages-1g-only", func() {
+var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

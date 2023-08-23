@@ -18,7 +18,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-affinity-required-pods", func() {
+var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

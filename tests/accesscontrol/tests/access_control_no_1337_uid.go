@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control no-1337-uid,", func() {
+var _ = Describe("Access-control no-1337-uid,", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")

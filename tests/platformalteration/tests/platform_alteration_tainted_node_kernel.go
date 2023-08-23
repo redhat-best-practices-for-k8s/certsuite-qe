@@ -11,7 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("platform-alteration-tainted-node-kernel", func() {
+var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

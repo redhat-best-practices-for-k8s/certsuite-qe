@@ -15,7 +15,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("platform-alteration-boot-params", func() {
+var _ = Describe("platform-alteration-boot-params", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

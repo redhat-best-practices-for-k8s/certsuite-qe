@@ -11,7 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("performance-rt-apps-no-exec-probes", func() {
+var _ = Describe("performance-rt-apps-no-exec-probes", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

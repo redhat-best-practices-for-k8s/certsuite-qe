@@ -19,7 +19,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-scheduling", func() {
+var _ = Describe("lifecycle-pod-scheduling", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

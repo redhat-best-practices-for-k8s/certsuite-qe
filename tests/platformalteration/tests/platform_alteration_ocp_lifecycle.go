@@ -9,7 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 )
 
-var _ = Describe("platform-alteration-ocp-lifecycle", func() {
+var _ = Describe("platform-alteration-ocp-lifecycle", Serial, func() {
 
 	It("OCP version should be supported", func() {
 		By("Start platform-alteration-ocp-lifecycle test")

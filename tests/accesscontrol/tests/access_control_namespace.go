@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control namespace, ", func() {
+var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Clean test suite namespace before tests")

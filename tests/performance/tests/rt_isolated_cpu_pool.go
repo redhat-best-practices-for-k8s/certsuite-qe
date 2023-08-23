@@ -11,7 +11,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
+var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

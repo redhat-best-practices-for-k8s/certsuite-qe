@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("platform-alteration-ocp-node-os", func() {
 
-	It("Nodes OS should be compatible with OCP version", func() {
+	It("Nodes OS should be compatible with OCP version", Serial, func() {
 		By("Start platform-alteration-ocp-node-os test")
 		err := globalhelper.LaunchTests(tsparams.TnfOCPNodeOsName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))

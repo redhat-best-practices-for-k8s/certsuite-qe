@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control pod-host-ipc, ", func() {
+var _ = Describe("Access-control pod-host-ipc, ", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")

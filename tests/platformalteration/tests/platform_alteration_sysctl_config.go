@@ -17,7 +17,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("platform-alteration-sysctl-config", func() {
+var _ = Describe("platform-alteration-sysctl-config", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

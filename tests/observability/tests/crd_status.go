@@ -18,7 +18,7 @@ var (
 	crdNames = []string{}
 )
 
-var _ = Describe(tsparams.TnfCrdStatusTcName, func() {
+var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 	const tnfTestCaseName = tsparams.TnfCrdStatusTcName
 
 	AfterEach(func() {

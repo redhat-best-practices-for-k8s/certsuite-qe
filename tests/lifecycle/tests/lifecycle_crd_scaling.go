@@ -13,7 +13,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-crd-scaling", func() {
+var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 	execute.BeforeAll(func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
