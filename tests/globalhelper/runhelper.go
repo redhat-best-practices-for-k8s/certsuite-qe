@@ -24,6 +24,12 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 		return fmt.Errorf("failed to set TNF_CONTAINER_CLIENT: %w", err)
 	}
 
+	// disable the zip file creation
+	err = os.Setenv("TNF_OMIT_ARTIFACTS_ZIP_FILE", "true")
+	if err != nil {
+		return fmt.Errorf("failed to set TNF_OMIT_ARTIFACTS_ZIP_FILE: %w", err)
+	}
+
 	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
 	testArgs := []string{
 		"-k", os.Getenv("KUBECONFIG"),
