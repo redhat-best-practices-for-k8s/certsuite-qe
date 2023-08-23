@@ -91,11 +91,11 @@ func DefineAndCreateDeployment(deploymentName string, replicaNumber int32) error
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
-func DefineAndCreateDeamonsetWithMultusOnCluster(nadName string) error {
+func DefineAndCreateDaemonsetWithMultusOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, nil)
 }
 
-func DefineAndCreateDeamonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
+func DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
 	return defineDaemonSetBasedOnArgs(nadName, tsparams.NetworkingTestMultusSkipLabel)
 }
 
