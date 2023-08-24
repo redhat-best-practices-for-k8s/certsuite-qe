@@ -12,6 +12,26 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
+// OverrideReportDir overrides the report directory.
+func OverrideReportDir(reportDir string) {
+	err := os.MkdirAll(reportDir, os.ModePerm)
+	if err != nil {
+		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+	}
+
+	GetConfiguration().General.TnfReportDir = reportDir
+}
+
+// OverrideTnfConfigDir overrides the TNF config directory.
+func OverrideTnfConfigDir(configDir string) {
+	err := os.MkdirAll(configDir, os.ModePerm)
+	if err != nil {
+		glog.Error("could not create dest directory= %s, err=%s", configDir, err)
+	}
+
+	GetConfiguration().General.TnfConfigDir = configDir
+}
+
 // LaunchTests stats tests based on given parameters.
 func LaunchTests(testCaseName string, tcNameForReport string) error {
 	containerEngine, err := container.SelectEngine()

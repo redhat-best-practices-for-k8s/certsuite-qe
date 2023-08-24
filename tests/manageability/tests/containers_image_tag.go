@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -10,24 +12,58 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("manageability-containers-image-tag", Serial, func() {
+var _ = Describe("manageability-containers-image-tag", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
+		randomNamespace = tsparams.ManageabilityNamespace + "-" + globalhelper.GenerateRandomString(10)
+
+		By(fmt.Sprintf("Create %s namespace", randomNamespace))
+		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Override default report directory")
+		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
+		reportDir := origReportDir + "/" + randomNamespace
+		globalhelper.OverrideReportDir(reportDir)
+
+		By("Override default TNF config directory")
+		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
+		configDir := origTnfConfigDir + "/" + randomNamespace
+		globalhelper.OverrideTnfConfigDir(configDir)
+
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
+		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+		err := namespaces.DeleteAndWait(
+			globalhelper.GetAPIClient().CoreV1Interface,
+			randomNamespace,
+			tsparams.WaitingTime,
+		)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Restore default report directory")
+		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
+
+		By("Restore default TNF config directory")
+		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	It("One pod with valid image tag", func() {
 
 		By("Define pod")
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.ManageabilityNamespace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
@@ -47,7 +83,7 @@ var _ = Describe("manageability-containers-image-tag", Serial, func() {
 	It("One pod with invalid image tag", func() {
 
 		By("Define pod")
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.ManageabilityNamespace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
