@@ -9,13 +9,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/networking/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
@@ -34,6 +35,11 @@ func TestNetworking(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
+	configSuite, err := config.NewConfig()
+	if err != nil {
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+	}
+
 	By("Validate that cluster is Schedulable")
 	Eventually(func() bool {
 		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient())
@@ -43,45 +49,14 @@ var _ = BeforeSuite(func() {
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err := nodes.WaitForNodesReady(globalhelper.GetAPIClient(), tsparams.WaitingTime, tsparams.RetryInterval)
-	Expect(err).ToNot(HaveOccurred())
-
-	By(fmt.Sprintf("Create %s namespace", tsparams.TestNetworkingNameSpace))
-	err = namespaces.Create(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Define TNF config file")
-	err = globalhelper.DefineTnfConfig(
-		[]string{tsparams.TestNetworkingNameSpace},
-		[]string{tsparams.TestPodLabel},
-		[]string{},
-		[]string{},
-		[]string{})
+	err = nodes.WaitForNodesReady(globalhelper.GetAPIClient(), tsparams.WaitingTime, tsparams.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Set rbac policy which allows authenticated users to run privileged containers")
 	err = globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
 	Expect(err).ToNot(HaveOccurred())
 
-})
-
-var _ = AfterSuite(func() {
-	By("Remove networking test namespaces")
-	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient().CoreV1Interface,
-		tsparams.TestNetworkingNameSpace,
-		tsparams.WaitingTime,
-	)
-	Expect(err).ToNot(HaveOccurred())
-
-	err = namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient().CoreV1Interface,
-		tsparams.AdditionalNetworkingNamespace,
-		tsparams.WaitingTime,
-	)
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Remove reports from report directory")
-	err = globalhelper.RemoveContentsFromReportDir()
+	By("Ensure all nodes are labeled with 'worker-cnf' label")
+	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
 })

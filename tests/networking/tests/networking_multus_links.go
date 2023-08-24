@@ -3,67 +3,74 @@ package tests
 import (
 	"fmt"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
-var _ = Describe("Networking custom namespace,", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
-
-	execute.BeforeAll(func() {
-		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-	})
+var _ = Describe("Networking custom namespace,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
+		randomNamespace = tsparams.TestNetworkingNameSpace + "-" + globalhelper.GenerateRandomString(10)
+
+		By(fmt.Sprintf("Create %s namespace", randomNamespace))
+		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
+		By("Override default report directory")
+		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
+		reportDir := origReportDir + "/" + randomNamespace
+		globalhelper.OverrideReportDir(reportDir)
 
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Override default TNF config directory")
+		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
+		configDir := origTnfConfigDir + "/" + randomNamespace
+		globalhelper.OverrideTnfConfigDir(configDir)
+
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
+		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+		err := namespaces.DeleteAndWait(
+			globalhelper.GetAPIClient().CoreV1Interface,
+			randomNamespace,
+			tsparams.WaitingTime,
+		)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
+		By("Restore default report directory")
+		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
+
+		By("Restore default TNF config directory")
+		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	// 48328
 	It("custom deployment 3 pods, 1 NAD, connectivity via Multus secondary interface", func() {
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -86,18 +93,18 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 		// see https://github.com/test-network-function/cnfcert-tests-verification/pull/263
 
 		By("Define and create Network-attachment-definition")
-		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+		err := tshelper.DefineAndCreateNadOnCluster(
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentBName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentBName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -117,21 +124,21 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 	It("custom deployment and daemonset 3 pods, 2 NADs, connectivity via Multus secondary interfaces", func() {
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, randomNamespace, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define first deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentBName, []string{tsparams.TestNadNameB}, 3)
+			tsparams.TestDeploymentBName, randomNamespace, []string{tsparams.TestNadNameB}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -150,12 +157,12 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 	// 48334
 	It("custom deployment 3 pods, 1 NAD missing IP, connectivity via Multus secondary interface[skip]", func() {
 		By("Define and create Network-attachment-definition")
-		err := tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameA, "")
+		err := tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameA, randomNamespace, "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -176,20 +183,20 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create Network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, "")
+		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, randomNamespace, "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment-a and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 1)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 1)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment-b and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentBName, []string{tsparams.TestNadNameB}, 3)
+			tsparams.TestDeploymentBName, randomNamespace, []string{tsparams.TestNadNameB}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -211,20 +218,20 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, "")
+		err = tshelper.DefineAndCreateNadOnCluster(tsparams.TestNadNameB, randomNamespace, "")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
 
-		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB, randomNamespace, "ds1")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -245,11 +252,11 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA, randomNamespace, "ds2")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -270,16 +277,16 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA, randomNamespace, "ds3")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -300,16 +307,16 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(tsparams.TestNadNameA, randomNamespace, "ds4")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -330,16 +337,16 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, randomNamespace, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA, tsparams.TestNadNameB}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA, tsparams.TestNadNameB}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -361,16 +368,16 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Put one deployment's pod  interface down")
-		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		By("Put one deployment's pod interface down")
+		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -391,24 +398,24 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 		"interface[negative]", func() {
 
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, randomNamespace, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Put one deployment's pod interface down")
-		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB, randomNamespace, "ds5")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -430,24 +437,24 @@ var _ = Describe("Networking custom namespace,", Serial, func() {
 
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameA, tsparams.TestIPamIPNetworkA)
+			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = tshelper.DefineAndCreateNadOnCluster(
-			tsparams.TestNadNameB, tsparams.TestIPamIPNetworkB)
+			tsparams.TestNadNameB, randomNamespace, tsparams.TestIPamIPNetworkB)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
 		err = tshelper.DefineAndCreateDeploymentWithMultusOnCluster(
-			tsparams.TestDeploymentAName, []string{tsparams.TestNadNameB, tsparams.TestNadNameA}, 3)
+			tsparams.TestDeploymentAName, randomNamespace, []string{tsparams.TestNadNameB, tsparams.TestNadNameA}, 3)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Put one deployment's pod interface down")
-		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"})
+		err = tshelper.ExecCmdOnOnePodInNamespace([]string{"ip", "link", "set", "net1", "down"}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonset and create it on cluster")
-		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB)
+		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB, randomNamespace, "ds6")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
