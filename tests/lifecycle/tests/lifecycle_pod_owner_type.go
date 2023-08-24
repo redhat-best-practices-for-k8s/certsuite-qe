@@ -3,52 +3,71 @@ package tests
 import (
 	"fmt"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-owner-type", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
+var _ = Describe("lifecycle-pod-owner-type", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		err := tshelper.WaitUntilClusterIsStable()
+		randomNamespace = tsparams.LifecycleNamespace + "-" + globalhelper.GenerateRandomString(10)
+
+		By(fmt.Sprintf("Create %s namespace", randomNamespace))
+		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		By("Override default report directory")
+		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
+		reportDir := origReportDir + "/" + randomNamespace
+		globalhelper.OverrideReportDir(reportDir)
 
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Override default TNF config directory")
+		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
+		configDir := origTnfConfigDir + "/" + randomNamespace
+		globalhelper.OverrideTnfConfigDir(configDir)
+
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
+		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+		err := namespaces.DeleteAndWait(
+			globalhelper.GetAPIClient().CoreV1Interface,
+			randomNamespace,
+			tsparams.WaitingTime,
+		)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Restore default report directory")
+		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
+
+		By("Restore default TNF config directory")
+		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	// 47409
 	It("One ReplicaSet, several pods", func() {
 
 		By("Define ReplicaSet with replica number")
-		replicaSet := tshelper.DefineReplicaSet(tsparams.TestReplicaSetName)
+		replicaSet := tshelper.DefineReplicaSet(tsparams.TestReplicaSetName, randomNamespace)
 		replicaset.RedefineWithReplicaNumber(replicaSet, 3)
 
 		err := globalhelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, tsparams.WaitingTime)
@@ -68,13 +87,13 @@ var _ = Describe("lifecycle-pod-owner-type", Serial, func() {
 	It("Two deployments, several pods", func() {
 
 		By("Define deployments")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
@@ -94,7 +113,7 @@ var _ = Describe("lifecycle-pod-owner-type", Serial, func() {
 	It("StatefulSet pod", func() {
 
 		By("Define statefulSet")
-		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName)
+		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName, randomNamespace)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -113,7 +132,7 @@ var _ = Describe("lifecycle-pod-owner-type", Serial, func() {
 	It("One pod, not part of any workload resource [negative]", func() {
 
 		By("Define pod")
-		put := tshelper.DefinePod(tsparams.TestPodName)
+		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -132,20 +151,20 @@ var _ = Describe("lifecycle-pod-owner-type", Serial, func() {
 	It("Two deployments, one pod not related to any resource [negative]", func() {
 
 		By("Define deployments")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		put := tshelper.DefinePod(tsparams.TestPodName)
+		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

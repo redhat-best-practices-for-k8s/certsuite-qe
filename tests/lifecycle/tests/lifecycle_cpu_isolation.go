@@ -3,18 +3,15 @@ package tests
 import (
 	"fmt"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
 )
@@ -24,29 +21,45 @@ var (
 	rtcNames = []string{}
 )
 
-var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
+var _ = Describe("lifecycle-cpu-isolation", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		err := tshelper.WaitUntilClusterIsStable()
+		randomNamespace = tsparams.LifecycleNamespace + "-" + globalhelper.GenerateRandomString(10)
+
+		By(fmt.Sprintf("Create %s namespace", randomNamespace))
+		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		By("Override default report directory")
+		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
+		reportDir := origReportDir + "/" + randomNamespace
+		globalhelper.OverrideReportDir(reportDir)
 
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Override default TNF config directory")
+		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
+		configDir := origTnfConfigDir + "/" + randomNamespace
+		globalhelper.OverrideTnfConfigDir(configDir)
+
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test in order to enable RunTimeClass deletion.")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
+		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+		err := namespaces.DeleteAndWait(
+			globalhelper.GetAPIClient().CoreV1Interface,
+			randomNamespace,
+			tsparams.WaitingTime,
+		)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Delete all RTC's that were created by the previous test case.")
@@ -58,6 +71,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		// clear the list.
 		rtcNames = []string{}
+
+		By("Restore default report directory")
+		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
+
+		By("Restore default TNF config directory")
+		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	const disableVar = "disable"
@@ -67,7 +86,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
@@ -80,7 +99,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
+		rtcNames = append(rtcNames, rtc.Name)
 
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
@@ -104,7 +123,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 
@@ -118,7 +137,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
+		rtcNames = append(rtcNames, rtc.Name)
 
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
@@ -142,7 +161,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define deployment with resources and runTimeClass")
-		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
@@ -156,7 +175,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
+		rtcNames = append(rtcNames, rtc.Name)
 
 		deployment.RedefineWithRunTimeClass(dep, rtc.Name)
 		deployment.RedefineWithCPUResources(dep, "1", "1")
@@ -180,7 +199,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define daemonSet with resources and runTimeClass")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Add annotations to the pod")
@@ -194,7 +213,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
+		rtcNames = append(rtcNames, rtc.Name)
 
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
@@ -215,7 +234,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	// 54734
 	It("One daemonSet no annotations [negative]", func() {
 		By("Define daemonSet with resources and runTimeClass")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Define runTimeClass")
@@ -223,7 +242,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
+		rtcNames = append(rtcNames, rtc.Name)
 
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
@@ -247,7 +266,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define deployment with resources and runTimeClass")
-		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
@@ -276,9 +295,9 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		puta := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		puta := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
-		putb := pod.DefinePod("lifecycle-podb", tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		putb := pod.DefinePod("lifecycle-podb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
@@ -293,7 +312,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, tsparams.TnfRunTimeClass)
+		rtcNames = append(rtcNames, rtc.Name)
 
 		By("Define runTimeClass for the first pod")
 		pod.RedefineWithRunTimeClass(puta, rtc.Name)

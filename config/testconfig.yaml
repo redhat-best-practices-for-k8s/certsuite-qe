@@ -17,3 +17,4 @@ general:
   # yamllint disable-line rule:line-length
   # tnf_report_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_report"
   tnf_report_dir: "/path/to/cnfcert-tests-verification/tnf_report"
+  disable_intrusive_tests: false

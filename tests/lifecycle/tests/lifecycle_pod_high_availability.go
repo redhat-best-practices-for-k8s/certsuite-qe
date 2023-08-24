@@ -3,13 +3,11 @@ package tests
 import (
 	"fmt"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
@@ -18,30 +16,58 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
+var _ = Describe("lifecycle-pod-high-availability", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		err := tshelper.WaitUntilClusterIsStable()
+		randomNamespace = tsparams.LifecycleNamespace + "-" + globalhelper.GenerateRandomString(10)
+
+		if globalhelper.IsKindCluster() {
+			By("Make masters schedulable")
+			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
+			Expect(err).ToNot(HaveOccurred())
+		}
+
+		By(fmt.Sprintf("Create %s namespace", randomNamespace))
+		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		By("Override default report directory")
+		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
+		reportDir := origReportDir + "/" + randomNamespace
+		globalhelper.OverrideReportDir(reportDir)
 
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Override default TNF config directory")
+		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
+		configDir := origTnfConfigDir + "/" + randomNamespace
+		globalhelper.OverrideTnfConfigDir(configDir)
+
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
+		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+		err := namespaces.DeleteAndWait(
+			globalhelper.GetAPIClient().CoreV1Interface,
+			randomNamespace,
+			tsparams.WaitingTime,
+		)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Restore default report directory")
+		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
+
+		By("Restore default TNF config directory")
+		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	// 48492
@@ -54,7 +80,7 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		}
 
 		By("Define and create deployment")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
@@ -82,7 +108,7 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		}
 
 		By("Define and create first deployment")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
@@ -91,7 +117,7 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define and create second deployment")
-		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
@@ -119,7 +145,7 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		}
 
 		By("Define and create deployment")
-		deployment, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
+		deployment, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
@@ -145,14 +171,14 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		}
 
 		By("Define and create first deployment")
-		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define and create second deployment")
-		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb")
+		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
@@ -178,7 +204,7 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		}
 
 		By("Define and create deployment")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
