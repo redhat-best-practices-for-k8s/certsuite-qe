@@ -17,7 +17,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 )
 
-var _ = Describe("Lifecycle pod-toleration-bypass", func() {
+var _ = Describe("Lifecycle pod-toleration-bypass", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

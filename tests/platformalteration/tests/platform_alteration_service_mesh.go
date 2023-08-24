@@ -25,7 +25,7 @@ const (
 	istioNamespace = "istio-system"
 )
 
-var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
+var _ = Describe("platform-alteration-service-mesh-usage-installed", Serial, func() {
 
 	execute.BeforeAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
@@ -112,7 +112,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", func() {
 	})
 })
 
-var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", func() {
+var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

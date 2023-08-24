@@ -15,7 +15,7 @@ import (
 
 var commandToLaunchTwoProcesses = []string{"/bin/bash", "-c", "seq 998 999| xargs -n 1 -P 2 sleep"}
 
-var _ = Describe("Access-control one-process-per-container,", func() {
+var _ = Describe("Access-control one-process-per-container,", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")

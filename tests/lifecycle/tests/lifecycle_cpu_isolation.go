@@ -24,7 +24,7 @@ var (
 	rtcNames = []string{}
 )
 
-var _ = Describe("lifecycle-cpu-isolation", func() {
+var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

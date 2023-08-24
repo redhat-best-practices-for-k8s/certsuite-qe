@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control net-raw-capability-check,", func() {
+var _ = Describe("Access-control net-raw-capability-check,", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")

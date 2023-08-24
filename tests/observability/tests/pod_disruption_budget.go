@@ -14,7 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
+var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

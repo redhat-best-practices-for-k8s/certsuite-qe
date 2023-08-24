@@ -15,7 +15,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 )
 
-var _ = Describe("Access control custom namespace, custom deployment,", func() {
+var _ = Describe("Access control custom namespace, custom deployment,", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Clean namespace before all tests")

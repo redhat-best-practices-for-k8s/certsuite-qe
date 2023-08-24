@@ -18,7 +18,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-high-availability", func() {
+var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

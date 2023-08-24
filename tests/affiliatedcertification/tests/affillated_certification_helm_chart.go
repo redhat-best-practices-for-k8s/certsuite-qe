@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Affiliated-certification helm chart certification,", func() {
+var _ = Describe("Affiliated-certification helm chart certification,", Serial, func() {
 	execute.BeforeAll(func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(

@@ -18,7 +18,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-owner-type", func() {
+var _ = Describe("lifecycle-pod-owner-type", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

@@ -25,7 +25,7 @@ func setupInitialRbacConfiguration() {
 	Expect(err).ToNot(HaveOccurred())
 }
 
-var _ = Describe("Access-control pod-role-bindings,", func() {
+var _ = Describe("Access-control pod-role-bindings,", Serial, func() {
 
 	execute.BeforeAll(func() {
 

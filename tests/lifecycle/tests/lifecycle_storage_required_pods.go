@@ -16,7 +16,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-storage-required-pods", func() {
+var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 	BeforeEach(func() {
 		err := tshelper.WaitUntilClusterIsStable()
 		Expect(err).ToNot(HaveOccurred())

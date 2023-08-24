@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("manageability-containers-image-tag", func() {
+var _ = Describe("manageability-containers-image-tag", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

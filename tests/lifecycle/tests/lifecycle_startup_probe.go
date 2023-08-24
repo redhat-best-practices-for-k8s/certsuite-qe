@@ -21,7 +21,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-startup-probe", func() {
+var _ = Describe("lifecycle-startup-probe", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

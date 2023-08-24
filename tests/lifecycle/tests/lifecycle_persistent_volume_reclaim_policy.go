@@ -27,7 +27,7 @@ var (
 	pvNames = []string{}
 )
 
-var _ = Describe("lifecycle-persistent-volume-reclaim-policy", func() {
+var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

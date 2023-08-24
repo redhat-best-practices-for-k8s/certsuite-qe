@@ -15,7 +15,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
-var _ = Describe("Affiliated-certification invalid operator certification,", func() {
+var _ = Describe("Affiliated-certification invalid operator certification,", Serial, func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo

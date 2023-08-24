@@ -14,7 +14,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("Access-control container-host-port,", func() {
+var _ = Describe("Access-control container-host-port,", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Define tnf config file")

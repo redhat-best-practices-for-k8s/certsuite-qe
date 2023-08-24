@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("manageability-container-port-name", func() {
+var _ = Describe("manageability-container-port-name", Serial, func() {
 
 	BeforeEach(func() {
 		By("Clean namespace before each test")

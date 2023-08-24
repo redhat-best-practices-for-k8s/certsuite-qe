@@ -18,7 +18,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
-var _ = Describe("Networking network-policy-deny-all,", func() {
+var _ = Describe("Networking network-policy-deny-all,", Serial, func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
