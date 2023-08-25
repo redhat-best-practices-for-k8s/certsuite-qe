@@ -66,7 +66,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54201
 	It("One deployment, one pod with a volume that uses a reclaim policy of delete", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -102,7 +102,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54202
 	It("One pod with a volume that uses a reclaim policy of delete", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -137,7 +137,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54203
 	It("One replicaSet with a volume that uses a reclaim policy of delete", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -172,7 +172,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54204
 	It("One deployment, one pod with a volume that uses a reclaim policy of retain [negative]", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimRetain)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -208,7 +208,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54206
 	It("One pod with a volume that uses a reclaim policy of recycle [negative]", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimRecycle)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -244,7 +244,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	It("Two deployments, one with reclaim policy of delete, other with recycle [negative]", func() {
 
 		By("Define and create first pv")
-		persistentVolumea := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolumea := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumea, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolumea, tsparams.WaitingTime)
@@ -253,7 +253,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		pvNames = append(pvNames, tsparams.TestPVName)
 
 		By("Define and create second pv")
-		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb", tsparams.LifecycleNamespace)
+		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb")
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumeb, corev1.PersistentVolumeReclaimRecycle)
 
 		err = tshelper.CreatePersistentVolume(persistentVolumeb, tsparams.WaitingTime)
