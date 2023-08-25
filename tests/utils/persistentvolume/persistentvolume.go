@@ -7,7 +7,7 @@ import (
 )
 
 // DefinePersistentVolume defines a persistent volume manifest based on given params.
-func DefinePersistentVolume(pvName string, namespace string) *corev1.PersistentVolume {
+func DefinePersistentVolume(pvName string) *corev1.PersistentVolume {
 	return &corev1.PersistentVolume{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: pvName,

@@ -52,7 +52,7 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 
 	It("One pod with a storage, PVC with no storageclass defined", func() {
 		By("Define PV")
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -84,7 +84,7 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 
 	It("One pod with local storage, PVC with storageclass defined", func() {
 		By("Define PV")
-		testPv := persistentvolume.DefinePersistentVolume(tsparams.TestPVName, tsparams.LifecycleNamespace)
+		testPv := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
 		persistentvolume.RedefineWithPVReclaimPolicy(testPv, corev1.PersistentVolumeReclaimDelete)
 		persistentvolume.RedefineWithStorageClass(testPv, tsparams.TestLocalStorageClassName)
 
