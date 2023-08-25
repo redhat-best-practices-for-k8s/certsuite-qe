@@ -58,17 +58,17 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		pvNames = append(pvNames, tsparams.TestPVName)
+		pvNames = append(pvNames, persistentVolume.Name)
 
 		By("Define PVC")
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(persistentVolume.Name, tsparams.LifecycleNamespace)
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod with a pvc")
 		testPod := tshelper.DefinePod(tsparams.TestPodName)
 
-		pod.RedefineWithPVC(testPod, tsparams.TestPVCName, tsparams.TestPVCName)
+		pod.RedefineWithPVC(testPod, persistentVolume.Name, pvc.Name)
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -91,10 +91,10 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 		err := tshelper.CreatePersistentVolume(testPv, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		pvNames = append(pvNames, tsparams.TestPVName)
+		pvNames = append(pvNames, testPv.Name)
 
 		By("Define PVC")
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(testPv.Name, tsparams.LifecycleNamespace)
 		persistentvolumeclaim.RedefineWithStorageClass(pvc, tsparams.TestLocalStorageClassName)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, testPv.Name)
@@ -103,7 +103,7 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 		By("Define pod with a pvc")
 		testPod := tshelper.DefinePod(tsparams.TestPodName)
 
-		pod.RedefineWithPVC(testPod, tsparams.TestPVCName, tsparams.TestPVCName)
+		pod.RedefineWithPVC(testPod, testPv.Name, pvc.Name)
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
