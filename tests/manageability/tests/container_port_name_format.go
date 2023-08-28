@@ -7,27 +7,35 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/manageability/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/manageability/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("manageability-container-port-name", Serial, func() {
+var _ = Describe("manageability-container-port-name", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.ManageabilityNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.ManageabilityNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One pod with valid port name", func() {
 
 		By("Define pod")
-		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, tsparams.ManageabilityNamespace,
+		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, randomNamespace,
 			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
@@ -47,7 +55,7 @@ var _ = Describe("manageability-container-port-name", Serial, func() {
 	It("One pod with invalid port name", func() {
 
 		By("Define pod")
-		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, tsparams.ManageabilityNamespace,
+		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, randomNamespace,
 			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
 
 		tshelper.RedefinePodWithContainerPort(testPod, 0, tsparams.InvalidPortName)

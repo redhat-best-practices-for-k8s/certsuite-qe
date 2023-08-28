@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/golang/glog"
 	appsv1 "k8s.io/api/apps/v1"
@@ -360,4 +362,20 @@ func CopyFiles(src string, dst string) error {
 	}
 
 	return nil
+}
+
+var seededRand *rand.Rand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
+func GenerateRandomString(length int) string {
+	charset := "abcdefghijklmnopqrstuvwxyz"
+
+	//nolint:varnamelen
+	b := make([]byte, length)
+
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+
+	return string(b)
 }
