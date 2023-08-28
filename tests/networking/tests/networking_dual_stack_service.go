@@ -1,74 +1,44 @@
 package tests
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
-var _ = Describe("Networking dual-stack-service,", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
-
-	execute.BeforeAll(func() {
-		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
-		Expect(err).ToNot(HaveOccurred())
-	})
+var _ = Describe("Networking dual-stack-service,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespaces before each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
-		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespaces after each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Clean(tsparams.AdditionalNetworkingNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 62506
 	It("service with ipFamilyPolicy SingleStack and ip version ipv4 [negative]", func() {
 
 		By("Define and create service")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, false,
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3022, 3022, false, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
@@ -89,7 +59,8 @@ var _ = Describe("Networking dual-stack-service,", Serial, func() {
 	It("service with ipFamilyPolicy PreferDualStack and zero ClusterIPs [negative]", func() {
 
 		By("Define and create service")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, true, []corev1.IPFamily{"IPv4"}, "PreferDualStack")
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3023, 3023,
+			false, true, []corev1.IPFamily{"IPv4"}, "PreferDualStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -111,7 +82,8 @@ var _ = Describe("Networking dual-stack-service,", Serial, func() {
 		func() {
 
 			By("Define and create service")
-			err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false, false, []corev1.IPFamily{"IPv4"}, "")
+			err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3024,
+				3024, false, false, []corev1.IPFamily{"IPv4"}, "")
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Start tests")

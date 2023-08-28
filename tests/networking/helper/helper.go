@@ -26,16 +26,16 @@ import (
 )
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
-func DefineAndCreateDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, tsparams.TestNetworkingNameSpace,
+func DefineAndCreateDeploymentOnCluster(replicaNumber int32, namespace string) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, namespace,
 		replicaNumber, false, nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
-func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string, replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(name, tsparams.TestNetworkingNameSpace,
+func DefineAndCreateDeploymentWithMultusOnCluster(name, namespace string, nadNames []string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(name, namespace,
 		replicaNumber, true, nadNames, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
@@ -43,9 +43,9 @@ func DefineAndCreateDeploymentWithMultusOnCluster(name string, nadNames []string
 
 // DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
-	name string, nadNames []string, replicaNumber int32) error {
+	name, namespace string, nadNames []string, replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(
-		name, tsparams.TestNetworkingNameSpace,
+		name, namespace,
 		replicaNumber,
 		false,
 		nadNames,
@@ -55,8 +55,8 @@ func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
-func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, tsparams.TestNetworkingNameSpace,
+func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32, namespace string) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, namespace,
 		replicaNumber, true,
 		nil, nil)
 
@@ -64,8 +64,8 @@ func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32) error {
 }
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
-func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, tsparams.TestNetworkingNameSpace,
+func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32, namespace string) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, namespace,
 		replicaNumber,
 		true, nil, tsparams.NetworkingTestSkipLabel)
 
@@ -84,24 +84,24 @@ func DefineAndCreateDeploymentWithNamespace(namespace string, replicaNumber int3
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
-func DefineAndCreateDeployment(deploymentName string, replicaNumber int32) error {
-	deploymentUnderTest := defineDeploymentBasedOnArgs(deploymentName, tsparams.TestNetworkingNameSpace,
+func DefineAndCreateDeployment(deploymentName, namespace string, replicaNumber int32) error {
+	deploymentUnderTest := defineDeploymentBasedOnArgs(deploymentName, namespace,
 		replicaNumber, false, nil, nil)
 
 	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
-func DefineAndCreateDaemonsetWithMultusOnCluster(nadName string) error {
-	return defineDaemonSetBasedOnArgs(nadName, nil)
+func DefineAndCreateDaemonsetWithMultusOnCluster(nadName, namespace, daemonsetName string) error {
+	return defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName, nil)
 }
 
-func DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(nadName string) error {
-	return defineDaemonSetBasedOnArgs(nadName, tsparams.NetworkingTestMultusSkipLabel)
+func DefineAndCreateDaemonsetWithMultusAndSkipLabelOnCluster(nadName, namespace, daemonsetName string) error {
+	return defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName, tsparams.NetworkingTestMultusSkipLabel)
 }
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
-func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []corev1.ContainerPort) error {
-	deploymentUnderTest, err := DefineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName)
+func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []corev1.ContainerPort, namespace string) error {
+	deploymentUnderTest, err := DefineDeploymentWithContainers(replicaNumber, len(ports), tsparams.TestDeploymentAName, namespace)
 	if err != nil {
 		return err
 	}
@@ -114,12 +114,12 @@ func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []co
 }
 
 // ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace.
-func ExecCmdOnOnePodInNamespace(command []string) error {
-	return execCmdOnPodsListInNamespace(command, "first")
+func ExecCmdOnOnePodInNamespace(command []string, namespace string) error {
+	return execCmdOnPodsListInNamespace(command, "first", namespace)
 }
 
-func ExecCmdOnAllPodInNamespace(command []string) error {
-	return execCmdOnPodsListInNamespace(command, "all")
+func ExecCmdOnAllPodInNamespace(command []string, namespace string) error {
+	return execCmdOnPodsListInNamespace(command, "all", namespace)
 }
 
 func RedefineServiceToHeadless(service *corev1.Service) {
@@ -127,14 +127,14 @@ func RedefineServiceToHeadless(service *corev1.Service) {
 }
 
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
-func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort, headless bool,
+func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetPort int32, withNodePort, headless bool,
 	ipFams []corev1.IPFamily, ipFamPolicy string) error {
 	var testService *corev1.Service
 
 	if ipFamPolicy == "" {
 		testService = service.DefineService(
 			name,
-			tsparams.TestNetworkingNameSpace,
+			namespace,
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
@@ -146,7 +146,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 
 		testService = service.DefineService(
 			name,
-			tsparams.TestNetworkingNameSpace,
+			namespace,
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
@@ -168,7 +168,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		RedefineServiceToHeadless(testService)
 	}
 
-	_, err := globalhelper.GetAPIClient().Services(tsparams.TestNetworkingNameSpace).Create(
+	_, err := globalhelper.GetAPIClient().Services(namespace).Create(
 		context.TODO(),
 		testService, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
@@ -180,8 +180,8 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	return nil
 }
 
-func DefineAndCreateNadOnCluster(name string, network string) error {
-	nadOneInterface := nad.DefineNad(name, tsparams.TestNetworkingNameSpace)
+func DefineAndCreateNadOnCluster(name, namespace string, network string) error {
+	nadOneInterface := nad.DefineNad(name, namespace)
 
 	if network != "" {
 		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
@@ -198,13 +198,13 @@ func DefineAndCreateNadOnCluster(name string, network string) error {
 	return nil
 }
 
-func GetClusterMultusInterfaces() ([]string, error) {
-	err := defineAndCreatePrivilegedDaemonset()
+func GetClusterMultusInterfaces(namespace string) ([]string, error) {
+	err := defineAndCreatePrivilegedDaemonset(namespace)
 	if err != nil {
 		return nil, err
 	}
 
-	podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.TestNetworkingNameSpace)
+	podsList, err := globalhelper.GetListOfPodsInNamespace(namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -317,12 +317,12 @@ func defineDeploymentBasedOnArgs(
 }
 
 func DefineDeploymentWithContainers(replica int32, containers int,
-	name string) (*appsv1.Deployment, error) {
+	name, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid containers number")
 	}
 
-	deploymentStruct := defineDeploymentBasedOnArgs(name, tsparams.TestNetworkingNameSpace, replica, false, nil, nil)
+	deploymentStruct := defineDeploymentBasedOnArgs(name, namespace, replica, false, nil, nil)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
@@ -330,9 +330,9 @@ func DefineDeploymentWithContainers(replica int32, containers int,
 	return deploymentStruct, nil
 }
 
-func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error {
-	testDaemonset := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
+func defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName string, labels map[string]string) error {
+	testDaemonset := daemonset.DefineDaemonSet(namespace,
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels, daemonsetName)
 	daemonset.RedefineWithMultus(testDaemonset, nadName)
 	//nolint:lll
 	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.GetConfiguration().General.CnfNodeLabel: ""})
@@ -344,8 +344,8 @@ func defineDaemonSetBasedOnArgs(nadName string, labels map[string]string) error 
 	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, tsparams.WaitingTime)
 }
 
-func defineAndCreatePrivilegedDaemonset() error {
-	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, globalhelper.GetConfiguration().General.TestImage,
+func defineAndCreatePrivilegedDaemonset(namespace string) error {
+	daemonSet := daemonset.DefineDaemonSet(namespace, globalhelper.GetConfiguration().General.TestImage,
 		tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.GetConfiguration().General.WorkerNodeLabel: ""})
 	daemonset.RedefineWithPrivilegeAndHostNetwork(daemonSet)
@@ -358,8 +358,8 @@ func defineAndCreatePrivilegedDaemonset() error {
 	return nil
 }
 
-func execCmdOnPodsListInNamespace(command []string, execOn string) error {
-	runningTestPods, err := globalhelper.GetAPIClient().Pods(tsparams.TestNetworkingNameSpace).List(
+func execCmdOnPodsListInNamespace(command []string, execOn, namespace string) error {
+	runningTestPods, err := globalhelper.GetAPIClient().Pods(namespace).List(
 		context.TODO(),
 		metav1.ListOptions{})
 	if err != nil {
@@ -409,12 +409,13 @@ func createContainerSpecsFromContainerPorts(ports []corev1.ContainerPort) []core
 	return containerSpecs
 }
 
-func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports []corev1.ContainerPort) (*appsv1.Deployment, error) {
+func DefineDeploymentWithContainerPorts(name, namespace string,
+	replicaNumber int32, ports []corev1.ContainerPort) (*appsv1.Deployment, error) {
 	if len(ports) < 1 {
 		return nil, errors.New("invalid number of containers")
 	}
 
-	deploymentStruct := deployment.DefineDeployment(name, tsparams.TestNetworkingNameSpace,
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)

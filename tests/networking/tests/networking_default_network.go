@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
@@ -11,57 +10,43 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
 )
 
-var _ = Describe("Networking custom namespace, custom deployment,", Serial, func() {
-
+var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
 		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
 	}
 
-	execute.BeforeAll(func() {
-		By("Clean namespace before all tests")
-		err = namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestNetworkingNameSpace)
-		Expect(err).ToNot(HaveOccurred())
-	})
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Clean namespace after each test")
-		err = namespaces.Clean(tsparams.TestNetworkingNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 45440
 	It("3 custom pods on Default network networking-icmpv4-connectivity", func() {
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(3)
+		err := tshelper.DefineAndCreateDeploymentOnCluster(3, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -80,11 +65,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", Serial, func
 	// 45441
 	It("custom daemonset, 4 custom pods on Default network", func() {
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentOnCluster(2)
+		err := tshelper.DefineAndCreateDeploymentOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, configSuite.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, configSuite.General.TestImage,
 			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
@@ -109,11 +94,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", Serial, func
 	It("3 custom pods on Default network networking-icmpv4-connectivity fail when "+
 		"one pod is disconnected [negative]", func() {
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreatePrivilegedDeploymentOnCluster(2)
+		err := tshelper.DefineAndCreatePrivilegedDeploymentOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Close communication between deployment pods")
-		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.TestNetworkingNameSpace)
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		for index := range podsList.Items {
@@ -141,12 +126,12 @@ var _ = Describe("Networking custom namespace, custom deployment,", Serial, func
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
+		err := tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
 		err = tshelper.ExecCmdOnOnePodInNamespace(
-			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
+			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -166,16 +151,16 @@ var _ = Describe("Networking custom namespace, custom deployment,", Serial, func
 	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
 		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
 		By("Define deployment and create it on cluster")
-		err = tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2)
+		err := tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Remove ping binary from test pod")
 		err = tshelper.ExecCmdOnAllPodInNamespace(
-			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"})
+			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.TestNetworkingNameSpace, configSuite.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, configSuite.General.TestImage,
 			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
