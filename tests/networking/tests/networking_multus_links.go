@@ -1,13 +1,10 @@
 package tests
 
 import (
-	"fmt"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
@@ -19,24 +16,11 @@ var _ = Describe("Networking custom namespace,", func() {
 	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		randomNamespace = tsparams.TestNetworkingNameSpace + "-" + globalhelper.GenerateRandomString(10)
-
-		By(fmt.Sprintf("Create %s namespace", randomNamespace))
-		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Override default report directory")
-		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
-		reportDir := origReportDir + "/" + randomNamespace
-		globalhelper.OverrideReportDir(reportDir)
-
-		By("Override default TNF config directory")
-		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
-		configDir := origTnfConfigDir + "/" + randomNamespace
-		globalhelper.OverrideTnfConfigDir(configDir)
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
 		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -46,19 +30,7 @@ var _ = Describe("Networking custom namespace,", func() {
 	})
 
 	AfterEach(func() {
-		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
-		err := namespaces.DeleteAndWait(
-			globalhelper.GetAPIClient().CoreV1Interface,
-			randomNamespace,
-			tsparams.WaitingTime,
-		)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Restore default report directory")
-		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
-
-		By("Restore default TNF config directory")
-		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 48328
