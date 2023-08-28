@@ -2,10 +2,14 @@ package globalhelper
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/golang/glog"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -60,4 +64,49 @@ func GetConfiguration() *config.Config {
 	}
 
 	return conf
+}
+
+func GetOriginalTNFPaths() (string, string) {
+	return GetConfiguration().General.TnfReportDir, GetConfiguration().General.TnfConfigDir
+}
+
+func OverrideDirectories(randomStr string) {
+	reportDir := GetConfiguration().General.TnfReportDir + "/" + randomStr
+	OverrideReportDir(reportDir)
+
+	configDir := GetConfiguration().General.TnfConfigDir + "/" + randomStr
+	OverrideTnfConfigDir(configDir)
+}
+
+func RestoreOriginalTNFPaths(reportDir, configDir string) {
+	GetConfiguration().General.TnfReportDir = reportDir
+	GetConfiguration().General.TnfConfigDir = configDir
+}
+
+func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespace, origReportDir, origConfigDir string) {
+	randomNamespace = incomingNamespace + "-" + GenerateRandomString(10)
+
+	By(fmt.Sprintf("Create %s namespace", randomNamespace))
+	err := namespaces.Create(randomNamespace, GetAPIClient())
+	Expect(err).ToNot(HaveOccurred())
+
+	origReportDir, origConfigDir = GetOriginalTNFPaths()
+
+	By("Override directories")
+	OverrideDirectories(randomNamespace)
+
+	return randomNamespace, origReportDir, origConfigDir
+}
+
+func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origConfigDir string, waitingTime time.Duration) {
+	By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+	err := namespaces.DeleteAndWait(
+		GetAPIClient().CoreV1Interface,
+		randomNamespace,
+		waitingTime,
+	)
+	Expect(err).ToNot(HaveOccurred())
+
+	By("Restore directories")
+	RestoreOriginalTNFPaths(origReportDir, origConfigDir)
 }
