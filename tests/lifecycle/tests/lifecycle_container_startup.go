@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -11,7 +9,6 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
@@ -22,46 +19,21 @@ var _ = Describe("lifecycle-container-startup", func() {
 	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		randomNamespace = tsparams.LifecycleNamespace + "-" + globalhelper.GenerateRandomString(10)
-
-		By(fmt.Sprintf("Create %s namespace", randomNamespace))
-		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Override default report directory")
-		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
-		reportDir := origReportDir + "/" + randomNamespace
-		globalhelper.OverrideReportDir(reportDir)
-
-		By("Override default TNF config directory")
-		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
-		configDir := origTnfConfigDir + "/" + randomNamespace
-		globalhelper.OverrideTnfConfigDir(configDir)
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
-		err := namespaces.DeleteAndWait(
-			globalhelper.GetAPIClient().CoreV1Interface,
-			randomNamespace,
-			tsparams.WaitingTime,
-		)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Restore default report directory")
-		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
-
-		By("Restore default TNF config directory")
-		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 55910

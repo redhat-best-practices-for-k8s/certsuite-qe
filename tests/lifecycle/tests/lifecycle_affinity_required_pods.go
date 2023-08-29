@@ -28,30 +28,21 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	}
 
 	BeforeEach(func() {
-		randomNamespace = tsparams.LifecycleNamespace + "-" + globalhelper.GenerateRandomString(10)
-
-		By(fmt.Sprintf("Create %s namespace", randomNamespace))
-		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Override default report directory")
-		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
-		reportDir := origReportDir + "/" + randomNamespace
-		globalhelper.OverrideReportDir(reportDir)
-
-		By("Override default TNF config directory")
-		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
-		configDir := origTnfConfigDir + "/" + randomNamespace
-		globalhelper.OverrideTnfConfigDir(configDir)
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+	})
+
+	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	AfterEach(func() {

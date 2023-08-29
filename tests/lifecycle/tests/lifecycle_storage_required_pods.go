@@ -9,7 +9,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolume"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolumeclaim"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
@@ -24,26 +23,14 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		randomNamespace = tsparams.LifecycleNamespace + "-" + globalhelper.GenerateRandomString(10)
 		randomStorageClassName = tsparams.TestLocalStorageClassName + "-" + globalhelper.GenerateRandomString(10)
 		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
 
-		By(fmt.Sprintf("Create %s namespace", randomNamespace))
-		err := namespaces.Create(randomNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Override default report directory")
-		origReportDir = globalhelper.GetConfiguration().General.TnfReportDir
-		reportDir := origReportDir + "/" + randomNamespace
-		globalhelper.OverrideReportDir(reportDir)
-
-		By("Override default TNF config directory")
-		origTnfConfigDir = globalhelper.GetConfiguration().General.TnfConfigDir
-		configDir := origTnfConfigDir + "/" + randomNamespace
-		globalhelper.OverrideTnfConfigDir(configDir)
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
@@ -57,19 +44,7 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 	})
 
 	AfterEach(func() {
-		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
-		err := namespaces.DeleteAndWait(
-			globalhelper.GetAPIClient().CoreV1Interface,
-			randomNamespace,
-			tsparams.WaitingTime,
-		)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Restore default report directory")
-		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
-
-		By("Restore default TNF config directory")
-		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 
 		By("Delete all PVs that were created by the previous test case.")
 		for _, pv := range pvNames {
@@ -79,7 +54,7 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 		}
 
 		By(fmt.Sprintf("Remove %s storageclass", randomStorageClassName))
-		err = tshelper.DeleteStorageClass(randomStorageClassName)
+		err := tshelper.DeleteStorageClass(randomStorageClassName)
 		Expect(err).ToNot(HaveOccurred())
 
 		// clear the list.
