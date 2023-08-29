@@ -36,6 +36,7 @@ The following test features are can run selectively or altogether.
 * *accesscontrol*
 * *affiliatedcertification*
 * *lifecycle*
+* *manageability*
 * *networking*
 * *observability*
 * *platformalteration*
