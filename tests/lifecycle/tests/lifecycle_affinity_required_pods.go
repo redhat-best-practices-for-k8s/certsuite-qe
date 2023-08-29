@@ -10,7 +10,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
@@ -43,22 +42,6 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 	AfterEach(func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
-	})
-
-	AfterEach(func() {
-		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
-		err := namespaces.DeleteAndWait(
-			globalhelper.GetAPIClient().CoreV1Interface,
-			randomNamespace,
-			tsparams.WaitingTime,
-		)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Restore default report directory")
-		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
-
-		By("Restore default TNF config directory")
-		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	// 55327
