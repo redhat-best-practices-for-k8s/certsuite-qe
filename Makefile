@@ -18,7 +18,7 @@ lint:
 	scripts/golangci-lint.sh
 
 update-go:
-	# scripts/install-latest-go.sh
+	 scripts/install-latest-go.sh
 
 deps-update:
 	go mod tidy && \
