@@ -60,6 +60,8 @@ The following environment variables are used to configure the test setup.
 | TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
 | DEBUG_TNF | Generate `Debug` folder that will contain TNF suites folders with TNF logs for each test.
 | TNF_LOG_LEVEL | Log level. Default is 4
+| DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`.
+| ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`.
 
 ## Steps to run the tests
 
