@@ -1,39 +1,50 @@
 package tests
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	corev1 "k8s.io/api/core/v1"
-
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolume"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolumeclaim"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
+var _ = Describe("lifecycle-storage-required-pods", func() {
+	var randomNamespace string
+	var randomStorageClassName string
+	var randomPV string
+	var origReportDir string
+	var origTnfConfigDir string
+
 	BeforeEach(func() {
-		err := tshelper.WaitUntilClusterIsStable()
+		randomStorageClassName = tsparams.TestLocalStorageClassName + "-" + globalhelper.GenerateRandomString(10)
+		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
+
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Create local-storage storageclass")
-		err = tshelper.CreateStorageClass("local-storage")
+		By(fmt.Sprintf("Create %s storageclass", randomStorageClassName))
+		err = tshelper.CreateStorageClass(randomStorageClassName, false)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test in order to enable PVs deletion.")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 
 		By("Delete all PVs that were created by the previous test case.")
 		for _, pv := range pvNames {
@@ -42,8 +53,8 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		}
 
-		By("Delete local-storage storageclass")
-		err = tshelper.DeleteStorageClass("local-storage")
+		By(fmt.Sprintf("Remove %s storageclass", randomStorageClassName))
+		err := tshelper.DeleteStorageClass(randomStorageClassName)
 		Expect(err).ToNot(HaveOccurred())
 
 		// clear the list.
@@ -52,7 +63,7 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 
 	It("One pod with a storage, PVC with no storageclass defined", func() {
 		By("Define PV")
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -61,12 +72,12 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 		pvNames = append(pvNames, persistentVolume.Name)
 
 		By("Define PVC")
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(persistentVolume.Name, tsparams.LifecycleNamespace)
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod with a pvc")
-		testPod := tshelper.DefinePod(tsparams.TestPodName)
+		testPod := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 
 		pod.RedefineWithPVC(testPod, persistentVolume.Name, pvc.Name)
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
@@ -84,9 +95,9 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 
 	It("One pod with local storage, PVC with storageclass defined", func() {
 		By("Define PV")
-		testPv := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		testPv := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(testPv, corev1.PersistentVolumeReclaimDelete)
-		persistentvolume.RedefineWithStorageClass(testPv, tsparams.TestLocalStorageClassName)
+		persistentvolume.RedefineWithStorageClass(testPv, randomStorageClassName)
 
 		err := tshelper.CreatePersistentVolume(testPv, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -94,14 +105,14 @@ var _ = Describe("lifecycle-storage-required-pods", Serial, func() {
 		pvNames = append(pvNames, testPv.Name)
 
 		By("Define PVC")
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(testPv.Name, tsparams.LifecycleNamespace)
-		persistentvolumeclaim.RedefineWithStorageClass(pvc, tsparams.TestLocalStorageClassName)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentvolumeclaim.RedefineWithStorageClass(pvc, randomStorageClassName)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, testPv.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, testPv.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod with a pvc")
-		testPod := tshelper.DefinePod(tsparams.TestPodName)
+		testPod := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 
 		pod.RedefineWithPVC(testPod, testPv.Name, pvc.Name)
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)

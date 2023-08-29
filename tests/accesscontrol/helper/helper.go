@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os/exec"
 	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
@@ -200,16 +199,4 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 	}
 
 	return nil
-}
-
-// Returns true if the cluster is of kind type, otherwise false. Performance
-// gains are achievable by invoking the command once, leveraging a
-// synchronization mechanism like sync.Once.
-func IsKindCluster() bool {
-	cmd := exec.Command(
-		"oc",
-		"cluster-info", "--context", "kind-kind",
-		">/dev/null", "2>&1")
-
-	return cmd.Run() == nil
 }

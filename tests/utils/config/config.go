@@ -24,19 +24,20 @@ const (
 // Config type keeps general GetConfiguration().
 type Config struct {
 	General struct {
-		ReportDirAbsPath     string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
-		CnfNodeLabel         string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
-		WorkerNodeLabel      string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
-		TestImage            string `yaml:"test_image" envconfig:"TEST_IMAGE"`
-		VerificationLogLevel string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
-		DebugTnf             string `envconfig:"DEBUG_TNF"`
-		TnfConfigDir         string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
-		TnfRepoPath          string `envconfig:"TNF_REPO_PATH"`
-		TnfEntryPointScript  string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
-		TnfReportDir         string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
-		DockerConfigDir      string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
-		TnfImage             string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
-		TnfImageTag          string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
+		ReportDirAbsPath      string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
+		CnfNodeLabel          string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
+		WorkerNodeLabel       string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
+		TestImage             string `yaml:"test_image" envconfig:"TEST_IMAGE"`
+		VerificationLogLevel  string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
+		DebugTnf              string `envconfig:"DEBUG_TNF"`
+		TnfConfigDir          string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
+		TnfRepoPath           string `envconfig:"TNF_REPO_PATH"`
+		TnfEntryPointScript   string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
+		TnfReportDir          string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
+		DockerConfigDir       string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
+		TnfImage              string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
+		TnfImageTag           string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
+		DisableIntrusiveTests string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
 	} `yaml:"general"`
 }
 

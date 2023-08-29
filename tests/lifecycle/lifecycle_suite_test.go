@@ -9,15 +9,16 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
 func TestLifecycle(t *testing.T) {
@@ -32,34 +33,20 @@ func TestLifecycle(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+	configSuite, err := config.NewConfig()
+	if err != nil {
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+	}
 
-	err := tshelper.WaitUntilClusterIsStable()
+	err = tshelper.WaitUntilClusterIsStable()
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Create namespace")
-	err = namespaces.Create(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Define TNF config file")
-	err = globalhelper.DefineTnfConfig(
-		[]string{tsparams.LifecycleNamespace},
-		[]string{tsparams.TestPodLabel},
-		[]string{tsparams.TnfTargetOperatorLabels}, // some operator labels are added here
-		[]string{},
-		[]string{})
+	By("Ensure all nodes are labeled with 'worker-cnf' label")
+	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {
-
-	By(fmt.Sprintf("Remove %s namespace", tsparams.LifecycleNamespace))
-	err := namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, tsparams.LifecycleNamespace, tsparams.WaitingTime)
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Remove reports from reports directory")
-	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())
-
-	err = os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
+	err := os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
 	Expect(err).ToNot(HaveOccurred())
 })

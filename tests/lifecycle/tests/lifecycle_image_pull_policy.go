@@ -1,9 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -11,42 +8,39 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
+var _ = Describe("lifecycle-image-pull-policy", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 48473
 	It("One deployment with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
@@ -68,7 +62,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 	It("Several deployments with ifNotPresent as ImagePullPolicy", func() {
 
 		By("Define deployments with ifNotPresent as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
@@ -76,7 +70,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
+		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
@@ -84,7 +78,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpc")
+		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpc", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymentc, corev1.PullIfNotPresent)
@@ -107,7 +101,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 
 		By("Define DaemonSet with ifNotPresent as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
+			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -127,19 +121,19 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 
 		By("Define DaemonSets with ifNotPresent as ImagePullPolicy")
 		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
+			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSeta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetb := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsb",
-			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
+			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetc := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsc",
-			globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
+			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -160,7 +154,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 		// and you do not specify the tag for the container image,
 		// imagePullPolicy is automatically set to Always;
 		By("Define DaemonSet without ImagePullPolicy")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, "registry.access.redhat.com/ubi8/ubi",
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, "registry.access.redhat.com/ubi8/ubi",
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -182,7 +176,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 		// and the tag for the container image is :latest,
 		// imagePullPolicy is automatically set to Always;
 		By("Define deployment without ImagePullPolicy")
-		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			"registry.access.redhat.com/ubi8/ubi:latest", tsparams.TestTargetLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
@@ -202,7 +196,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 	It("One deployment with Always as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with 'Always' as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullAlways)
@@ -224,7 +218,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 	It("Two deployments one with Never other with ifNotPresent as ImagePullPolicy [negative]", func() {
 
 		By("Define deployment with Never as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullNever)
@@ -233,7 +227,7 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb")
+		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
@@ -256,13 +250,13 @@ var _ = Describe("lifecycle-image-pull-policy", Serial, func() {
 
 		By("Define DaemonSet with Never as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
-			globalhelper.GetConfiguration().General.TestImage, corev1.PullNever)
+			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullNever)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
-		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName)
+		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)

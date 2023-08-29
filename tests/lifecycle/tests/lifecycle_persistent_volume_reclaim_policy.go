@@ -1,9 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -12,10 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolume"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolumeclaim"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
@@ -28,29 +22,28 @@ var (
 )
 
 var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
-
-	configSuite, err := config.NewConfig()
-	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
-	}
+	var randomNamespace string
+	var randomPV string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		err := tshelper.WaitUntilClusterIsStable()
-		Expect(err).ToNot(HaveOccurred())
+		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test in order to enable PVs deletion.")
-		err := namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 
 		By("Delete all PVs that were created by the previous test case.")
 		for _, pv := range pvNames {
@@ -66,7 +59,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54201
 	It("One deployment, one pod with a volume that uses a reclaim policy of delete", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -74,16 +67,16 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		pvNames = append(pvNames, persistentVolume.Name)
 
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment")
-		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
-		deployment.RedefineWithPVC(dep, tsparams.TestVolumeName, pvc.Name)
+		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -102,7 +95,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54202
 	It("One pod with a volume that uses a reclaim policy of delete", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -110,15 +103,15 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		pvNames = append(pvNames, persistentVolume.Name)
 
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
-		pod.RedefineWithPVC(put, tsparams.TestVolumeName, pvc.Name)
+		pod.RedefineWithPVC(put, persistentVolume.Name, pvc.Name)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -137,7 +130,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54203
 	It("One replicaSet with a volume that uses a reclaim policy of delete", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -145,15 +138,15 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		pvNames = append(pvNames, persistentVolume.Name)
 
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define replicaSet")
-		rs := replicaset.DefineReplicaSet(tsparams.TestReplicaSetName, tsparams.LifecycleNamespace,
+		rs := replicaset.DefineReplicaSet(tsparams.TestReplicaSetName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
-		replicaset.RedefineWithPVC(rs, tsparams.TestVolumeName, pvc.Name)
+		replicaset.RedefineWithPVC(rs, persistentVolume.Name, pvc.Name)
 
 		err = globalhelper.CreateAndWaitUntilReplicaSetIsReady(rs, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -172,7 +165,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54204
 	It("One deployment, one pod with a volume that uses a reclaim policy of retain [negative]", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimRetain)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -180,16 +173,16 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		pvNames = append(pvNames, persistentVolume.Name)
 
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment")
-		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
-		deployment.RedefineWithPVC(dep, tsparams.TestVolumeName, pvc.Name)
+		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -208,7 +201,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	// 54206
 	It("One pod with a volume that uses a reclaim policy of recycle [negative]", func() {
 
-		persistentVolume := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimRecycle)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -216,15 +209,15 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		pvNames = append(pvNames, persistentVolume.Name)
 
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolume.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
-		pod.RedefineWithPVC(put, tsparams.TestVolumeName, pvc.Name)
+		pod.RedefineWithPVC(put, persistentVolume.Name, pvc.Name)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -244,7 +237,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	It("Two deployments, one with reclaim policy of delete, other with recycle [negative]", func() {
 
 		By("Define and create first pv")
-		persistentVolumea := persistentvolume.DefinePersistentVolume(tsparams.TestPVName)
+		persistentVolumea := persistentvolume.DefinePersistentVolume(randomPV)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumea, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolumea, tsparams.WaitingTime)
@@ -253,36 +246,36 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		pvNames = append(pvNames, persistentVolumea.Name)
 
 		By("Define and create second pv")
-		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb")
+		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb-" + globalhelper.GenerateRandomString(10))
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumeb, corev1.PersistentVolumeReclaimRecycle)
 
 		err = tshelper.CreatePersistentVolume(persistentVolumeb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		pvNames = append(pvNames, "lifecycle-pvb")
+		pvNames = append(pvNames, persistentVolumeb.Name)
 
 		By("Define and create first pvc")
-		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, tsparams.LifecycleNamespace)
+		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvca, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolumea.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvca, randomNamespace, tsparams.WaitingTime, persistentVolumea.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define and create second pvc")
-		pvcb := persistentvolumeclaim.DefinePersistentVolumeClaim("lifecycle-pvcb", tsparams.LifecycleNamespace)
+		pvcb := persistentvolumeclaim.DefinePersistentVolumeClaim("lifecycle-pvcb", randomNamespace)
 
-		err = tshelper.CreateAndWaitUntilPVCIsBound(pvcb, tsparams.LifecycleNamespace, tsparams.WaitingTime, persistentVolumeb.Name)
+		err = tshelper.CreateAndWaitUntilPVCIsBound(pvcb, randomNamespace, tsparams.WaitingTime, persistentVolumeb.Name)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployments")
-		depa := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.LifecycleNamespace,
+		depa := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
-		deployment.RedefineWithPVC(depa, tsparams.TestVolumeName, pvca.Name)
+		deployment.RedefineWithPVC(depa, persistentVolumea.Name, pvca.Name)
 
-		depb := deployment.DefineDeployment("lifecycle-dpb", tsparams.LifecycleNamespace, globalhelper.GetConfiguration().General.TestImage,
+		depb := deployment.DefineDeployment("lifecycle-dpb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
 
-		deployment.RedefineWithPVC(depb, tsparams.TestVolumeName, pvcb.Name)
+		deployment.RedefineWithPVC(depb, persistentVolumeb.Name, pvcb.Name)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depa, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

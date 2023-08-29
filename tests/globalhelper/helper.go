@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 	"time"
@@ -378,4 +379,16 @@ func GenerateRandomString(length int) string {
 	}
 
 	return string(b)
+}
+
+// Returns true if the cluster is of kind type, otherwise false. Performance
+// gains are achievable by invoking the command once, leveraging a
+// synchronization mechanism like sync.Once.
+func IsKindCluster() bool {
+	cmd := exec.Command(
+		"oc",
+		"cluster-info", "--context", "kind-kind",
+		">/dev/null", "2>&1")
+
+	return cmd.Run() == nil
 }

@@ -83,12 +83,12 @@ func CreateCustomResourceScale(name, namespace string) (string, error) {
 }
 
 // DefineDeployment defines a deployment.
-func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deployment, error) {
+func DefineDeployment(replica int32, containers int, name, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid containers number")
 	}
 
-	deploymentStruct := deployment.DefineDeployment(name, tsparams.LifecycleNamespace,
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
@@ -97,27 +97,27 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 	return deploymentStruct, nil
 }
 
-func DefineReplicaSet(name string) *appsv1.ReplicaSet {
+func DefineReplicaSet(name, namespace string) *appsv1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
-		tsparams.LifecycleNamespace,
+		namespace,
 		globalhelper.GetConfiguration().General.TestImage,
 		tsparams.TestTargetLabels)
 }
 
-func DefineStatefulSet(name string) *appsv1.StatefulSet {
+func DefineStatefulSet(name, namespace string) *appsv1.StatefulSet {
 	return statefulset.DefineStatefulSet(name,
-		tsparams.LifecycleNamespace,
+		namespace,
 		globalhelper.GetConfiguration().General.TestImage,
 		tsparams.TestTargetLabels)
 }
 
-func DefinePod(name string) *corev1.Pod {
-	return pod.DefinePod(name, tsparams.LifecycleNamespace,
+func DefinePod(name, namespace string) *corev1.Pod {
+	return pod.DefinePod(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 }
 
-func DefineDaemonSetWithImagePullPolicy(name string, image string, pullPolicy corev1.PullPolicy) *appsv1.DaemonSet {
-	daemonSet := daemonset.DefineDaemonSet(tsparams.LifecycleNamespace, image, tsparams.TestTargetLabels, name)
+func DefineDaemonSetWithImagePullPolicy(name, namespace string, image string, pullPolicy corev1.PullPolicy) *appsv1.DaemonSet {
+	daemonSet := daemonset.DefineDaemonSet(namespace, image, tsparams.TestTargetLabels, name)
 	daemonset.RedefineWithImagePullPolicy(daemonSet, pullPolicy)
 
 	return daemonSet
@@ -214,12 +214,19 @@ func DeleteRunTimeClass(rtcName string) error {
 	return nil
 }
 
-func CreateStorageClass(storageClassName string) error {
+func CreateStorageClass(storageClassName string, defaultSC bool) error {
 	storageClassTemplate := storagev1.StorageClass{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: storageClassName,
 		},
 		Provisioner: "kubernetes.io/no-provisioner",
+	}
+
+	// Set the storageclass as default if needed.
+	if defaultSC {
+		storageClassTemplate.Annotations = map[string]string{
+			"storageclass.kubernetes.io/is-default-class": "true",
+		}
 	}
 
 	_, err := globalhelper.GetAPIClient().K8sClient.StorageV1().StorageClasses().Create(context.Background(),

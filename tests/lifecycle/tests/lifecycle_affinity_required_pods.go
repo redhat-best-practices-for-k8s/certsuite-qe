@@ -11,14 +11,16 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
+var _ = Describe("lifecycle-affinity-required-pods", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
@@ -26,28 +28,43 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 	}
 
 	BeforeEach(func() {
-		err := tshelper.WaitUntilClusterIsStable()
-		Expect(err).ToNot(HaveOccurred())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Clean namespace before each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Ensure all nodes are labeled with 'worker-cnf' label")
-		err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+		By("Define TNF config file")
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err = namespaces.Clean(tsparams.LifecycleNamespace, globalhelper.GetAPIClient())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+	})
+
+	AfterEach(func() {
+		By(fmt.Sprintf("Remove %s namespace", randomNamespace))
+		err := namespaces.DeleteAndWait(
+			globalhelper.GetAPIClient().CoreV1Interface,
+			randomNamespace,
+			tsparams.WaitingTime,
+		)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Restore default report directory")
+		globalhelper.GetConfiguration().General.TnfReportDir = origReportDir
+
+		By("Restore default TNF config directory")
+		globalhelper.GetConfiguration().General.TnfConfigDir = origTnfConfigDir
 	})
 
 	// 55327
 	It("One pod, label is set, Affinity rules are set", func() {
 		By("Define and create pod")
-		put := tshelper.DefinePod(tsparams.TestPodName)
+		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(put, configSuite.General.CnfNodeLabel)
@@ -64,13 +81,12 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 55328
 	It("Two pods, labels are set for both, Affinity rules are set", func() {
 		By("Define and create pods")
-		putA := tshelper.DefinePod(tsparams.TestPodName)
+		putA := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 		globalhelper.AppendLabelsToPod(putA, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(putA, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(putA, configSuite.General.CnfNodeLabel)
@@ -79,7 +95,7 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putA, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		putB := tshelper.DefinePod("lifecycle-podb")
+		putB := tshelper.DefinePod("lifecycle-podb", randomNamespace)
 		globalhelper.AppendLabelsToPod(putB, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(putB, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(putB, configSuite.General.CnfNodeLabel)
@@ -96,13 +112,12 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 55329
 	It("One pod, label is set, affinity rules are not set [negative]", func() {
 		By("Define and create pod")
-		put := tshelper.DefinePod(tsparams.TestPodName)
+		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
 
@@ -117,12 +132,11 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 55330
 	It("One pod, label is set, podantiaffinity is set [negative]", func() {
-		put := tshelper.DefinePod(tsparams.TestPodName)
+		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithPodantiAffinity(put, tsparams.TestTargetLabels)
@@ -138,13 +152,12 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 55333
 	It("Two pods, labels are set for both, affinity rules are not set for one of the pods [negative]", func() {
 		By("Define and create pods")
-		putA := tshelper.DefinePod(tsparams.TestPodName)
+		putA := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 		globalhelper.AppendLabelsToPod(putA, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(putA, tsparams.AffinityRequiredPodLabels)
 		pod.RedefineWithNodeAffinity(putA, configSuite.General.CnfNodeLabel)
@@ -153,7 +166,7 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putA, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		putB := tshelper.DefinePod("lifecycle-podb")
+		putB := tshelper.DefinePod("lifecycle-podb", randomNamespace)
 		globalhelper.AppendLabelsToPod(putB, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(putB, tsparams.AffinityRequiredPodLabels)
 
@@ -168,6 +181,5 @@ var _ = Describe("lifecycle-affinity-required-pods", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })
