@@ -35,7 +35,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	})
 
 	// 59536
-	It("one deployment, one pod, one container not declaring reserved ports", func() {
+	It("one deployment, one pod, one container not declaring reserved ports (OCP Ports)", func() {
 
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)

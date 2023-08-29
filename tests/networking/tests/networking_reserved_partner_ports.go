@@ -35,7 +35,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	// 61487
-	It("one deployment, one pod, one container not declaring reserved ports", func() {
+	It("one deployment, one pod, one container not declaring reserved ports (Partner Ports)", func() {
 
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
