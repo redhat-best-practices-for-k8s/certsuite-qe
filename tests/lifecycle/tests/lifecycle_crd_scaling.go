@@ -36,20 +36,20 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 			[]string{},
 			[]string{tsparams.TnfTargetCrdFilters})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
-		// We have to pre-install the crd-operator-scaling resources prior to running these tests.
-		By("Check if crd-scaling-operator is installed")
-		exists, err := namespaces.Exists(tsparams.TnfTargetOperatorNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "error checking if crd-scaling-operator is installed")
-		if !exists {
-			// Skip the test if crd-scaling-operator is not installed
-			Skip("crd-scaling-operator is not installed, skipping test")
-		}
 	})
 
 	It("Crd deployed, scale in and out", func() {
+		// We have to pre-install the crd-operator-scaling resources prior to running these tests.
+		By("Check if cr-scaling-operator is installed")
+		exists, err := namespaces.Exists(tsparams.TnfTargetOperatorNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scaling-operator is installed")
+		if !exists {
+			// Skip the test if cr-scaling-operator is not installed
+			Skip("cr-scaling-operator is not installed, skipping test")
+		}
+
 		By("Create a scale custom resource")
-		_, err := tshelper.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace)
+		_, err = tshelper.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-crd-scaling test")
