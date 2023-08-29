@@ -11,6 +11,13 @@ if [[ "${GINKGO_SEED_NUMBER}" != "" ]]; then
 	GINKGO_SEED_FLAG="--seed=${GINKGO_SEED_NUMBER}"
 fi
 
+# Check if the user has specified to run in parallel
+PFLAG=""
+if [[ ${ENABLE_PARALLEL} == "true" ]]; then
+	echo "Running tests in parallel"
+	PFLAG="-p"
+fi
+
 function run_tests {
 	case $1 in
 	all)
@@ -27,7 +34,7 @@ function run_tests {
 			fi
 		done
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
+		ginkgo -timeout=24h -v ${PFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
 		;;
 	features)
 		if [ -z "$FEATURES" ]; then
@@ -44,7 +51,7 @@ function run_tests {
 		done
 
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
+		ginkgo -timeout=24h -v ${PFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
 		;;
 	*)
 		echo "Unknown case"
