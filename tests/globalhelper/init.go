@@ -99,8 +99,13 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origConfigDir string, waitingTime time.Duration) {
+	By("Remove reports from report directory")
+
+	err := RemoveContentsFromReportDir()
+	Expect(err).ToNot(HaveOccurred())
+
 	By(fmt.Sprintf("Remove %s namespace", randomNamespace))
-	err := namespaces.DeleteAndWait(
+	err = namespaces.DeleteAndWait(
 		GetAPIClient().CoreV1Interface,
 		randomNamespace,
 		waitingTime,

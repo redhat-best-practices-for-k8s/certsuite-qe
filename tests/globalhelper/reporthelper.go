@@ -119,6 +119,12 @@ func RemoveContentsFromReportDir() error {
 			GetConfiguration().General.TnfReportDir))
 	}
 
+	// Delete the report directory
+	err = os.Remove(GetConfiguration().General.TnfReportDir)
+	if err != nil {
+		return fmt.Errorf("failed to remove report directory: %w", err)
+	}
+
 	return nil
 }
 
