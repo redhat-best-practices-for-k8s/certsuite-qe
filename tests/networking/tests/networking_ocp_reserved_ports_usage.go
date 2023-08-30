@@ -98,7 +98,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	})
 
 	// 59539
-	It("one deployment, one pod, two containers, one declaring reserved ports [negative] (OCP Ports)", func() {
+	It("one deployment, one pod, two containers, one declaring reserved ports (OCP Ports) [negative]", func() {
 		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22623}}
 
 		By("Define deployment with two containers")
@@ -140,7 +140,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	})
 
 	// 59541
-	It("one deployment, one pod listening on reserved ports [negative] (OCP Ports)", func() {
+	It("one deployment, one pod listening on reserved ports (OCP Ports) [negative]", func() {
 
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 22624}}, randomNamespace)
@@ -191,7 +191,7 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	})
 
 	// 59543
-	It("two deployments, one pod each, one listening on reserved ports [negative] (OCP Ports)", func() {
+	It("two deployments, one pod each, one listening on reserved ports (OCP Ports) [negative]", func() {
 
 		By("Define first deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeployment(tsparams.TestDeploymentBName, randomNamespace, 3)

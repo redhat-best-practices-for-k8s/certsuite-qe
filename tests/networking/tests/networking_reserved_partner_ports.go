@@ -56,7 +56,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	// 61505
-	It("one deployment, one pod, one container declaring reserved ports [negative] (Partner Ports)", func() {
+	It("one deployment, one pod, one container declaring reserved ports (Partner Ports) [negative]", func() {
 
 		By("Define and create deployment with container declaring reserved port")
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 15443}}, randomNamespace)
@@ -98,7 +98,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	// 61507
-	It("one deployment, one pod, two containers, one declaring reserved ports [negative] (Partner Ports)", func() {
+	It("one deployment, one pod, two containers, one declaring reserved ports (Partner Ports) [negative]", func() {
 		ports := []corev1.ContainerPort{{ContainerPort: 15020}, {ContainerPort: 15019}}
 
 		By("Define deployment with two containers")
@@ -120,7 +120,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	// 61508
-	It("one deployment, one pod not listening on reserved ports (Reserved Partner Ports)", func() {
+	It("one deployment, one pod not listening on reserved ports (Partner Ports)", func() {
 
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(3, randomNamespace)
@@ -140,7 +140,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	// 61509
-	It("one deployment, one pod listening on reserved ports [negative] (Partner Ports)", func() {
+	It("one deployment, one pod listening on reserved ports (Partner Ports) [negative]", func() {
 
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 15021}}, randomNamespace)
@@ -189,7 +189,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 	})
 
 	// 61517
-	It("two deployments, one pod each, one listening on reserved ports [negative] (Partner Ports)", func() {
+	It("two deployments, one pod each, one listening on reserved ports (Partner Ports) [negative]", func() {
 
 		By("Define first deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeployment(tsparams.TestDeploymentBName, randomNamespace, 3)
