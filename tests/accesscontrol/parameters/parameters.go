@@ -43,6 +43,7 @@ const (
 	TestCaseNameAccessControlIpcLockCapability      = "access-control-ipc-lock-capability-check"
 	TestCaseNameAccessControlNetAdminCapability     = "access-control-net-admin-capability-check"
 	TestCaseNameAccessControlNetRawCapability       = "access-control-net-raw-capability-check"
+	TestCaseNameAccessControlBpfCapability          = "access-control-bpf-capability-check"
 	TestCaseNameAccessControlContainerHostPort      = "access-control-container-host-port"
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
 	TestCaseNameAccessControlNonRootUser            = "access-control-security-context-non-root-user-check"
