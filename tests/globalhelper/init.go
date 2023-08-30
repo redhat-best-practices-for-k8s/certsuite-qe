@@ -104,17 +104,17 @@ func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origCon
 	err := RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
 
+	By("Remove configs from config directory")
+
+	err = RemoveContentsFromConfigDir()
+	Expect(err).ToNot(HaveOccurred())
+
 	By(fmt.Sprintf("Remove %s namespace", randomNamespace))
 	err = namespaces.DeleteAndWait(
 		GetAPIClient().CoreV1Interface,
 		randomNamespace,
 		waitingTime,
 	)
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Remove configs from config directory")
-
-	err = RemoveContentsFromConfigDir()
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Restore directories")

@@ -55,7 +55,7 @@ func assertDeployment(t *testing.T, deployment *appsv1.Deployment) {
 
 func TestDefineDeployment(t *testing.T) {
 	// Define a deployment with 1 replica and 1 container
-	deployment, err := DefineDeployment(1, 1, testDeploymentName)
+	deployment, err := DefineDeployment(1, 1, testDeploymentName, parameters.TestAccessControlNameSpace)
 	assert.Nil(t, err)
 
 	assertDeployment(t, deployment)
@@ -65,7 +65,8 @@ func TestDefineDeployment(t *testing.T) {
 
 func TestDefineDeploymentWithClusterRoleBindingWithServiceAccount(t *testing.T) {
 	// Define a deployment with 1 replica and 1 container
-	deployment, err := DefineDeploymentWithClusterRoleBindingWithServiceAccount(1, 1, testDeploymentName, "my-service-account")
+	deployment, err := DefineDeploymentWithClusterRoleBindingWithServiceAccount(1, 1, testDeploymentName,
+		parameters.TestAccessControlNameSpace, "my-service-account")
 	assert.Nil(t, err)
 
 	assertDeployment(t, deployment)
@@ -85,12 +86,13 @@ func TestDefineDeploymentWithNamespace(t *testing.T) {
 
 func TestDefineDeploymentWithContainerPorts(t *testing.T) {
 	// Define a deployment with 1 replica and 1 container
-	deployment, err := DefineDeploymentWithContainerPorts(testDeploymentName, 1, []corev1.ContainerPort{
-		{
-			Name:          "test-port",
-			ContainerPort: 80,
-		},
-	})
+	deployment, err := DefineDeploymentWithContainerPorts(testDeploymentName,
+		parameters.TestAccessControlNameSpace, 1, []corev1.ContainerPort{
+			{
+				Name:          "test-port",
+				ContainerPort: 80,
+			},
+		})
 	assert.Nil(t, err)
 
 	assertDeployment(t, deployment)
@@ -139,7 +141,6 @@ func TestSetServiceAccountAutomountServiceAccountToken(t *testing.T) {
 
 		// Set the globalhelper client to the fake client
 		globalhelper.SetTestK8sAPIClient(client)
-		defer globalhelper.UnsetTestK8sAPIClient()
 
 		// Set the automountServiceAccountToken to the test value
 		err := SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace, "my-service-account", testCase.testValue)
@@ -162,6 +163,8 @@ func TestSetServiceAccountAutomountServiceAccountToken(t *testing.T) {
 				assert.Nil(t, serviceAccount.AutomountServiceAccountToken)
 			}
 		}
+
+		globalhelper.UnsetTestK8sAPIClient()
 	}
 }
 
@@ -228,14 +231,16 @@ func TestDefineAndCreateServiceOnCluster(t *testing.T) {
 
 		// Set the globalhelper client to the fake client
 		globalhelper.SetTestK8sAPIClient(client)
-		defer globalhelper.UnsetTestK8sAPIClient()
 
 		// Define a service
-		err := DefineAndCreateServiceOnCluster("service-name", 8080, 8080, testCase.withNodePort, testCase.ipFams, testCase.ipFamilyDesired)
+		err := DefineAndCreateServiceOnCluster("service-name", parameters.TestAccessControlNameSpace,
+			8080, 8080, testCase.withNodePort, testCase.ipFams, testCase.ipFamilyDesired)
 		assert.Nil(t, err)
 
 		// Get the service from the fake client and check if it exists
 		_, err = client.CoreV1().Services(parameters.TestAccessControlNameSpace).Get(context.TODO(), "service-name", metav1.GetOptions{})
 		assert.Nil(t, err)
+
+		globalhelper.UnsetTestK8sAPIClient()
 	}
 }

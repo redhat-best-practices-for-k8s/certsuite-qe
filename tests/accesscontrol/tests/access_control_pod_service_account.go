@@ -6,32 +6,41 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("Access-control pod-service-account,", Serial, func() {
+var _ = Describe("Access-control pod-service-account,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
+		By("Define tnf config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
+		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	It("one pod with valid service account", func() {
 
 		By("Create service account")
-		err := globalhelper.CreateServiceAccount(tsparams.TestServiceAccount, tsparams.TestAccessControlNameSpace)
+		err := globalhelper.CreateServiceAccount(tsparams.TestServiceAccount, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod with service account")
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
@@ -56,7 +65,7 @@ var _ = Describe("Access-control pod-service-account,", Serial, func() {
 
 		By("Define pod with empty service account")
 
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "")
@@ -80,7 +89,7 @@ var _ = Describe("Access-control pod-service-account,", Serial, func() {
 
 		By("Define pod with empty service account")
 
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.TestAccessControlNameSpace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "default")

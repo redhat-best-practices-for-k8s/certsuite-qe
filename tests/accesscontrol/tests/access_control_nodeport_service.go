@@ -7,41 +7,43 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 )
 
-var _ = Describe("Access control custom namespace, custom deployment,", Serial, func() {
-
-	execute.BeforeAll(func() {
-		By("Clean namespace before all tests")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, tsparams.TestAccessControlNameSpace)
-		Expect(err).ToNot(HaveOccurred())
-	})
+var _ = Describe("Access control custom namespace, custom deployment,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
+		By("Define tnf config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
+		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+
+		err = os.Setenv(globalparameters.PartnerNamespaceEnvVarName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 45447
 	It("2 custom pods, no service installed, service Should not have type of nodePort", func() {
-
 		By("Define deployment and create it on cluster")
-		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -63,14 +65,13 @@ var _ = Describe("Access control custom namespace, custom deployment,", Serial, 
 
 	// 45481
 	It("2 custom pods, service installed without NodePort, service Should not have type of nodePort", func() {
-
 		By("Define Service")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 3022, 3022, false,
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3022, 3022, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -94,16 +95,16 @@ var _ = Describe("Access control custom namespace, custom deployment,", Serial, 
 	It("2 custom pods, multiple services installed without NodePort, service Should not have type of nodePort", func() {
 
 		By("Define multiple Services")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", 3022, 3022, false,
+		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", randomNamespace, 3022, 3022, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
-		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", 3023, 3023, false,
+		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", randomNamespace, 3023, 3023, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -126,12 +127,12 @@ var _ = Describe("Access control custom namespace, custom deployment,", Serial, 
 	It("2 custom pods, service installed with NodePort, service Should not have type of nodePort [negative]", func() {
 
 		By("Define Services with NodePort")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservice", 30022, 3022, true,
+		err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 30022, 3022, true,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -156,15 +157,15 @@ var _ = Describe("Access control custom namespace, custom deployment,", Serial, 
 		"nodePort [negative]", func() {
 
 		By("Define Services")
-		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", 30022, 3022, true,
+		err := tshelper.DefineAndCreateServiceOnCluster("testservicefirst", randomNamespace, 30023, 3023, true,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
-		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", 3022, 3022, false,
+		err = tshelper.DefineAndCreateServiceOnCluster("testservicesecond", randomNamespace, 3023, 3023, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment and create it on cluster")
-		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment")
+		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -182,5 +183,4 @@ var _ = Describe("Access control custom namespace, custom deployment,", Serial, 
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })
