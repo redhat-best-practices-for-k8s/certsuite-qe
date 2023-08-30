@@ -29,19 +29,11 @@ var _ = Describe("Access control custom namespace, custom deployment,", Serial, 
 		By("Clean namespace before each test")
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
-
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
 		By("Clean namespace after each test")
 		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Remove reports from report directory")
-		err = globalhelper.RemoveContentsFromReportDir()
 		Expect(err).ToNot(HaveOccurred())
 	})
 
