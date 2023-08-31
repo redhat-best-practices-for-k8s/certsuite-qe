@@ -7,28 +7,40 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/performance/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("performance-rt-apps-no-exec-probes", Serial, func() {
+var _ = Describe("performance-rt-apps-no-exec-probes", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
+		Expect(err).ToNot(HaveOccurred())
+
+		// Create service account and roles and roles binding
+		err = tshelper.ConfigurePrivilegedServiceAccount(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("Rt app pod with no exec probes", func() {
 
 		By("Define pod")
-		testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
+		testPod := tshelper.DefineRtPod(tsparams.TestPodName, randomNamespace,
 			tsparams.RtImageName, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
@@ -51,7 +63,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", Serial, func() {
 
 	It("Rt app pod with exec probes ", func() {
 		By("Define pod")
-		testPod := tshelper.DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
+		testPod := tshelper.DefineRtPod(tsparams.TestPodName, randomNamespace,
 			tsparams.RtImageName, tsparams.TnfTargetPodLabels)
 
 		pod.RedefineWithLivenessProbe(testPod)
@@ -77,7 +89,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", Serial, func() {
 	It("One non-Rt exclusive pod with no exec probes", func() {
 
 		By("Define pod")
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "1", "1")
