@@ -5,52 +5,54 @@ import (
 	. "github.com/onsi/gomega"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control pod-host-path, ", Serial, func() {
+var _ = Describe("Access-control pod-host-path, ", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
-	execute.BeforeAll(func() {
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{parameters.TestAccessControlNameSpace},
-			[]string{parameters.TestPodLabel},
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})
 
-	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(parameters.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
+	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 53939
 	It("one deployment, one pod, HostPath not set", func() {
 		By("Define deployment with hostPath set to false")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -58,23 +60,23 @@ var _ = Describe("Access-control pod-host-path, ", Serial, func() {
 	// 53940
 	It("one deployment, one pod, HostPath set [negative]", func() {
 		By("Define deployment with hostPath set to true")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPath(dep, "volume", "mnt/data")
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -82,27 +84,27 @@ var _ = Describe("Access-control pod-host-path, ", Serial, func() {
 	// 53941
 	It("two deployments, one pod each, HostPath not set", func() {
 		By("Define deployments with hostPath set to false")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, parameters.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -110,29 +112,29 @@ var _ = Describe("Access-control pod-host-path, ", Serial, func() {
 	// 53946
 	It("two deployments, one pod each, one HostPath set [negative]", func() {
 		By("Define deployments with hostPath set to different values")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, parameters.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPath(dep2, "volume", "mnt/data")
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, parameters.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(
-			parameters.TestCaseNameAccessControlPodHostPath,
+			tsparams.TestCaseNameAccessControlPodHostPath,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
