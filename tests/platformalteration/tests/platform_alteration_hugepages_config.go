@@ -12,21 +12,34 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
+var _ = Describe("platform-alteration-hugepages-config", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.PlatformAlterationNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() {
+			Skip("Hugepages are not supported in Kind clusters")
+		}
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51308
@@ -53,13 +66,16 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 
 	// 51309
 	It("Change Hugepages config manually [negative]", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Kind cluster does not support hugepages")
+		}
 
 		By("Set rbac policy which allows authenticated users to run privileged containers")
 		err := globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -67,7 +83,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
+		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		Expect(len(podList.Items)).NotTo(BeZero())

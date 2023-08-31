@@ -11,8 +11,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -25,9 +23,12 @@ const (
 	istioNamespace = "istio-system"
 )
 
-var _ = Describe("platform-alteration-service-mesh-usage-installed", Serial, func() {
+var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
-	execute.BeforeAll(func() {
+	BeforeAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Install istio")
 			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.18.1 sh - "+
@@ -37,22 +38,43 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Serial, fun
 		}
 	})
 
+	AfterAll(func() {
+		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
+			By("Uninstall istio")
+			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.18.1 sh - "+
+				"&& istio-1.18.1/bin/istioctl uninstall -y --purge")
+			err := cmd.Run()
+			Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
+		}
+	})
+
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.PlatformAlterationNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() {
+			Skip("Service mesh test is not applicable for Kind cluster")
+		}
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 56594
 	It("istio is installed", func() {
 		By("Define a test pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
@@ -71,7 +93,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Serial, fun
 	// 56596
 	It("istio is installed but proxy containers does not exist [negative]", func() {
 		By("Define a test pod without istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
@@ -89,14 +111,14 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Serial, fun
 	// 56597
 	It("istio is installed but proxy container exist on one pod only [negative]", func() {
 		By("Define first pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		putb := pod.DefinePod("lifecycle-putb", tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		putb := pod.DefinePod("lifecycle-putb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, WaitingTime)
@@ -113,17 +135,27 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Serial, fun
 })
 
 var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.PlatformAlterationNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 56595
@@ -145,7 +177,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 		}
 
 		By("Define a test pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 

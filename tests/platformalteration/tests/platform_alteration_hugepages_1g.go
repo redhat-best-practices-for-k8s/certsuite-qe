@@ -5,31 +5,44 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
+var _ = Describe("platform-alteration-hugepages-1g-only", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.PlatformAlterationNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() {
+			Skip("Hugepages are not supported in Kind clusters")
+		}
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One deployment, one pod with 1Gi hugepages", func() {
 
 		By("Define deployment")
-		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
@@ -51,7 +64,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	It("One pod with 1Gi hugepages", func() {
 
 		By("Define pod with 1Gi hugepages")
-		put := pod.DefinePod(tsparams.TestPodName, tsparams.PlatformAlterationNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 		pod.RedefineWith1GiHugepages(put, 1)
@@ -72,7 +85,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	It("One deployment, one pod, two containers, only one with 1Gi hugepages", func() {
 
 		By("Define deployment")
-		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
@@ -95,7 +108,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	It("One pod, two containers, both with 1Gi hugepages", func() {
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
@@ -123,7 +136,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	It("One pod, two containers, one with 1Gi hugepages, other with 2Mi [negative]", func() {
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
