@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/golang/glog"
@@ -99,11 +98,6 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 	return randomNamespace, origReportDir, origConfigDir
 }
 
-func DeleteTnfConfig() error {
-	// Delete the tnf config directory
-	return os.RemoveAll(GetConfiguration().General.TnfConfigDir)
-}
-
 func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origConfigDir string, waitingTime time.Duration) {
 	By("Remove reports from report directory")
 
@@ -118,9 +112,9 @@ func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origCon
 	)
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Delete TNF config")
+	By("Remove configs from config directory")
 
-	err = DeleteTnfConfig()
+	err = RemoveContentsFromConfigDir()
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Restore directories")

@@ -14,7 +14,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-deployment-scaling", func() {
+var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
