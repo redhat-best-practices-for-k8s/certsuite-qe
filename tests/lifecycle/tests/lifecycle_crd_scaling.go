@@ -1,6 +1,9 @@
 package tests
 
 import (
+	"os"
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -23,6 +26,10 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 			By("Make masters schedulable")
 			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
 			Expect(err).ToNot(HaveOccurred())
+
+			By("Enable intrusive tests")
+			err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
+			Expect(err).ToNot(HaveOccurred())
 		}
 
 		// Create random namespace and keep original report and TNF config directories
@@ -36,6 +43,18 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 			[]string{},
 			[]string{tsparams.TnfTargetCrdFilters})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+
+		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
+			Skip("Intrusive tests are disabled via config")
+		}
+	})
+
+	AfterEach(func() {
+		By("Disable intrusive tests")
+		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
+		Expect(err).ToNot(HaveOccurred())
+
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("Crd deployed, scale in and out", func() {
@@ -60,9 +79,5 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdScaling, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-	})
-
-	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 })
