@@ -38,6 +38,8 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 	})
 
 	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+
 		By("Delete all RTC's that were created by the previous test case.")
 		for _, rtc := range rtcNames {
 			By("Deleting rtc " + rtc)
@@ -47,8 +49,6 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 
 		// clear the list.
 		rtcNames = []string{}
-
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	const disableVar = "disable"
