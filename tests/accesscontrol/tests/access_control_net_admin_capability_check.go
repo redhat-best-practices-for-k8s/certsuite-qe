@@ -9,40 +9,36 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control net-admin-capability-check,", Serial, func() {
+var _ = Describe("Access-control net-admin-capability-check,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
-	execute.BeforeAll(func() {
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace},
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
-	})
-
-	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 63466
 	It("one deployment, one pod, one container, does not have net admin capability", func() {
 		By("Define deployment without net admin")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -64,7 +60,7 @@ var _ = Describe("Access-control net-admin-capability-check,", Serial, func() {
 	// 63467
 	It("one deployment, one pod, one container, does have net admin capability [negative]", func() {
 		By("Define deployment with net admin")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithContainersSecurityContextNetAdmin(dep)
@@ -88,13 +84,13 @@ var _ = Describe("Access-control net-admin-capability-check,", Serial, func() {
 	// 63468
 	It("two deployments, one pod each, one container each, does not have net admin capability", func() {
 		By("Define deployments without net admin")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
@@ -116,7 +112,7 @@ var _ = Describe("Access-control net-admin-capability-check,", Serial, func() {
 	// 63469
 	It("two deployments, one pod each, one container each, one does have net admin capability [negative]", func() {
 		By("Define deployments with varying net admin capabilities")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithContainersSecurityContextNetAdmin(dep)
@@ -124,7 +120,7 @@ var _ = Describe("Access-control net-admin-capability-check,", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)

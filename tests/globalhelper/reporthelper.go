@@ -128,6 +128,39 @@ func RemoveContentsFromReportDir() error {
 	return nil
 }
 
+func RemoveContentsFromConfigDir() error {
+	tnfConfigDir, err := os.Open(GetConfiguration().General.TnfConfigDir)
+	if err != nil {
+		return fmt.Errorf("failed to open config directory: %w", err)
+	}
+
+	defer tnfConfigDir.Close()
+
+	names, err := tnfConfigDir.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(GetConfiguration().General.TnfConfigDir, name))
+		if err != nil {
+			return fmt.Errorf("failed to remove content from config directory: %w", err)
+		}
+
+		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
+			name,
+			GetConfiguration().General.TnfConfigDir))
+	}
+
+	// Delete the config directory
+	err = os.Remove(GetConfiguration().General.TnfConfigDir)
+	if err != nil {
+		return fmt.Errorf("failed to remove config directory: %w", err)
+	}
+
+	return nil
+}
+
 // ConvertSpecNameToFileName converts given spec name to file name.
 func ConvertSpecNameToFileName(specName string) string {
 	formatString := specName

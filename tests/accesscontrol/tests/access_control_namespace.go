@@ -8,56 +8,29 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Access-control namespace, ", Serial, func() {
-
-	execute.BeforeAll(func() {
-		By("Clean test suite namespace before tests")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Create additional namespaces for testing")
-		// these namespaces will only be used for the access-control-namespace tests
-		err = namespaces.Create(tsparams.AdditionalValidNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Create(tsparams.InvalidNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-	})
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespaces before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
 	})
 
 	AfterEach(func() {
-		By("Clean namespaces after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Clean(tsparams.AdditionalValidNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Clean(tsparams.InvalidNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 51860
 	It("one namespace, no invalid prefixes", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace},
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -80,9 +53,19 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 51862
 	It("one namespace, namespace has invalid prefix [negative]", func() {
+		By("Create Invalid Namespace")
+		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.InvalidNamespace},
+		err = globalhelper.DefineTnfConfig(
+			[]string{invalidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -101,14 +84,23 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-
 	})
 
 	// 51863
 	It("two namespaces, no invalid prefixes", func() {
+		By("Create additional valid namespace")
+		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, tsparams.AdditionalValidNamespace},
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -127,14 +119,33 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-
 	})
 
 	// 51864
 	It("two namespaces, one has invalid prefix [negative]", func() {
+		By("Create additional valid namespace")
+		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
+		By("Create Invalid Namespace")
+		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err = namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.InvalidNamespace, tsparams.AdditionalValidNamespace},
+		err = globalhelper.DefineTnfConfig(
+			[]string{invalidNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -159,7 +170,8 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("one custom resource in a valid namespace", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{randomNamespace, "tnf"},
+			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -167,7 +179,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resource")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -187,9 +199,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 52058
 	It("one custom resource in an invalid namespace [negative]", func() {
+		By("Create Invalid Namespace")
+		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace, "tnf"},
+			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -197,7 +220,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resource")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.InvalidNamespace, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", invalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -216,9 +239,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 52069
 	It("two custom resources, both in valid namespaces", func() {
+		By("Create additional valid namespace")
+		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, tsparams.AdditionalValidNamespace, "tnf"},
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace, additionalValidNamespace, "tnf"},
+			// []string{randomNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -226,11 +260,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", tsparams.AdditionalValidNamespace,
+		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", additionalValidNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -250,9 +284,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 52070
 	It("two custom resources, one in invalid namespace [negative]", func() {
+		By("Create Invalid Namespace")
+		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace, "tnf"},
+			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -260,10 +305,10 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", tsparams.InvalidNamespace, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", invalidNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -284,7 +329,8 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("two custom resources of different CRDs, both in valid namespace", func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+			[]string{randomNamespace, "tnf"},
+			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -292,11 +338,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateSubscription("test-sub", tsparams.TestAccessControlNameSpace,
+		err = tshelper.DefineAndCreateSubscription("test-sub", randomNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating subscription")
 
@@ -316,9 +362,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 52098
 	It("two custom resources of different CRDs, one in invalid namespace [negative]", func() {
+		By("Create Additional Valid Namespace")
+		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
+
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
+		})
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace, "tnf"},
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace, "tnf"},
+			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -326,11 +383,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", tsparams.TestAccessControlNameSpace,
+		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateSubscription("test-sub", tsparams.AdditionalValidNamespace,
+		err = tshelper.DefineAndCreateSubscription("test-sub", additionalValidNamespace,
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating subscription")
 
@@ -347,5 +404,4 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
-
 })

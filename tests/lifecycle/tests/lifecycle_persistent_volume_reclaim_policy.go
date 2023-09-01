@@ -43,6 +43,8 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	})
 
 	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+
 		By("Delete all PVs that were created by the previous test case.")
 		for _, pv := range pvNames {
 			By("Deleting pv " + pv)
@@ -52,8 +54,6 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		// clear the list.
 		pvNames = []string{}
-
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 54201

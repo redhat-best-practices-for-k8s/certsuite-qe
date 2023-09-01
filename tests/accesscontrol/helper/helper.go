@@ -18,6 +18,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
@@ -43,12 +44,12 @@ func DeleteNamespaces(nsToDelete []string, client corev1Typed.CoreV1Interface, t
 	return nil
 }
 
-func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deployment, error) {
+func DefineDeployment(replica int32, containers int, name, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid number of containers")
 	}
 
-	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
@@ -58,8 +59,8 @@ func DefineDeployment(replica int32, containers int, name string) (*appsv1.Deplo
 }
 
 func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32,
-	containers int, name, serviceAccountName string) (*appsv1.Deployment, error) {
-	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
+	containers int, name, namespace, serviceAccountName string) (*appsv1.Deployment, error) {
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
@@ -83,12 +84,13 @@ func DefineDeploymentWithNamespace(replica int32, containers int, name string, n
 	return deploymentStruct, nil
 }
 
-func DefineDeploymentWithContainerPorts(name string, replicaNumber int32, ports []corev1.ContainerPort) (*appsv1.Deployment, error) {
+func DefineDeploymentWithContainerPorts(name, namespace string, replicaNumber int32,
+	ports []corev1.ContainerPort) (*appsv1.Deployment, error) {
 	if len(ports) < 1 {
 		return nil, errors.New("invalid number of containers")
 	}
 
-	deploymentStruct := deployment.DefineDeployment(name, parameters.TestAccessControlNameSpace,
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)
@@ -128,7 +130,7 @@ func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value stri
 		return fmt.Errorf("invalid value for token value")
 	}
 
-	_, err = globalhelper.GetAPIClient().ServiceAccounts(parameters.TestAccessControlNameSpace).
+	_, err = globalhelper.GetAPIClient().ServiceAccounts(namespace).
 		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
 
 	return err
@@ -144,24 +146,36 @@ func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet)
 func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.ClientSet) error {
 	plan := installplan.DefineInstallPlan(name, namespace)
 
-	return globalhelper.GetAPIClient().Create(context.TODO(), plan)
+	err := globalhelper.GetAPIClient().Create(context.TODO(), plan)
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	}
+
+	return err
 }
 
 func DefineAndCreateSubscription(name, namespace string, clientSet *client.ClientSet) error {
 	subscription := subscription.DefineSubscription(name, namespace)
 
-	return globalhelper.GetAPIClient().Create(context.TODO(), subscription)
+	err := globalhelper.GetAPIClient().Create(context.TODO(), subscription)
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	}
+
+	return err
 }
 
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
-func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, withNodePort bool,
+func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetPort int32, withNodePort bool,
 	ipFams []corev1.IPFamily, ipFamPolicy string) error {
 	var testService *corev1.Service
 
 	if ipFamPolicy == "" {
 		testService = service.DefineService(
 			name,
-			parameters.TestAccessControlNameSpace,
+			namespace,
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
@@ -173,7 +187,7 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 
 		testService = service.DefineService(
 			name,
-			parameters.TestAccessControlNameSpace,
+			namespace,
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
@@ -191,10 +205,13 @@ func DefineAndCreateServiceOnCluster(name string, port int32, targetPort int32, 
 		}
 	}
 
-	_, err := globalhelper.GetAPIClient().Services(parameters.TestAccessControlNameSpace).Create(
+	_, err := globalhelper.GetAPIClient().Services(namespace).Create(
 		context.TODO(),
 		testService, metav1.CreateOptions{})
-	if err != nil {
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("failed to create service on cluster: %w", err)
 	}
 

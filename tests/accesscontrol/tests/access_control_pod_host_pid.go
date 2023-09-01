@@ -9,35 +9,36 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control pod-host-pid ", Serial, func() {
+var _ = Describe("Access-control pod-host-pid ", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
-	execute.BeforeAll(func() {
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace},
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
 	})
 
-	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
+	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 53140
 	It("one deployment, one pod, HostPid false", func() {
 		By("Define deployment with hostPid set to false")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPid(dep, false)
@@ -61,7 +62,7 @@ var _ = Describe("Access-control pod-host-pid ", Serial, func() {
 	// 53141
 	It("one deployment, one pod, HostPid true [negative]", func() {
 		By("Define deployment with hostPid set to true")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPid(dep, true)
@@ -85,7 +86,7 @@ var _ = Describe("Access-control pod-host-pid ", Serial, func() {
 	// 53142
 	It("two deployments, one pod each, HostPids false", func() {
 		By("Define deployments with hostPid set to false")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPid(dep, false)
@@ -93,7 +94,7 @@ var _ = Describe("Access-control pod-host-pid ", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPid(dep2, false)
@@ -117,7 +118,7 @@ var _ = Describe("Access-control pod-host-pid ", Serial, func() {
 	// 53143
 	It("two deployments, one pod each, one HostPid true [negative]", func() {
 		By("Define deployments with hostPid set to different values")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPid(dep, true)
@@ -125,7 +126,7 @@ var _ = Describe("Access-control pod-host-pid ", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2")
+		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostPid(dep2, false)

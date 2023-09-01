@@ -8,56 +8,54 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Access-control namespace-resource-quota,", Serial, func() {
+var _ = Describe("Access-control namespace-resource-quota,", func() {
+	var randomNamespace string
+	var randomNamespace2 string
+	var origReportDir string
+	var origTnfConfigDir string
 
-	execute.BeforeAll(func() {
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
+		By("Create additional namespace for deployment2")
+		randomNamespace2 = tsparams.AdditionalNamespaceForResourceQuotas + "-" + globalhelper.GenerateRandomString(5)
+		err := namespaces.Create(randomNamespace2, globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace},
+		err = globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
-		By("Create additional namespace for testing")
-		err = namespaces.Create(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	BeforeEach(func() {
-		By("Clean namespaces before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.Clean(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespaces after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 
-		err = namespaces.Clean(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.GetAPIClient())
+		By("Delete additional namespace for deployment2")
+		err := namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, randomNamespace2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 56469
 	It("one deployment, one pod in a namespace with resource quota", func() {
 		By("Define deployment")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateResourceQuota(randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -76,7 +74,7 @@ var _ = Describe("Access-control namespace-resource-quota,", Serial, func() {
 	// 56470
 	It("one deployment, one pod in a namespace without resource quota [negative]", func() {
 		By("Define deployment")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -98,25 +96,25 @@ var _ = Describe("Access-control namespace-resource-quota,", Serial, func() {
 	// 56471
 	It("two deployments, one pod each, both in a namespace with resource quota", func() {
 		By("Define deployments")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateResourceQuota(randomNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeploymentWithNamespace(1, 1, "accesscontroldeployment2",
-			tsparams.AdditionalNamespaceForResourceQuotas)
+			randomNamespace2)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateResourceQuota(randomNamespace2, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -135,21 +133,21 @@ var _ = Describe("Access-control namespace-resource-quota,", Serial, func() {
 	// 56472
 	It("two deployments, one pod each, one in a namespace without resource quota [negative]", func() {
 		By("Define deployments")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1")
+		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeploymentWithNamespace(1, 1, "accesscontroldeployment2",
-			tsparams.AdditionalNamespaceForResourceQuotas)
+			randomNamespace2)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(tsparams.AdditionalNamespaceForResourceQuotas, globalhelper.GetAPIClient())
+		err = tshelper.DefineAndCreateResourceQuota(randomNamespace2, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

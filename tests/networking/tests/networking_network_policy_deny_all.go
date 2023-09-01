@@ -150,6 +150,15 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			err = namespaces.Create(randomSecondaryNamespace, globalhelper.GetAPIClient())
 			Expect(err).ToNot(HaveOccurred())
 
+			DeferCleanup(func() {
+				err = namespaces.DeleteAndWait(
+					globalhelper.GetAPIClient().CoreV1Interface,
+					randomSecondaryNamespace,
+					tsparams.WaitingTime,
+				)
+				Expect(err).ToNot(HaveOccurred())
+			})
+
 			By("Define second deployment and create it on cluster")
 			err = tshelper.DefineAndCreateDeploymentWithNamespace(randomSecondaryNamespace, 1)
 			Expect(err).ToNot(HaveOccurred())
@@ -179,14 +188,6 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 				tsparams.TnfNetworkPolicyDenyAllTcName,
 				globalparameters.TestCasePassed)
 			Expect(err).ToNot(HaveOccurred())
-
-			By("Delete additional namespaces")
-			err = namespaces.DeleteAndWait(
-				globalhelper.GetAPIClient().CoreV1Interface,
-				randomSecondaryNamespace,
-				tsparams.WaitingTime,
-			)
-			Expect(err).ToNot(HaveOccurred())
 		})
 
 	// 59745
@@ -206,6 +207,15 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			randomSecondaryNamespace := tsparams.AdditionalNetworkingNamespace + "-" + globalhelper.GenerateRandomString(5)
 			err = namespaces.Create(randomSecondaryNamespace, globalhelper.GetAPIClient())
 			Expect(err).ToNot(HaveOccurred())
+
+			DeferCleanup(func() {
+				err = namespaces.DeleteAndWait(
+					globalhelper.GetAPIClient().CoreV1Interface,
+					randomSecondaryNamespace,
+					tsparams.WaitingTime,
+				)
+				Expect(err).ToNot(HaveOccurred())
+			})
 
 			By("Define second deployment and create it on cluster")
 			err = tshelper.DefineAndCreateDeploymentWithNamespace(randomSecondaryNamespace, 1)
@@ -236,14 +246,5 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 				tsparams.TnfNetworkPolicyDenyAllTcName,
 				globalparameters.TestCaseFailed)
 			Expect(err).ToNot(HaveOccurred())
-
-			By("Delete additional namespaces")
-			err = namespaces.DeleteAndWait(
-				globalhelper.GetAPIClient().CoreV1Interface,
-				randomSecondaryNamespace,
-				tsparams.WaitingTime,
-			)
-			Expect(err).ToNot(HaveOccurred())
-
 		})
 })

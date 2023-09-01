@@ -8,42 +8,38 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("Access-control container-host-port,", Serial, func() {
+var _ = Describe("Access-control container-host-port,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
-	execute.BeforeAll(func() {
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestAccessControlNameSpace)
+
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestAccessControlNameSpace},
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
-
-	})
-
-	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 63884
 	It("one deployment, one pod, one container not declaring host port", func() {
 		By("Define deployment with container without host port")
-		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -67,7 +63,7 @@ var _ = Describe("Access-control container-host-port,", Serial, func() {
 		ports := []corev1.ContainerPort{{ContainerPort: 22223, HostPort: 22222}}
 
 		By("Define deployment with container declaring host port")
-		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", 1, ports)
+		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -91,7 +87,7 @@ var _ = Describe("Access-control container-host-port,", Serial, func() {
 		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22223}}
 
 		By("Define deployment with containers not declaring host port")
-		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", 1, ports)
+		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -115,7 +111,7 @@ var _ = Describe("Access-control container-host-port,", Serial, func() {
 		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22222, HostPort: 22223}}
 
 		By("Define deployment with one container declaring host port")
-		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", 1, ports)
+		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)

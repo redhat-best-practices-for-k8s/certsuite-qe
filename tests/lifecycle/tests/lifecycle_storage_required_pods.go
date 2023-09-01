@@ -44,6 +44,8 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 	})
 
 	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+
 		By("Delete all PVs that were created by the previous test case.")
 		for _, pv := range pvNames {
 			By("Deleting pv " + pv)
@@ -57,8 +59,6 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 
 		// clear the list.
 		pvNames = []string{}
-
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One pod with a storage, PVC with no storageclass defined", func() {
