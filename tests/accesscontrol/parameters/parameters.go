@@ -31,6 +31,9 @@ var (
 	TnfTargetOperatorNamespace = "cr-scale-operator-system"
 	TnfCustomResourceName      = "memcached-sample"
 
+	TnfCustomResourceAPIGroupName = "cache.example.com"
+	TnfCustomResourceResourceName = "memcacheds"
+
 	SSHDaemonStartContainerCommand = []string{"/usr/sbin/sshd", "-f", "/home/tnf-user/sshd/sshd_config", "-D", "-d"}
 )
 
