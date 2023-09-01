@@ -7,22 +7,34 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/performance/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
-var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, func() {
+var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
+		Expect(err).ToNot(HaveOccurred())
+
+		// Create service account and roles and roles binding
+		err = tshelper.ConfigurePrivilegedServiceAccount(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test in order to enable RunTimeClass deletion.")
-		err := namespaces.Clean(tsparams.PerformanceNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 
 		By("Delete all RTC's that were created by the previous test case.")
 		for _, rtc := range tsparams.RtcNames {
@@ -38,7 +50,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
 
 		By("Define pod")
-		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool()
+		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool(randomNamespace)
 		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
@@ -65,7 +77,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 	It("One pod running in isolated cpu pool and non-rt scheduling policy", func() {
 		By("Define pod")
 
-		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool()
+		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool(randomNamespace)
 		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
@@ -86,7 +98,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 
 	It("One pod running in shared cpu pool", func() {
 		By("Define pod")
-		testPod := pod.DefinePod(tsparams.TestPodName, tsparams.PerformanceNamespace,
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)

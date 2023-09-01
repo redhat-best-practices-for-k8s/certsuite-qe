@@ -290,8 +290,8 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 	return aRole, aRoleBinding, aServiceAccount
 }
 
-func DefineRtPodInIsolatedCPUPool() (*corev1.Pod, error) {
-	testPod := DefineRtPod(tsparams.TestPodName, tsparams.PerformanceNamespace,
+func DefineRtPodInIsolatedCPUPool(namespace string) (*corev1.Pod, error) {
+	testPod := DefineRtPod(tsparams.TestPodName, namespace,
 		tsparams.RtImageName, tsparams.TnfTargetPodLabels)
 
 	annotationsMap := make(map[string]string)
@@ -299,14 +299,15 @@ func DefineRtPodInIsolatedCPUPool() (*corev1.Pod, error) {
 	annotationsMap["irq-load-balancing.crio.io"] = tsparams.DisableStr
 	testPod.SetAnnotations(annotationsMap)
 
-	rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+	rtcName := tsparams.TnfRunTimeClass + "-" + globalhelper.GenerateRandomString(10)
+	rtc := runtimeclass.DefineRunTimeClass(rtcName)
 	err := globalhelper.CreateRunTimeClass(rtc)
 
 	if err != nil {
 		return nil, err
 	}
 
-	tsparams.RtcNames = append(tsparams.RtcNames, tsparams.TnfRunTimeClass)
+	tsparams.RtcNames = append(tsparams.RtcNames, rtc.Name)
 
 	pod.RedefineWithRunTimeClass(testPod, rtc.Name)
 	pod.RedefineWithCPUResources(testPod, "1", "1")
