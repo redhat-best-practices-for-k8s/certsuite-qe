@@ -24,10 +24,9 @@ func IsDeploymentReady(operatorNamespace string, deploymentName string) (bool, e
 		return false, err
 	}
 
-	if testDeployment.Status.ReadyReplicas > 0 {
-		if testDeployment.Status.Replicas == testDeployment.Status.ReadyReplicas {
-			return true, nil
-		}
+	// Ensure the number of ready replicas matches the desired number of replicas.
+	if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
+		return true, nil
 	}
 
 	return false, nil

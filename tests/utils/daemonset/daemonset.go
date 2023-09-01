@@ -16,6 +16,7 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 			Name:      name,
 			Namespace: namespace},
 		Spec: appsv1.DaemonSetSpec{
+			MinReadySeconds: 30,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},

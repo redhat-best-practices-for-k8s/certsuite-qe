@@ -50,7 +50,7 @@ func isDaemonSetReady(namespace string, name string) (bool, error) {
 		return false, err
 	}
 
-	if daemonSet.Status.NumberReady > 0 && daemonSet.Status.NumberUnavailable == 0 {
+	if daemonSet.Status.NumberReady == daemonSet.Status.DesiredNumberScheduled && daemonSet.Status.NumberUnavailable == 0 {
 		return true, nil
 	}
 

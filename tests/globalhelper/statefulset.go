@@ -49,7 +49,7 @@ func isStatefulSetReady(namespace string, statefulSetName string) (bool, error) 
 		return false, err
 	}
 
-	if *testStatefulSet.Spec.Replicas == testStatefulSet.Status.ReadyReplicas {
+	if *testStatefulSet.Spec.Replicas == testStatefulSet.Status.ReadyReplicas && testStatefulSet.Status.ReadyReplicas > 0 {
 		return true, nil
 	}
 
