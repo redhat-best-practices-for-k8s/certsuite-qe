@@ -84,7 +84,7 @@ func EnsureCrdExists(name string) (bool, error) {
 }
 
 // Define a custom resource.
-func DefineCustomResource(name, namespace, operatorLabels string, operatorLablesMap map[string]string) *crscaleoperator.Memcached {
+func DefineCustomResource(name, namespace, operatorLabels string, operatorLabelsMap map[string]string) *crscaleoperator.Memcached {
 	return &crscaleoperator.Memcached{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "cache.example.com/v1",
@@ -93,13 +93,13 @@ func DefineCustomResource(name, namespace, operatorLabels string, operatorLables
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace,
-			Labels:    operatorLablesMap, //tsparams.TnfTargetOperatorLabelsMap,
+			Labels:    operatorLabelsMap,
 		},
 		Spec: crscaleoperator.MemcachedSpec{
 			Size: 1,
 		},
 		Status: crscaleoperator.MemcachedStatus{
-			Selector: operatorLabels, // tsparams.TnfTargetOperatorLabels,
+			Selector: operatorLabels,
 		},
 	}
 }
