@@ -17,7 +17,7 @@ func setupInitialRbacConfiguration() {
 	err := globalhelper.CreateServiceAccount(tsparams.TestServiceAccount, tsparams.TestAccessControlNameSpace)
 	Expect(err).ToNot(HaveOccurred())
 
-	err = globalhelper.CreateRole(tsparams.TestRoleName, tsparams.TestAccessControlNameSpace)
+	err = globalhelper.CreateRole(globalhelper.DefineRole(tsparams.TestRoleName, tsparams.TestAccessControlNameSpace))
 	Expect(err).ToNot(HaveOccurred())
 
 	err = globalhelper.CreateRoleBindingWithServiceAccountSubject(tsparams.TestRoleBindingName, tsparams.TestRoleName,

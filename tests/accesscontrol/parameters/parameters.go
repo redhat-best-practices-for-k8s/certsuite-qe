@@ -23,11 +23,20 @@ var (
 		"app":                  "test",
 	}
 
+	TnfTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
+	TnfTargetOperatorLabelsMap = map[string]string{
+		"cnf/test": "cr-scale-operator",
+	}
+	TnfTargetCrdFilters        = "memcacheds.cache.example.com"
+	TnfTargetOperatorNamespace = "cr-scale-operator-system"
+	TnfCustomResourceName      = "memcached-sample"
+
 	SSHDaemonStartContainerCommand = []string{"/usr/sbin/sshd", "-f", "/home/tnf-user/sshd/sshd_config", "-D", "-d"}
 )
 
 const (
 	// TNF Test case names.
+	TnfCrdRoles                                     = "access-control-crd-roles"
 	TnfPodRoleBindings                              = "access-control-pod-role-bindings"
 	TnfPodServiceAccount                            = "access-control-pod-service-account"
 	TnfNoSSHDaemonsAllowed                          = "access-control-ssh-daemons"
