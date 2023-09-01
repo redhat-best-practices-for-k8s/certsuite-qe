@@ -174,4 +174,53 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, Serial, func() {
 		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
+
+	It("One deployment, pod disruption budget matchLabels does not match deployment label [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
+
+		By("Create deployment")
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+
+		deployment.RedefineWithReplicaNumber(dep, 1)
+
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Create pod disruption budget")
+		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, tsparams.TestNamespace,
+			intstr.FromInt(1), tsparams.TnfUnknownPodLabels)
+
+		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start TNF " + tnfTestCaseName + " test case")
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("One deployment, no pod disruption budget [negative]", func() {
+		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
+
+		By("Create deployment")
+		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, tsparams.TestNamespace,
+			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+
+		deployment.RedefineWithReplicaNumber(dep, 1)
+
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start TNF " + tnfTestCaseName + " test case")
+		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		Expect(err).ToNot(HaveOccurred())
+	})
 })

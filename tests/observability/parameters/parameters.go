@@ -24,6 +24,9 @@ const (
 
 	TestPodLabelKey   = "tnf-qe/observability"
 	TestPodLabelValue = "container-logging-tc"
+
+	UnknownKey   = "unknown-key"
+	UnknownValue = "unknown-value"
 )
 
 // observability-container-logging helper params.
@@ -55,6 +58,10 @@ const (
 var (
 	TnfTargetPodLabels = map[string]string{
 		TestPodLabelKey: TestPodLabelValue,
+	}
+
+	TnfUnknownPodLabels = map[string]string{
+		UnknownKey: UnknownValue,
 	}
 
 	TestContainerNormalCommand = []string{"/bin/bash", "-c", "sleep INF"}
