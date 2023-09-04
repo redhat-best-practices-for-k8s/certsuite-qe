@@ -50,8 +50,8 @@ func DeleteServiceAccount(serviceAccountName, namespace string) error {
 	return nil
 }
 
-func CreateRole(roleName, namespace string) error {
-	aRole := rbacv1.Role{
+func DefineRole(roleName, namespace string) rbacv1.Role {
+	return rbacv1.Role{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Role",
 			APIVersion: "v1",
@@ -67,12 +67,22 @@ func CreateRole(roleName, namespace string) error {
 		},
 		},
 	}
+}
 
+func RedefineRoleWithAPIGroups(role rbacv1.Role, newAPIGroups []string) {
+	role.Rules[0].APIGroups = newAPIGroups
+}
+
+func RedefineRoleWithResources(role rbacv1.Role, newResources []string) {
+	role.Rules[0].Resources = newResources
+}
+
+func CreateRole(aRole rbacv1.Role) error {
 	_, err :=
-		GetAPIClient().RbacV1Interface.Roles(namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
+		GetAPIClient().RbacV1Interface.Roles(aRole.Namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("role %s already installed", roleName))
+		glog.V(5).Info(fmt.Sprintf("role %s already installed", aRole.Name))
 
 		return nil
 	}

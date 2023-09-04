@@ -12,8 +12,9 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+
+	crdutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
 )
 
 var _ = Describe("lifecycle-crd-scaling", Serial, func() {
@@ -57,18 +58,19 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
-	It("Crd deployed, scale in and out", func() {
+	It("Custom resource is deployed, scale in and out", func() {
 		// We have to pre-install the crd-operator-scaling resources prior to running these tests.
-		By("Check if cr-scaling-operator is installed")
+		By("Check if cr-scale-operator is installed")
 		exists, err := namespaces.Exists(tsparams.TnfTargetOperatorNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scaling-operator is installed")
 		if !exists {
 			// Skip the test if cr-scaling-operator is not installed
-			Skip("cr-scaling-operator is not installed, skipping test")
+			Skip("cr-scale-operator is not installed, skipping test")
 		}
 
 		By("Create a scale custom resource")
-		_, err = tshelper.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace)
+		_, err = crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
+			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-crd-scaling test")
