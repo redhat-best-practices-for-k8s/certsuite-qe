@@ -19,7 +19,7 @@ jobs:
         with:
           go-version: 1.21.0
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: nosborn/github-action-markdown-cli@v3.3.0
         with:
           files: README.md
@@ -48,7 +48,7 @@ jobs:
         run: make lint
 
       - name: Checkout the cnf-certification-test repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: test-network-function/cnf-certification-test
           path: cnf-certification-test
