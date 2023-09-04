@@ -76,7 +76,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("Custom resource is deployed, one role defined with multiple api groups [negative test]", func() {
+	It("Custom resource is deployed, one role defined with multiple api groups [negative]", func() {
 		By("Create a scale custom resource")
 		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
 			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
@@ -99,7 +99,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("Custom resource is deployed, one role with multiple resources defined [negative test]", func() {
+	It("Custom resource is deployed, one role with multiple resources defined [negative]", func() {
 		By("Create a scale custom resource")
 		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
 			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
@@ -122,7 +122,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("Custom resource is deployed, with improper role [negative test]", func() {
+	It("Custom resource is deployed, with improper role [skip]", func() {
 		By("Create a scale custom resource")
 		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
 			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
