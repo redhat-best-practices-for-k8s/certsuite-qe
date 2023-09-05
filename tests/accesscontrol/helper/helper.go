@@ -104,38 +104,6 @@ func DefineDeploymentWithContainerPorts(name, namespace string, replicaNumber in
 	return deploymentStruct, nil
 }
 
-func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value string) error {
-	var boolVal bool
-
-	serviceacct, err := globalhelper.GetAPIClient().ServiceAccounts(namespace).
-		Get(context.TODO(), saname, metav1.GetOptions{})
-
-	if err != nil {
-		return fmt.Errorf("error getting service account: %w", err)
-	}
-
-	switch value {
-	case "true":
-		boolVal = true
-		serviceacct.AutomountServiceAccountToken = &boolVal
-
-	case "false":
-		boolVal = false
-		serviceacct.AutomountServiceAccountToken = &boolVal
-
-	case "nil":
-		serviceacct.AutomountServiceAccountToken = nil
-
-	default:
-		return fmt.Errorf("invalid value for token value")
-	}
-
-	_, err = globalhelper.GetAPIClient().ServiceAccounts(namespace).
-		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
-
-	return err
-}
-
 func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet) error {
 	quota := resourcequota.DefineResourceQuota("quota1", parameters.CPURequest, parameters.MemoryRequest,
 		parameters.CPULimit, parameters.MemoryLimit)

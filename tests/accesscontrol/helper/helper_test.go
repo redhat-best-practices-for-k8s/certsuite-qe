@@ -2,7 +2,6 @@ package helper
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -101,71 +100,6 @@ func TestDefineDeploymentWithContainerPorts(t *testing.T) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers[0].Ports))
 	assert.Equal(t, "test-port", deployment.Spec.Template.Spec.Containers[0].Ports[0].Name)
 	assert.Equal(t, int32(80), deployment.Spec.Template.Spec.Containers[0].Ports[0].ContainerPort)
-}
-
-func TestSetServiceAccountAutomountServiceAccountToken(t *testing.T) {
-	// generate test serviceaccount objects
-	generateServiceAccount := func() *corev1.ServiceAccount {
-		return &corev1.ServiceAccount{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      "my-service-account",
-				Namespace: parameters.TestAccessControlNameSpace,
-			},
-		}
-	}
-
-	testCases := []struct {
-		testValue   string
-		expectedErr error
-	}{
-		{
-			testValue:   "true",
-			expectedErr: nil,
-		},
-		{
-			testValue:   "false",
-			expectedErr: nil,
-		},
-		{
-			testValue:   "invalid",
-			expectedErr: errors.New("invalid value for token value"),
-		},
-		{
-			testValue:   "nil",
-			expectedErr: nil,
-		},
-	}
-
-	for _, testCase := range testCases {
-		client := k8sfake.NewSimpleClientset(generateServiceAccount())
-
-		// Set the globalhelper client to the fake client
-		globalhelper.SetTestK8sAPIClient(client)
-
-		// Set the automountServiceAccountToken to the test value
-		err := SetServiceAccountAutomountServiceAccountToken(parameters.TestAccessControlNameSpace, "my-service-account", testCase.testValue)
-
-		// Check if the error is as expected
-		assert.Equal(t, testCase.expectedErr, err)
-
-		// Get the serviceaccount from the fake client and check if the automountServiceAccountToken is set to the test value
-		serviceAccount, err := client.CoreV1().
-			ServiceAccounts(parameters.TestAccessControlNameSpace).Get(context.TODO(), "my-service-account", metav1.GetOptions{})
-		assert.Nil(t, err)
-
-		if err == nil {
-			switch testCase.testValue {
-			case "true":
-				assert.Equal(t, true, *serviceAccount.AutomountServiceAccountToken)
-			case "false":
-				assert.Equal(t, false, *serviceAccount.AutomountServiceAccountToken)
-			case "nil":
-				assert.Nil(t, serviceAccount.AutomountServiceAccountToken)
-			}
-		}
-
-		globalhelper.UnsetTestK8sAPIClient()
-	}
 }
 
 func TestDefineAndCreateResourceQuota(t *testing.T) {

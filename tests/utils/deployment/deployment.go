@@ -227,10 +227,6 @@ func RedefineWithHostIpc(deployment *appsv1.Deployment, hostIpc bool) {
 	deployment.Spec.Template.Spec.HostIPC = hostIpc
 }
 
-func RedefineWithAutomountServiceAccountToken(deployment *appsv1.Deployment, token bool) {
-	deployment.Spec.Template.Spec.AutomountServiceAccountToken = &token
-}
-
 func RedefineWithHostNetwork(deployment *appsv1.Deployment, hostNetwork bool) {
 	deployment.Spec.Template.Spec.HostNetwork = hostNetwork
 }
@@ -416,25 +412,6 @@ func RedefineWithPostStart(deployment *appsv1.Deployment) {
 func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid int64) {
 	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
 		RunAsUser: pointer.Int64(uid),
-	}
-}
-
-func RedefineWithProjectedVolume(deployment *appsv1.Deployment, name, tokenPath string) {
-	projection := corev1.VolumeProjection{
-		ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
-			Path: tokenPath,
-		},
-	}
-
-	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
-		{
-			Name: name,
-			VolumeSource: corev1.VolumeSource{
-				Projected: &corev1.ProjectedVolumeSource{
-					Sources: []corev1.VolumeProjection{projection},
-				},
-			},
-		},
 	}
 }
 

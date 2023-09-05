@@ -46,7 +46,6 @@ const (
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
 	TestCaseNameAccessControlPodHostPid             = "access-control-pod-host-pid"
-	TestCaseNameAccessControlPodAutomountToken      = "access-control-pod-automount-service-account-token"
 	TestCaseNameAccessControlPodHostNetwork         = "access-control-pod-host-network"
 	TestCaseNameAccessControlSysPtraceCapability    = "access-control-sys-ptrace-capability"
 	TestCaseNameAccessControlRequestsAndLimits      = "access-control-requests-and-limits"
@@ -65,17 +64,15 @@ const (
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 	TnfSecurityContextTcName                        = "access-control-security-context"
 	TestCaseNameAccessControlOneProcessPerContainer = "access-control-one-process-per-container"
-	TnfProjectedVolumeServiceAccountTcName          = "access-control-projected-volume-service-account-token"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
 	SSHDaemonImageName = "quay.io/testnetworkfunction/debug-partner:latest"
 
-	ServiceAccountName = "automount-test-sa"
-	MemoryLimit        = "512Mi"
-	MemoryRequest      = "500Mi"
-	CPULimit           = "1"
-	CPURequest         = "1"
+	MemoryLimit   = "512Mi"
+	MemoryRequest = "500Mi"
+	CPULimit      = "1"
+	CPURequest    = "1"
 
 	TestServiceAccount   = "my-sa"
 	TestRoleBindingName  = "my-rb"
