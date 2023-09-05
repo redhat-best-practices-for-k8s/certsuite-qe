@@ -23,7 +23,8 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 			Namespace: namespace,
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas: pointer.Int32(1),
+			Replicas:        pointer.Int32(1),
+			MinReadySeconds: 30,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
