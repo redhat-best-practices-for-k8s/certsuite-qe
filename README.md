@@ -7,7 +7,7 @@
 
 ## Objective
 
-> The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
+The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
 
 The cnfcert-tests-verification project is based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
 
@@ -63,6 +63,8 @@ The following environment variables are used to configure the test setup.
 | TNF_LOG_LEVEL | Log level. Default is 4
 | DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`.
 | ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`.
+| FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false`.
+| NON_LINUX_ENV | Allow the test suites to run in a non Linux environment. Default is `false`.
 
 ## Steps to run the tests
 
@@ -83,29 +85,6 @@ cd cnfcert-tests-verification
 make install
 ```
 
-#### Set environment variables
-
-* `testconfig.yaml` inside the `config` directory stores the local environment related information.
-Update `tnf_config_dir` and `tnf_report_dir`, and `docker_config_dir` as specific to your local workspace.
-
-Optionally, update `tnf_image`, `test_image`, and `tnf_image_tag` as per needs.
-
-```yaml
-# Sample configurations snippet
-general:
-  tnf_config_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_config"
-  tnf_report_dir: "/Users/bmandal/rhdev/github.com/cnfcert-tests-verification/tnf_report"
-  tnf_image: "quay.io/testnetworkfunction/cnf-certification-test"
-  tnf_image_tag: "unstable"
-  docker_config_dir: "/tmp"
-```
-
-* To use this test config file, you need to set `LOCAL_TESTING` environment variable while running the test.
-* If you need to force the download of the `unstable` image, set the `FORCE_DOWNLOAD_UNSTABLE=true` environment variable.
-
->**Mac Users**:
-Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the non Linux local env.
-
 #### Execute tests
 
 * To run all tests
@@ -125,7 +104,6 @@ Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the n
 # Linux user
  \
   KUBECONFIG=$HOME/.kube/config \
-  LOCAL_TESTING= \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
 ```
@@ -135,7 +113,6 @@ Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the n
  \
   FORCE_DOWNLOAD_UNSTABLE=true \
   KUBECONFIG=$HOME/.kube/config \
-  LOCAL_TESTING= \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
 ```
@@ -159,7 +136,6 @@ Set `NON_LINUX_ENV=` to signal the repo code that the suite is run against the n
  \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
-  LOCAL_TESTING= \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
@@ -189,7 +165,6 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
   DEBUG_TNF=true \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
-  LOCAL_TESTING= \
   TNF_LOG_LEVEL=trace \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
