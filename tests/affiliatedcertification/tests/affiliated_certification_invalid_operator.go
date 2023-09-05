@@ -23,7 +23,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 	execute.BeforeAll(func() {
 		Skip("Impractical to test under current circumstances")
-		preConfigureAffiliatedCertificationEnvironment()
+		preConfigureAffiliatedCertificationEnvironment(tsparams.TestCertificationNameSpace)
 
 		By("Deploy instana-agent-operator for testing")
 		// instana-agent-operator: in certified-operators group and version is certified
@@ -122,6 +122,10 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 				info.Label)
 			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator "+info.OperatorPrefix)
 		}
+
+		By("Remove reports from report directory")
+		err := globalhelper.RemoveContentsFromReportDir()
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46695

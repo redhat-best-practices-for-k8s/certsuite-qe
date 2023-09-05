@@ -8,15 +8,22 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("Affiliated-certification helm chart certification,", Serial, func() {
-	execute.BeforeAll(func() {
+var _ = Describe("Affiliated-certification helm chart certification,", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
+
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestCertificationNameSpace)
+
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
-			[]string{tsparams.TestHelmChartCertified},
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -24,16 +31,8 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})
 
-	BeforeEach(func() {
-		By("Create namespace")
-		err := namespaces.Create(tsparams.TestHelmChartCertified, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
-	})
-
 	AfterEach(func() {
-		By("Remove the project")
-		err := namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, tsparams.TestHelmChartCertified, tsparams.Timeout)
-		Expect(err).ToNot(HaveOccurred(), "Error delete ns affiliated-certification-helmchart-is-certified")
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	It("One helm to test, are certified", func() {

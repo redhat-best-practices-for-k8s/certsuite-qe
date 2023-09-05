@@ -15,13 +15,13 @@ import (
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
-func SetUpAndRunContainerCertTest(tcName string, containersInfo []string, expectedResult string) error {
+func SetUpAndRunContainerCertTest(tcName, namespace string, containersInfo []string, expectedResult string) error {
 	var err error
 
 	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
 
 	err = globalhelper.DefineTnfConfig(
-		[]string{tsparams.TestCertificationNameSpace},
+		[]string{namespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
 		containersInfo,

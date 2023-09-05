@@ -206,6 +206,8 @@ make test
 ## Test exceptions on local kind cluster
 
 * access-control-security-context
+* affiliated-certification-container-is-certified-digest
+* affiliated-certification-operator-is-certified
 
 ## Contribution Guidelines
 

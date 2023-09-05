@@ -17,12 +17,12 @@ import (
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
-func preConfigureAffiliatedCertificationEnvironment() {
+func preConfigureAffiliatedCertificationEnvironment(namespace string) {
 	By("Clean test namespace")
 
-	err := namespaces.Clean(tsparams.TestCertificationNameSpace, globalhelper.GetAPIClient())
+	err := namespaces.Clean(namespace, globalhelper.GetAPIClient())
 	Expect(err).ToNot(HaveOccurred(),
-		"Error cleaning namespace "+tsparams.TestCertificationNameSpace)
+		"Error cleaning namespace "+namespace)
 	By("Ensure default catalog source is enabled")
 
 	catalogEnabled, err := globalhelper.IsCatalogSourceEnabled(
@@ -51,11 +51,11 @@ func preConfigureAffiliatedCertificationEnvironment() {
 	By("Deploy OperatorGroup if not already deployed")
 
 	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
-		tsparams.TestCertificationNameSpace) != nil {
-		err = globalhelper.DeployOperatorGroup(tsparams.TestCertificationNameSpace,
+		namespace) != nil {
+		err = globalhelper.DeployOperatorGroup(namespace,
 			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
-				tsparams.TestCertificationNameSpace,
-				[]string{tsparams.TestCertificationNameSpace}),
+				namespace,
+				[]string{namespace}),
 		)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
 	}
@@ -63,7 +63,7 @@ func preConfigureAffiliatedCertificationEnvironment() {
 	By("Define config file " + globalparameters.DefaultTnfConfigFileName)
 
 	err = globalhelper.DefineTnfConfig(
-		[]string{tsparams.TestCertificationNameSpace},
+		[]string{namespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
 		[]string{},
@@ -104,7 +104,7 @@ func approveInstallPlanWhenReady(csvName, namespace string) {
 		}
 
 		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
-			err = globalhelper.ApproveInstallPlan(tsparams.TestCertificationNameSpace,
+			err = globalhelper.ApproveInstallPlan(namespace,
 				installPlan)
 
 			return err == nil
