@@ -85,7 +85,6 @@ cd cnfcert-tests-verification
 make install
 ```
 
-
 #### Execute tests
 
 * To run all tests
