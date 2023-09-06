@@ -68,10 +68,6 @@ var _ = AfterSuite(func() {
 	)
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Remove reports from report directory")
-	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())
-
 	if isCloudCasaAlreadyLabeled {
 		By("Re-label operator used in other suites")
 		err = tshelper.AddLabelToInstalledCSV(
