@@ -96,6 +96,8 @@ func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, te
 
 // RemoveContentsFromReportDir removes all files from report dir.
 func RemoveContentsFromReportDir() error {
+	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", GetConfiguration().General.TnfReportDir))
+
 	tnfReportDir, err := os.Open(GetConfiguration().General.TnfReportDir)
 	if err != nil {
 		return fmt.Errorf("failed to open report directory: %w", err)
