@@ -48,7 +48,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		cmd = exec.Command("/bin/bash", "-c",
 			"helm repo add openshift-helm-charts https://charts.openshift.io/ "+
 				"&& helm repo update && "+
-				"helm install example-vault1 openshift-helm-charts/hashicorp-vault -n "+tsparams.TestHelmChartCertified)
+				"helm install example-vault1 openshift-helm-charts/hashicorp-vault -n "+randomNamespace)
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
@@ -83,7 +83,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		cmd = exec.Command("/bin/bash", "-c",
 			"helm repo add istio https://istio-release.storage.googleapis.com/charts "+
 				"&& helm repo update &&"+
-				"helm install istio-base istio/base --set defaultRevision=default -n "+tsparams.TestHelmChartCertified)
+				"helm install istio-base istio/base --set defaultRevision=default -n "+randomNamespace)
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 
@@ -102,7 +102,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 
 		By("Remove the istio-system ns and istio chart")
 		cmd = exec.Command("/bin/bash", "-c", // uinstall the chart
-			"helm uninstall istio-base -n "+tsparams.TestHelmChartCertified)
+			"helm uninstall istio-base -n "+randomNamespace)
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
 		err = namespaces.Clean("istio-system", globalhelper.GetAPIClient())
