@@ -31,6 +31,10 @@ func TestOperator(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 
+	if globalhelper.IsKindCluster() {
+		Skip("Skipping operator tests on kind cluster")
+	}
+
 	By(fmt.Sprintf("Create %s namespace", tsparams.OperatorNamespace))
 	err := namespaces.Create(tsparams.OperatorNamespace, globalhelper.GetAPIClient())
 	Expect(err).ToNot(HaveOccurred())
