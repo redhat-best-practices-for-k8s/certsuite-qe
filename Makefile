@@ -46,6 +46,9 @@ install: deps-update install-ginkgo
 	@echo "Installing needed dependencies"
 
 unit-tests:
-	UNIT_TEST=true go test ./... -tags=utest
+	UNIT_TEST=true go test ./... -tags=utest -coverprofile=cover.out
+
+coverage-html: test
+	go tool cover -html cover.out
 
 

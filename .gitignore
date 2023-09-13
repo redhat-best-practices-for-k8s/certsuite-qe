@@ -1,3 +1,5 @@
 .idea
 .vscode
 reports
+cover.out
+cover.out.tmp
