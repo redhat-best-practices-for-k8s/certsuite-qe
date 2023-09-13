@@ -103,7 +103,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -123,19 +124,22 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSeta, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSeta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetb := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsb",
 			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSetb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		daemonSetc := tshelper.DefineDaemonSetWithImagePullPolicy("lifecycle-dsc",
 			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSetc, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSetc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -157,7 +161,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, "registry.access.redhat.com/ubi8/ubi",
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -252,7 +257,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullNever)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
