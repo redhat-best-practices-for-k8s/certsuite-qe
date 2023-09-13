@@ -12,11 +12,10 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/observability/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
+	_ "github.com/test-network-function/cnfcert-tests-verification/tests/observability/tests"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func TestObservability(t *testing.T) {
@@ -54,9 +53,5 @@ var _ = AfterSuite(func() {
 		tsparams.TestNamespace,
 		tsparams.NsResourcesDeleteTimeoutMins,
 	)
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Remove reports from reports directory")
-	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
 })

@@ -6,25 +6,32 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
-var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
-	const tnfTestCaseName = tsparams.TnfContainerLoggingTcName
+var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace " + tsparams.TestNamespace + " before each test")
-		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			tshelper.GetTnfTargetPodLabelsSlice(),
+			[]string{},
+			[]string{},
+			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace " + tsparams.TestNamespace + " after each test")
-		err := namespaces.Clean(tsparams.TestNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.CrdDeployTimeoutMins)
 	})
 
 	// 51747
@@ -33,19 +40,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.TwoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -55,19 +62,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -77,19 +84,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.TwoLogLines, tsparams.TwoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -97,21 +104,27 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
+		logLines := []string{tsparams.TwoLogLines}
+		if globalhelper.IsKindCluster() {
+			logLines = append(logLines, tsparams.OneLogLine)
+		} else {
+			logLines = append(logLines, tsparams.OneLogLineWithoutNewLine)
+		}
+
 		By("Deploy daemonset in the cluster")
 		daemonSet := tshelper.DefineDaemonSetWithStdoutBuffers(
-			tsparams.TestDaemonSetBaseName,
-			[]string{tsparams.TwoLogLines, tsparams.OneLogLine})
+			tsparams.TestDaemonSetBaseName, randomNamespace, logLines)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet,
 			tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -119,10 +132,17 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 	It("Two deployments, two pods with two containers each, all printing 1 log line", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
+		logLines := []string{tsparams.TwoLogLines}
+		if globalhelper.IsKindCluster() {
+			logLines = append(logLines, tsparams.OneLogLine)
+		} else {
+			logLines = append(logLines, tsparams.OneLogLineWithoutNewLine)
+		}
+
 		By("Create deployment1 in the cluster")
 		deployment1 := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName+"1", 2,
-			[]string{tsparams.OneLogLine, tsparams.OneLogLine})
+			tsparams.TestDeploymentBaseName+"1", randomNamespace, 2,
+			logLines)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
 			tsparams.DeploymentDeployTimeoutMins)
@@ -130,19 +150,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment2 in the cluster")
 		deployment2 := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName+"2", 2,
-			[]string{tsparams.OneLogLine, tsparams.OneLogLine})
+			tsparams.TestDeploymentBaseName+"2", randomNamespace, 2,
+			logLines)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -153,7 +173,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -162,19 +182,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create statefulset in the cluster")
 		statefulset := tshelper.DefineStatefulSetWithStdoutBuffers(
-			tsparams.TestStatefulSetBaseName, 1,
+			tsparams.TestStatefulSetBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset,
 			tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -184,17 +204,17 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(
-			tsparams.TestPodBaseName, tsparams.OneLogLine)
+			tsparams.TestPodBaseName, randomNamespace, tsparams.OneLogLine)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -203,18 +223,18 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create pod in the cluster")
-		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName,
+		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName, randomNamespace,
 			"\t"+tsparams.OneLogLine)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -224,19 +244,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.NoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -246,19 +266,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.NoLogLines})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -268,7 +288,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment1 in the cluster whose containers print one line to stdout each")
 		deployment1 := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName+"1", 1,
+			tsparams.TestDeploymentBaseName+"1", randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
@@ -277,19 +297,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment2 in the cluster but only the first of its containers prints a line to stdout")
 		deployment2 := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName+"2", 1,
+			tsparams.TestDeploymentBaseName+"2", randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.NoLogLines})
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -298,18 +318,18 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
 		By("Create pod in the cluster")
-		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName,
+		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName, randomNamespace,
 			tsparams.NoLogLines)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -320,7 +340,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
@@ -329,19 +349,19 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Deploy statefulset in the cluster")
 		statefulset := tshelper.DefineStatefulSetWithStdoutBuffers(
-			tsparams.TestStatefulSetBaseName, 1,
+			tsparams.TestStatefulSetBaseName, randomNamespace, 1,
 			[]string{tsparams.NoLogLines})
 
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset,
 			tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -349,21 +369,25 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 	It("One deployment one pod one container printing one log line without newline char", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
+		if globalhelper.IsKindCluster() {
+			Skip("Test skipped on KIND cluster due to newline char issue")
+		}
+
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLineWithoutNewLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -372,21 +396,25 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 		"one line without newline", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
+		if globalhelper.IsKindCluster() {
+			Skip("Test skipped on KIND cluster due to newline char issue")
+		}
+
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
-			tsparams.TestDeploymentBaseName, 1,
+			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.OneLogLineWithoutNewLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -396,18 +424,18 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, Serial, func() {
 
 		By("Create deployment without TNF target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(
-			tsparams.TestDeploymentBaseName)
+			tsparams.TestDeploymentBaseName, randomNamespace)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tnfTestCaseName + " test case")
-		err = globalhelper.LaunchTests(tnfTestCaseName, qeTcFileName)
+		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tnfTestCaseName, globalparameters.TestCaseSkipped)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
