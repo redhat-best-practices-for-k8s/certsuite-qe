@@ -456,16 +456,6 @@ func DefineDpdkPod(podName, namespace string) *corev1.Pod {
 	annotations := make(map[string]string)
 	annotations["k8s.v1.cni.cncf.io/networks"] = "sriovnet1"
 
-	containerLivenessProbe := &corev1.Probe{
-		ProbeHandler: corev1.ProbeHandler{
-			Exec: &corev1.ExecAction{
-				Command: []string{"cat", "/tmp/healthy"},
-			},
-		},
-		InitialDelaySeconds: 5,
-		PeriodSeconds:       5,
-	}
-
 	return &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        podName,
@@ -482,7 +472,6 @@ func DefineDpdkPod(podName, namespace string) *corev1.Pod {
 					Command:         containerCommand,
 					Resources:       containerResource,
 					SecurityContext: containerSecurityContext,
-					LivenessProbe:   containerLivenessProbe,
 					VolumeMounts: []corev1.VolumeMount{
 						{
 							Name:      "hugepage",

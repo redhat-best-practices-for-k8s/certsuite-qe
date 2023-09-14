@@ -8,6 +8,8 @@ import (
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 /*
@@ -38,7 +40,7 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
-	It("one dpdk pod with exec probe", func() {
+	It("one dpdk pod with no probe", func() {
 
 		By("Deploy dpdk pod namespace")
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
@@ -57,6 +59,42 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDpdkCPUPinningExecProbe,
 			globalparameters.TestCasePassed)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("one dpdk pod with exec probe [negative]", func() {
+
+		By("Deploy dpdk pod namespace")
+		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
+
+		By("Redefine liveness probe")
+
+		containerLivenessProbe := &corev1.Probe{
+			ProbeHandler: corev1.ProbeHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{"cat", "/tmp/healthy"},
+				},
+			},
+			InitialDelaySeconds: 5,
+			PeriodSeconds:       5,
+		}
+		dpdkPod.Spec.Containers[0].LivenessProbe = containerLivenessProbe
+
+		err := globalhelper.CreateAndWaitUntilPodIsReady(dpdkPod, tsparams.WaitingTime)
+		if err != nil {
+			Skip("DPDK is not deployed. There may be some problems in setup. Hence, skipping.")
+		}
+
+		By("Start tests")
+		err = globalhelper.LaunchTests(
+			tsparams.TnfDpdkCPUPinningExecProbe,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		Expect(err).To(HaveOccurred())
+
+		By("Verify test case status in Junit and Claim reports")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TnfDpdkCPUPinningExecProbe,
+			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
