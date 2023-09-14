@@ -70,6 +70,8 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		Expect(len(podList.Items)).NotTo(BeZero())
+
 		By("Get first hugepages file")
 		nrHugepagesFiles, err := globalhelper.ExecCommand(
 			podList.Items[0], []string{"/bin/bash", "-c", tsparams.FindHugePagesFiles})
