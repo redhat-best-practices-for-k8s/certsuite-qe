@@ -67,6 +67,8 @@ var _ = Describe("platform-alteration-sysctl-config", Serial, func() {
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		Expect(len(podList.Items)).NotTo(BeZero())
+
 		node, err := globalhelper.GetAPIClient().Nodes().Get(context.TODO(), podList.Items[0].Spec.NodeName, metav1.GetOptions{})
 		Expect(err).ToNot(HaveOccurred())
 

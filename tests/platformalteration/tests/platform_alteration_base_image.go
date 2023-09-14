@@ -92,6 +92,8 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		Expect(len(podsList.Items)).NotTo(BeZero())
+
 		By("Change container base image")
 		_, err = globalhelper.ExecCommand(podsList.Items[0], []string{"/bin/bash", "-c", "touch /usr/lib/testfile"})
 		Expect(err).ToNot(HaveOccurred())
@@ -131,6 +133,8 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 
 		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
+
+		Expect(len(podsList.Items)).NotTo(BeZero())
 
 		By("Change container base image")
 		_, err = globalhelper.ExecCommand(podsList.Items[0], []string{"/bin/bash", "-c", "touch /usr/lib/testfile"})

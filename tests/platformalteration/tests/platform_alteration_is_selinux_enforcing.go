@@ -75,6 +75,8 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Serial, func() {
 		podList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		Expect(len(podList.Items)).NotTo(BeZero())
+
 		By("Set SELinux permissive on the node")
 		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", tsparams.SetPermissive})
 		Expect(err).ToNot(HaveOccurred())
