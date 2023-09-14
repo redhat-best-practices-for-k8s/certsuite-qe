@@ -198,6 +198,15 @@ func DefineAndCreateNadOnCluster(name, namespace string, network string) error {
 	return nil
 }
 
+// GetListOfPodsInNamespace returns list of pods for given namespace.
+func GetPodInNamespace(podName, namespace string) (*corev1.Pod, error) {
+	foundPod, err := globalhelper.GetAPIClient().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return foundPod, nil
+}
+
 func GetClusterMultusInterfaces(namespace string) ([]string, error) {
 	err := defineAndCreatePrivilegedDaemonset(namespace)
 	if err != nil {
