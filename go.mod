@@ -1,6 +1,6 @@
 module github.com/test-network-function/cnfcert-tests-verification
 
-go 1.21
+go 1.21.1
 
 require (
 	github.com/golang/glog v1.1.2
@@ -15,14 +15,14 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
-	github.com/test-network-function/test-network-function-claim v1.0.25
+	github.com/test-network-function/test-network-function-claim v1.0.26
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.28.1
 	k8s.io/apiextensions-apiserver v0.28.1
 	k8s.io/apimachinery v0.28.1
 	k8s.io/client-go v0.28.1
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
-	sigs.k8s.io/controller-runtime v0.16.0
+	sigs.k8s.io/controller-runtime v0.16.2
 )
 
 require github.com/evanphx/json-patch/v5 v5.6.0 // indirect

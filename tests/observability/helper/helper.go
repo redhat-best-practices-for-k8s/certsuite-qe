@@ -34,30 +34,30 @@ func GetTnfTargetPodLabelsSlice() []string {
 // a container spec for each entry in the stdoutBuffers slice. The number of containers is
 // not needed as a parameter, as it will match the number of entries in stdoutBuffers.
 // There are equivalent functions for statefulSets and daemonSets.
-func DefineDeploymentWithStdoutBuffers(name string, replicas int, stdoutBuffers []string) *appsv1.Deployment {
+func DefineDeploymentWithStdoutBuffers(name, namespace string, replicas int, stdoutBuffers []string) *appsv1.Deployment {
 	// Get each container spec based on the desired stdout buffer per container.
 	containerSpecs := createContainerSpecsFromStdoutBuffers(stdoutBuffers)
 
-	return defineDeploymentWithContainerSpecs(name, replicas, containerSpecs)
+	return defineDeploymentWithContainerSpecs(name, namespace, replicas, containerSpecs)
 }
 
-func DefineStatefulSetWithStdoutBuffers(name string, replicas int, stdoutBuffers []string) *appsv1.StatefulSet {
+func DefineStatefulSetWithStdoutBuffers(name, namespace string, replicas int, stdoutBuffers []string) *appsv1.StatefulSet {
 	// Get each container spec based on the desired stdout buffer per container.
 	containerSpecs := createContainerSpecsFromStdoutBuffers(stdoutBuffers)
 
-	return defineStatefulSetWithContainerSpecs(name, replicas, containerSpecs)
+	return defineStatefulSetWithContainerSpecs(name, namespace, replicas, containerSpecs)
 }
 
-func DefineDaemonSetWithStdoutBuffers(name string, stdoutBuffers []string) *appsv1.DaemonSet {
+func DefineDaemonSetWithStdoutBuffers(name, namespace string, stdoutBuffers []string) *appsv1.DaemonSet {
 	// Get each container spec based on the desired stdout buffer per container.
 	containerSpecs := createContainerSpecsFromStdoutBuffers(stdoutBuffers)
 
 	// Define base daemonset
-	return defineDaemonSetWithContainerSpecs(name, containerSpecs)
+	return defineDaemonSetWithContainerSpecs(name, namespace, containerSpecs)
 }
 
-func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, tsparams.TestNamespace, globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+func DefinePodWithStdoutBuffer(name, namespace string, stdoutBuffer string) *corev1.Pod {
+	newPod := pod.DefinePod(name, namespace, globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
@@ -65,8 +65,8 @@ func DefinePodWithStdoutBuffer(name string, stdoutBuffer string) *corev1.Pod {
 	return newPod
 }
 
-func DefineDeploymentWithoutTargetLabels(name string) *appsv1.Deployment {
-	return deployment.DefineDeployment(name, tsparams.TestNamespace,
+func DefineDeploymentWithoutTargetLabels(name, namespace string) *appsv1.Deployment {
+	return deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage,
 		map[string]string{"fakeLabelKey": "fakeLabelValue"})
 }
@@ -146,28 +146,28 @@ func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
 	}, timeout, tsparams.CrdRetryInterval).Should(Equal(true), "CRD is not removed yet")
 }
 
-func DefineDeploymentWithTerminationMsgPolicies(name string, replicas int,
+func DefineDeploymentWithTerminationMsgPolicies(name, namespace string, replicas int,
 	policies []corev1.TerminationMessagePolicy) *appsv1.Deployment {
 	// Create one container spec per policy.
 	containerSpecs := createContainerSpecsFromTerminationMsgPolicies(policies)
 
-	return defineDeploymentWithContainerSpecs(name, replicas, containerSpecs)
+	return defineDeploymentWithContainerSpecs(name, namespace, replicas, containerSpecs)
 }
 
-func DefineDaemonSetWithTerminationMsgPolicies(name string,
+func DefineDaemonSetWithTerminationMsgPolicies(name, namespace string,
 	policies []corev1.TerminationMessagePolicy) *appsv1.DaemonSet {
 	// Create one container spec per policy.
 	containerSpecs := createContainerSpecsFromTerminationMsgPolicies(policies)
 
-	return defineDaemonSetWithContainerSpecs(name, containerSpecs)
+	return defineDaemonSetWithContainerSpecs(name, namespace, containerSpecs)
 }
 
-func DefineStatefulSetWithTerminationMsgPolicies(name string, replicas int,
+func DefineStatefulSetWithTerminationMsgPolicies(name, namespace string, replicas int,
 	policies []corev1.TerminationMessagePolicy) *appsv1.StatefulSet {
 	// Create one container spec per policy.
 	containerSpecs := createContainerSpecsFromTerminationMsgPolicies(policies)
 
-	return defineStatefulSetWithContainerSpecs(name, replicas, containerSpecs)
+	return defineStatefulSetWithContainerSpecs(name, namespace, replicas, containerSpecs)
 }
 
 // getContainerCommandWithStdout is a helper function that will return the command slice
@@ -221,10 +221,10 @@ func createContainerSpecsFromTerminationMsgPolicies(policies []corev1.Terminatio
 	return containerSpecs
 }
 
-func defineDeploymentWithContainerSpecs(name string, replicas int,
+func defineDeploymentWithContainerSpecs(name, namespace string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.Deployment {
 	// Define base deployment
-	dep := deployment.DefineDeployment(name, tsparams.TestNamespace,
+	dep := deployment.DefineDeployment(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
@@ -234,10 +234,10 @@ func defineDeploymentWithContainerSpecs(name string, replicas int,
 	return dep
 }
 
-func defineStatefulSetWithContainerSpecs(name string, replicas int,
+func defineStatefulSetWithContainerSpecs(name, namespace string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.StatefulSet {
 	// Define base statefulSet
-	sts := statefulset.DefineStatefulSet(name, tsparams.TestNamespace,
+	sts := statefulset.DefineStatefulSet(name, namespace,
 		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 	// Customize its replicas and container specs.
@@ -247,10 +247,10 @@ func defineStatefulSetWithContainerSpecs(name string, replicas int,
 	return sts
 }
 
-func defineDaemonSetWithContainerSpecs(name string,
+func defineDaemonSetWithContainerSpecs(name, namespace string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
-	daemonSet := daemonset.DefineDaemonSet(tsparams.TestNamespace,
+	daemonSet := daemonset.DefineDaemonSet(namespace,
 		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels, name)
 
 	// Customize its container specs.

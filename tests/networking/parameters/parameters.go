@@ -34,8 +34,10 @@ var (
 	TnfReservedPartnerPortsTcName          = "networking-reserved-partner-ports"
 	TnfDualStackServiceTcName              = "networking-dual-stack-service"
 	TnfDpdkCPUPinningExecProbe             = "networking-dpdk-cpu-pinning-exec-probe"
-	NetworkingTestSkipLabel                = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
-	NetworkingTestMultusSkipLabel          = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
+
+	DpdkPodName                   = "dpdk-pod"
+	NetworkingTestSkipLabel       = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
+	NetworkingTestMultusSkipLabel = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
 )
 
 type IPOutputInterface struct {

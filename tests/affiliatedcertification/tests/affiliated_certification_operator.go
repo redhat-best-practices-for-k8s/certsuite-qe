@@ -120,15 +120,6 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 	})
 
 	AfterEach(func() {
-		By("Remove labels from operators")
-		for _, info := range installedLabeledOperators {
-			err := tshelper.DeleteLabelFromInstalledCSV(
-				info.OperatorPrefix,
-				info.Namespace,
-				info.Label)
-			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator "+info.OperatorPrefix)
-		}
-
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 

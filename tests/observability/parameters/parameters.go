@@ -34,8 +34,7 @@ const (
 	OneLogLine               = "Hello world line 1\n"
 	OneLogLineWithoutNewLine = "Hello world line 1"
 
-	TwoLogLines               = "Hello world line 1\nHello world line 2\n"
-	TwoLogLinesWithoutNewLine = "Hello world line 1\nHello world line 2"
+	TwoLogLines = "Hello world line 1\nHello world line 2\n"
 
 	NoLogLines = ""
 )

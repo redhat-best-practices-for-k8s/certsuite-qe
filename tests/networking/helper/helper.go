@@ -18,10 +18,12 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/utils/pointer"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	appsv1 "k8s.io/api/apps/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -196,15 +198,6 @@ func DefineAndCreateNadOnCluster(name, namespace string, network string) error {
 	}
 
 	return nil
-}
-
-// GetListOfPodsInNamespace returns list of pods for given namespace.
-func GetPodInNamespace(podName, namespace string) (*corev1.Pod, error) {
-	foundPod, err := globalhelper.GetAPIClient().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
-	return foundPod, nil
 }
 
 func GetClusterMultusInterfaces(namespace string) ([]string, error) {
@@ -435,4 +428,78 @@ func DefineDeploymentWithContainerPorts(name, namespace string,
 	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
 
 	return deploymentStruct, nil
+}
+
+func DefineDpdkPod(podName, namespace string) *corev1.Pod {
+	cpuLimit := "1"
+	memoryLimit := "512Mi"
+	containerCommand := []string{"/bin/sh", "-c", "touch /tmp/healthy", "sleep infinity"}
+
+	containerResource := corev1.ResourceRequirements{
+		Limits: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+			corev1.ResourceMemory: resource.MustParse(memoryLimit),
+		},
+		Requests: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+			corev1.ResourceMemory: resource.MustParse(memoryLimit),
+		},
+	}
+
+	containerSecurityContext := &corev1.SecurityContext{
+		Privileged: pointer.Bool(true),
+		RunAsUser:  pointer.Int64(0),
+		Capabilities: &corev1.Capabilities{
+			Add: []corev1.Capability{"IPC_LOCK", "SYS_RESOURCE", "NET_RAW"}},
+	}
+
+	annotations := make(map[string]string)
+	annotations["k8s.v1.cni.cncf.io/networks"] = "sriovnet1"
+
+	containerLivenessProbe := &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			Exec: &corev1.ExecAction{
+				Command: []string{"cat", "/tmp/healthy"},
+			},
+		},
+		InitialDelaySeconds: 5,
+		PeriodSeconds:       5,
+	}
+
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        podName,
+			Namespace:   namespace,
+			Labels:      tsparams.TestDeploymentLabels,
+			Annotations: annotations,
+		},
+		Spec: corev1.PodSpec{
+			TerminationGracePeriodSeconds: pointer.Int64(0),
+			Containers: []corev1.Container{
+				{
+					Name:            "app-container",
+					Image:           "registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9",
+					Command:         containerCommand,
+					Resources:       containerResource,
+					SecurityContext: containerSecurityContext,
+					LivenessProbe:   containerLivenessProbe,
+					VolumeMounts: []corev1.VolumeMount{
+						{
+							Name:      "hugepage",
+							MountPath: "/dev/hugepages",
+						},
+					}},
+			},
+			Volumes: []corev1.Volume{
+				{
+					Name: "hugepage",
+					VolumeSource: corev1.VolumeSource{
+						EmptyDir: &corev1.EmptyDirVolumeSource{
+							Medium: corev1.StorageMediumHugePages,
+						},
+					},
+				},
+			},
+		},
+	}
 }
