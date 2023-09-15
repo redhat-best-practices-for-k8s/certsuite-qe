@@ -9,28 +9,37 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
-var _ = Describe("platform-alteration-is-redhat-release", Serial, func() {
+var _ = Describe("platform-alteration-is-redhat-release", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.PlatformAlterationNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51319
 	It("One deployment, one pod, several containers, all running Red Hat release", func() {
 
 		By("Define deployment")
-		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		globalhelper.AppendContainersToDeployment(deployment, 3, globalhelper.GetConfiguration().General.TestImage)
@@ -55,7 +64,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Serial, func() {
 	It("One daemonSet that is running Red Hat release", func() {
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
@@ -79,7 +88,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Serial, func() {
 	It("One deployment, one pod, 2 containers, one running Red Hat release, other is not [negative]", func() {
 
 		By("Define deployment")
-		dep := tshelper.DefineDeploymentWithNonUBIContainer()
+		dep := tshelper.DefineDeploymentWithNonUBIContainer(randomNamespace)
 
 		// Append UBI-based container.
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
@@ -104,7 +113,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Serial, func() {
 	It("One statefulSet, one pod that is not running Red Hat release [negative]", func() {
 
 		By("Define statefulSet")
-		statefulSet := tshelper.DefineStatefulSetWithNonUBIContainer()
+		statefulSet := tshelper.DefineStatefulSetWithNonUBIContainer(randomNamespace)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
