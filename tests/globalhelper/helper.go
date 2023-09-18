@@ -78,8 +78,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 }
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
-	certifiedContainerInfo []string, crdFilters []string) error {
+func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string, crdFilters []string) error {
 	tnfConfigFilePath := path.Join(GetConfiguration().General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
 
 	configFile, err := os.OpenFile(tnfConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
@@ -102,11 +101,6 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 	}
 
 	defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
-
-	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
-	if err != nil {
-		return fmt.Errorf("failed to create certified containers info section in tnf yaml config file: %w", err)
-	}
 
 	// CRD filters is an optional field.
 	defineCrdFilters(&tnfConfig, crdFilters)

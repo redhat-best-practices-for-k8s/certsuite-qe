@@ -24,7 +24,6 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

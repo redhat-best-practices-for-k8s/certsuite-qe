@@ -39,7 +39,6 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

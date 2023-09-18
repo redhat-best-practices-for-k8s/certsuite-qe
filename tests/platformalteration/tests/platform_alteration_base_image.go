@@ -31,7 +31,6 @@ var _ = Describe("platform-alteration-base-image", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

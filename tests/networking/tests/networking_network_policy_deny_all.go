@@ -25,7 +25,6 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -173,7 +172,6 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 				[]string{randomNamespace, randomSecondaryNamespace},
 				[]string{tsparams.TestPodLabel},
 				[]string{},
-				[]string{},
 				[]string{})
 			Expect(err).ToNot(HaveOccurred())
 
@@ -230,7 +228,6 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			err = globalhelper.DefineTnfConfig(
 				[]string{randomNamespace, randomSecondaryNamespace},
 				[]string{tsparams.TestPodLabel},
-				[]string{},
 				[]string{},
 				[]string{})
 			Expect(err).ToNot(HaveOccurred())

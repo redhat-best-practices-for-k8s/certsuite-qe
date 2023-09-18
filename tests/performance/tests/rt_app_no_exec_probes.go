@@ -24,7 +24,6 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

@@ -25,7 +25,6 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

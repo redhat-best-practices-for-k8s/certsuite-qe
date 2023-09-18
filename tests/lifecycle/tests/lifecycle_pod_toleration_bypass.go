@@ -25,7 +25,6 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

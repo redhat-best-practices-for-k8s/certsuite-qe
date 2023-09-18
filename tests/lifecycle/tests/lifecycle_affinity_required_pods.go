@@ -35,7 +35,6 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

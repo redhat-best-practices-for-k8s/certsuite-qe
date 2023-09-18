@@ -29,7 +29,6 @@ var _ = Describe("lifecycle-startup-probe", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

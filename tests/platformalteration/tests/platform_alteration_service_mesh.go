@@ -58,7 +58,6 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 
@@ -148,7 +147,6 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())

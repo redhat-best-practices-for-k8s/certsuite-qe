@@ -26,7 +26,6 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

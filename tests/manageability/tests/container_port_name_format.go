@@ -23,7 +23,6 @@ var _ = Describe("manageability-container-port-name", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

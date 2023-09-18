@@ -24,7 +24,6 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

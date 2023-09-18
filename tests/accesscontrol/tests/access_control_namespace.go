@@ -33,7 +33,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -68,7 +67,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{invalidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -102,7 +100,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -148,7 +145,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{invalidNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
@@ -171,9 +167,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -212,9 +206,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -252,9 +244,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, additionalValidNamespace, "tnf"},
-			// []string{randomNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -297,9 +287,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -330,9 +318,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
@@ -375,9 +361,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")

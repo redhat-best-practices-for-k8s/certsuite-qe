@@ -25,7 +25,6 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

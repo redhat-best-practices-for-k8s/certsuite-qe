@@ -25,7 +25,6 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

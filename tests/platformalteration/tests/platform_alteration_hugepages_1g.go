@@ -26,7 +26,6 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

@@ -37,7 +37,6 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

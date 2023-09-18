@@ -26,7 +26,6 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})

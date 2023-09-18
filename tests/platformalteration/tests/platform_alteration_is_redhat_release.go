@@ -26,7 +26,6 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

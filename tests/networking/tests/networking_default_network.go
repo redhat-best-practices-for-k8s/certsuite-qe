@@ -34,7 +34,6 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})

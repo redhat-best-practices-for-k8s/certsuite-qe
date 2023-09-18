@@ -29,7 +29,6 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 

@@ -41,7 +41,6 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
-			[]string{},
 			[]string{tsparams.TnfTargetCrdFilters})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 

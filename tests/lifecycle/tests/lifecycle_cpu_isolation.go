@@ -32,7 +32,6 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
-			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
 	})
