@@ -218,7 +218,7 @@ func TestRedefineWithContainerSpecs(t *testing.T) {
 	})
 	assert.NotNil(t, deployment)
 
-	// Assert that the deployment has a startup probe.
+	// Assert that the deployment has container specs.
 	assert.Equal(t, "test-container", deployment.Spec.Template.Spec.Containers[0].Name)
 }
 
@@ -390,7 +390,7 @@ func TestRedefineWithRunTimeClass(t *testing.T) {
 	RedefineWithRunTimeClass(deployment, "test-runtime-class")
 	assert.NotNil(t, deployment)
 
-	// Assert that the deployment has resources set.
+	// Assert that the deployment has runtime class set.
 	assert.Equal(t, "test-runtime-class", *deployment.Spec.Template.Spec.RuntimeClassName)
 }
 
