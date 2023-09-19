@@ -292,11 +292,14 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		pod.RedefineWithRunTimeClass(puta, rtc.Name)
 		pod.RedefineWithCPUResources(puta, "1", "1")
 
+		By("Redfine the second pod with CPU resources")
 		pod.RedefineWithCPUResources(putb, "1", "1")
 
+		By("Create the first pod")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create the second pod")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
