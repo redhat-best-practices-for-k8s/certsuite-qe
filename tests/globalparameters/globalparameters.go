@@ -8,7 +8,6 @@ type (
 		TargetPodLabels          []PodLabel                   `yaml:"targetPodLabels" json:"targetPodLabels"`
 		OperatorsUnderTestLabels []string                     `yaml:"operatorsUnderTestLabels" json:"operatorsUnderTestLabels"`
 		Certifiedcontainerinfo   []CertifiedContainerRepoInfo `yaml:"certifiedcontainerinfo" json:"certifiedcontainerinfo"`
-		Certifiedoperatorinfo    []CertifiedOperatorRepoInfo  `yaml:"certifiedoperatorinfo" json:"certifiedoperatorinfo"`
 		TargetCrdFilters         []TargetCrdFilter            `yaml:"targetCrdFilters" json:"targetCrdFilters"`
 	}
 
