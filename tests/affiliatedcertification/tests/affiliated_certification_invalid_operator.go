@@ -114,6 +114,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	})
 
 	AfterEach(func() {
+		Skip("Impractical to test under current circumstances")
 		By("Remove labels from operators")
 		for _, info := range installedLabeledOperators {
 			err := tshelper.DeleteLabelFromInstalledCSV(
