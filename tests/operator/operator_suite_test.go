@@ -50,6 +50,9 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
+	if globalhelper.IsKindCluster() {
+		Skip("Skipping operator tests cleanup on kind cluster")
+	}
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.OperatorNamespace))
 	err := namespaces.DeleteAndWait(
