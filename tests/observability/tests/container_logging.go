@@ -106,6 +106,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 		logLines := []string{tsparams.TwoLogLines}
 		if globalhelper.IsKindCluster() {
+			By("Using KIND cluster, add one log line with newline char")
 			logLines = append(logLines, tsparams.OneLogLine)
 		} else {
 			logLines = append(logLines, tsparams.OneLogLineWithoutNewLine)
@@ -134,6 +135,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 		logLines := []string{tsparams.TwoLogLines}
 		if globalhelper.IsKindCluster() {
+			By("Using KIND cluster, add one log line with newline char")
 			logLines = append(logLines, tsparams.OneLogLine)
 		} else {
 			logLines = append(logLines, tsparams.OneLogLineWithoutNewLine)

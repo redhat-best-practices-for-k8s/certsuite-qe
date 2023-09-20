@@ -61,10 +61,10 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	})
 
 	// 46566
-	It("certifiedcontainerinfo field exists in tnf_config but has no value [skip]", func() {
+	It("certifiedcontainerinfo field exists in tnf_config but has no value [negative]", func() {
 		err := tshelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomNamespace,
-			[]string{""}, globalparameters.TestCaseSkipped)
+			[]string{""}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -77,36 +77,36 @@ var _ = Describe("Affiliated-certification container certification,", func() {
 	})
 
 	// 46578
-	It("name and repository fields exist in certifiedcontainerinfo field but are empty [skip]", func() {
+	It("name and repository fields exist in certifiedcontainerinfo field but are empty [negative]", func() {
 		err := tshelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomNamespace,
-			[]string{tsparams.EmptyFieldsContainer}, globalparameters.TestCaseSkipped)
+			[]string{tsparams.EmptyFieldsContainer}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46579
-	It("name field in certifiedcontainerinfo field is populated but repository field is not [skip]", func() {
+	It("name field in certifiedcontainerinfo field is populated but repository field is not [negative]", func() {
 		err := tshelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomNamespace,
-			[]string{tsparams.ContainerNameOnlyCockroachDB}, globalparameters.TestCaseSkipped)
+			[]string{tsparams.ContainerNameOnlyCockroachDB}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46580
-	It("repository field in certifiedcontainerinfo field is populated but name field is not [skip]", func() {
+	It("repository field in certifiedcontainerinfo field is populated but name field is not [negative]", func() {
 		err := tshelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomNamespace,
-			[]string{tsparams.ContainerRepoOnlyRedHatRegistry}, globalparameters.TestCaseSkipped)
+			[]string{tsparams.ContainerRepoOnlyRedHatRegistry}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 46581
 	It("two containers listed in certifiedcontainerinfo field, one is certified, one has empty name and "+
-		"repository fields", func() {
+		"repository fields [negative]", func() {
 		err := tshelper.SetUpAndRunContainerCertTest(
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomNamespace,
 			[]string{tsparams.CertifiedContainer5gc,
-				tsparams.EmptyFieldsContainer}, globalparameters.TestCasePassed)
+				tsparams.EmptyFieldsContainer}, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
