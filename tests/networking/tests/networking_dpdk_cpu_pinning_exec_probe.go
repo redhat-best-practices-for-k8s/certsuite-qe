@@ -8,8 +8,7 @@ import (
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
-
-	corev1 "k8s.io/api/core/v1"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 )
 
 /*
@@ -68,17 +67,7 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
 
 		By("Redefine liveness probe")
-
-		containerLivenessProbe := &corev1.Probe{
-			ProbeHandler: corev1.ProbeHandler{
-				Exec: &corev1.ExecAction{
-					Command: []string{"cat", "/tmp/healthy"},
-				},
-			},
-			InitialDelaySeconds: 5,
-			PeriodSeconds:       5,
-		}
-		dpdkPod.Spec.Containers[0].LivenessProbe = containerLivenessProbe
+		pod.RedefinePodContainerWithLivenessProbeCommand(dpdkPod, 0, []string{"cat", "/tmp/healthy"})
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(dpdkPod, tsparams.WaitingTime)
 		if err != nil {
