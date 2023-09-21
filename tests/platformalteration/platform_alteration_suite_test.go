@@ -7,13 +7,16 @@ import (
 	"fmt"
 	"runtime"
 	"testing"
+	"time"
 
+	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/tests"
-
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -31,33 +34,24 @@ func TestPlatformAlteration(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+	configSuite, err := config.NewConfig()
+	if err != nil {
+		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+	}
 
-	By("Create namespace")
-	err := namespaces.Create(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+	By("Validate that cluster is Schedulable")
+	Eventually(func() bool {
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient())
+		Expect(err).ToNot(HaveOccurred())
+
+		return isClusterReady
+	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
+
+	By("Validate that all nodes are Ready")
+	err = nodes.WaitForNodesReady(globalhelper.GetAPIClient(), tsparams.WaitingTime, tsparams.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Define TNF config file")
-	err = globalhelper.DefineTnfConfig(
-		[]string{tsparams.PlatformAlterationNamespace},
-		[]string{tsparams.TestPodLabel},
-		[]string{},
-		[]string{},
-		[]string{})
+	By("Ensure all nodes are labeled with 'worker-cnf' label")
+	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
-})
-
-var _ = AfterSuite(func() {
-
-	By(fmt.Sprintf("Remove %s namespace", tsparams.PlatformAlterationNamespace))
-	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient().CoreV1Interface,
-		tsparams.PlatformAlterationNamespace,
-		tsparams.WaitingTime,
-	)
-	Expect(err).ToNot(HaveOccurred())
-
-	By("Remove reports from reports directory")
-	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())
-
 })

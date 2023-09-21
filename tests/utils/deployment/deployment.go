@@ -101,6 +101,7 @@ func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) *appsv
 func RedefineWithReplicaNumber(deployment *appsv1.Deployment, replicasNumber int32) {
 	deployment.Spec.Replicas = pointer.Int32(replicasNumber)
 }
+
 func AppendServiceAccount(deployment *appsv1.Deployment, serviceAccountName string) {
 	deployment.Spec.Template.Spec.ServiceAccountName = serviceAccountName
 }
@@ -416,25 +417,6 @@ func RedefineWithPostStart(deployment *appsv1.Deployment) {
 func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid int64) {
 	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
 		RunAsUser: pointer.Int64(uid),
-	}
-}
-
-func RedefineWithProjectedVolume(deployment *appsv1.Deployment, name, tokenPath string) {
-	projection := corev1.VolumeProjection{
-		ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
-			Path: tokenPath,
-		},
-	}
-
-	deployment.Spec.Template.Spec.Volumes = []corev1.Volume{
-		{
-			Name: name,
-			VolumeSource: corev1.VolumeSource{
-				Projected: &corev1.ProjectedVolumeSource{
-					Sources: []corev1.VolumeProjection{projection},
-				},
-			},
-		},
 	}
 }
 

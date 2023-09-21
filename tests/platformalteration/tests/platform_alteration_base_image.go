@@ -1,6 +1,9 @@
 package tests
 
 import (
+	"fmt"
+	"time"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -10,35 +13,51 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
-var _ = Describe("platform-alteration-base-image", Serial, func() {
+var _ = Describe("platform-alteration-base-image", func() {
+	var randomNamespace string
+	var origReportDir string
+	var origTnfConfigDir string
 
 	BeforeEach(func() {
-		By("Clean namespace before each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.PlatformAlterationNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() {
+			// The TNF suite actually proactively skips this test if the cluster is Non-OCP.
+			Skip(fmt.Sprintf("%s test is not applicable for Kind cluster", tsparams.TnfBaseImageName))
+		}
 	})
 
 	AfterEach(func() {
-		By("Clean namespace after each test")
-		err := namespaces.Clean(tsparams.PlatformAlterationNamespace, globalhelper.GetAPIClient())
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51297
 	It("One deployment, one pod, running test image", func() {
-
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName,
-			tsparams.PlatformAlterationNamespace,
+			randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Sleep for 5 minutes")
+		time.Sleep(5 * time.Minute)
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
@@ -55,13 +74,13 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 
 	// 51298
 	It("One daemonSet, running test image", func() {
-
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(tsparams.PlatformAlterationNamespace,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-base-image test")
@@ -79,9 +98,8 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 
 	// 51299
 	It("Two deployments, one pod each, change container base image by creating a file [negative]", func() {
-
 		By("Define first deployment")
-		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, tsparams.PlatformAlterationNamespace,
+		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
@@ -89,8 +107,10 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
+
+		Expect(len(podsList.Items)).NotTo(BeZero())
 
 		By("Change container base image")
 		_, err = globalhelper.ExecCommand(podsList.Items[0], []string{"/bin/bash", "-c", "touch /usr/lib/testfile"})
@@ -98,7 +118,7 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 
 		By("Define second deployment")
 		deploymentb := deployment.DefineDeployment("platform-alteration-dpb",
-			tsparams.PlatformAlterationNamespace,
+			randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
@@ -118,10 +138,9 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 	})
 
 	It("One statefulSet, one pod, change container base image by creating a file [negative]", func() {
-
 		By("Define statefulSet")
 		statefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
-			tsparams.PlatformAlterationNamespace,
+			randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 		statefulset.RedefineWithPrivilegedContainer(statefulSet)
@@ -129,8 +148,10 @@ var _ = Describe("platform-alteration-base-image", Serial, func() {
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		podsList, err := globalhelper.GetListOfPodsInNamespace(tsparams.PlatformAlterationNamespace)
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
+
+		Expect(len(podsList.Items)).NotTo(BeZero())
 
 		By("Change container base image")
 		_, err = globalhelper.ExecCommand(podsList.Items[0], []string{"/bin/bash", "-c", "touch /usr/lib/testfile"})

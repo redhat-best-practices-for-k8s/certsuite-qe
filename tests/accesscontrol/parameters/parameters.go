@@ -65,7 +65,6 @@ const (
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 	TnfSecurityContextTcName                        = "access-control-security-context"
 	TestCaseNameAccessControlOneProcessPerContainer = "access-control-one-process-per-container"
-	TnfProjectedVolumeServiceAccountTcName          = "access-control-projected-volume-service-account-token"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 

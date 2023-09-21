@@ -33,7 +33,7 @@ gofmt:
 test-all: update-go install-ginkgo download-unstable
 	./scripts/run-tests.sh all
 
-test-features: update-go install-ginkgo download-unstable
+test-features: install-ginkgo download-unstable
 	FEATURES="$(FEATURES)" ./scripts/run-tests.sh features
 
 download-unstable:

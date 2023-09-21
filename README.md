@@ -183,6 +183,7 @@ make test
 * access-control-security-context
 * affiliated-certification-container-is-certified-digest
 * affiliated-certification-operator-is-certified
+* platform-alteration-tainted-node-kernel
 
 ## Contribution Guidelines
 

@@ -190,7 +190,8 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
@@ -219,7 +220,8 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
@@ -290,11 +292,14 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		pod.RedefineWithRunTimeClass(puta, rtc.Name)
 		pod.RedefineWithCPUResources(puta, "1", "1")
 
+		By("Redfine the second pod with CPU resources")
 		pod.RedefineWithCPUResources(putb, "1", "1")
 
+		By("Create the first pod")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create the second pod")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
