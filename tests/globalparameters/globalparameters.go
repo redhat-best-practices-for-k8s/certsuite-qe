@@ -5,7 +5,7 @@ import "encoding/xml"
 type (
 	TnfConfig struct {
 		TargetNameSpaces         []TargetNameSpace            `yaml:"targetNameSpaces" json:"targetNameSpaces"`
-		TargetPodLabels          []PodLabel                   `yaml:"targetPodLabels" json:"targetPodLabels"`
+		PodsUnderTestLabels      []string                     `yaml:"podsUnderTestLabels" json:"podsUnderTestLabels"`
 		OperatorsUnderTestLabels []string                     `yaml:"operatorsUnderTestLabels" json:"operatorsUnderTestLabels"`
 		Certifiedcontainerinfo   []CertifiedContainerRepoInfo `yaml:"certifiedcontainerinfo" json:"certifiedcontainerinfo"`
 		TargetCrdFilters         []TargetCrdFilter            `yaml:"targetCrdFilters" json:"targetCrdFilters"`
@@ -17,12 +17,6 @@ type (
 
 	TargetNameSpace struct {
 		Name string `yaml:"name" json:"name"`
-	}
-
-	PodLabel struct {
-		Prefix string `yaml:"prefix" json:"prefix"`
-		Name   string `yaml:"name" json:"name"`
-		Value  string `yaml:"value" json:"value"`
 	}
 
 	Label struct {

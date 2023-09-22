@@ -40,6 +40,9 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 	})
 
 	It("one dpdk pod with no probe", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("DPDK is not supported on Kind cluster. Skipping.")
+		}
 
 		By("Deploy dpdk pod namespace")
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
@@ -62,6 +65,9 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 	})
 
 	It("one dpdk pod with exec probe [negative]", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("DPDK is not supported on Kind cluster. Skipping.")
+		}
 
 		By("Deploy dpdk pod namespace")
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
