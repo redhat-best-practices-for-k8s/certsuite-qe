@@ -56,7 +56,7 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("one deployment, one pod, does  have cluster role binding [negative]", func() {
+	It("one deployment, one pod, does have cluster role binding [negative]", func() {
 		By("Create cluster role binding")
 		err := globalhelper.CreateClusterRoleBinding(randomNamespace, "my-service-account")
 		Expect(err).ToNot(HaveOccurred())
