@@ -48,16 +48,24 @@ func RedefineWithReadinessProbe(pod *corev1.Pod) {
 	}
 }
 
+func RedefinePodContainerWithLivenessProbeCommand(pod *corev1.Pod, index int, commands []string) {
+	pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			Exec: &corev1.ExecAction{
+				Command: commands,
+			},
+		},
+		InitialDelaySeconds: 5,
+		PeriodSeconds:       5,
+	}
+}
+
 // RedefineWithLivenessProbe adds liveness probe to pod manifest.
 func RedefineWithLivenessProbe(pod *corev1.Pod) {
+	commands := []string{"ls"}
+
 	for index := range pod.Spec.Containers {
-		pod.Spec.Containers[index].LivenessProbe = &corev1.Probe{
-			ProbeHandler: corev1.ProbeHandler{
-				Exec: &corev1.ExecAction{
-					Command: []string{"ls"},
-				},
-			},
-		}
+		RedefinePodContainerWithLivenessProbeCommand(pod, index, commands)
 	}
 }
 
