@@ -96,7 +96,7 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 		return fmt.Errorf("failed to create namespaces section in tnf yaml config file: %w", err)
 	}
 
-	err = defineTargetPodLabels(&tnfConfig, targetPodLabels)
+	err = definePodUnderTestLabels(&tnfConfig, targetPodLabels)
 	if err != nil {
 		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
 	}
@@ -201,32 +201,18 @@ func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string
 	return nil
 }
 
-func defineTargetPodLabels(config *globalparameters.TnfConfig, targetPodLabels []string) error {
-	if len(targetPodLabels) < 1 {
-		return fmt.Errorf("target pod labels cannot be empty list")
+func definePodUnderTestLabels(config *globalparameters.TnfConfig, podsUnderTestLabels []string) error {
+	if len(podsUnderTestLabels) < 1 {
+		return fmt.Errorf("pods under test labels cannot be empty list")
 	}
 
-	for _, targetPodLabel := range targetPodLabels {
-		prefixNameValue := strings.Split(targetPodLabel, "/")
+	for _, podsUnderTestLabel := range podsUnderTestLabels {
+		prefixNameValue := strings.Split(podsUnderTestLabel, ":")
 		if len(prefixNameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
+			return fmt.Errorf(fmt.Sprintf("podUnderTest label %s is invalid", podsUnderTestLabel))
 		}
 
-		prefix := strings.TrimSpace(prefixNameValue[0])
-		nameValue := strings.Split(prefixNameValue[1], ":")
-
-		if len(nameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("target pod label %s is invalid", targetPodLabel))
-		}
-
-		name := strings.TrimSpace(nameValue[0])
-		value := strings.TrimSpace(nameValue[1])
-
-		config.TargetPodLabels = append(config.TargetPodLabels, globalparameters.PodLabel{
-			Prefix: prefix,
-			Name:   name,
-			Value:  value,
-		})
+		config.PodsUnderTestLabels = append(config.PodsUnderTestLabels, prefixNameValue[0]+":"+prefixNameValue[1])
 	}
 
 	return nil
