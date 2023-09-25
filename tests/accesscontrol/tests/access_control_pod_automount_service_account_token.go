@@ -30,7 +30,8 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			[]string{})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		err = globalhelper.CreateServiceAccount(tsparams.ServiceAccountName, randomNamespace)
+		err = globalhelper.CreateServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
+			tsparams.ServiceAccountName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

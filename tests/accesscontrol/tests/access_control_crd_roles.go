@@ -63,12 +63,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
 		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.TnfCustomResourceAPIGroupName})
 		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
-		err = globalhelper.CreateRole(testRole)
+		err = globalhelper.CreateRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
 			By("Delete role")
-			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			err = globalhelper.DeleteRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole.Name, testRole.Namespace)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -92,12 +92,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
 		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.TnfCustomResourceAPIGroupName, "rbac.authorization.k8s.io"})
 		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
-		err = globalhelper.CreateRole(testRole)
+		err = globalhelper.CreateRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
 			By("Delete role")
-			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			err = globalhelper.DeleteRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole.Name, testRole.Namespace)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -121,12 +121,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
 		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.TnfCustomResourceAPIGroupName})
 		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName, "pods"})
-		err = globalhelper.CreateRole(testRole)
+		err = globalhelper.CreateRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
 			By("Delete role")
-			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			err = globalhelper.DeleteRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole.Name, testRole.Namespace)
 			Expect(err).ToNot(HaveOccurred())
 		})
 
@@ -150,12 +150,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
 		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{"bad.example.com"})
 		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
-		err = globalhelper.CreateRole(testRole)
+		err = globalhelper.CreateRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
 			By("Delete role")
-			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			err = globalhelper.DeleteRole(globalhelper.GetAPIClient().K8sClient.RbacV1(), testRole.Name, testRole.Namespace)
 			Expect(err).ToNot(HaveOccurred())
 		})
 

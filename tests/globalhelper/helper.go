@@ -278,55 +278,6 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 	return nil
 }
 
-func CreateClusterRoleBinding(nameSpace, name string) error {
-	// Define the service account object
-	serviceAccount := &corev1.ServiceAccount{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: nameSpace,
-		},
-	}
-
-	// Exit early if the cluster role binding already exists
-	_, err := GetAPIClient().ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
-	if err == nil {
-		return nil
-	}
-
-	// Create the service account
-	_, err = GetAPIClient().ServiceAccounts(nameSpace).Create(context.TODO(), serviceAccount, metav1.CreateOptions{})
-	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("service account %s already exists", name))
-	} else if err != nil {
-		return fmt.Errorf("failed to create cServiceAccount: %w", err)
-	}
-
-	roleBind := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects(nameSpace, name)
-
-	_, err = GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{})
-	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("cluster role binding %s already exists", name))
-	} else if err != nil {
-		return fmt.Errorf("failed to create cluster role binding: %w", err)
-	}
-
-	return nil
-}
-
-func DeleteClusterRoleBinding(nameSpace, name string) error {
-	// Exit if the cluster role binding does not exist
-	_, err := GetAPIClient().ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
-	if k8serrors.IsNotFound(err) {
-		return nil
-	}
-
-	if err := GetAPIClient().ClusterRoleBindings().Delete(context.TODO(), name, metav1.DeleteOptions{}); err != nil {
-		return fmt.Errorf("failed to delete cluster role binding: %w", err)
-	}
-
-	return nil
-}
-
 // CopyFiles copy file from source to destination.
 func CopyFiles(src string, dst string) error {
 	originalFile, err := os.Open(src)

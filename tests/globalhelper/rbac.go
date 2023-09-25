@@ -9,16 +9,18 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
+	rbacv1Typed "k8s.io/client-go/kubernetes/typed/rbac/v1"
 )
 
-func CreateServiceAccount(serviceAccountName, namespace string) error {
+func CreateServiceAccount(client corev1Typed.CoreV1Interface, serviceAccountName, namespace string) error {
 	serviceAccount := corev1.ServiceAccount{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      serviceAccountName,
 			Namespace: namespace}}
 
 	_, err :=
-		GetAPIClient().CoreV1Interface.ServiceAccounts(namespace).Create(context.TODO(), &serviceAccount, metav1.CreateOptions{})
+		client.ServiceAccounts(namespace).Create(context.TODO(), &serviceAccount, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("serviceaccount %s already installed", serviceAccountName))
@@ -29,8 +31,8 @@ func CreateServiceAccount(serviceAccountName, namespace string) error {
 	return err
 }
 
-func DeleteServiceAccount(serviceAccountName, namespace string) error {
-	serviceAccount, err := GetAPIClient().ServiceAccounts(namespace).Get(context.TODO(), serviceAccountName, metav1.GetOptions{})
+func DeleteServiceAccount(client corev1Typed.CoreV1Interface, serviceAccountName, namespace string) error {
+	serviceAccount, err := client.ServiceAccounts(namespace).Get(context.TODO(), serviceAccountName, metav1.GetOptions{})
 
 	if k8serrors.IsNotFound(err) {
 		return nil
@@ -40,7 +42,7 @@ func DeleteServiceAccount(serviceAccountName, namespace string) error {
 		return err
 	}
 
-	err = GetAPIClient().ServiceAccounts(namespace).Delete(context.TODO(), serviceAccountName,
+	err = client.ServiceAccounts(namespace).Delete(context.TODO(), serviceAccountName,
 		metav1.DeleteOptions{})
 
 	if err != nil {
@@ -77,9 +79,9 @@ func RedefineRoleWithResources(role rbacv1.Role, newResources []string) {
 	role.Rules[0].Resources = newResources
 }
 
-func CreateRole(aRole rbacv1.Role) error {
+func CreateRole(client rbacv1Typed.RbacV1Interface, aRole rbacv1.Role) error {
 	_, err :=
-		GetAPIClient().RbacV1Interface.Roles(aRole.Namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
+		client.Roles(aRole.Namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("role %s already installed", aRole.Name))
@@ -90,9 +92,9 @@ func CreateRole(aRole rbacv1.Role) error {
 	return err
 }
 
-func DeleteRole(roleName, namespace string) error {
+func DeleteRole(client rbacv1Typed.RbacV1Interface, roleName, namespace string) error {
 	err :=
-		GetAPIClient().RbacV1Interface.Roles(namespace).Delete(context.TODO(), roleName, metav1.DeleteOptions{})
+		client.Roles(namespace).Delete(context.TODO(), roleName, metav1.DeleteOptions{})
 
 	if k8serrors.IsNotFound(err) {
 		glog.V(5).Info(fmt.Sprintf("role %s does not exist", roleName))
@@ -103,9 +105,9 @@ func DeleteRole(roleName, namespace string) error {
 	return err
 }
 
-func DeleteRoleBinding(bindingName, namespace string) error {
+func DeleteRoleBinding(client rbacv1Typed.RbacV1Interface, bindingName, namespace string) error {
 	err :=
-		GetAPIClient().RbacV1Interface.RoleBindings(namespace).Delete(context.TODO(), bindingName, metav1.DeleteOptions{})
+		client.RoleBindings(namespace).Delete(context.TODO(), bindingName, metav1.DeleteOptions{})
 
 	if k8serrors.IsNotFound(err) {
 		glog.V(5).Info(fmt.Sprintf("rolebinding %s does not exist", bindingName))
@@ -116,7 +118,7 @@ func DeleteRoleBinding(bindingName, namespace string) error {
 	return err
 }
 
-func CreateRoleBindingWithServiceAccountSubject(bindingName, roleName, serviceAccountName,
+func CreateRoleBindingWithServiceAccountSubject(client rbacv1Typed.RbacV1Interface, bindingName, roleName, serviceAccountName,
 	serviceAccountNamespace, namespace string) error {
 	aRoleBinding := rbacv1.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
@@ -140,7 +142,7 @@ func CreateRoleBindingWithServiceAccountSubject(bindingName, roleName, serviceAc
 	}
 
 	_, err :=
-		GetAPIClient().RbacV1Interface.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
+		client.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", bindingName))
