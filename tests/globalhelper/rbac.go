@@ -90,6 +90,19 @@ func CreateRole(aRole rbacv1.Role) error {
 	return err
 }
 
+func DeleteRole(roleName, namespace string) error {
+	err :=
+		GetAPIClient().RbacV1Interface.Roles(namespace).Delete(context.TODO(), roleName, metav1.DeleteOptions{})
+
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info(fmt.Sprintf("role %s does not exist", roleName))
+
+		return nil
+	}
+
+	return err
+}
+
 func DeleteRoleBinding(bindingName, namespace string) error {
 	err :=
 		GetAPIClient().RbacV1Interface.RoleBindings(namespace).Delete(context.TODO(), bindingName, metav1.DeleteOptions{})

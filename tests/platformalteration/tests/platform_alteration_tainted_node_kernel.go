@@ -54,6 +54,9 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 	// 51390
 	It("Tainted node [negative]", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Tainting a node not support on Kind cluster, skipping...")
+		}
 
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,

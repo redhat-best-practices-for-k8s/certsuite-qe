@@ -87,7 +87,6 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54728

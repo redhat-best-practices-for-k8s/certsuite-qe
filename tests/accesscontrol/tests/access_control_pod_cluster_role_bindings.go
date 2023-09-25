@@ -61,6 +61,16 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 		err := globalhelper.CreateClusterRoleBinding(randomNamespace, "my-service-account")
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(func() {
+			By("Delete cluster role binding")
+			err = globalhelper.DeleteClusterRoleBinding(randomNamespace, "my-cluster-role-binding")
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Delete service account")
+			err = globalhelper.DeleteServiceAccount(randomNamespace, "my-service-account")
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		By("Define deployment with cluster role binding ")
 		dep, err := tshelper.DefineDeploymentWithClusterRoleBindingWithServiceAccount(1, 1, "accesscontroldeployment",
 			randomNamespace, "my-service-account")
@@ -79,14 +89,6 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlClusterRoleBindings,
 			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Delete service account")
-		err = globalhelper.DeleteClusterRoleBinding(randomNamespace, "my-cluster-role-binding")
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Delete cluster role binding")
-		err = globalhelper.DeleteServiceAccount(randomNamespace, "my-service-account")
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

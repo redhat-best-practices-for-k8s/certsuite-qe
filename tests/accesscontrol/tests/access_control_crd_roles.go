@@ -66,6 +66,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(func() {
+			By("Delete role")
+			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -88,6 +94,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("Delete role")
+			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
@@ -112,6 +124,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(func() {
+			By("Delete role")
+			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -134,6 +152,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("Delete role")
+			err = globalhelper.DeleteRole(testRole.Name, testRole.Namespace)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
