@@ -187,8 +187,8 @@ github.com/stretchr/testify/assert
 # github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 ## explicit; go 1.19
 github.com/test-network-function/cr-scale-operator/api/v1
-# github.com/test-network-function/test-network-function-claim v1.0.26
-## explicit; go 1.21
+# github.com/test-network-function/test-network-function-claim v1.0.27
+## explicit; go 1.21.1
 github.com/test-network-function/test-network-function-claim/pkg/claim
 # golang.org/x/net v0.14.0
 ## explicit; go 1.17
