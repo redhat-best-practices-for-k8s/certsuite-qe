@@ -43,6 +43,7 @@ func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string
 			Name:      name,
 			Namespace: namespace},
 		Spec: appsv1.DaemonSetSpec{
+			MinReadySeconds: 30,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: labels,
 			},
@@ -51,7 +52,8 @@ func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string
 					Labels: labels,
 				},
 				Spec: corev1.PodSpec{
-					Containers: containerSpecs,
+					TerminationGracePeriodSeconds: pointer.Int64(0),
+					Containers:                    containerSpecs,
 				},
 			},
 		},

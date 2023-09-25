@@ -38,6 +38,11 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	})
 
 	It("One pod with only exclusive containers", func() {
+		if globalhelper.IsKindCluster() {
+			// We cannot guarantee the number of available CPUs so we skip this test
+			Skip("Exclusive CPU pool is not supported on Kind cluster, skipping...")
+		}
+
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
