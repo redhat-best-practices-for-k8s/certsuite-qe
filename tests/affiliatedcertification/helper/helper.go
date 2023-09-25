@@ -8,58 +8,9 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/onsi/ginkgo/v2"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
-
-func SetUpAndRunContainerCertTest(tcName, namespace string, containersInfo []string, expectedResult string) error {
-	var err error
-
-	ginkgo.By("Add container information to " + globalparameters.DefaultTnfConfigFileName)
-
-	err = globalhelper.DefineTnfConfig(
-		[]string{namespace},
-		[]string{tsparams.TestPodLabel},
-		[]string{},
-		containersInfo,
-		[]string{})
-
-	if err != nil {
-		return fmt.Errorf("error defining tnf config file: %w", err)
-	}
-
-	ginkgo.By("Start test")
-
-	err = globalhelper.LaunchTests(
-		tsparams.TestCaseContainerAffiliatedCertName,
-		tcName)
-
-	if strings.Contains(expectedResult, globalparameters.TestCaseFailed) && err == nil {
-		return fmt.Errorf("error running %s test",
-			tsparams.TestCaseContainerAffiliatedCertName)
-	}
-
-	if (strings.Contains(expectedResult, globalparameters.TestCasePassed) ||
-		strings.Contains(expectedResult, globalparameters.TestCaseSkipped)) && err != nil {
-		return fmt.Errorf("error running %s test: %w",
-			tsparams.TestCaseContainerAffiliatedCertName, err)
-	}
-
-	ginkgo.By("Verify test case status in Junit and Claim reports")
-
-	err = globalhelper.ValidateIfReportsAreValid(
-		tsparams.TestCaseContainerAffiliatedCertName,
-		expectedResult)
-
-	if err != nil {
-		return fmt.Errorf("error validating test reports: %w", err)
-	}
-
-	return nil
-}
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
 func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
