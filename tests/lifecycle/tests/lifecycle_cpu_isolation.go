@@ -1,11 +1,12 @@
 package tests
 
 import (
+	"runtime"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -13,12 +14,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
 )
 
-var (
-	// Each tc will save the RTC that was created in order to delete them.
-	rtcNames = []string{}
-)
-
-var _ = Describe("lifecycle-cpu-isolation", func() {
+var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -35,20 +31,14 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() && runtime.NumCPU() <= 2 {
+			Skip("This test requires more than 2 CPU cores")
+		}
 	})
 
 	AfterEach(func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
-
-		By("Delete all RTC's that were created by the previous test case.")
-		for _, rtc := range rtcNames {
-			By("Deleting rtc " + rtc)
-			err := tshelper.DeleteRunTimeClass(rtc)
-			Expect(err).ToNot(HaveOccurred())
-		}
-
-		// clear the list.
-		rtcNames = []string{}
 	})
 
 	const disableVar = "disable"
@@ -71,7 +61,11 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, rtc.Name)
+		DeferCleanup(func() {
+			By("Deleting rtc " + rtc.Name)
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
@@ -108,7 +102,11 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, rtc.Name)
+		DeferCleanup(func() {
+			By("Deleting rtc " + rtc.Name)
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
@@ -146,7 +144,11 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, rtc.Name)
+		DeferCleanup(func() {
+			By("Deleting rtc " + rtc.Name)
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		deployment.RedefineWithRunTimeClass(dep, rtc.Name)
 		deployment.RedefineWithCPUResources(dep, "1", "1")
@@ -184,7 +186,11 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, rtc.Name)
+		DeferCleanup(func() {
+			By("Deleting rtc " + rtc.Name)
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
@@ -214,7 +220,11 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, rtc.Name)
+		DeferCleanup(func() {
+			By("Deleting rtc " + rtc.Name)
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
@@ -285,7 +295,11 @@ var _ = Describe("lifecycle-cpu-isolation", func() {
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
-		rtcNames = append(rtcNames, rtc.Name)
+		DeferCleanup(func() {
+			By("Deleting rtc " + rtc.Name)
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		By("Define runTimeClass for the first pod")
 		pod.RedefineWithRunTimeClass(puta, rtc.Name)

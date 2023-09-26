@@ -7,7 +7,7 @@ import (
 )
 
 // DefinePersistentVolume defines a persistent volume manifest based on given params.
-func DefinePersistentVolume(pvName string) *corev1.PersistentVolume {
+func DefinePersistentVolume(pvName, pvcName, pvcNamespace string) *corev1.PersistentVolume {
 	return &corev1.PersistentVolume{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: pvName,
@@ -15,6 +15,10 @@ func DefinePersistentVolume(pvName string) *corev1.PersistentVolume {
 		Spec: corev1.PersistentVolumeSpec{
 			AccessModes: []corev1.PersistentVolumeAccessMode{
 				corev1.ReadWriteMany,
+			},
+			ClaimRef: &corev1.ObjectReference{
+				Namespace: pvcNamespace,
+				Name:      pvcName,
 			},
 
 			PersistentVolumeReclaimPolicy: corev1.PersistentVolumeReclaimRetain,

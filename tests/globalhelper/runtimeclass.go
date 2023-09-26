@@ -42,3 +42,32 @@ func isRtcCreated(rtc *nodev1.RuntimeClass) (bool, error) {
 
 	return len(rtc.UID) != 0, nil
 }
+
+func DeleteRunTimeClass(rtc *nodev1.RuntimeClass) error {
+	err := GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtc.Name, metav1.DeleteOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to delete runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
+	}
+
+	Eventually(func() bool {
+		rtcDeleted, err := isRtcDeleted(rtc)
+		if err != nil {
+			glog.V(5).Info(fmt.Sprintf("rtc %s was not deleted, retry in %d seconds", rtc.Name, retryInterval))
+
+			return false
+		}
+
+		return rtcDeleted
+	}, retryInterval*time.Minute, retryInterval*time.Second).Should(Equal(true), "rtc was not deleted")
+
+	return nil
+}
+
+func isRtcDeleted(rtc *nodev1.RuntimeClass) (bool, error) {
+	_, err := GetAPIClient().RuntimeClasses().Get(context.TODO(), rtc.Name, metav1.GetOptions{})
+	if err != nil && k8serrors.IsNotFound(err) {
+		return true, nil
+	}
+
+	return false, err
+}

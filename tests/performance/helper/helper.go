@@ -10,13 +10,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/utils/pointer"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	corev1 "k8s.io/api/core/v1"
+	nodev1 "k8s.io/api/node/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -290,7 +290,7 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 	return aRole, aRoleBinding, aServiceAccount
 }
 
-func DefineRtPodInIsolatedCPUPool(namespace string) (*corev1.Pod, error) {
+func DefineRtPodInIsolatedCPUPool(namespace string, rtc *nodev1.RuntimeClass) (*corev1.Pod, error) {
 	testPod := DefineRtPod(tsparams.TestPodName, namespace,
 		tsparams.RtImageName, tsparams.TnfTargetPodLabels)
 
@@ -298,16 +298,6 @@ func DefineRtPodInIsolatedCPUPool(namespace string) (*corev1.Pod, error) {
 	annotationsMap["cpu-load-balancing.crio.io"] = tsparams.DisableStr
 	annotationsMap["irq-load-balancing.crio.io"] = tsparams.DisableStr
 	testPod.SetAnnotations(annotationsMap)
-
-	rtcName := tsparams.TnfRunTimeClass + "-" + globalhelper.GenerateRandomString(10)
-	rtc := runtimeclass.DefineRunTimeClass(rtcName)
-	err := globalhelper.CreateRunTimeClass(rtc)
-
-	if err != nil {
-		return nil, err
-	}
-
-	tsparams.RtcNames = append(tsparams.RtcNames, rtc.Name)
 
 	pod.RedefineWithRunTimeClass(testPod, rtc.Name)
 	pod.RedefineWithCPUResources(testPod, "1", "1")
