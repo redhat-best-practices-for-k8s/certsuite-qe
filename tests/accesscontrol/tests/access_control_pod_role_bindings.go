@@ -111,6 +111,11 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = namespaces.Create(anotherNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, anotherNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		// Delete service account
 		err = globalhelper.DeleteServiceAccount(tsparams.TestServiceAccount, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -128,9 +133,6 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodRoleBindings,
 			globalparameters.TestCasePassed)
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, anotherNamespace, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -152,6 +154,11 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = namespaces.Create(anotherNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, anotherNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		// Create role binding in a new namespace
 		err = globalhelper.CreateRoleBindingWithServiceAccountSubject(tsparams.TestRoleBindingName,
 			tsparams.TestRoleName, tsparams.TestServiceAccount, randomNamespace, anotherNamespace)
@@ -167,9 +174,6 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodRoleBindings,
 			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, anotherNamespace, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
