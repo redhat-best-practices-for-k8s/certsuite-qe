@@ -160,6 +160,11 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = namespaces.Create(anotherNamespace, globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(func() {
+			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, anotherNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		// Create role binding in a new namespace
 		err = globalhelper.CreateRoleBindingWithServiceAccountSubject(globalhelper.GetAPIClient().K8sClient.RbacV1(),
 			tsparams.TestRoleBindingName,
@@ -176,9 +181,6 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodRoleBindings,
 			globalparameters.TestCaseFailed)
-		Expect(err).ToNot(HaveOccurred())
-
-		err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, anotherNamespace, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
