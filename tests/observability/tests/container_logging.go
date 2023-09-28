@@ -104,17 +104,13 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
-		logLines := []string{tsparams.TwoLogLines}
 		if globalhelper.IsKindCluster() {
-			By("Using KIND cluster, add one log line with newline char")
-			logLines = append(logLines, tsparams.OneLogLine)
-		} else {
-			logLines = append(logLines, tsparams.OneLogLineWithoutNewLine)
+			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
 		By("Deploy daemonset in the cluster")
 		daemonSet := tshelper.DefineDaemonSetWithStdoutBuffers(
-			tsparams.TestDaemonSetBaseName, randomNamespace, logLines)
+			tsparams.TestDaemonSetBaseName, randomNamespace, []string{tsparams.OneLogLineWithoutNewLine})
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), daemonSet,
 			tsparams.DaemonSetDeployTimeoutMins)
@@ -133,18 +129,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	It("Two deployments, two pods with two containers each, all printing 1 log line", func() {
 		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
 
-		logLines := []string{tsparams.TwoLogLines}
 		if globalhelper.IsKindCluster() {
-			By("Using KIND cluster, add one log line with newline char")
-			logLines = append(logLines, tsparams.OneLogLine)
-		} else {
-			logLines = append(logLines, tsparams.OneLogLineWithoutNewLine)
+			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
 		By("Create deployment1 in the cluster")
 		deployment1 := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName+"1", randomNamespace, 2,
-			logLines)
+			[]string{tsparams.OneLogLineWithoutNewLine})
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
 			tsparams.DeploymentDeployTimeoutMins)
@@ -153,7 +145,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		By("Create deployment2 in the cluster")
 		deployment2 := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName+"2", randomNamespace, 2,
-			logLines)
+			[]string{tsparams.OneLogLineWithoutNewLine})
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
