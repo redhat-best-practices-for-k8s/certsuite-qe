@@ -60,7 +60,7 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 	It("one deployment, one pod, does have cluster role binding [negative]", func() {
 		By("Create service account")
 		err := globalhelper.CreateServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
-			randomNamespace, "my-service-account")
+			"my-service-account", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create cluster role binding")
