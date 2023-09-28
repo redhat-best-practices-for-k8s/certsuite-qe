@@ -39,18 +39,18 @@ func DefineRbacAuthorizationClusterGroupSubjects(subjectNames []string) *[]rbacv
 	return &Subjects
 }
 
-func DefineRbacAuthorizationClusterServiceAccountSubjects(namespace, name string) *rbacv1.ClusterRoleBinding {
+func DefineRbacAuthorizationClusterServiceAccountSubjects(clusterRoleBindingName, serviceAccountNamespace,
+	serviceAccountName string) *rbacv1.ClusterRoleBinding {
 	// Define the RoleBinding
 	return &rbacv1.ClusterRoleBinding{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "my-cluster-role-binding",
-			Namespace: namespace,
+			Name: clusterRoleBindingName,
 		},
 		Subjects: []rbacv1.Subject{
 			{
 				Kind:      "ServiceAccount",
-				Name:      name,
-				Namespace: namespace,
+				Name:      serviceAccountName,
+				Namespace: serviceAccountNamespace,
 			},
 		},
 		RoleRef: rbacv1.RoleRef{

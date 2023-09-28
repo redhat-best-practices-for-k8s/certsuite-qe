@@ -8,6 +8,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
 )
 
 var _ = Describe("Access-control pod cluster role binding,", func() {
@@ -57,17 +58,24 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 	})
 
 	It("one deployment, one pod, does have cluster role binding [negative]", func() {
+		By("Create service account")
+		err := globalhelper.CreateServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
+			randomNamespace, "my-service-account")
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Create cluster role binding")
-		err := globalhelper.CreateClusterRoleBinding(randomNamespace, "my-service-account")
+		crb := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects("my-cluster-role-binding", randomNamespace, "my-service-account")
+		err = globalhelper.CreateClusterRoleBinding(globalhelper.GetAPIClient().K8sClient.RbacV1(), crb)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
 			By("Delete cluster role binding")
-			err = globalhelper.DeleteClusterRoleBinding(randomNamespace, "my-cluster-role-binding")
+			err = globalhelper.DeleteClusterRoleBinding(globalhelper.GetAPIClient().K8sClient.RbacV1(), crb.Name)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Delete service account")
-			err = globalhelper.DeleteServiceAccount(randomNamespace, "my-service-account")
+			err = globalhelper.DeleteServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
+				randomNamespace, "my-service-account")
 			Expect(err).ToNot(HaveOccurred())
 		})
 
