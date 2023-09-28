@@ -58,16 +58,14 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	// 54201
 	It("One deployment, one pod with a volume that uses a reclaim policy of delete", func() {
-
-		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolume.Name)
-
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
@@ -94,16 +92,14 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	// 54202
 	It("One pod with a volume that uses a reclaim policy of delete", func() {
-
-		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolume.Name)
-
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
@@ -129,16 +125,14 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	// 54203
 	It("One replicaSet with a volume that uses a reclaim policy of delete", func() {
-
-		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolume.Name)
-
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
@@ -164,16 +158,14 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	// 54204
 	It("One deployment, one pod with a volume that uses a reclaim policy of retain [negative]", func() {
-
-		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimRetain)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolume.Name)
-
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
@@ -200,16 +192,14 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	// 54206
 	It("One pod with a volume that uses a reclaim policy of recycle [negative]", func() {
-
-		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimRecycle)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolume.Name)
-
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
@@ -237,31 +227,30 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 	It("Two deployments, one with reclaim policy of delete, other with recycle [negative]", func() {
 
 		By("Define and create first pv")
-		persistentVolumea := persistentvolume.DefinePersistentVolume(randomPV)
+		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentVolumea := persistentvolume.DefinePersistentVolume(randomPV, pvca.Name, pvca.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumea, corev1.PersistentVolumeReclaimDelete)
-
 		err := tshelper.CreatePersistentVolume(persistentVolumea, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolumea.Name)
 
 		By("Define and create second pv")
-		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb-" + globalhelper.GenerateRandomString(10))
+		pvcb := persistentvolumeclaim.DefinePersistentVolumeClaim("lifecycle-pvcb", randomNamespace)
+		persistentVolumeb := persistentvolume.DefinePersistentVolume("lifecycle-pvb-"+globalhelper.GenerateRandomString(10),
+			pvcb.Name, pvcb.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolumeb, corev1.PersistentVolumeReclaimRecycle)
-
 		err = tshelper.CreatePersistentVolume(persistentVolumeb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, persistentVolumeb.Name)
 
-		By("Define and create first pvc")
-		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		By("create first pvc")
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvca, randomNamespace, tsparams.WaitingTime, persistentVolumea.Name)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define and create second pvc")
-		pvcb := persistentvolumeclaim.DefinePersistentVolumeClaim("lifecycle-pvcb", randomNamespace)
+		By("create second pvc")
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvcb, randomNamespace, tsparams.WaitingTime, persistentVolumeb.Name)
 		Expect(err).ToNot(HaveOccurred())

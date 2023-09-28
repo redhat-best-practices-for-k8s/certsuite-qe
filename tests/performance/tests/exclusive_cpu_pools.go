@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"runtime"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -31,6 +33,10 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		// Create service account and roles and roles binding
 		err = tshelper.ConfigurePrivilegedServiceAccount(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() && runtime.NumCPU() <= 2 {
+			Skip("This test requires more than 2 CPU cores")
+		}
 	})
 
 	AfterEach(func() {

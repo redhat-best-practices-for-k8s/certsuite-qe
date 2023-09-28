@@ -18,9 +18,6 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-
-	// Each tc will save the RTC that was created in order to delete them.
-	RtcNames = []string{}
 )
 
 const (

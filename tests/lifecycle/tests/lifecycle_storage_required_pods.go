@@ -62,8 +62,10 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 	})
 
 	It("One pod with a storage, PVC with no storageclass defined", func() {
+		By("Define PVC")
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 		By("Define PV")
-		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV)
+		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := tshelper.CreatePersistentVolume(persistentVolume, tsparams.WaitingTime)
@@ -71,8 +73,6 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 
 		pvNames = append(pvNames, persistentVolume.Name)
 
-		By("Define PVC")
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -94,8 +94,12 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 	})
 
 	It("One pod with local storage, PVC with storageclass defined", func() {
+		By("Define PVC")
+		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+		persistentvolumeclaim.RedefineWithStorageClass(pvc, randomStorageClassName)
+
 		By("Define PV")
-		testPv := persistentvolume.DefinePersistentVolume(randomPV)
+		testPv := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
 		persistentvolume.RedefineWithPVReclaimPolicy(testPv, corev1.PersistentVolumeReclaimDelete)
 		persistentvolume.RedefineWithStorageClass(testPv, randomStorageClassName)
 
@@ -103,10 +107,6 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		pvNames = append(pvNames, testPv.Name)
-
-		By("Define PVC")
-		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
-		persistentvolumeclaim.RedefineWithStorageClass(pvc, randomStorageClassName)
 
 		err = tshelper.CreateAndWaitUntilPVCIsBound(pvc, randomNamespace, tsparams.WaitingTime, testPv.Name)
 		Expect(err).ToNot(HaveOccurred())

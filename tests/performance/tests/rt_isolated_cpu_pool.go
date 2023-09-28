@@ -8,9 +8,10 @@ import (
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/performance/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
 )
 
-var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
+var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -35,22 +36,26 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 
 	AfterEach(func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
-
-		By("Delete all RTC's that were created by the previous test case.")
-		for _, rtc := range tsparams.RtcNames {
-			By("Deleting rtc " + rtc)
-			err := tshelper.DeleteRunTimeClass(rtc)
-			Expect(err).ToNot(HaveOccurred())
-		}
-
-		// clear the list.
-		tsparams.RtcNames = []string{}
 	})
 
 	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
 
+		By("Define runtime class")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(rtc).ToNot(BeNil())
+
+		By("Create runtime class")
+		err := globalhelper.CreateRunTimeClass(rtc)
+		Expect(err).ToNot(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("Delete runtime class")
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		By("Define pod")
-		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool(randomNamespace)
+		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool(randomNamespace, rtc)
 		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
@@ -75,9 +80,22 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", func() {
 	})
 
 	It("One pod running in isolated cpu pool and non-rt scheduling policy", func() {
-		By("Define pod")
+		By("Define runtime class")
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		Expect(rtc).ToNot(BeNil())
 
-		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool(randomNamespace)
+		By("Create runtime class")
+		err := globalhelper.CreateRunTimeClass(rtc)
+		Expect(err).ToNot(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("Delete runtime class")
+			err := globalhelper.DeleteRunTimeClass(rtc)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		By("Define pod")
+		testPod, err := tshelper.DefineRtPodInIsolatedCPUPool(randomNamespace, rtc)
 		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
