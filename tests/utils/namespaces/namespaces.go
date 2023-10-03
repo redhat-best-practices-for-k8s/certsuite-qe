@@ -14,7 +14,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 // WaitForDeletion waits until the namespace will be removed from the cluster.
@@ -88,7 +88,7 @@ func CleanPods(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = clientSet.Pods(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64(0),
+		GracePeriodSeconds: ptr.To[int64](0),
 	}, metav1.ListOptions{})
 
 	if err != nil {
@@ -110,7 +110,7 @@ func CleanDeployments(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = clientSet.Deployments(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64(0),
+		GracePeriodSeconds: ptr.To[int64](0),
 	}, metav1.ListOptions{})
 
 	if err != nil {
@@ -132,7 +132,7 @@ func CleanDaemonSets(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = clientSet.DaemonSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64(0),
+		GracePeriodSeconds: ptr.To[int64](0),
 	}, metav1.ListOptions{})
 
 	if err != nil {
@@ -185,7 +185,7 @@ func CleanReplicaSets(namespace string, clientSet *testclient.ClientSet) error {
 	}
 
 	err = clientSet.ReplicaSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64(0),
+		GracePeriodSeconds: ptr.To[int64](0),
 	}, metav1.ListOptions{})
 
 	if err != nil {
@@ -207,7 +207,7 @@ func CleanStatefulSets(namespace string, clientSet *testclient.ClientSet) error 
 	}
 
 	err = clientSet.StatefulSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64(0),
+		GracePeriodSeconds: ptr.To[int64](0),
 	}, metav1.ListOptions{})
 
 	if err != nil {
@@ -235,7 +235,7 @@ func CleanServices(namespace string, clientSet *testclient.ClientSet) error {
 
 	for _, s := range serviceList.Items {
 		err = clientSet.Services(namespace).Delete(context.TODO(), s.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		})
 		if err != nil {
 			return fmt.Errorf("failed to delete service %w", err)
@@ -257,7 +257,7 @@ func CleanSubscriptions(namespace string, clientSet *testclient.ClientSet) error
 
 	err = clientSet.Subscriptions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 
@@ -280,7 +280,7 @@ func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
 
 	err = clientSet.ClusterServiceVersions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 
@@ -303,7 +303,7 @@ func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error 
 
 	err = clientSet.InstallPlans(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 
@@ -326,7 +326,7 @@ func CleanPVCs(namespace string, clientSet *testclient.ClientSet) error {
 
 	err = clientSet.PersistentVolumeClaims(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 
@@ -349,7 +349,7 @@ func CleanPodDistruptionBudget(namespace string, clientSet *testclient.ClientSet
 
 	err = clientSet.PolicyV1Interface.PodDisruptionBudgets(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 
@@ -372,7 +372,7 @@ func CleanResourceQuotas(namespace string, clientSet *testclient.ClientSet) erro
 
 	err = clientSet.ResourceQuotas(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 
@@ -395,7 +395,7 @@ func CleanNetworkPolicies(namespace string, clientSet *testclient.ClientSet) err
 
 	err = clientSet.NetworkPolicies(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		},
 		metav1.ListOptions{})
 

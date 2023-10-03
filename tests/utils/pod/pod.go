@@ -5,9 +5,9 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/utils/ptr"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
 )
 
 // DefinePod defines pod manifest based on given params.
@@ -18,11 +18,11 @@ func DefinePod(podName string, namespace string, image string, label map[string]
 			Namespace: namespace,
 			Labels:    label},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: pointer.Int64(0),
+			TerminationGracePeriodSeconds: ptr.To[int64](0),
 			SecurityContext: &corev1.PodSecurityContext{
-				RunAsUser:    pointer.Int64(1000),
-				RunAsGroup:   pointer.Int64(1000),
-				RunAsNonRoot: pointer.Bool(true),
+				RunAsUser:    ptr.To[int64](1000),
+				RunAsGroup:   ptr.To[int64](1000),
+				RunAsNonRoot: ptr.To[bool](true),
 			},
 			Containers: []corev1.Container{
 				{
@@ -122,7 +122,7 @@ func RedefineWithMemoryResources(pod *corev1.Pod, limit string, req string) {
 }
 
 func RedefineWithRunTimeClass(pod *corev1.Pod, rtcName string) {
-	pod.Spec.RuntimeClassName = pointer.String(rtcName)
+	pod.Spec.RuntimeClassName = ptr.To[string](rtcName)
 }
 
 // RedefineWithNodeAffinity redefines pod with nodeAffinity spec.

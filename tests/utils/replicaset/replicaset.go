@@ -4,7 +4,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 // DefineReplicaSet returns replicaset struct.
@@ -14,7 +14,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 			Name:      replicaSetName,
 			Namespace: namespace},
 		Spec: appsv1.ReplicaSetSpec{
-			Replicas:        pointer.Int32(1),
+			Replicas:        ptr.To[int32](1),
 			MinReadySeconds: 30,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
@@ -25,7 +25,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64(0),
+					TerminationGracePeriodSeconds: ptr.To[int64](0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -35,7 +35,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 
 // RedefineWithReplicaNumber redefines replicaSet with requested replica number.
 func RedefineWithReplicaNumber(replicaSet *appsv1.ReplicaSet, replicasNumber int32) {
-	replicaSet.Spec.Replicas = pointer.Int32(replicasNumber)
+	replicaSet.Spec.Replicas = ptr.To[int32](replicasNumber)
 }
 
 func RedefineWithPVC(replicaSet *appsv1.ReplicaSet, name string, claim string) {

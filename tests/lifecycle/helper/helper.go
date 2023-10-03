@@ -22,7 +22,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 	storagev1 "k8s.io/api/storage/v1"
@@ -137,7 +137,7 @@ func isPvcBound(pvcName string, namespace string, pvName string) (bool, error) {
 
 func DeletePV(persistentVolume string, timeout time.Duration) error {
 	err := globalhelper.GetAPIClient().PersistentVolumes().Delete(context.TODO(), persistentVolume, metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64(0),
+		GracePeriodSeconds: ptr.To[int64](0),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to delete persistent volume %w", err)
@@ -155,7 +155,7 @@ func DeletePV(persistentVolume string, timeout time.Duration) error {
 
 func DeleteRunTimeClass(rtcName string) error {
 	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtcName,
-		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
+		metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
 	}
@@ -192,7 +192,7 @@ func CreateStorageClass(storageClassName string, defaultSC bool) error {
 
 func DeleteStorageClass(storageClassName string) error {
 	err := globalhelper.GetAPIClient().K8sClient.StorageV1().StorageClasses().Delete(context.Background(),
-		storageClassName, metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
+		storageClassName, metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
 
 	if k8serrors.IsNotFound(err) {
 		glog.V(5).Info(fmt.Sprintf("storageclass %s already deleted", storageClassName))

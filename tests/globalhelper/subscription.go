@@ -7,7 +7,7 @@ import (
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 func DeleteSubscription(namespace string, subscriptionName string, clientSet *testclient.ClientSet) error {
@@ -26,7 +26,7 @@ func DeleteSubscription(namespace string, subscriptionName string, clientSet *te
 	err = clientSet.Subscriptions(namespace).Delete(context.TODO(),
 		subscriptionName,
 		metav1.DeleteOptions{
-			GracePeriodSeconds: pointer.Int64(0),
+			GracePeriodSeconds: ptr.To[int64](0),
 		})
 
 	if err != nil {

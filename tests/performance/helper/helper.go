@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
 	corev1 "k8s.io/api/core/v1"
@@ -45,12 +45,12 @@ func DefineExclusivePod(podName string, namespace string, image string, label ma
 			Namespace: namespace,
 			Labels:    label},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: pointer.Int64(0),
+			TerminationGracePeriodSeconds: ptr.To[int64](0),
 			ServiceAccountName:            tsparams.PrivilegedRoleName,
 			SecurityContext: &corev1.PodSecurityContext{
-				RunAsUser:    pointer.Int64(1000),
-				RunAsGroup:   pointer.Int64(1000),
-				RunAsNonRoot: pointer.Bool(true)},
+				RunAsUser:    ptr.To[int64](1000),
+				RunAsGroup:   ptr.To[int64](1000),
+				RunAsNonRoot: ptr.To[bool](true)},
 			Containers: []corev1.Container{
 				{
 					Name:      "shared",
@@ -84,8 +84,8 @@ func DefineRtPod(podName string, namespace string, image string, label map[strin
 	}
 
 	containerSecurityContext := &corev1.SecurityContext{
-		Privileged: pointer.Bool(true),
-		RunAsUser:  pointer.Int64(0),
+		Privileged: ptr.To[bool](true),
+		RunAsUser:  ptr.To[int64](0),
 	}
 
 	return &corev1.Pod{
@@ -95,7 +95,7 @@ func DefineRtPod(podName string, namespace string, image string, label map[strin
 			Labels:    label},
 		Spec: corev1.PodSpec{
 			ServiceAccountName:            tsparams.PrivilegedRoleName,
-			TerminationGracePeriodSeconds: pointer.Int64(0),
+			TerminationGracePeriodSeconds: ptr.To[int64](0),
 			Containers: []corev1.Container{
 				{
 					Name:            "rt-app",
@@ -194,7 +194,7 @@ func ExecCommandContainer(
 
 func DeleteRunTimeClass(rtcName string) error {
 	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtcName,
-		metav1.DeleteOptions{GracePeriodSeconds: pointer.Int64(0)})
+		metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
 	if err != nil {
 		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
 	}

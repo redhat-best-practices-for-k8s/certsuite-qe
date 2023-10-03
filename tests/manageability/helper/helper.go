@@ -1,10 +1,9 @@
 package helper
 
 import (
-	"k8s.io/utils/pointer"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 )
 
 func DefineManageabilityPod(podName, namespace, image string, label map[string]string) *corev1.Pod {
@@ -14,7 +13,7 @@ func DefineManageabilityPod(podName, namespace, image string, label map[string]s
 			Namespace: namespace,
 			Labels:    label},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: pointer.Int64(0),
+			TerminationGracePeriodSeconds: ptr.To[int64](0),
 			Containers: []corev1.Container{
 				{
 					Name:  "httpd",
@@ -22,7 +21,7 @@ func DefineManageabilityPod(podName, namespace, image string, label map[string]s
 					Ports: []corev1.ContainerPort{
 						{
 							Name:          "http",
-							ContainerPort: *pointer.Int32(80),
+							ContainerPort: *ptr.To[int32](80),
 						},
 					},
 				},
