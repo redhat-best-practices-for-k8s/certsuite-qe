@@ -76,7 +76,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
@@ -176,7 +176,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
@@ -266,10 +266,10 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		deployment.RedefineWithPVC(depb, persistentVolumeb.Name, pvcb.Name)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depa, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), depa, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), depb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")

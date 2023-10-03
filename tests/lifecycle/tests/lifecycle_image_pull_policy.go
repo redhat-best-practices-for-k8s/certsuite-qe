@@ -45,7 +45,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -67,7 +68,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
@@ -75,7 +77,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpc", randomNamespace)
@@ -83,7 +86,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymentc, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentc, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymentc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -184,7 +188,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			"registry.access.redhat.com/ubi8/ubi:latest", tsparams.TestTargetLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -206,7 +211,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullAlways)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -228,7 +234,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullNever)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
@@ -237,7 +244,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")
@@ -267,7 +275,8 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-image-pull-policy test")

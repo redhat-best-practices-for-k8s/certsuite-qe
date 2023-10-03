@@ -47,7 +47,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")
@@ -91,7 +91,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 		deployment.RedefineWith1GiHugepages(dep, 1)
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")

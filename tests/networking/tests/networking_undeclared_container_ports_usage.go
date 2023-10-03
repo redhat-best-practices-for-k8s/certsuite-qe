@@ -44,7 +44,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = deployment.RedefineContainerCommand(dep, 0, []string{})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -68,7 +68,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 			[]corev1.ContainerPort{{ContainerPort: 8081}})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -94,7 +94,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = deployment.RedefineContainerCommand(dep, 0, []string{})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -118,7 +118,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = deployment.RedefineContainerCommand(dep, 0, []string{})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -147,7 +147,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = deployment.RedefineContainerEnvVarList(dep, 1, []corev1.EnvVar{{Name: "LIVENESS_PROBE_DEFAULT_PORT", Value: "8081"}})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -177,7 +177,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = deployment.RedefineContainerEnvVarList(dep, 1, []corev1.EnvVar{{Name: "LIVENESS_PROBE_DEFAULT_PORT", Value: "8081"}})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -201,7 +201,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = deployment.RedefineContainerCommand(dep, 1, []string{})
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")

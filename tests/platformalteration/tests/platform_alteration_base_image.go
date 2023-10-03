@@ -53,7 +53,8 @@ var _ = Describe("platform-alteration-base-image", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Sleep for 5 minutes")
@@ -104,7 +105,8 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
@@ -121,7 +123,8 @@ var _ = Describe("platform-alteration-base-image", func() {
 			randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-base-image test")

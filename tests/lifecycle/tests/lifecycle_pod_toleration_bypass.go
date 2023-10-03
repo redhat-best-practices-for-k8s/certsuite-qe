@@ -40,7 +40,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -64,7 +64,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		deployment.RedefineWithNoExecuteToleration(dep)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -88,7 +88,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		deployment.RedefineWithPreferNoScheduleToleration(dep)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -112,7 +112,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		deployment.RedefineWithNoScheduleToleration(dep)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -134,13 +134,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -165,13 +165,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		deployment.RedefineWithNoScheduleToleration(dep)
 		deployment.RedefineWithNoExecuteToleration(dep)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

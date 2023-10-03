@@ -44,7 +44,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
@@ -65,7 +66,8 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-container-shutdown test")
@@ -88,7 +90,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
 			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -112,7 +114,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
 			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -122,7 +124,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymentb, tsparams.PreStopCommand)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
 			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -147,7 +149,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		err = deployment.RedefineFirstContainerWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
 			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -169,7 +171,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
 			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -177,7 +179,7 @@ var _ = Describe("lifecycle-container-shutdown", func() {
 		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
 			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

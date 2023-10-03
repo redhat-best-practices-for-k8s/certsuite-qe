@@ -46,7 +46,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
@@ -67,7 +68,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment with a startup probe")
@@ -76,7 +78,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymentb)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
@@ -136,7 +139,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
@@ -178,14 +182,16 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define second deployment without a startup probe")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
@@ -207,7 +213,8 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deployment.RedefineWithStartUpProbe(deploymenta)
 		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
+			deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-startup-probe test")
