@@ -7,7 +7,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 func DefineDaemonSet(namespace string, image string, label map[string]string, name string) *appsv1.DaemonSet {
@@ -26,7 +26,7 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 					Labels: label,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64(0),
+					TerminationGracePeriodSeconds: ptr.To[int64](0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -52,7 +52,7 @@ func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string
 					Labels: labels,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64(0),
+					TerminationGracePeriodSeconds: ptr.To[int64](0),
 					Containers:                    containerSpecs,
 				},
 			},
@@ -85,8 +85,8 @@ func RedefineWithPrivilegeAndHostNetwork(daemonSet *appsv1.DaemonSet) {
 	}
 
 	daemonSet.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{
-		Privileged: pointer.Bool(true),
-		RunAsUser:  pointer.Int64(0),
+		Privileged: ptr.To[bool](true),
+		RunAsUser:  ptr.To[int64](0),
 		Capabilities: &corev1.Capabilities{
 			Add: []corev1.Capability{"ALL"}},
 	}
@@ -111,8 +111,8 @@ func RedefineWithContainerSpecs(daemonSet *appsv1.DaemonSet, containerSpecs []co
 func RedefineWithPrivilegedContainer(daemonSet *appsv1.DaemonSet) {
 	for index := range daemonSet.Spec.Template.Spec.Containers {
 		daemonSet.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"ALL"}},
 		}
@@ -157,5 +157,5 @@ func RedefineWithCPUResources(daemonSet *appsv1.DaemonSet, limit string, req str
 }
 
 func RedefineWithRunTimeClass(daemonSet *appsv1.DaemonSet, rtcName string) {
-	daemonSet.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
+	daemonSet.Spec.Template.Spec.RuntimeClassName = ptr.To[string](rtcName)
 }
