@@ -171,7 +171,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -212,7 +211,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -252,7 +250,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, additionalValidNamespace, "tnf"},
-			// []string{randomNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -297,7 +294,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -330,7 +326,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -375,7 +370,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define tnf config file")
 		err = globalhelper.DefineTnfConfig(
 			[]string{randomNamespace, "tnf"},
-			// []string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
