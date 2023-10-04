@@ -43,7 +43,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.TwoLogLines})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -65,7 +65,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -87,7 +87,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.TwoLogLines, tsparams.TwoLogLines})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -138,7 +138,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName+"1", randomNamespace, 2,
 			[]string{tsparams.OneLogLineWithoutNewLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment1,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -147,7 +147,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName+"2", randomNamespace, 2,
 			[]string{tsparams.OneLogLineWithoutNewLine})
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment2,
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -170,7 +170,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -241,7 +241,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.NoLogLines})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -263,7 +263,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.NoLogLines})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -285,7 +285,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName+"1", randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.OneLogLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment1,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment1,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -294,7 +294,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName+"2", randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.NoLogLines})
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment2,
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -337,7 +337,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -372,7 +372,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLineWithoutNewLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -399,7 +399,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.OneLogLineWithoutNewLine})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -420,7 +420,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(
 			tsparams.TestDeploymentBaseName, randomNamespace)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), deployment,
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 

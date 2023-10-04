@@ -44,8 +44,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		globalhelper.AppendContainersToDeployment(deployment, 3, globalhelper.GetConfiguration().General.TestImage)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-is-redhat-release test")
@@ -95,7 +94,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		// Append UBI-based container.
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-is-redhat-release test")

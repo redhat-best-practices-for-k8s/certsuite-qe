@@ -42,7 +42,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -66,7 +66,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -90,7 +90,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -114,7 +114,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

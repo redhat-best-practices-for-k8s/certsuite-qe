@@ -45,7 +45,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -68,7 +68,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -94,13 +94,13 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -126,13 +126,13 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", func
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

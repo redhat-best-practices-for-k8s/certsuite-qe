@@ -153,7 +153,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		deployment.RedefineWithRunTimeClass(dep, rtc.Name)
 		deployment.RedefineWithCPUResources(dep, "1", "1")
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
@@ -259,7 +259,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		dep.Spec.Template.SetAnnotations(annotationsMap)
 		deployment.RedefineWithCPUResources(dep, "1", "1")
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")

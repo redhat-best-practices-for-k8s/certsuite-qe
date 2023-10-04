@@ -44,8 +44,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
@@ -67,8 +66,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 				corev1.TerminationMessageFallbackToLogsOnError,
 			})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
@@ -114,8 +112,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create statefulset in the cluster")
@@ -143,8 +140,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{tsparams.UseDefaultTerminationMsgPolicy})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
@@ -168,8 +164,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 				corev1.TerminationMessageFallbackToLogsOnError,
 			})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
@@ -191,8 +186,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 				tsparams.UseDefaultTerminationMsgPolicy,
 			})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
@@ -213,8 +207,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create statefulset in the cluster")
@@ -243,8 +236,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create daemonset in the cluster")
@@ -271,8 +263,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		By("Create deployment without TNF target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(tsparams.TestDeploymentBaseName, randomNamespace)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")

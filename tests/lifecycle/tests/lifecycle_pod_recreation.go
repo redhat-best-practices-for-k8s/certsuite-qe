@@ -74,8 +74,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
@@ -105,8 +104,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define and create second deployment")
@@ -115,8 +113,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
@@ -144,8 +141,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")
@@ -177,8 +173,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deploymenta, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define and create second deployment")
@@ -188,8 +183,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			deploymentb, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-recreation test")

@@ -47,8 +47,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			dep, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create pod disruption budget")
@@ -77,8 +76,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			dep, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create pod disruption budget")
@@ -136,8 +134,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			dep, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create pod disruption budget")
@@ -166,8 +163,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			dep, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create pod disruption budget")
@@ -195,8 +191,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			dep, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create pod disruption budget")
@@ -224,8 +219,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			dep, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")

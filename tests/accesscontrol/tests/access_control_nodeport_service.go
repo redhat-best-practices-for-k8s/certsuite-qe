@@ -46,7 +46,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -74,7 +74,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -107,7 +107,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -135,7 +135,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -168,7 +168,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")

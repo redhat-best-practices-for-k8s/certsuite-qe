@@ -49,7 +49,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -75,7 +75,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, true)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -99,7 +99,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithServiceAccount(dep, tsparams.ServiceAccountName)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to false")
@@ -128,7 +128,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithServiceAccount(dep, tsparams.ServiceAccountName)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to true")
@@ -157,7 +157,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithServiceAccount(dep, tsparams.ServiceAccountName)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to nil")
@@ -188,7 +188,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to true")
@@ -219,7 +219,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
@@ -229,7 +229,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -255,7 +255,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, true)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
@@ -265,7 +265,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 
 		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

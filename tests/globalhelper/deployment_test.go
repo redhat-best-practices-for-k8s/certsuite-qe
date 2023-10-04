@@ -116,7 +116,7 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 		runtimeObjects = append(runtimeObjects, testDeployment)
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
-		err := CreateAndWaitUntilDeploymentIsReady(client.AppsV1(),
+		err := createAndWaitUntilDeploymentIsReady(client.AppsV1(),
 			testDeployment, 5)
 		assert.Equal(t, testCase.expectedError, err)
 	}

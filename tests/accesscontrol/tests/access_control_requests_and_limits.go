@@ -44,7 +44,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithAllRequestsAndLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -68,7 +68,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 
 		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -90,7 +90,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -115,7 +115,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithMemoryRequestsAndLimitsAndCPURequest(dep, tsparams.MemoryLimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -140,7 +140,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithMemoryRequestAndCPURequestsAndLimits(dep, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -165,7 +165,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithAllRequestsAndLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
@@ -174,7 +174,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithAllRequestsAndLimits(dep2, tsparams.MemoryLimit, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -199,7 +199,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithAllRequestsAndLimits(dep, tsparams.MemoryLimit, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
@@ -208,7 +208,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithMemoryRequestAndCPURequestsAndLimits(dep2, tsparams.CPULimit,
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), dep2, tsparams.Timeout)
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

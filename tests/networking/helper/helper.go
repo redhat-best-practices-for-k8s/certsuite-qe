@@ -32,8 +32,7 @@ func DefineAndCreateDeploymentOnCluster(replicaNumber int32, namespace string) e
 	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, namespace,
 		replicaNumber, false, nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
@@ -41,8 +40,7 @@ func DefineAndCreateDeploymentWithMultusOnCluster(name, namespace string, nadNam
 	deploymentUnderTest := defineDeploymentBasedOnArgs(name, namespace,
 		replicaNumber, true, nadNames, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster defines deployment resource and creates it on cluster.
@@ -55,8 +53,7 @@ func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
 		nadNames,
 		tsparams.NetworkingTestMultusSkipLabel)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
@@ -65,8 +62,7 @@ func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32, namespace
 		replicaNumber, true,
 		nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
@@ -75,8 +71,7 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32, nam
 		replicaNumber,
 		true, nil, tsparams.NetworkingTestSkipLabel)
 
-	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 	if err != nil {
 		return fmt.Errorf("failed to create deployment: %w", err)
 	}
@@ -88,16 +83,14 @@ func DefineAndCreateDeploymentWithNamespace(namespace string, replicaNumber int3
 	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentBName, namespace,
 		replicaNumber, false, nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 func DefineAndCreateDeployment(deploymentName, namespace string, replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(deploymentName, namespace,
 		replicaNumber, false, nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 func DefineAndCreateDaemonsetWithMultusOnCluster(nadName, namespace, daemonsetName string) error {
@@ -119,8 +112,7 @@ func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []co
 
 	deployment.RedefineWithContainerSpecs(deploymentUnderTest, portSpecs)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		deploymentUnderTest, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace.

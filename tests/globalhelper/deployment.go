@@ -34,7 +34,13 @@ func IsDeploymentReady(client typedappsv1.AppsV1Interface, namespace, deployment
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
-func CreateAndWaitUntilDeploymentIsReady(client typedappsv1.AppsV1Interface, deployment *appsv1.Deployment,
+func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment,
+	timeout time.Duration) error {
+	return createAndWaitUntilDeploymentIsReady(GetAPIClient().K8sClient.AppsV1(), deployment, timeout)
+}
+
+// createAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
+func createAndWaitUntilDeploymentIsReady(client typedappsv1.AppsV1Interface, deployment *appsv1.Deployment,
 	timeout time.Duration) error {
 	runningDeployment, err := client.Deployments(deployment.Namespace).Create(
 		context.TODO(),
