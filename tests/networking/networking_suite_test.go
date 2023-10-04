@@ -42,14 +42,14 @@ var _ = BeforeSuite(func() {
 
 	By("Validate that cluster is Schedulable")
 	Eventually(func() bool {
-		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient())
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
 		return isClusterReady
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
 	By("Validate that all nodes are Ready")
-	err = nodes.WaitForNodesReady(globalhelper.GetAPIClient(), tsparams.WaitingTime, tsparams.RetryInterval)
+	err = nodes.WaitForNodesReady(globalhelper.GetAPIClient().Nodes(), tsparams.WaitingTime, tsparams.RetryInterval)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Set rbac policy which allows authenticated users to run privileged containers")
@@ -57,6 +57,6 @@ var _ = BeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Ensure all nodes are labeled with 'worker-cnf' label")
-	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().Nodes(), configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
 })
