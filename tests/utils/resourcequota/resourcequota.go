@@ -6,10 +6,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func DefineResourceQuota(resourceQuotaName, cpuRequest, memoryRequest, cpuLimit, memoryLimit string) *corev1.ResourceQuota {
+func DefineResourceQuota(resourceQuotaName, namespace, cpuRequest, memoryRequest, cpuLimit, memoryLimit string) *corev1.ResourceQuota {
 	return &corev1.ResourceQuota{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: resourceQuotaName,
+			Name:      resourceQuotaName,
+			Namespace: namespace,
 		},
 		Spec: corev1.ResourceQuotaSpec{
 			Hard: corev1.ResourceList{

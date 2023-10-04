@@ -112,7 +112,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		daemonSet := tshelper.DefineDaemonSetWithStdoutBuffers(
 			tsparams.TestDaemonSetBaseName, randomNamespace, []string{tsparams.OneLogLineWithoutNewLine})
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(), daemonSet,
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet,
 			tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 

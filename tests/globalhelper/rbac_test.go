@@ -33,7 +33,7 @@ func TestCreateServiceAccount(t *testing.T) {
 
 		// Create a fake clientset
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, CreateServiceAccount(client.CoreV1(), "testSA", "default"))
+		assert.Nil(t, createServiceAccount(client.CoreV1(), "testSA", "default"))
 	}
 }
 
@@ -60,7 +60,7 @@ func TestDeleteServiceAccount(t *testing.T) {
 
 		// Create a fake clientset
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, DeleteServiceAccount(client.CoreV1(), "testSA", "default"))
+		assert.Nil(t, deleteServiceAccount(client.CoreV1(), "testSA", "default"))
 	}
 }
 
@@ -131,7 +131,7 @@ func TestCreateRole(t *testing.T) {
 
 		// Create a fake clientset
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, CreateRole(client.RbacV1(), DefineRole("testRole", "default")))
+		assert.Nil(t, createRole(client.RbacV1(), DefineRole("testRole", "default")))
 	}
 }
 
@@ -158,7 +158,7 @@ func TestDeleteRole(t *testing.T) {
 
 		// Create a fake clientset
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, DeleteRole(client.RbacV1(), "testRole", "default"))
+		assert.Nil(t, deleteRole(client.RbacV1(), "testRole", "default"))
 	}
 }
 
@@ -185,7 +185,7 @@ func TestDeleteRoleBinding(t *testing.T) {
 
 		// Create a fake clientset
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, DeleteRoleBinding(client.RbacV1(), "testRoleBinding", "default"))
+		assert.Nil(t, deleteRoleBinding(client.RbacV1(), "testRoleBinding", "default"))
 	}
 }
 
@@ -212,7 +212,7 @@ func TestCreateRoleBindingWithServiceAccountSubject(t *testing.T) {
 
 		// Create a fake clientset
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, CreateRoleBindingWithServiceAccountSubject(client.RbacV1(), "testRoleBinding",
+		assert.Nil(t, createRoleBindingWithServiceAccountSubject(client.RbacV1(), "testRoleBinding",
 			"my-role", "testSA", "default", "default"))
 	}
 }

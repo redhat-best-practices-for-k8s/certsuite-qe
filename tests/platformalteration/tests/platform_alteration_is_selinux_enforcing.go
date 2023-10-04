@@ -47,8 +47,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
@@ -88,8 +87,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)

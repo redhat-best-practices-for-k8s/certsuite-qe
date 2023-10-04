@@ -8,7 +8,6 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Affiliated-certification helm chart certification,", func() {
@@ -76,7 +75,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 		}
 
 		By("Create ns istio-system")
-		err = namespaces.Create("istio-system", globalhelper.GetAPIClient())
+		err = globalhelper.CreateNamespace("istio-system")
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Install a helm chart")
@@ -105,7 +104,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 			"helm uninstall istio-base -n "+randomNamespace)
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm chart")
-		err = namespaces.Clean("istio-system", globalhelper.GetAPIClient())
+		err = globalhelper.CleanNamespace("istio-system")
 		Expect(err).ToNot(HaveOccurred(), "Error delete ns istio-system")
 	})
 })

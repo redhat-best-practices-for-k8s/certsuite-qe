@@ -343,8 +343,7 @@ func defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName string, labels
 		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
 	}
 
-	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		testDaemonset, tsparams.WaitingTime)
+	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, tsparams.WaitingTime)
 }
 
 func defineAndCreatePrivilegedDaemonset(namespace string) error {
@@ -353,8 +352,7 @@ func defineAndCreatePrivilegedDaemonset(namespace string) error {
 	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.GetConfiguration().General.WorkerNodeLabel: ""})
 	daemonset.RedefineWithPrivilegeAndHostNetwork(daemonSet)
 
-	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-		daemonSet, tsparams.WaitingTime)
+	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 	if err != nil {
 		return err
 	}

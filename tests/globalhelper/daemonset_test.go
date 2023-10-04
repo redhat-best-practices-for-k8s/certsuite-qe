@@ -54,7 +54,7 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		t.Run(testCase.name, func(t *testing.T) {
-			err := CreateAndWaitUntilDaemonSetIsReady(client.AppsV1(),
+			err := createAndWaitUntilDaemonSetIsReady(client.AppsV1(),
 				generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable), 5)
 			if (err != nil) != testCase.wantErr {
 				t.Errorf("CreateAndWaitUntilDaemonSetIsReady() error = %v, wantErr %v", err, testCase.wantErr)
