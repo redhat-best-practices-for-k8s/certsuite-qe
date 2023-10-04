@@ -18,7 +18,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	appsv1 "k8s.io/api/apps/v1"
@@ -449,8 +449,8 @@ func DefineDpdkPod(podName, namespace string) *corev1.Pod {
 	}
 
 	containerSecurityContext := &corev1.SecurityContext{
-		Privileged: pointer.Bool(true),
-		RunAsUser:  pointer.Int64(0),
+		Privileged: ptr.To[bool](true),
+		RunAsUser:  ptr.To[int64](0),
 		Capabilities: &corev1.Capabilities{
 			Add: []corev1.Capability{"IPC_LOCK", "SYS_RESOURCE", "NET_RAW"}},
 	}
@@ -466,7 +466,7 @@ func DefineDpdkPod(podName, namespace string) *corev1.Pod {
 			Annotations: annotations,
 		},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: pointer.Int64(0),
+			TerminationGracePeriodSeconds: ptr.To[int64](0),
 			Containers: []corev1.Container{
 				{
 					Name:            "app-container",

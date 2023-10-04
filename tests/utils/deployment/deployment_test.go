@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 func TestDefineDeployment(t *testing.T) {
@@ -230,8 +230,8 @@ func TestRedefineWithPrivilegedContainer(t *testing.T) {
 	assert.NotNil(t, deployment)
 
 	securityContext := corev1.SecurityContext{
-		Privileged: pointer.Bool(true),
-		RunAsUser:  pointer.Int64(0),
+		Privileged: ptr.To[bool](true),
+		RunAsUser:  ptr.To[int64](0),
 		Capabilities: &corev1.Capabilities{
 			Add: []corev1.Capability{
 				"ALL",
@@ -441,7 +441,7 @@ func TestRedefineWithNoExecuteToleration(t *testing.T) {
 		Effect:            "NoExecute",
 		Key:               "node.kubernetes.io/not-ready",
 		Operator:          "Exists",
-		TolerationSeconds: pointer.Int64(365),
+		TolerationSeconds: ptr.To[int64](365),
 	}
 
 	// Assert that the deployment has tolerations set.

@@ -8,7 +8,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 )
 
 type MultusAnnotation struct {
@@ -23,7 +23,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 			Namespace: namespace,
 		},
 		Spec: appsv1.DeploymentSpec{
-			Replicas:        pointer.Int32(1),
+			Replicas:        ptr.To[int32](1),
 			MinReadySeconds: 30,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
@@ -35,7 +35,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 					Namespace: namespace,
 				},
 				Spec: corev1.PodSpec{
-					TerminationGracePeriodSeconds: pointer.Int64(0),
+					TerminationGracePeriodSeconds: ptr.To[int64](0),
 					Containers: []corev1.Container{
 						{
 							Name:    "test",
@@ -99,7 +99,7 @@ func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) *appsv
 
 // RedefineWithReplicaNumber redefines deployment with requested replica number.
 func RedefineWithReplicaNumber(deployment *appsv1.Deployment, replicasNumber int32) {
-	deployment.Spec.Replicas = pointer.Int32(replicasNumber)
+	deployment.Spec.Replicas = ptr.To[int32](replicasNumber)
 }
 
 func AppendServiceAccount(deployment *appsv1.Deployment, serviceAccountName string) {
@@ -212,8 +212,8 @@ func RedefineWithContainerSpecs(deployment *appsv1.Deployment, containerSpecs []
 func RedefineWithPrivilegedContainer(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"ALL"}},
 		}
@@ -333,7 +333,7 @@ func RedefineWithResourceRequests(deployment *appsv1.Deployment, memory string, 
 }
 
 func RedefineWithRunTimeClass(deployment *appsv1.Deployment, rtcName string) {
-	deployment.Spec.Template.Spec.RuntimeClassName = pointer.String(rtcName)
+	deployment.Spec.Template.Spec.RuntimeClassName = ptr.To[string](rtcName)
 }
 
 func RedefineWithShareProcessNamespace(deployment *appsv1.Deployment, shareProcessNamespace bool) {
@@ -372,7 +372,7 @@ func RedefineWithNoExecuteToleration(deployment *appsv1.Deployment) {
 		Effect:            "NoExecute",
 		Key:               "node.kubernetes.io/not-ready",
 		Operator:          "Exists",
-		TolerationSeconds: pointer.Int64(365),
+		TolerationSeconds: ptr.To[int64](365),
 	}
 	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tol)
 }
@@ -416,7 +416,7 @@ func RedefineWithPostStart(deployment *appsv1.Deployment) {
 
 func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid int64) {
 	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
-		RunAsUser: pointer.Int64(uid),
+		RunAsUser: ptr.To[int64](uid),
 	}
 }
 
@@ -424,8 +424,8 @@ func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid 
 func RedefineWithContainersSecurityContextAll(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"ALL"}},
 		}
@@ -435,8 +435,8 @@ func RedefineWithContainersSecurityContextAll(deployment *appsv1.Deployment) {
 func RedefineWithContainersSecurityContextIpcLock(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"IPC_LOCK"}},
 		}
@@ -446,8 +446,8 @@ func RedefineWithContainersSecurityContextIpcLock(deployment *appsv1.Deployment)
 func RedefineWithContainersSecurityContextNetAdmin(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"NET_ADMIN"}},
 		}
@@ -457,8 +457,8 @@ func RedefineWithContainersSecurityContextNetAdmin(deployment *appsv1.Deployment
 func RedefineWithContainersSecurityContextNetRaw(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"NET_RAW"}},
 		}
@@ -468,8 +468,8 @@ func RedefineWithContainersSecurityContextNetRaw(deployment *appsv1.Deployment) 
 func RedefineWithContainersSecurityContextSysAdmin(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"SYS_ADMIN"}},
 		}
@@ -479,8 +479,8 @@ func RedefineWithContainersSecurityContextSysAdmin(deployment *appsv1.Deployment
 func RedefineWithContainersSecurityContextBpf(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			Privileged: pointer.Bool(true),
-			RunAsUser:  pointer.Int64(0),
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
 			Capabilities: &corev1.Capabilities{
 				Add: []corev1.Capability{"BPF"}},
 		}
@@ -491,7 +491,7 @@ func RedefineWithContainersSecurityContextAllowPrivilegeEscalation(deployment *a
 	allowPrivilegeEscalation bool) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
-			RunAsUser:                pointer.Int64(0),
+			RunAsUser:                ptr.To[int64](0),
 			AllowPrivilegeEscalation: &allowPrivilegeEscalation,
 		}
 	}
