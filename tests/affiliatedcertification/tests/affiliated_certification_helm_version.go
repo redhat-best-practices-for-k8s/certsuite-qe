@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 )
 
-var _ = Describe("Affiliated-certification helm version certification,", func() {
+var _ = Describe("Affiliated-certification helm-version,", func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -34,7 +34,8 @@ var _ = Describe("Affiliated-certification helm version certification,", func() 
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
-	It("Installed helm version is certified", func() {
+	// 68120
+	It("installed helm version is certified", func() {
 		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
@@ -57,7 +58,8 @@ var _ = Describe("Affiliated-certification helm version certification,", func() 
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("Installed helm version is not certified", func() {
+	// 68121
+	It("installed helm version is not certified", func() {
 		By("Remove helm")
 		cmd := exec.Command("rm", "-rf", "/usr/local/bin/helm")
 		err := cmd.Run()
