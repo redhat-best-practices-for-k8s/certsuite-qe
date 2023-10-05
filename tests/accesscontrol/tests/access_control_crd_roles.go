@@ -34,7 +34,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
 			By("Make masters schedulable")
-			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
+			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().K8sClient.CoreV1().Nodes(), true)
 			Expect(err).ToNot(HaveOccurred())
 		}
 

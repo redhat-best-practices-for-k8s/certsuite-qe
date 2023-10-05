@@ -25,7 +25,7 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
 			By("Make masters schedulable")
-			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
+			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().Nodes(), true)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Enable intrusive tests")

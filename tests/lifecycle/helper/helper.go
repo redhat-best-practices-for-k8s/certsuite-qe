@@ -75,13 +75,13 @@ func DefineDaemonSetWithImagePullPolicy(name, namespace string, image string, pu
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
 func WaitUntilClusterIsStable() error {
 	Eventually(func() bool {
-		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient())
+		isClusterReady, err := cluster.IsClusterStable(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
 		return isClusterReady
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
-	err := nodes.WaitForNodesReady(globalhelper.GetAPIClient(),
+	err := nodes.WaitForNodesReady(globalhelper.GetAPIClient().Nodes(),
 		tsparams.WaitingTime, tsparams.RetryInterval*time.Second)
 	if err != nil {
 		return fmt.Errorf("failed to wait for node to become ready: %w", err)

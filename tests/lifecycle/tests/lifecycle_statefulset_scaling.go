@@ -27,7 +27,7 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 
 		if globalhelper.IsKindCluster() {
 			By("Make masters schedulable")
-			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
+			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().Nodes(), true)
 			Expect(err).ToNot(HaveOccurred())
 		}
 

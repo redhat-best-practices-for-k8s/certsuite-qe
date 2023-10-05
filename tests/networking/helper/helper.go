@@ -214,7 +214,7 @@ func GetClusterMultusInterfaces(namespace string) ([]string, error) {
 	var nodesInterfacesList [][]string
 
 	for _, runningPod := range podsList.Items {
-		isMasterNode, err := nodes.IsNodeMaster(runningPod.Spec.NodeName, globalhelper.GetAPIClient())
+		isMasterNode, err := nodes.IsNodeMaster(runningPod.Spec.NodeName, globalhelper.GetAPIClient().Nodes())
 		if err != nil {
 			return nil, err
 		}

@@ -42,7 +42,7 @@ var _ = BeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Ensure all nodes are labeled with 'worker-cnf' label")
-	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().CoreV1Interface, configSuite.General.CnfNodeLabel)
+	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().Nodes(), configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
 })
 
