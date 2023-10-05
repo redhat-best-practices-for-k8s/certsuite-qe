@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 )
 
-var _ = Describe("Affiliated-certification helm-version,", func() {
+var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -74,6 +74,16 @@ var _ = Describe("Affiliated-certification helm-version,", func() {
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm v2")
 
+		DeferCleanup(func() {
+			By("Re-install helm v3")
+			cmd = exec.Command("/bin/bash", "-c",
+				"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
+					" && chmod +x get_helm.sh"+
+					" && ./get_helm.sh")
+			err = cmd.Run()
+			Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
+		})
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestHelmVersion,
@@ -86,13 +96,5 @@ var _ = Describe("Affiliated-certification helm-version,", func() {
 			tsparams.TestHelmVersion,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
-		By("Re-install helm v3")
-		cmd = exec.Command("/bin/bash", "-c",
-			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
-				" && chmod +x get_helm.sh"+
-				" && ./get_helm.sh")
-		err = cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
 	})
 })
