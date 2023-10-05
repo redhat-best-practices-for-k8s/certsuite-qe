@@ -5,7 +5,6 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
@@ -147,15 +146,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 			By("Create additional namespaces for testing")
 			randomSecondaryNamespace := tsparams.AdditionalNetworkingNamespace + "-" + globalhelper.GenerateRandomString(5)
-			err = namespaces.Create(randomSecondaryNamespace, globalhelper.GetAPIClient())
+			err = globalhelper.CreateNamespace(randomSecondaryNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			DeferCleanup(func() {
-				err = namespaces.DeleteAndWait(
-					globalhelper.GetAPIClient().CoreV1Interface,
-					randomSecondaryNamespace,
-					tsparams.WaitingTime,
-				)
+				err = globalhelper.DeleteNamespaceAndWait(randomSecondaryNamespace, tsparams.WaitingTime)
 				Expect(err).ToNot(HaveOccurred())
 			})
 
@@ -205,15 +200,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 			By("Create additional namespaces for testing")
 			randomSecondaryNamespace := tsparams.AdditionalNetworkingNamespace + "-" + globalhelper.GenerateRandomString(5)
-			err = namespaces.Create(randomSecondaryNamespace, globalhelper.GetAPIClient())
+			err = globalhelper.CreateNamespace(randomSecondaryNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			DeferCleanup(func() {
-				err = namespaces.DeleteAndWait(
-					globalhelper.GetAPIClient().CoreV1Interface,
-					randomSecondaryNamespace,
-					tsparams.WaitingTime,
-				)
+				err = globalhelper.DeleteNamespaceAndWait(randomSecondaryNamespace, tsparams.WaitingTime)
 				Expect(err).ToNot(HaveOccurred())
 			})
 

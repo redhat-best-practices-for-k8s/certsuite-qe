@@ -195,8 +195,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
@@ -229,8 +228,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		daemonset.RedefineWithRunTimeClass(daemonSet, rtc.Name)
 		daemonset.RedefineWithCPUResources(daemonSet, "1", "1")
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")

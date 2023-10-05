@@ -74,8 +74,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")
@@ -166,8 +165,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
 		By("Create DaemonSet on cluster")
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start tests")

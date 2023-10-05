@@ -192,16 +192,6 @@ func ExecCommandContainer(
 	return stdout, stderr, err
 }
 
-func DeleteRunTimeClass(rtcName string) error {
-	err := globalhelper.GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtcName,
-		metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
-	if err != nil {
-		return fmt.Errorf("failed to delete RunTimeClasses %w", err)
-	}
-
-	return nil
-}
-
 func ConfigurePrivilegedServiceAccount(namespace string) error {
 	aRole, aRoleBinding, aServiceAccount := getPrivilegedServiceAccountObjects(namespace)
 	// create role

@@ -9,7 +9,6 @@ import (
 	. "github.com/onsi/gomega"
 	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -87,7 +86,7 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 	randomNamespace = incomingNamespace + "-" + GenerateRandomString(10)
 
 	By(fmt.Sprintf("Create %s namespace", randomNamespace))
-	err := namespaces.Create(randomNamespace, GetAPIClient())
+	err := CreateNamespace(randomNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
 	origReportDir, origConfigDir = GetOriginalTNFPaths()
@@ -110,11 +109,7 @@ func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origCon
 	Expect(err).ToNot(HaveOccurred())
 
 	By(fmt.Sprintf("Remove %s namespace", randomNamespace))
-	err = namespaces.DeleteAndWait(
-		GetAPIClient().CoreV1Interface,
-		randomNamespace,
-		waitingTime,
-	)
+	err = DeleteNamespaceAndWait(randomNamespace, waitingTime)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Restore directories")

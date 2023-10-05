@@ -9,7 +9,6 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
@@ -61,7 +60,7 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 	It("Custom resource is deployed, scale in and out", func() {
 		// We have to pre-install the crd-operator-scaling resources prior to running these tests.
 		By("Check if cr-scale-operator is installed")
-		exists, err := namespaces.Exists(tsparams.TnfTargetOperatorNamespace, globalhelper.GetAPIClient())
+		exists, err := globalhelper.NamespaceExists(tsparams.TnfTargetOperatorNamespace)
 		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scaling-operator is installed")
 		if !exists {
 			// Skip the test if cr-scaling-operator is not installed

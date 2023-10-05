@@ -8,7 +8,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 )
 
 var _ = Describe("Access-control namespace, ", Serial, func() {
@@ -55,11 +55,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("one namespace, namespace has invalid prefix [negative]", func() {
 		By("Create Invalid Namespace")
 		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(invalidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(invalidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -90,11 +90,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("two namespaces, no invalid prefixes", func() {
 		By("Create additional valid namespace")
 		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(additionalValidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(additionalValidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -125,21 +125,21 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("two namespaces, one has invalid prefix [negative]", func() {
 		By("Create additional valid namespace")
 		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(additionalValidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(additionalValidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
 		By("Create Invalid Namespace")
 		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err = namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		err = globalhelper.CreateNamespace(invalidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(invalidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -200,11 +200,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("one custom resource in an invalid namespace [negative]", func() {
 		By("Create Invalid Namespace")
 		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(invalidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(invalidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -239,11 +239,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("two custom resources, both in valid namespaces", func() {
 		By("Create additional valid namespace")
 		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(additionalValidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(additionalValidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -283,11 +283,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("two custom resources, one in invalid namespace [negative]", func() {
 		By("Create Invalid Namespace")
 		invalidNamespace := tsparams.InvalidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(invalidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(invalidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, invalidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(invalidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -337,9 +337,15 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateSubscription("test-sub", randomNamespace,
-			globalhelper.GetAPIClient())
+		By("Define and create subscription")
+		testSub := subscription.DefineSubscription("test-sub", randomNamespace)
+		err = globalhelper.CreateSubscription(randomNamespace, testSub)
 		Expect(err).ToNot(HaveOccurred(), "Error creating subscription")
+
+		DeferCleanup(func() {
+			err = globalhelper.DeleteSubscription(randomNamespace, testSub.Name)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting subscription")
+		})
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -359,11 +365,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	It("two custom resources of different CRDs, one in invalid namespace [negative]", func() {
 		By("Create Additional Valid Namespace")
 		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(additionalValidNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(additionalValidNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 		DeferCleanup(func() {
-			err = namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, additionalValidNamespace, tsparams.Timeout)
+			err = globalhelper.DeleteNamespaceAndWait(additionalValidNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
@@ -381,9 +387,15 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			globalhelper.GetAPIClient())
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateSubscription("test-sub", additionalValidNamespace,
-			globalhelper.GetAPIClient())
+		By("Define and create subscription")
+		testSub := subscription.DefineSubscription("test-sub", additionalValidNamespace)
+		err = globalhelper.CreateSubscription(additionalValidNamespace, testSub)
 		Expect(err).ToNot(HaveOccurred(), "Error creating subscription")
+
+		DeferCleanup(func() {
+			err = globalhelper.DeleteSubscription(additionalValidNamespace, testSub.Name)
+			Expect(err).ToNot(HaveOccurred(), "Error deleting subscription")
+		})
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

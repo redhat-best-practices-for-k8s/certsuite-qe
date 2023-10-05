@@ -59,22 +59,22 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 
 	It("one deployment, one pod, does have cluster role binding [negative]", func() {
 		By("Create service account")
-		err := globalhelper.CreateServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
+		err := globalhelper.CreateServiceAccount(
 			"my-service-account", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create cluster role binding")
 		crb := rbac.DefineRbacAuthorizationClusterServiceAccountSubjects("my-cluster-role-binding", randomNamespace, "my-service-account")
-		err = globalhelper.CreateClusterRoleBinding(globalhelper.GetAPIClient().K8sClient.RbacV1(), crb)
+		err = globalhelper.CreateClusterRoleBinding(crb)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
 			By("Delete cluster role binding")
-			err = globalhelper.DeleteClusterRoleBinding(globalhelper.GetAPIClient().K8sClient.RbacV1(), crb.Name)
+			err = globalhelper.DeleteClusterRoleBinding(crb)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Delete service account")
-			err = globalhelper.DeleteServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
+			err = globalhelper.DeleteServiceAccount(
 				randomNamespace, "my-service-account")
 			Expect(err).ToNot(HaveOccurred())
 		})

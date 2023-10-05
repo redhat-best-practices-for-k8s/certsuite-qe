@@ -8,7 +8,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
 )
 
 var _ = Describe("Access-control namespace-resource-quota,", func() {
@@ -24,7 +24,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 		By("Create additional namespace for deployment2")
 		randomNamespace2 = tsparams.AdditionalNamespaceForResourceQuotas + "-" + globalhelper.GenerateRandomString(5)
-		err := namespaces.Create(randomNamespace2, globalhelper.GetAPIClient())
+		err := globalhelper.CreateNamespace(randomNamespace2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define tnf config file")
@@ -41,7 +41,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 
 		By("Delete additional namespace for deployment2")
-		err := namespaces.DeleteAndWait(globalhelper.GetAPIClient().CoreV1Interface, randomNamespace2, tsparams.Timeout)
+		err := globalhelper.DeleteNamespaceAndWait(randomNamespace2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -54,8 +54,12 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(randomNamespace, globalhelper.GetAPIClient())
+		By("Define resource quota")
+		resourceQuota := resourcequota.DefineResourceQuota("quota1", randomNamespace, tsparams.CPURequest,
+			tsparams.MemoryRequest, tsparams.CPULimit, tsparams.MemoryLimit)
+
+		By("Create resource quota")
+		err = globalhelper.CreateResourceQuota(resourceQuota)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -102,8 +106,12 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(randomNamespace, globalhelper.GetAPIClient())
+		By("Define resource quota")
+		resourceQuota := resourcequota.DefineResourceQuota("quota1", randomNamespace, tsparams.CPURequest,
+			tsparams.MemoryRequest, tsparams.CPULimit, tsparams.MemoryLimit)
+
+		By("Create resource quota")
+		err = globalhelper.CreateResourceQuota(resourceQuota)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeploymentWithNamespace(1, 1, "accesscontroldeployment2",
@@ -113,8 +121,12 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(randomNamespace2, globalhelper.GetAPIClient())
+		By("Define resource quota")
+		resourceQuota = resourcequota.DefineResourceQuota("quota1", randomNamespace2, tsparams.CPURequest,
+			tsparams.MemoryRequest, tsparams.CPULimit, tsparams.MemoryLimit)
+
+		By("Create resource quota")
+		err = globalhelper.CreateResourceQuota(resourceQuota)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -146,8 +158,12 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Apply resource quota to namespace")
-		err = tshelper.DefineAndCreateResourceQuota(randomNamespace2, globalhelper.GetAPIClient())
+		By("Define resource quota")
+		resourceQuota := resourcequota.DefineResourceQuota("quota1", randomNamespace, tsparams.CPURequest,
+			tsparams.MemoryRequest, tsparams.CPULimit, tsparams.MemoryLimit)
+
+		By("Create resource quota")
+		err = globalhelper.CreateResourceQuota(resourceQuota)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -162,5 +178,4 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

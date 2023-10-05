@@ -14,8 +14,12 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
+	return createAndWaitUntilDaemonSetIsReady(GetAPIClient().K8sClient.AppsV1(), daemonSet, timeout)
+}
+
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
-func CreateAndWaitUntilDaemonSetIsReady(client appsv1Typed.AppsV1Interface, daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
+func createAndWaitUntilDaemonSetIsReady(client appsv1Typed.AppsV1Interface, daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := client.DaemonSets(daemonSet.Namespace).Create(
 		context.TODO(), daemonSet, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {

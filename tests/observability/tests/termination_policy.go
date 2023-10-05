@@ -90,8 +90,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 				corev1.TerminationMessageFallbackToLogsOnError,
 			})
 
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.DaemonSetDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
@@ -244,8 +243,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace,
 			[]corev1.TerminationMessagePolicy{tsparams.UseDefaultTerminationMsgPolicy})
 
-		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(globalhelper.GetAPIClient().K8sClient.AppsV1(),
-			daemonSet, tsparams.DaemonSetDeployTimeoutMins)
+		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")

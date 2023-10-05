@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
@@ -12,37 +11,12 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/installplan"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/resourcequota"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
-
-func DeleteNamespaces(nsToDelete []string, client corev1Typed.CoreV1Interface, timeout time.Duration) error {
-	failedNs := make(map[string]error)
-
-	for _, namespace := range nsToDelete {
-		err := namespaces.DeleteAndWait(
-			client,
-			namespace,
-			timeout,
-		)
-		if err != nil {
-			failedNs[namespace] = err
-		}
-	}
-
-	if len(failedNs) > 0 {
-		return fmt.Errorf("failed to remove the following namespaces: %v", failedNs)
-	}
-
-	return nil
-}
 
 func DefineDeployment(replica int32, containers int, name, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
@@ -136,29 +110,10 @@ func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value stri
 	return err
 }
 
-func DefineAndCreateResourceQuota(namespace string, clientSet *client.ClientSet) error {
-	quota := resourcequota.DefineResourceQuota("quota1", parameters.CPURequest, parameters.MemoryRequest,
-		parameters.CPULimit, parameters.MemoryLimit)
-
-	return namespaces.ApplyResourceQuota(namespace, clientSet, quota)
-}
-
 func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.ClientSet) error {
 	plan := installplan.DefineInstallPlan(name, namespace)
 
 	err := globalhelper.GetAPIClient().Create(context.TODO(), plan)
-
-	if k8serrors.IsAlreadyExists(err) {
-		return nil
-	}
-
-	return err
-}
-
-func DefineAndCreateSubscription(name, namespace string, clientSet *client.ClientSet) error {
-	subscription := subscription.DefineSubscription(name, namespace)
-
-	err := globalhelper.GetAPIClient().Create(context.TODO(), subscription)
 
 	if k8serrors.IsAlreadyExists(err) {
 		return nil

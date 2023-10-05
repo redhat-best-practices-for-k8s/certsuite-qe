@@ -10,7 +10,6 @@ import (
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 var _ = Describe("Operator install-source,", Serial, func() {
@@ -21,7 +20,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	execute.BeforeAll(func() {
 		By("Clean namespace")
-		err := namespaces.Clean(tsparams.OperatorNamespace, globalhelper.GetAPIClient())
+		err := globalhelper.CleanNamespace(tsparams.OperatorNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
@@ -153,8 +152,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Delete operator's subscription")
 		err := globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
-			tsparams.SubscriptionNameOpenvino,
-			globalhelper.GetAPIClient())
+			tsparams.SubscriptionNameOpenvino)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -223,8 +221,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Delete operator's subscription")
 		err := globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
-			tsparams.SubscriptionNameOpenvino,
-			globalhelper.GetAPIClient())
+			tsparams.SubscriptionNameOpenvino)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")

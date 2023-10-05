@@ -11,38 +11,12 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 const (
 	testDeploymentName = "test-deployment"
 )
-
-func TestDeleteNamespaces(t *testing.T) {
-	namespacesToDelete := []string{"test1", "test2"}
-
-	// Create fake namespace objects
-	var runtimeObjects []runtime.Object
-	for _, namespace := range namespacesToDelete {
-		runtimeObjects = append(runtimeObjects, &corev1.Namespace{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: namespace,
-			},
-		})
-	}
-
-	// Create a fake clientset
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
-
-	err := DeleteNamespaces(namespacesToDelete, client.CoreV1(), parameters.Timeout)
-	assert.Nil(t, err)
-
-	// Check that all of the namespaces have been deleted
-	namespaces, err := client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-	assert.Nil(t, err)
-	assert.Equal(t, 0, len(namespaces.Items))
-}
 
 func assertDeployment(t *testing.T, deployment *appsv1.Deployment) {
 	t.Helper()
@@ -166,30 +140,6 @@ func TestSetServiceAccountAutomountServiceAccountToken(t *testing.T) {
 
 		globalhelper.UnsetTestK8sAPIClient()
 	}
-}
-
-func TestDefineAndCreateResourceQuota(t *testing.T) {
-	// create a fake namespace object as it needs to exist before creating a resource quota
-	namespace := &corev1.Namespace{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: parameters.TestAccessControlNameSpace,
-		},
-	}
-
-	// Create a fake clientset
-	client := k8sfake.NewSimpleClientset(namespace)
-
-	// Set the globalhelper client to the fake client
-	globalhelper.SetTestK8sAPIClient(client)
-	defer globalhelper.UnsetTestK8sAPIClient()
-
-	// Define a resource quota
-	err := DefineAndCreateResourceQuota(parameters.TestAccessControlNameSpace, globalhelper.GetAPIClient())
-	assert.Nil(t, err)
-
-	// Get the resource quota from the fake client and check if it exists
-	_, err = client.CoreV1().ResourceQuotas(parameters.TestAccessControlNameSpace).Get(context.TODO(), "quota1", metav1.GetOptions{})
-	assert.Nil(t, err)
 }
 
 func TestDefineAndCreateServiceOnCluster(t *testing.T) {
