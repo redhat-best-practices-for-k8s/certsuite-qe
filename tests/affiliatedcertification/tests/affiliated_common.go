@@ -10,7 +10,6 @@ import (
 
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
@@ -20,7 +19,7 @@ import (
 func preConfigureAffiliatedCertificationEnvironment(namespace string) {
 	By("Clean test namespace")
 
-	err := namespaces.Clean(namespace, globalhelper.GetAPIClient())
+	err := globalhelper.CleanNamespace(namespace)
 	Expect(err).ToNot(HaveOccurred(),
 		"Error cleaning namespace "+namespace)
 	By("Ensure default catalog source is enabled")

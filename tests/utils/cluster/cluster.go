@@ -8,13 +8,13 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	nodesutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 // IsClusterStable tests if cluster is stable.
-func IsClusterStable(clients *testclient.ClientSet) (bool, error) {
-	nodes, err := clients.Nodes().List(context.TODO(), metav1.ListOptions{})
+func IsClusterStable(client corev1Typed.NodeInterface) (bool, error) {
+	nodes, err := client.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -22,7 +22,7 @@ func IsClusterStable(clients *testclient.ClientSet) (bool, error) {
 	for _, node := range nodes.Items {
 		if node.Spec.Unschedulable {
 			glog.V(5).Info(fmt.Sprintf("node %s is in unschedulable state, trying to uncordon it", node.Name))
-			err := nodesutils.UnCordon(clients, node.Name)
+			err := nodesutils.UnCordon(client, node.Name)
 
 			if err != nil {
 				return false, err

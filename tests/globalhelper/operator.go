@@ -14,12 +14,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 	goclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) error {
-	err := namespaces.Create(namespace, GetAPIClient())
+	err := CreateNamespace(namespace)
 	if err != nil {
 		return err
 	}

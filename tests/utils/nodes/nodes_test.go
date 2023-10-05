@@ -46,14 +46,14 @@ func TestEnsureAllNodesAreLabeled(t *testing.T) {
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		// Label all the nodes accordingly
-		err := EnsureAllNodesAreLabeled(client.CoreV1(), "testValue")
+		err := EnsureAllNodesAreLabeled(client.CoreV1().Nodes(), "testValue")
 		assert.Nil(t, err)
 
 		// Without generating a runtimeObject
-		err = EnsureAllNodesAreLabeled(client.CoreV1(), "worker-cnf")
+		err = EnsureAllNodesAreLabeled(client.CoreV1().Nodes(), "worker-cnf")
 		assert.Nil(t, err)
 
-		err = EnsureAllNodesAreLabeled(client.CoreV1(), "node-role.kubernetes.io/worker-cnf")
+		err = EnsureAllNodesAreLabeled(client.CoreV1().Nodes(), "node-role.kubernetes.io/worker-cnf")
 		assert.Nil(t, err)
 
 		// Get all of the nodes from the fake client and test their labels

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -27,10 +26,10 @@ const (
 )
 
 // WaitForNodesReady waits for all the nodes to become ready.
-func WaitForNodesReady(clients *client.ClientSet, timeout, interval time.Duration) error {
+func WaitForNodesReady(client corev1Typed.NodeInterface, timeout, interval time.Duration) error {
 	return wait.PollUntilContextTimeout(context.TODO(), interval, timeout, true,
 		func(ctx context.Context) (bool, error) {
-			nodesList, err := clients.Nodes().List(ctx, metav1.ListOptions{})
+			nodesList, err := client.List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return false, nil
 			}
@@ -57,8 +56,8 @@ func IsNodeInCondition(node *corev1.Node, condition corev1.NodeConditionType) bo
 }
 
 // GetNumOfReadyNodesInCluster gets the number of ready nodes in the cluster.
-func GetNumOfReadyNodesInCluster(clients *client.ClientSet) (int32, error) {
-	nodesList, err := clients.Nodes().List(context.TODO(), metav1.ListOptions{})
+func GetNumOfReadyNodesInCluster(client corev1Typed.NodeInterface) (int32, error) {
+	nodesList, err := client.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return 0, err
 	}
@@ -75,12 +74,12 @@ func GetNumOfReadyNodesInCluster(clients *client.ClientSet) (int32, error) {
 }
 
 // UnCordon removes cordon label from the given node.
-func UnCordon(clients *client.ClientSet, nodeName string) error {
-	return setUnSchedulableValue(clients, nodeName, false)
+func UnCordon(client corev1Typed.NodeInterface, nodeName string) error {
+	return setUnSchedulableValue(client, nodeName, false)
 }
 
 // setUnSchedulableValue cordones/uncordons a node by a given node name.
-func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedulable bool) error {
+func setUnSchedulableValue(client corev1Typed.NodeInterface, nodeName string, unSchedulable bool) error {
 	cordonPatchBytes, err := json.Marshal(
 		[]resourceSpecs{{
 			Operation: "replace",
@@ -92,7 +91,7 @@ func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedul
 		return err
 	}
 
-	_, err = clients.Nodes().Patch(context.TODO(), nodeName, types.JSONPatchType,
+	_, err = client.Patch(context.TODO(), nodeName, types.JSONPatchType,
 		cordonPatchBytes, metav1.PatchOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to patch node unschedulable value: %w", err)
@@ -101,8 +100,8 @@ func setUnSchedulableValue(clients *client.ClientSet, nodeName string, unSchedul
 	return nil
 }
 
-func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
-	node, err := clients.Nodes().Get(context.TODO(), name, metav1.GetOptions{})
+func IsNodeMaster(name string, client corev1Typed.NodeInterface) (bool, error) {
+	node, err := client.Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -119,8 +118,8 @@ func IsNodeMaster(name string, clients *client.ClientSet) (bool, error) {
 }
 
 // EnsureAllNodesAreLabeled ensures that all nodes are labeled with the given label.
-func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) error {
-	nodesList, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
+func EnsureAllNodesAreLabeled(client corev1Typed.NodeInterface, label string) error {
+	nodesList, err := client.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
@@ -139,21 +138,21 @@ func EnsureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) 
 }
 
 // LabelNode labels a node by a given node name.
-func LabelNode(client corev1Typed.CoreV1Interface, node *corev1.Node, label, value string) error {
+func LabelNode(client corev1Typed.NodeInterface, node *corev1.Node, label, value string) error {
 	// Set the label
 	node.Labels[label] = value
 
 	var err error
 
-	_, err = client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
+	_, err = client.Update(context.TODO(), node, metav1.UpdateOptions{})
 
 	return err
 }
 
 // EnableMasterScheduling enables/disables master nodes scheduling.
-func EnableMasterScheduling(client corev1Typed.CoreV1Interface, scheduleable bool) error {
+func EnableMasterScheduling(client corev1Typed.NodeInterface, scheduleable bool) error {
 	// Get all nodes in the cluster
-	nodes, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodes, err := client.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get nodes: %w", err)
 	}
@@ -189,7 +188,7 @@ func isMasterNode(node *corev1.Node) bool {
 	return false
 }
 
-func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node) error {
+func addControlPlaneTaint(client corev1Typed.NodeInterface, node *corev1.Node) error {
 	// add the control-plane:NoSchedule taint to the master
 	// check if the tainted already exists to avoid duplicate key error
 	for _, taint := range node.Spec.Taints {
@@ -201,7 +200,7 @@ func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node)
 		Key:    controlPlaneTaintKey,
 		Effect: corev1.TaintEffectNoSchedule,
 	})
-	_, err := client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
+	_, err := client.Update(context.TODO(), node, metav1.UpdateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to update node %s - error: %w", node.Name, err)
@@ -210,7 +209,7 @@ func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node)
 	return nil
 }
 
-func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node) error {
+func removeControlPlaneTaint(client corev1Typed.NodeInterface, node *corev1.Node) error {
 	// remove the control-plane:NoSchedule taint from the master
 	// remove the control-plane:NoSchedule taint from the master
 	for i, taint := range node.Spec.Taints {
@@ -219,7 +218,7 @@ func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.No
 		}
 	}
 
-	_, err := client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
+	_, err := client.Update(context.TODO(), node, metav1.UpdateOptions{})
 
 	if err != nil {
 		return fmt.Errorf("failed to update node %s - error: %w", node.Name, err)

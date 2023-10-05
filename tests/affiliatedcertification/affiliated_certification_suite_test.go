@@ -16,7 +16,6 @@ import (
 
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/tests"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
@@ -37,7 +36,7 @@ var isCloudCasaAlreadyLabeled bool
 
 var _ = BeforeSuite(func() {
 	By("Create namespace")
-	err := namespaces.Create(tsparams.TestCertificationNameSpace, globalhelper.GetAPIClient())
+	err := globalhelper.CreateNamespace(tsparams.TestCertificationNameSpace)
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
 
 	isCloudCasaAlreadyLabeled, err = tshelper.DoesOperatorHaveLabels(tsparams.UnrelatedOperatorPrefixCloudcasa,
@@ -61,11 +60,7 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestCertificationNameSpace))
-	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient().CoreV1Interface,
-		tsparams.TestCertificationNameSpace,
-		tsparams.Timeout,
-	)
+	err := globalhelper.DeleteNamespaceAndWait(tsparams.TestCertificationNameSpace, tsparams.Timeout)
 	Expect(err).ToNot(HaveOccurred())
 
 	if isCloudCasaAlreadyLabeled {

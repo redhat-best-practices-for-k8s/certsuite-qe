@@ -36,7 +36,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 	It("one pod with valid service account", func() {
 
 		By("Create service account")
-		err := globalhelper.CreateServiceAccount(globalhelper.GetAPIClient().K8sClient.CoreV1(),
+		err := globalhelper.CreateServiceAccount(
 			tsparams.TestServiceAccount, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 

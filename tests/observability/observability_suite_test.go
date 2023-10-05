@@ -15,7 +15,6 @@ import (
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/observability/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 )
 
 func TestObservability(t *testing.T) {
@@ -32,7 +31,7 @@ func TestObservability(t *testing.T) {
 var _ = BeforeSuite(func() {
 
 	By(fmt.Sprintf("Create %s namespace", tsparams.TestNamespace))
-	err := namespaces.Create(tsparams.TestNamespace, globalhelper.GetAPIClient())
+	err := globalhelper.CreateNamespace(tsparams.TestNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
@@ -46,12 +45,7 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterSuite(func() {
-
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestNamespace))
-	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient().CoreV1Interface,
-		tsparams.TestNamespace,
-		tsparams.NsResourcesDeleteTimeoutMins,
-	)
+	err := globalhelper.DeleteNamespaceAndWait(tsparams.TestNamespace, tsparams.NsResourcesDeleteTimeoutMins)
 	Expect(err).ToNot(HaveOccurred())
 })

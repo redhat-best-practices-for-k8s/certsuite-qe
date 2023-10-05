@@ -13,7 +13,6 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	_ "github.com/test-network-function/cnfcert-tests-verification/tests/operator/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/namespaces"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 )
@@ -36,7 +35,7 @@ var _ = BeforeSuite(func() {
 	}
 
 	By(fmt.Sprintf("Create %s namespace", tsparams.OperatorNamespace))
-	err := namespaces.Create(tsparams.OperatorNamespace, globalhelper.GetAPIClient())
+	err := globalhelper.CreateNamespace(tsparams.OperatorNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Define TNF config file")
@@ -55,8 +54,7 @@ var _ = AfterSuite(func() {
 	}
 
 	By(fmt.Sprintf("Remove %s namespace", tsparams.OperatorNamespace))
-	err := namespaces.DeleteAndWait(
-		globalhelper.GetAPIClient().CoreV1Interface,
+	err := globalhelper.DeleteNamespaceAndWait(
 		tsparams.OperatorNamespace,
 		tsparams.Timeout,
 	)

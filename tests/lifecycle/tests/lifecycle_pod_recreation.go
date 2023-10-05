@@ -28,7 +28,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		if globalhelper.IsKindCluster() {
 			By("Make masters schedulable")
-			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().CoreV1Interface, true)
+			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().Nodes(), true)
 			Expect(err).ToNot(HaveOccurred())
 		}
 
@@ -59,7 +59,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	// 47405
 	It("One deployment with PodAntiAffinity, replicas are less than schedulable nodes", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
@@ -89,7 +89,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	// 47406
 	It("Two deployments with PodAntiAffinity, replicas are less than schedulable nodes", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes < 4 {
@@ -128,7 +128,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	// 47407
 	It("One deployment with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
 		if schedulableNodes == 0 {
@@ -156,7 +156,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	// 47408
 	It("Two deployments with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
-		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient())
+		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
 		// all nodes will be scheduled with a pod.
