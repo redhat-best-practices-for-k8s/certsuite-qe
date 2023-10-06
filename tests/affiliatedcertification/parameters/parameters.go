@@ -48,6 +48,7 @@ var (
 
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification-operator-is-certified"
 	TestHelmChartCertified             = "affiliated-certification-helmchart-is-certified"
+	TestHelmVersion                    = "affiliated-certification-helm-version"
 	OperatorGroupName                  = "affiliatedcert-test-operator-group"
 	CertifiedOperatorGroup             = "certified-operators"
 	CertifiedOperatorDisplayName       = "Certified Operators"
