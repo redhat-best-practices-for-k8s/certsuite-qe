@@ -35,6 +35,10 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	It("One helm to test, are certified", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Skipping helm chart test on Kind cluster")
+		}
+
 		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
@@ -66,6 +70,10 @@ var _ = Describe("Affiliated-certification helm chart certification,", func() {
 	})
 
 	It("One helm to test, chart not certified", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Skipping helm chart test on Kind cluster")
+		}
+
 		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
