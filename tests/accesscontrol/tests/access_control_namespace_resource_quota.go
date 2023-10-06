@@ -159,7 +159,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define resource quota")
-		resourceQuota := resourcequota.DefineResourceQuota("quota1", randomNamespace, tsparams.CPURequest,
+		resourceQuota := resourcequota.DefineResourceQuota("quota1", randomNamespace2, tsparams.CPURequest,
 			tsparams.MemoryRequest, tsparams.CPULimit, tsparams.MemoryLimit)
 
 		By("Create resource quota")
