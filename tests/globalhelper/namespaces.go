@@ -9,7 +9,6 @@ import (
 	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
-	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -319,8 +318,13 @@ func cleanSubscriptions(namespace string, k8sclient kubernetes.Interface, subcli
 	return nil
 }
 
-func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
-	nsExist, err := namespaceExists(namespace, clientSet.K8sClient)
+// CleanCSVs deletes all CSVs in namespace.
+func CleanCSVs(namespace string) error {
+	return cleanCSVs(namespace, GetAPIClient().K8sClient, GetAPIClient().OperatorsV1alpha1Interface)
+}
+
+func cleanCSVs(namespace string, k8sclient kubernetes.Interface, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
+	nsExist, err := namespaceExists(namespace, k8sclient)
 	if err != nil {
 		return err
 	}
@@ -329,7 +333,7 @@ func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
 		return nil
 	}
 
-	err = clientSet.ClusterServiceVersions(namespace).DeleteCollection(context.TODO(),
+	err = opclient.ClusterServiceVersions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		},
@@ -342,8 +346,12 @@ func CleanCSVs(namespace string, clientSet *testclient.ClientSet) error {
 	return nil
 }
 
-func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error {
-	nsExist, err := namespaceExists(namespace, clientSet.K8sClient)
+func CleanInstallPlans(namespace string) error {
+	return cleanInstallPlans(namespace, GetAPIClient().K8sClient, GetAPIClient().OperatorsV1alpha1Interface)
+}
+
+func cleanInstallPlans(namespace string, k8sclient kubernetes.Interface, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
+	nsExist, err := namespaceExists(namespace, k8sclient)
 	if err != nil {
 		return err
 	}
@@ -352,7 +360,7 @@ func CleanInstallPlans(namespace string, clientSet *testclient.ClientSet) error 
 		return nil
 	}
 
-	err = clientSet.InstallPlans(namespace).DeleteCollection(context.TODO(),
+	err = opclient.InstallPlans(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		},
@@ -527,7 +535,7 @@ func CleanNamespace(namespace string) error {
 		return err
 	}
 
-	err = CleanCSVs(namespace, clientSet)
+	err = CleanCSVs(namespace)
 	if err != nil {
 		return err
 	}
@@ -552,5 +560,5 @@ func CleanNamespace(namespace string) error {
 		return err
 	}
 
-	return CleanInstallPlans(namespace, clientSet)
+	return CleanInstallPlans(namespace)
 }

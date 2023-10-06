@@ -7,10 +7,8 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/installplan"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/service"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -106,18 +104,6 @@ func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value stri
 
 	_, err = globalhelper.GetAPIClient().ServiceAccounts(namespace).
 		Update(context.TODO(), serviceacct, metav1.UpdateOptions{})
-
-	return err
-}
-
-func DefineAndCreateInstallPlan(name, namespace string, clientSet *client.ClientSet) error {
-	plan := installplan.DefineInstallPlan(name, namespace)
-
-	err := globalhelper.GetAPIClient().Create(context.TODO(), plan)
-
-	if k8serrors.IsAlreadyExists(err) {
-		return nil
-	}
 
 	return err
 }

@@ -4,10 +4,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/installplan"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 )
 
@@ -177,9 +177,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		By("Create custom resource")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
-			globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
+
+		By("Create Install Plan in Namespace: " + plan.Namespace)
+		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -217,8 +219,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		By("Create custom resource")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", invalidNamespace, globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan := installplan.DefineInstallPlan("test-plan", invalidNamespace)
+
+		By("Create Install Plan in Namespace: " + plan.Namespace)
+		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -256,13 +261,18 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
-			globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
+
+		By("Create Install Plan in Namespace: " + plan.Namespace)
+		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", additionalValidNamespace,
-			globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan2 := installplan.DefineInstallPlan("test-plan-2", additionalValidNamespace)
+
+		By("Create Install Plan in Namespace: " + plan2.Namespace)
+		err = globalhelper.CreateInstallPlan(plan2)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -300,11 +310,18 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{"installplans.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace, globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
+
+		By("Create Install Plan in Namespace: " + plan.Namespace)
+		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
-		err = tshelper.DefineAndCreateInstallPlan("test-plan-2", invalidNamespace, globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan2 := installplan.DefineInstallPlan("test-plan-2", invalidNamespace)
+
+		By("Create Install Plan in Namespace: " + plan2.Namespace)
+		err = globalhelper.CreateInstallPlan(plan2)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Start test")
@@ -332,9 +349,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
-			globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
+
+		By("Create Install Plan in Namespace: " + plan.Namespace)
+		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Define and create subscription")
@@ -382,9 +401,11 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
-		By("Create custom resources")
-		err = tshelper.DefineAndCreateInstallPlan("test-plan", randomNamespace,
-			globalhelper.GetAPIClient())
+		By("Define Install Plan")
+		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
+
+		By("Create Install Plan in Namespace: " + plan.Namespace)
+		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Define and create subscription")
