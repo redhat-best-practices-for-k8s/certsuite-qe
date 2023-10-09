@@ -39,8 +39,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56635
 	It("One deployment, pod disruption budget minAvailable value meet requirements", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -58,7 +56,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -68,8 +67,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56636
 	It("One deployment, pod disruption budget maxUnavailable value meet requirements", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -87,7 +84,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -97,8 +95,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56637
 	It("One statefulSet, pod disruption budget minAvailable value is zero [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create statefulSet")
 		sf := statefulset.DefineStatefulSet(tsparams.TestStatefulSetBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -116,7 +112,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -126,8 +123,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56638
 	It("One deployment, pod disruption budget maxUnavailable equals to replica number [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -145,7 +140,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -155,8 +151,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56746
 	It("One deployment, pod disruption budget maxUnavailable is bigger than the replica number [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -174,7 +168,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -183,8 +178,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	})
 
 	It("One deployment, pod disruption budget matchLabels does not match deployment label [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -202,7 +195,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -211,8 +205,6 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	})
 
 	It("One deployment, no pod disruption budget [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
@@ -223,7 +215,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

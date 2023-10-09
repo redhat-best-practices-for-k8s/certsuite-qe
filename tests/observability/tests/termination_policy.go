@@ -12,8 +12,6 @@ import (
 )
 
 var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
-	qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -38,7 +36,6 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 	// Positive #1.
 	It("One deployment one pod one container with terminationMessagePolicy set to FallbackToLogsOnError", func() {
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
@@ -48,7 +45,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -58,7 +56,6 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 	// // Positive #2.
 	It("One deployment one pod two containers both with terminationMessagePolicy set to FallbackToLogsOnError", func() {
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{
@@ -70,7 +67,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -94,7 +92,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -123,7 +122,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -143,7 +143,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -167,7 +168,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -189,7 +191,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -218,7 +221,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -247,7 +251,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -265,7 +270,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")

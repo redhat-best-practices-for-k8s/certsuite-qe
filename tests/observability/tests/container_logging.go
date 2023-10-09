@@ -36,8 +36,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51747
 	It("One deployment one pod one container that prints two log lines", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -48,7 +46,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -58,8 +57,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51753
 	It("One deployment one pod one container that prints one log line", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -70,7 +67,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -80,8 +78,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51754
 	It("One deployment one pod with two containers, both containers print two log lines to stdout", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -92,7 +88,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -102,8 +99,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51755
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		if globalhelper.IsKindCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
@@ -117,7 +112,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -127,8 +123,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51756
 	It("Two deployments, two pods with two containers each, all printing 1 log line", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		if globalhelper.IsKindCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
@@ -152,7 +146,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -163,8 +158,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51757
 	It("One deployment and one statefulset, both having one pod with one container that prints one log "+
 		"line each", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -184,7 +177,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -194,8 +188,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51758
 	It("One pod with one container that prints one log line to stdout", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(
 			tsparams.TestPodBaseName, randomNamespace, tsparams.OneLogLine)
@@ -204,7 +196,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -214,8 +207,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51759
 	It("One pod with one container that prints to stdout one log line starting with a tab char", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName, randomNamespace,
 			"\t"+tsparams.OneLogLine)
@@ -224,7 +215,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -234,8 +226,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51760
 	It("One deployment one pod one container without any log line to stdout [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -246,7 +236,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -256,8 +247,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51761
 	It("One deployment one pod two containers but only one printing one log line [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -268,7 +257,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -278,8 +268,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51762
 	It("Two deployments one pod two containers each, first deployment passing but second fails [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment1 in the cluster whose containers print one line to stdout each")
 		deployment1 := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName+"1", randomNamespace, 1,
@@ -299,7 +287,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -309,8 +298,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51763
 	It("One pod one container without any log line to stdout [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create pod in the cluster")
 		pod := tshelper.DefinePodWithStdoutBuffer(tsparams.TestPodBaseName, randomNamespace,
 			tsparams.NoLogLines)
@@ -319,7 +306,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -330,8 +318,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51764
 	It("One deployment and one statefulset both one container each, but only deployment prints "+
 		"one log line [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment in the cluster")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
@@ -351,7 +337,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -361,8 +348,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51765
 	It("One deployment one pod one container printing one log line without newline char", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		if globalhelper.IsKindCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
@@ -377,7 +362,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -388,8 +374,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51767
 	It("One deployment one pod two containers, first prints one line, second prints "+
 		"one line without newline", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		if globalhelper.IsKindCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
@@ -404,7 +388,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -414,8 +399,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51768
 	It("One deployment with one pod and one container without TNF target labels [skip]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create deployment without TNF target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(
 			tsparams.TestDeploymentBaseName, randomNamespace)
@@ -425,7 +408,8 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
