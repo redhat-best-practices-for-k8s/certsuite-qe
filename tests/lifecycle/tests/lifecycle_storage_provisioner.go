@@ -46,19 +46,9 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 	AfterEach(func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
 
-		By("Delete all PVs that were created by the previous test case.")
-		for _, pv := range pvNames {
-			By("Deleting pv " + pv)
-			err := globalhelper.DeletePersistentVolume(pv, tsparams.WaitingTime)
-			Expect(err).ToNot(HaveOccurred())
-		}
-
 		By(fmt.Sprintf("Remove %s storageclass", randomStorageClassName))
 		err := globalhelper.DeleteStorageClass(randomStorageClassName)
 		Expect(err).ToNot(HaveOccurred())
-
-		// clear the list.
-		pvNames = []string{}
 	})
 
 	It("One pod with a storage, PVC with no storageclass defined", func() {
@@ -71,7 +61,15 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		err := globalhelper.CreatePersistentVolume(persistentVolume)
 		Expect(err).ToNot(HaveOccurred())
 
-		pvNames = append(pvNames, persistentVolume.Name)
+		DeferCleanup(func() {
+			By("Delete persistent volume claim")
+			err = globalhelper.DeletePersistentVolumeClaim(pvc)
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Delete persistent volume")
+			err = globalhelper.DeletePersistentVolume(persistentVolume.Name, tsparams.WaitingTime)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		err = globalhelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
@@ -106,7 +104,15 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		err := globalhelper.CreatePersistentVolume(testPv)
 		Expect(err).ToNot(HaveOccurred())
 
-		pvNames = append(pvNames, testPv.Name)
+		DeferCleanup(func() {
+			By("Delete persistent volume claim")
+			err = globalhelper.DeletePersistentVolumeClaim(pvc)
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Delete persistent volume")
+			err = globalhelper.DeletePersistentVolume(testPv.Name, tsparams.WaitingTime)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
 		err = globalhelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.WaitingTime, testPv.Name)
 		Expect(err).ToNot(HaveOccurred())
