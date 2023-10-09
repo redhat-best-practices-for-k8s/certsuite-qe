@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	appsv1Typed "k8s.io/client-go/kubernetes/typed/apps/v1"
@@ -55,9 +56,49 @@ func isDaemonSetReady(client appsv1Typed.AppsV1Interface, namespace string, name
 		return false, err
 	}
 
-	if daemonSet.Status.NumberAvailable == daemonSet.Status.DesiredNumberScheduled && daemonSet.Status.NumberUnavailable == 0 {
+	if daemonSet.Status.NumberAvailable == daemonSet.Status.DesiredNumberScheduled &&
+		daemonSet.Status.NumberUnavailable == 0 &&
+		daemonSet.Status.NumberReady == daemonSet.Status.DesiredNumberScheduled {
 		return true, nil
 	}
 
 	return false, nil
+}
+
+func GetDaemonSetPullPolicy(ds *appsv1.DaemonSet) (corev1.PullPolicy, error) {
+	return getDaemonSetPullPolicy(ds, GetAPIClient().K8sClient.AppsV1())
+}
+
+func getDaemonSetPullPolicy(daemonset *appsv1.DaemonSet, client appsv1Typed.AppsV1Interface) (corev1.PullPolicy, error) {
+	runningDaemonSet, err := client.DaemonSets(daemonset.Namespace).Get(
+		context.TODO(),
+		daemonset.Name,
+		metav1.GetOptions{},
+	)
+	if err != nil {
+		glog.Fatal(fmt.Sprintf("failed to get daemonset %s: %v", daemonset.Name, err))
+
+		return "", err
+	}
+
+	return runningDaemonSet.Spec.Template.Spec.Containers[0].ImagePullPolicy, nil
+}
+
+func GetRunningDaemonset(ds *appsv1.DaemonSet) (*appsv1.DaemonSet, error) {
+	return getRunningDaemonset(ds, GetAPIClient().K8sClient.AppsV1())
+}
+
+func getRunningDaemonset(daemonset *appsv1.DaemonSet, client appsv1Typed.AppsV1Interface) (*appsv1.DaemonSet, error) {
+	runningDaemonSet, err := client.DaemonSets(daemonset.Namespace).Get(
+		context.TODO(),
+		daemonset.Name,
+		metav1.GetOptions{},
+	)
+	if err != nil {
+		glog.Fatal(fmt.Sprintf("failed to get daemonset %s: %v", daemonset.Name, err))
+
+		return nil, err
+	}
+
+	return runningDaemonSet, nil
 }

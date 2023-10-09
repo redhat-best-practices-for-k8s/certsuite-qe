@@ -10,7 +10,7 @@ import (
 )
 
 func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
-	generateDaemonset := func(numAvailable, numScheduled, numUnavailable int) *appsv1.DaemonSet {
+	generateDaemonset := func(numAvailable, numScheduled, numUnavailable, numReady int) *appsv1.DaemonSet {
 		return &appsv1.DaemonSet{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-daemonset",
@@ -20,6 +20,7 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 				NumberAvailable:        int32(numAvailable),
 				DesiredNumberScheduled: int32(numScheduled),
 				NumberUnavailable:      int32(numUnavailable),
+				NumberReady:            int32(numReady),
 			},
 		}
 	}
@@ -29,18 +30,21 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 		numAvailable   int
 		numScheduled   int
 		numUnavailable int
+		numReady       int
 		wantErr        bool
 	}{
 		{
 			name:           "Daemonset is ready",
 			numAvailable:   1,
 			numScheduled:   1,
+			numReady:       1,
 			numUnavailable: 0,
 			wantErr:        false,
 		},
 		{
 			name:           "Daemonset is not ready",
 			numAvailable:   0,
+			numReady:       0,
 			numScheduled:   1,
 			numUnavailable: 1,
 			wantErr:        false,
@@ -50,12 +54,13 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 	for _, testCase := range testCases {
 		// Create fake daemonset
 		var runtimeObjects []runtime.Object
-		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable))
+		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.numAvailable,
+			testCase.numScheduled, testCase.numUnavailable, testCase.numReady))
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		t.Run(testCase.name, func(t *testing.T) {
 			err := createAndWaitUntilDaemonSetIsReady(client.AppsV1(),
-				generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable), 5)
+				generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable, testCase.numReady), 5)
 			if (err != nil) != testCase.wantErr {
 				t.Errorf("CreateAndWaitUntilDaemonSetIsReady() error = %v, wantErr %v", err, testCase.wantErr)
 
@@ -66,7 +71,7 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 }
 
 func TestIsDaemonsetReady(t *testing.T) {
-	generateDaemonset := func(numAvailable, numScheduled, numUnavailable int) *appsv1.DaemonSet {
+	generateDaemonset := func(numAvailable, numScheduled, numUnavailable, numReady int) *appsv1.DaemonSet {
 		return &appsv1.DaemonSet{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-daemonset",
@@ -76,6 +81,7 @@ func TestIsDaemonsetReady(t *testing.T) {
 				NumberAvailable:        int32(numAvailable),
 				DesiredNumberScheduled: int32(numScheduled),
 				NumberUnavailable:      int32(numUnavailable),
+				NumberReady:            int32(numReady),
 			},
 		}
 	}
@@ -85,12 +91,14 @@ func TestIsDaemonsetReady(t *testing.T) {
 		numAvailable   int
 		numScheduled   int
 		numUnavailable int
+		numReady       int
 		wantErr        bool
 		expectedOutput bool
 	}{
 		{
 			name:           "Daemonset is ready",
 			numAvailable:   1,
+			numReady:       1,
 			numScheduled:   1,
 			numUnavailable: 0,
 			wantErr:        false,
@@ -99,6 +107,7 @@ func TestIsDaemonsetReady(t *testing.T) {
 		{
 			name:           "Daemonset is not ready",
 			numAvailable:   0,
+			numReady:       0,
 			numScheduled:   1,
 			numUnavailable: 1,
 			wantErr:        false,
@@ -109,7 +118,8 @@ func TestIsDaemonsetReady(t *testing.T) {
 	for _, testCase := range testCases {
 		// Create fake daemonset
 		var runtimeObjects []runtime.Object
-		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable))
+		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.numAvailable,
+			testCase.numScheduled, testCase.numUnavailable, testCase.numReady))
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		t.Run(testCase.name, func(t *testing.T) {
