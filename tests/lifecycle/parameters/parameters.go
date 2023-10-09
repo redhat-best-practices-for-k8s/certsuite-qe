@@ -63,5 +63,5 @@ const (
 	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
 	TnfContainerStartUpTcName              = "lifecycle-container-startup"
 	TnfPodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
-	TnfStorageRequiredPods                 = "lifecycle-storage-required-pods"
+	TnfStorageProvisioner                  = "lifecycle-storage-provisioner"
 )
