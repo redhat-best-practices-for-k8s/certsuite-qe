@@ -31,8 +31,6 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52444
 	It("One CRD created with status subresource", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
@@ -43,7 +41,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -53,8 +51,6 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52445
 	It("Two CRDs created, both with status subresource", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
@@ -72,7 +68,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd2.Name)
 
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -82,8 +78,6 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52446
 	It("One CRD created without status subresource [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
@@ -94,7 +88,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -104,8 +98,6 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52447
 	It("Two CRDs created, one with and the other without status subresource [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
@@ -123,7 +115,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd2.Name)
 
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -133,8 +125,6 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52448
 	It("Two CRDs created, both without status subresource [negative]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
@@ -152,7 +142,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd2.Name)
 
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
@@ -162,8 +152,6 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52449
 	It("One CRD deployed not having any of the configured suffixes [skip]", func() {
-		qeTcFileName := globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText())
-
 		By("Create CRD in the cluster with suffix " + tsparams.NotConfiguredCrdSuffix)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne",
 			tsparams.NotConfiguredCrdSuffix)
@@ -175,7 +163,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, qeTcFileName)
+		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
