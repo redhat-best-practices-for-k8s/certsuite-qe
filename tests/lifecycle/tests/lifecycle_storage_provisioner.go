@@ -15,7 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("lifecycle-storage-required-pods", func() {
+var _ = Describe("lifecycle-storage-provisioner", func() {
 	var randomNamespace string
 	var randomStorageClassName string
 	var randomPV string
@@ -83,13 +83,13 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start storage-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfStorageRequiredPods,
+		By("Start storage-provisioner test")
+		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageRequiredPods, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -118,13 +118,13 @@ var _ = Describe("lifecycle-storage-required-pods", func() {
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start storage-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfStorageRequiredPods,
+		By("Start storage-provisioner test")
+		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageRequiredPods, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
