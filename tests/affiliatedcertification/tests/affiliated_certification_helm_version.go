@@ -36,6 +36,10 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 
 	// 68120
 	It("installed helm version is certified", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Skipping helm version test on Kind cluster")
+		}
+
 		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
@@ -60,6 +64,10 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 
 	// 68121
 	It("installed helm version is not certified", func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Skipping helm version test on Kind cluster")
+		}
+
 		By("Remove helm")
 		cmd := exec.Command("rm", "-rf", "/usr/local/bin/helm")
 		err := cmd.Run()
