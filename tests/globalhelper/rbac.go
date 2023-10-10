@@ -213,7 +213,11 @@ func deletePersistentVolume(client corev1Typed.CoreV1Interface, persistentVolume
 	err := client.PersistentVolumes().Delete(context.TODO(), persistentVolume, metav1.DeleteOptions{
 		GracePeriodSeconds: ptr.To[int64](0),
 	})
-	if err != nil {
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info(fmt.Sprintf("persistent volume %s does not exist", persistentVolume))
+
+		return nil
+	} else if err != nil {
 		return fmt.Errorf("failed to delete persistent volume %w", err)
 	}
 
@@ -264,4 +268,23 @@ func isPvcBound(client corev1Typed.CoreV1Interface, pvcName string, namespace st
 	}
 
 	return pvc.Status.Phase == corev1.ClaimBound && pvc.Spec.VolumeName == pvName, nil
+}
+
+func DeletePersistentVolumeClaim(pvc *corev1.PersistentVolumeClaim) error {
+	return deletePersistentVolumeClaim(GetAPIClient().K8sClient.CoreV1(), pvc)
+}
+
+func deletePersistentVolumeClaim(client corev1Typed.CoreV1Interface, pvc *corev1.PersistentVolumeClaim) error {
+	err := client.PersistentVolumeClaims(pvc.Namespace).Delete(context.TODO(), pvc.Name, metav1.DeleteOptions{
+		GracePeriodSeconds: ptr.To[int64](0),
+	})
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info(fmt.Sprintf("persistent volume claim %s does not exist", pvc.Name))
+
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("failed to delete persistent volume claim %w", err)
+	}
+
+	return nil
 }
