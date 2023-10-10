@@ -60,6 +60,11 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has podAntiAffinity configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
+
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -88,6 +93,11 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has podAntiAffinity configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
+
 		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -96,6 +106,11 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has podAntiAffinity configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
@@ -123,6 +138,11 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has podAntiAffinity configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
+
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -149,12 +169,22 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have podAntiAffinity configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
+
 		By("Define and create second deployment")
 		deploymentb, err := tshelper.DefineDeployment(2, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment does not have podAntiAffinity configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
@@ -183,6 +213,11 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has podAntiAffinity configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,

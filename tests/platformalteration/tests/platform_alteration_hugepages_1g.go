@@ -58,7 +58,6 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	It("One pod with 1Gi hugepages", func() {
@@ -130,7 +129,6 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	It("One pod, two containers, one with 1Gi hugepages, other with 2Mi [negative]", func() {
@@ -158,6 +156,5 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })

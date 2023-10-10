@@ -62,6 +62,11 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 15443}}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment has declared reserved port")
+		runningDeployment, err := globalhelper.GetRunningDeployment(randomNamespace, tsparams.TestDeploymentAName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports[0].ContainerPort).To(Equal(int32(15443)))
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,

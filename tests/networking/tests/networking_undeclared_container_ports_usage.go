@@ -47,6 +47,11 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has container port 8080")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports[0].ContainerPort).To(Equal(int32(8080)))
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
@@ -70,6 +75,11 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has container port 8081")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports[0].ContainerPort).To(Equal(int32(8081)))
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
@@ -97,6 +107,11 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has container port 8081")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports[0].ContainerPort).To(Equal(int32(8081)))
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
@@ -121,6 +136,11 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have container port 8080")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports).To(BeEmpty())
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
@@ -137,7 +157,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 	It("one deployment, one pod, two containers, both containers declare used ports (8080, 8081)", func() {
 
 		By("Define deployment and create it on cluster")
-		ports := []corev1.ContainerPort{{ContainerPort: 8080}, {ContainerPort: 8081}}
+		ports := []corev1.ContainerPort{{ContainerPort: 8080, Protocol: "TCP"}, {ContainerPort: 8081, Protocol: "TCP"}}
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("networking-deployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 		err = deployment.RedefineContainerCommand(dep, 0, []string{})
@@ -167,7 +187,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 	It("one deployment, one pod, two containers, the first one uses and declares port 8080, the second one uses port 8081 but declares 8082 [negative]", func() {
 
 		By("Define deployment and create it on cluster")
-		ports := []corev1.ContainerPort{{ContainerPort: 8080}, {ContainerPort: 8082}}
+		ports := []corev1.ContainerPort{{ContainerPort: 8080, Protocol: "TCP"}, {ContainerPort: 8082, Protocol: "TCP"}}
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("networking-deployment", randomNamespace, 2, ports)
 		Expect(err).ToNot(HaveOccurred())
 		err = deployment.RedefineContainerCommand(dep, 0, []string{})

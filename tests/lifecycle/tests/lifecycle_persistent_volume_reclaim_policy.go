@@ -73,6 +73,11 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has persistent volume claim configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvc.Name))
+
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -81,7 +86,6 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54202
@@ -197,6 +201,11 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has persistent volume claim configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvc.Name))
+
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -306,8 +315,18 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depa, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has persistent volume claim configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(depa.Namespace, depa.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvca.Name))
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has persistent volume claim configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(depb.Namespace, depb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvcb.Name))
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,

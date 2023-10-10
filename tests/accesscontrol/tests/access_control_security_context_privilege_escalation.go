@@ -44,6 +44,11 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment does not allow privilege escalation")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlPrivilegeEscalation,
@@ -67,6 +72,13 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert that deployment does allow privilege escalation")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.AllowPrivilegeEscalation).ToNot(BeNil())
+		Expect(*runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.AllowPrivilegeEscalation).To(BeTrue())
+		Expect(*runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.RunAsUser).To(Equal(int64(0)))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -92,11 +104,22 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment1 does not allow privilege escalation")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).ToNot(BeNil())
+		Expect(*runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.AllowPrivilegeEscalation).To(BeFalse())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert that deployment2 does not allow privilege escalation")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -122,11 +145,22 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment1 does allow privilege escalation")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.AllowPrivilegeEscalation).ToNot(BeNil())
+		Expect(*runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.AllowPrivilegeEscalation).To(BeTrue())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert that deployment2 does not allow privilege escalation")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -140,5 +174,4 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

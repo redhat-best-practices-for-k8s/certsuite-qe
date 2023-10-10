@@ -46,6 +46,11 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has hostIPC set to false")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.HostIPC).To(BeFalse())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlPodHostIpc,
@@ -69,6 +74,11 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has hostIPC set to true")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.HostIPC).To(BeTrue())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -94,6 +104,11 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 has hostIPC set to false")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.HostIPC).To(BeFalse())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,6 +116,11 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 has hostIPC set to false")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.HostIPC).To(BeFalse())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -126,6 +146,11 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 has hostIPC set to true")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.HostIPC).To(BeTrue())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -133,6 +158,11 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 has hostIPC set to false")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.HostIPC).To(BeFalse())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -146,5 +176,4 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

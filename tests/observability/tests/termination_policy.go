@@ -41,8 +41,15 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
+			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has terminationMessagePolicy set to FallbackToLogsOnError")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
+			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
@@ -66,6 +73,12 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has terminationMessagePolicy set to FallbackToLogsOnError")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
+			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
+
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -80,7 +93,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 	It("One daemonset with two containers, both with terminationMessagePolicy "+
 		"set to FallbackToLogsOnError", func() {
 
-		By("Create deployment in the cluster")
+		By("Create daemonset in the cluster")
 		daemonSet := tshelper.DefineDaemonSetWithTerminationMsgPolicies(tsparams.TestDaemonSetBaseName,
 			randomNamespace,
 			[]corev1.TerminationMessagePolicy{
@@ -110,8 +123,15 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
+			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has terminationMessagePolicy set to FallbackToLogsOnError")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
+			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
 		By("Create statefulset in the cluster")
 		statefulSet := tshelper.DefineStatefulSetWithTerminationMsgPolicies(tsparams.TestStatefulSetBaseName,
@@ -167,6 +187,12 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert the two containers have different terminationMessagePolicy")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[1].TerminationMessagePolicy).
+			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
+
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -211,6 +237,12 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has terminationMessagePolicy set to FallbackToLogsOnError")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
+			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
 		By("Create statefulset in the cluster")
 		statefulSet := tshelper.DefineStatefulSetWithTerminationMsgPolicies(tsparams.TestStatefulSetBaseName,
@@ -266,7 +298,8 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		By("Create deployment without TNF target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(tsparams.TestDeploymentBaseName, randomNamespace)
 
-		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
+			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")

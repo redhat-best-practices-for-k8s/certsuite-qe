@@ -44,6 +44,11 @@ var _ = Describe("Access-control non-root user,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has no securityContext RunAsUser 0")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.SecurityContext.RunAsUser).To(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNonRootUser,
@@ -68,6 +73,12 @@ var _ = Describe("Access-control non-root user,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has securityContext RunAsUser 0")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.SecurityContext.RunAsUser).ToNot(BeNil())
+		Expect(*runningDeployment.Spec.Template.Spec.SecurityContext.RunAsUser).To(Equal(int64(0)))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNonRootUser,
@@ -90,13 +101,22 @@ var _ = Describe("Access-control non-root user,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has no securityContext RunAsUser 0")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.SecurityContext.RunAsUser).To(BeNil())
+
+		By("Define deployment with securityContext RunAsUser set as 0")
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1338)
-
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has no securityContext RunAsUser 0")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.SecurityContext.RunAsUser).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -122,11 +142,22 @@ var _ = Describe("Access-control non-root user,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has securityContext RunAsUser 0")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.SecurityContext.RunAsUser).ToNot(BeNil())
+		Expect(*runningDeployment.Spec.Template.Spec.SecurityContext.RunAsUser).To(Equal(int64(0)))
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has no securityContext")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.SecurityContext.RunAsUser).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -140,5 +171,4 @@ var _ = Describe("Access-control non-root user,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

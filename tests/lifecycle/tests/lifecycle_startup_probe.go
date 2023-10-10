@@ -49,6 +49,11 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has startup probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).ToNot(BeNil())
+
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -70,6 +75,11 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deploymenta has startup probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).ToNot(BeNil())
+
 		By("Define second deployment with a startup probe")
 		deploymentb, err := tshelper.DefineDeployment(3, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -78,6 +88,11 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deploymentb has startup probe")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).ToNot(BeNil())
 
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
@@ -139,6 +154,11 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deploymenta has startup probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).ToNot(BeNil())
+
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -180,12 +200,22 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deploymenta has startup probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).ToNot(BeNil())
+
 		By("Define second deployment without a startup probe")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deploymentb has no startup probe")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).To(BeNil())
 
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
@@ -208,6 +238,11 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deploymenta has startup probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].StartupProbe).ToNot(BeNil())
 
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,

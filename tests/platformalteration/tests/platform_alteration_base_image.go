@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -55,9 +54,6 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
-
-		By("Sleep for 5 minutes")
-		time.Sleep(5 * time.Minute)
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(

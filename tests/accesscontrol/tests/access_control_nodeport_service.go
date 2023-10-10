@@ -49,6 +49,13 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert all services in namespace are not nodeport")
+		services, err := globalhelper.GetServicesFromNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		for _, service := range services {
+			Expect(service.Spec.Type).ToNot(Equal(corev1.ServiceTypeNodePort))
+		}
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfNodePortTcName,
@@ -76,6 +83,13 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert all services in namespace are not nodeport")
+		services, err := globalhelper.GetServicesFromNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		for _, service := range services {
+			Expect(service.Spec.Type).ToNot(Equal(corev1.ServiceTypeNodePort))
+		}
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
@@ -110,6 +124,13 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert all services in namespace are not nodeport")
+		services, err := globalhelper.GetServicesFromNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		for _, service := range services {
+			Expect(service.Spec.Type).ToNot(Equal(corev1.ServiceTypeNodePort))
+		}
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfNodePortTcName,
@@ -138,6 +159,15 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert testservice in namespace is type nodePort")
+		services, err := globalhelper.GetServicesFromNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		for _, service := range services {
+			if service.Name == "testservice" {
+				Expect(service.Spec.Type).To(Equal(corev1.ServiceTypeNodePort))
+			}
+		}
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfNodePortTcName,
@@ -149,7 +179,6 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 			tsparams.TnfNodePortTcName,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 45484
@@ -170,6 +199,17 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert the services in namespace have corresponding nodeport statuses")
+		services, err := globalhelper.GetServicesFromNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		for _, service := range services {
+			if service.Name == "testservicefirst" {
+				Expect(service.Spec.Type).To(Equal(corev1.ServiceTypeNodePort))
+			} else if service.Name == "testservicesecond" {
+				Expect(service.Spec.Type).ToNot(Equal(corev1.ServiceTypeNodePort))
+			}
+		}
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(

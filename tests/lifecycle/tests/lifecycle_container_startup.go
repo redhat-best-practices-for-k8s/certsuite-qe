@@ -47,6 +47,11 @@ var _ = Describe("lifecycle-container-startup", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has postStart configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
+
 		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -68,6 +73,11 @@ var _ = Describe("lifecycle-container-startup", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has postStart configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
+
 		By("Define second deployment with postStart spec")
 		deploymentb, err := tshelper.DefineDeployment(1, 2, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -76,6 +86,11 @@ var _ = Describe("lifecycle-container-startup", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has postStart configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
 
 		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
@@ -162,12 +177,22 @@ var _ = Describe("lifecycle-container-startup", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has postStart configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
+
 		By("Define second deployment without postStart spec")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment does not have postStart configured")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
 		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,

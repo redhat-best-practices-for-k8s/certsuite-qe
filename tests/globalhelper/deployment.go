@@ -70,3 +70,21 @@ func createAndWaitUntilDeploymentIsReady(client typedappsv1.AppsV1Interface, dep
 
 	return nil
 }
+
+// GetRunningDeployment returns a running deployment.
+func GetRunningDeployment(namespace, deploymentName string) (*appsv1.Deployment, error) {
+	return getRunningDeployment(GetAPIClient().K8sClient.AppsV1(), namespace, deploymentName)
+}
+
+func getRunningDeployment(client typedappsv1.AppsV1Interface, namespace, deploymentName string) (*appsv1.Deployment, error) {
+	runningDeployment, err := client.Deployments(namespace).Get(
+		context.TODO(),
+		deploymentName,
+		metav1.GetOptions{},
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployment %q (ns %s): %w", deploymentName, namespace, err)
+	}
+
+	return runningDeployment, nil
+}

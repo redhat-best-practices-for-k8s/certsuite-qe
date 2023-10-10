@@ -156,6 +156,13 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has runTimeClass configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Template.Spec.RuntimeClassName).To(Equal(rtc.Name))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal("1"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal("1"))
+
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -254,7 +261,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		annotationsMap := make(map[string]string)
 
-		By("Define deployment with resources and runTimeClass")
+		By("Define deployment with resources and no runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
 
@@ -267,6 +274,11 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has runTimeClass configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.RuntimeClassName).To(BeNil())
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
