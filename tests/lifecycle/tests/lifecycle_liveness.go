@@ -137,6 +137,11 @@ var _ = Describe("lifecycle-liveness", func() {
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert DaemonSet is without a liveness probe")
+		runningDaemonset, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonset.Spec.Template.Spec.Containers[0].LivenessProbe).To(BeNil())
+
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))

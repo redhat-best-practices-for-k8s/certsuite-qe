@@ -198,6 +198,14 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert DaemonSet is with runTimeClass and CPU resources")
+		runningDaemonset, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonset.Spec.Template.Spec.Containers).To(HaveLen(1))
+		Expect(runningDaemonset.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal("1"))
+		Expect(runningDaemonset.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal("1"))
+		Expect(*runningDaemonset.Spec.Template.Spec.RuntimeClassName).To(Equal(rtc.Name))
+
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
