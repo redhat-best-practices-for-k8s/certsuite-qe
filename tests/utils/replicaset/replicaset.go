@@ -15,7 +15,7 @@ func DefineReplicaSet(replicaSetName string, namespace string, image string, lab
 			Namespace: namespace},
 		Spec: appsv1.ReplicaSetSpec{
 			Replicas:        ptr.To[int32](1),
-			MinReadySeconds: 30,
+			MinReadySeconds: 15,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
