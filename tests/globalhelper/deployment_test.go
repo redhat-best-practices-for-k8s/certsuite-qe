@@ -12,7 +12,7 @@ import (
 )
 
 func TestIsDeploymentReady(t *testing.T) {
-	generateDeployment := func(availableReplicas, desiredReplicas int32) *appsv1.Deployment {
+	generateDeployment := func(availableReplicas, desiredReplicas, readyReplicas int32) *appsv1.Deployment {
 		return &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-deployment",
@@ -20,6 +20,7 @@ func TestIsDeploymentReady(t *testing.T) {
 			},
 			Status: appsv1.DeploymentStatus{
 				AvailableReplicas: availableReplicas,
+				ReadyReplicas:     readyReplicas,
 			},
 			Spec: appsv1.DeploymentSpec{
 				Replicas: &desiredReplicas,
@@ -33,6 +34,7 @@ func TestIsDeploymentReady(t *testing.T) {
 		expectedError     error
 		availableReplicas int32
 		desiredReplicas   int32
+		readyReplicas     int32
 	}{
 		{
 			deploymentExists:  true,
@@ -40,6 +42,7 @@ func TestIsDeploymentReady(t *testing.T) {
 			expectedError:     nil,
 			availableReplicas: 1,
 			desiredReplicas:   1,
+			readyReplicas:     1,
 		},
 		{
 			deploymentExists:  false,
@@ -47,6 +50,7 @@ func TestIsDeploymentReady(t *testing.T) {
 			expectedError:     errors.New("deployment not found"),
 			availableReplicas: 0,
 			desiredReplicas:   0,
+			readyReplicas:     0,
 		},
 		{
 			deploymentExists:  true,
@@ -54,13 +58,15 @@ func TestIsDeploymentReady(t *testing.T) {
 			expectedError:     nil,
 			availableReplicas: 0,
 			desiredReplicas:   1,
+			readyReplicas:     0,
 		},
 	}
 
 	for _, testCase := range testCases {
 		var runtimeObjects []runtime.Object
 		if testCase.deploymentExists {
-			runtimeObjects = append(runtimeObjects, generateDeployment(testCase.availableReplicas, testCase.desiredReplicas))
+			runtimeObjects = append(runtimeObjects, generateDeployment(testCase.availableReplicas,
+				testCase.desiredReplicas, testCase.readyReplicas))
 		}
 
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
@@ -76,7 +82,7 @@ func TestIsDeploymentReady(t *testing.T) {
 }
 
 func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
-	generateDeployment := func(availableReplicas, desiredReplicas int32) *appsv1.Deployment {
+	generateDeployment := func(availableReplicas, desiredReplicas, readyReplicas int32) *appsv1.Deployment {
 		return &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-deployment",
@@ -84,6 +90,7 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 			},
 			Status: appsv1.DeploymentStatus{
 				AvailableReplicas: availableReplicas,
+				ReadyReplicas:     readyReplicas,
 			},
 			Spec: appsv1.DeploymentSpec{
 				Replicas: &desiredReplicas,
@@ -95,16 +102,19 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 		expectedError     error
 		availableReplicas int32
 		desiredReplicas   int32
+		readyReplicas     int32
 	}{
 		{
 			expectedError:     nil,
 			availableReplicas: 1,
 			desiredReplicas:   1,
+			readyReplicas:     1,
 		},
 		{
 			expectedError:     nil,
 			availableReplicas: 0,
 			desiredReplicas:   0,
+			readyReplicas:     0,
 		},
 	}
 
@@ -112,7 +122,7 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 		// Create fake deployment
 		var runtimeObjects []runtime.Object
 
-		testDeployment := generateDeployment(testCase.availableReplicas, testCase.desiredReplicas)
+		testDeployment := generateDeployment(testCase.availableReplicas, testCase.desiredReplicas, testCase.readyReplicas)
 		runtimeObjects = append(runtimeObjects, testDeployment)
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 

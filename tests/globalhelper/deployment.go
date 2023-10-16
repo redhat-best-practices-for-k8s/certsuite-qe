@@ -26,7 +26,8 @@ func IsDeploymentReady(client typedappsv1.AppsV1Interface, namespace, deployment
 	}
 
 	// Ensure the number of ready replicas matches the desired number of replicas.
-	if testDeployment.Status.AvailableReplicas == *testDeployment.Spec.Replicas {
+	if testDeployment.Status.AvailableReplicas == *testDeployment.Spec.Replicas &&
+		testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
 		return true, nil
 	}
 
