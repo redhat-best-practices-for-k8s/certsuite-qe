@@ -49,6 +49,11 @@ var _ = Describe("lifecycle-liveness", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has liveness probe configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].LivenessProbe).ToNot(BeNil())
+
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -70,6 +75,13 @@ var _ = Describe("lifecycle-liveness", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert all containers have liveness probe configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
+			Expect(container.LivenessProbe).ToNot(BeNil())
+		}
+
 		By("Define second deployment with a liveness probe")
 		deploymentb, err := tshelper.DefineDeployment(3, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -78,6 +90,13 @@ var _ = Describe("lifecycle-liveness", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert all containers have liveness probe configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
+			Expect(container.LivenessProbe).ToNot(BeNil())
+		}
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
@@ -163,12 +182,22 @@ var _ = Describe("lifecycle-liveness", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has liveness probe configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].LivenessProbe).ToNot(BeNil())
+
 		By("Define second deployment without a liveness probe")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment does not have liveness probe configured")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].LivenessProbe).To(BeNil())
 
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,

@@ -48,6 +48,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has ifNotPresent configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullIfNotPresent))
+
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -70,6 +75,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has ifNotPresent configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullIfNotPresent))
+
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -78,6 +88,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has ifNotPresent configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullIfNotPresent))
+
 		deploymentc, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpc", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -85,6 +100,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has ifNotPresent configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentc.Namespace, deploymentc.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullIfNotPresent))
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
@@ -208,6 +228,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has Always pull policy configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullAlways))
+
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -229,6 +254,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has Always pull policy configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullAlways))
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
@@ -252,6 +282,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has Never pull policy configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullNever))
+
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -260,6 +295,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has ifNotPresent pull policy configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullIfNotPresent))
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
@@ -294,6 +334,11 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has ifNotPresent pull policy configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ImagePullPolicy).To(Equal(corev1.PullIfNotPresent))
 
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,

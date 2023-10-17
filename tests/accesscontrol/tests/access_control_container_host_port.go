@@ -45,6 +45,11 @@ var _ = Describe("Access-control container-host-port,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has no host port configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports).To(BeEmpty())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlContainerHostPort,
@@ -68,6 +73,13 @@ var _ = Describe("Access-control container-host-port,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has container has container/host port configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports).ToNot(BeEmpty())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports[0].ContainerPort).To(Equal(int32(22223)))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Ports[0].HostPort).To(Equal(int32(22222)))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -93,6 +105,16 @@ var _ = Describe("Access-control container-host-port,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have host port configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
+			for _, port := range container.Ports {
+				Expect(port.HostPort).To(BeZero())
+				Expect(port.ContainerPort).Should(BeElementOf([]int32{22222, 22223}))
+			}
+		}
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlContainerHostPort,
@@ -108,7 +130,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 
 	// 63887
 	It("one deployment, one pod, two containers, one declaring host port [negative]", func() {
-		ports := []corev1.ContainerPort{{ContainerPort: 22222}, {ContainerPort: 22222, HostPort: 22223}}
+		ports := []corev1.ContainerPort{{ContainerPort: 22221}, {ContainerPort: 22222, HostPort: 22223}}
 
 		By("Define deployment with one container declaring host port")
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
@@ -116,6 +138,19 @@ var _ = Describe("Access-control container-host-port,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has container/host port configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
+			for _, port := range container.Ports {
+				if port.ContainerPort == 22222 {
+					Expect(port.HostPort).To(Equal(int32(22223)))
+				} else if port.ContainerPort == 22221 {
+					Expect(port.HostPort).To(BeZero())
+				}
+			}
+		}
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

@@ -9,6 +9,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var _ = Describe("Access-control ipc-lock-capability-check,", func() {
@@ -44,6 +45,11 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have IPC_LOCK capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
@@ -68,6 +74,12 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does have IPC_LOCK capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].
+			SecurityContext.Capabilities.Add).To(ContainElement(corev1.Capability("IPC_LOCK")))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
@@ -90,11 +102,21 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have IPC_LOCK capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment does not have IPC_LOCK capability")
+		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -120,11 +142,22 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does have IPC_LOCK capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].
+			SecurityContext.Capabilities.Add).To(ContainElement(corev1.Capability("IPC_LOCK")))
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment does not have IPC_LOCK capability")
+		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -138,5 +171,4 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

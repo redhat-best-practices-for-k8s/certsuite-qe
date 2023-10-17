@@ -49,6 +49,11 @@ var _ = Describe("lifecycle-readiness", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has readiness probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ReadinessProbe).ToNot(BeNil())
+
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(tsparams.TnfReadinessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -70,6 +75,11 @@ var _ = Describe("lifecycle-readiness", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deploymenta has readiness probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ReadinessProbe).ToNot(BeNil())
+
 		By("Define second deployment with a readiness probe")
 		deploymentb, err := tshelper.DefineDeployment(3, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -78,6 +88,11 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deploymentb has readiness probe")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ReadinessProbe).ToNot(BeNil())
 
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(tsparams.TnfReadinessTcName,
@@ -156,12 +171,22 @@ var _ = Describe("lifecycle-readiness", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deploymenta has readiness probe")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ReadinessProbe).ToNot(BeNil())
+
 		By("Define second deployment without a readiness probe")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deploymentb has no readiness probe")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].ReadinessProbe).To(BeNil())
 
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(tsparams.TnfReadinessTcName,

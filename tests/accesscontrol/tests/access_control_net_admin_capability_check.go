@@ -3,6 +3,7 @@ package accesscontrol
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
@@ -44,6 +45,11 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have NET_ADMIN capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNetAdminCapability,
@@ -68,6 +74,12 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has NET_ADMIN capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].
+			SecurityContext.Capabilities.Add).To(ContainElement(corev1.Capability("NET_ADMIN")))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNetAdminCapability,
@@ -90,11 +102,21 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 does not have NET_ADMIN capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 does not have NET_ADMIN capability")
+		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -120,11 +142,22 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has NET_ADMIN capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].
+			SecurityContext.Capabilities.Add).To(ContainElement(corev1.Capability("NET_ADMIN")))
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment does not have NET_ADMIN capability")
+		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

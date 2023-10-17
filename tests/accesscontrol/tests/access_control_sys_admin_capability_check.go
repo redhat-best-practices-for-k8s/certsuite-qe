@@ -3,6 +3,7 @@ package accesscontrol
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
@@ -44,6 +45,11 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have security context set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlSysAdminCapability,
@@ -68,6 +74,14 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has security context SYS_ADMIN set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities.Add).
+			To(ContainElement(corev1.Capability("SYS_ADMIN")))
+		Expect(*runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.RunAsUser).To(Equal(int64(0)))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Privileged).ToNot(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlSysAdminCapability,
@@ -90,11 +104,21 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 does not have security context set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 does not have security context set")
+		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -120,11 +144,22 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has SYS_ADMIN capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities.Add).
+			To(ContainElement(corev1.Capability("SYS_ADMIN")))
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 does not have security context set")
+		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -138,5 +173,4 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

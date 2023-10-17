@@ -48,6 +48,11 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has one replica")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(1)))
+
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, randomNamespace,
 			intstr.FromInt(1), tsparams.TnfTargetPodLabels)
@@ -75,6 +80,11 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has two replicas")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(2)))
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, randomNamespace,
@@ -132,6 +142,11 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has two replicas")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(2)))
+
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, randomNamespace,
 			intstr.FromInt(2), tsparams.TnfTargetPodLabels)
@@ -160,6 +175,11 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has two replicas")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(2)))
+
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, randomNamespace,
 			intstr.FromInt(3), tsparams.TnfTargetPodLabels)
@@ -187,6 +207,11 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has one replica")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(1)))
+
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, randomNamespace,
 			intstr.FromInt(1), tsparams.TnfUnknownPodLabels)
@@ -213,6 +238,11 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has one replica")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(1)))
 
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,

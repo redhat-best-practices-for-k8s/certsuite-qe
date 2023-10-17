@@ -47,6 +47,14 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment has requests and limits set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal(tsparams.CPULimit))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal(tsparams.MemoryLimit))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal(tsparams.CPURequest))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal(tsparams.MemoryRequest))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlRequestsAndLimits,
@@ -71,6 +79,12 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment has no limits set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal("0"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal("0"))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlRequestsAndLimits,
@@ -92,6 +106,14 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has no limits or requests set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal("0"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal("0"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal("0"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal("0"))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -118,6 +140,12 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment has CPU limits not set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal("0"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal(tsparams.CPURequest))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlRequestsAndLimits,
@@ -142,6 +170,12 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert that deployment has memory limits not set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal("0"))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal(tsparams.MemoryRequest))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -168,6 +202,14 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment1 has requests and limits set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal(tsparams.CPULimit))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal(tsparams.MemoryLimit))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal(tsparams.CPURequest))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal(tsparams.MemoryRequest))
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -176,6 +218,14 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert that deployment2 has requests and limits set")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal(tsparams.CPULimit))
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal(tsparams.MemoryLimit))
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal(tsparams.CPURequest))
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal(tsparams.MemoryRequest))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -202,6 +252,12 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert that deployment1 has memory limits set")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal(tsparams.MemoryLimit))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal(tsparams.MemoryRequest))
+
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -210,6 +266,12 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert that deployment2 has memory limits not set")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String()).To(Equal("0"))
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal(tsparams.MemoryRequest))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

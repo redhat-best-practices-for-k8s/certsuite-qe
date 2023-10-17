@@ -37,7 +37,7 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 
 	// 56427
 	It("one deployment, one pod, does not have cluster role binding", func() {
-		By("Define deployment that do not have rolebinding")
+		By("Define deployment that do not have cluster role binding")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -86,6 +86,11 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has service account")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.ServiceAccountName).To(Equal("my-service-account"))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
