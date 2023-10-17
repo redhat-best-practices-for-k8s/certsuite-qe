@@ -111,6 +111,11 @@ var _ = Describe("lifecycle-container-startup", func() {
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert statefulSet has postStart configured")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].Lifecycle).ToNot(BeNil())
+
 		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))

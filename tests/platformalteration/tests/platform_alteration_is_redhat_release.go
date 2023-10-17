@@ -111,7 +111,6 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 	// 51326
 	It("One statefulSet, one pod that is not running Red Hat release [negative]", func() {
-
 		By("Define statefulSet")
 		statefulSet := tshelper.DefineStatefulSetWithNonUBIContainer(randomNamespace)
 
