@@ -83,7 +83,6 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 	// 47426
 	It("StatefulSet pod", func() {
-
 		By("Define statefulSet")
 		statefulSet := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName, randomNamespace)
 
@@ -121,7 +120,6 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 	// 47430
 	It("Two deployments, one pod not related to any resource [negative]", func() {
-
 		By("Define deployments")
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())

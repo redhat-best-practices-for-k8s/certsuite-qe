@@ -106,13 +106,18 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	// 56637
 	It("One statefulSet, pod disruption budget minAvailable value is zero [negative]", func() {
 		By("Create statefulSet")
-		sf := statefulset.DefineStatefulSet(tsparams.TestStatefulSetBaseName, randomNamespace,
+		myStatefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
-		statefulset.RedefineWithReplicaNumber(sf, 1)
+		statefulset.RedefineWithReplicaNumber(myStatefulSet, 1)
 
-		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(sf, tsparams.StatefulSetDeployTimeoutMins)
+		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(myStatefulSet, tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert statefulSet has one replica")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(myStatefulSet.Namespace, myStatefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(*runningStatefulSet.Spec.Replicas).To(Equal(int32(1)))
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, randomNamespace,

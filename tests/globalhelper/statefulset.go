@@ -11,6 +11,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	typedappsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 )
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
@@ -54,4 +55,19 @@ func isStatefulSetReady(namespace string, statefulSetName string) (bool, error) 
 	}
 
 	return false, nil
+}
+
+func GetRunningStatefulSet(namespace, statefulSetName string) (*appsv1.StatefulSet, error) {
+	return getRunningStatefulSet(GetAPIClient().K8sClient.AppsV1(), namespace, statefulSetName)
+}
+
+func getRunningStatefulSet(client typedappsv1.AppsV1Interface, namespace, statefulSetName string) (*appsv1.StatefulSet, error) {
+	runningStatefulSet, err := client.StatefulSets(namespace).Get(context.TODO(),
+		statefulSetName, metav1.GetOptions{})
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to get statefulSet %q (ns %s): %w", statefulSetName, namespace, err)
+	}
+
+	return runningStatefulSet, nil
 }

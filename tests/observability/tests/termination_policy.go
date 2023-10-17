@@ -141,6 +141,12 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert statefulset has terminationMessagePolicy set to FallbackToLogsOnError")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
+			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
+
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))

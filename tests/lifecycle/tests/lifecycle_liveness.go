@@ -117,6 +117,11 @@ var _ = Describe("lifecycle-liveness", func() {
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert statefulSet has liveness probe configured")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].LivenessProbe).ToNot(BeNil())
+
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))

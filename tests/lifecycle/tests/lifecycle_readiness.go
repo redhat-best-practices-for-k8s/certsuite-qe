@@ -112,6 +112,11 @@ var _ = Describe("lifecycle-readiness", func() {
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert statefulSet has readiness probe")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].ReadinessProbe).ToNot(BeNil())
+
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(tsparams.TnfReadinessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
