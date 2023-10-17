@@ -18,6 +18,13 @@ if [[ ${ENABLE_PARALLEL} == "true" ]]; then
 	PFLAG="-p"
 fi
 
+# Allow for flake retries
+FFLAG=""
+if [[ ${ENABLE_FLAKY_RETRY} == "true" ]]; then
+	echo "Retrying flaky tests"
+	FFLAG="--flake-attempts=2"
+fi
+
 function run_tests {
 	case $1 in
 	all)
@@ -34,7 +41,7 @@ function run_tests {
 			fi
 		done
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v ${PFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
+		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
 		;;
 	features)
 		if [ -z "$FEATURES" ]; then
@@ -51,7 +58,7 @@ function run_tests {
 		done
 
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v ${PFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
+		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
 		;;
 	*)
 		echo "Unknown case"
