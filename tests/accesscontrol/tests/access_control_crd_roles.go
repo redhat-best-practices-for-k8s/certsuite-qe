@@ -6,7 +6,6 @@ import (
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
@@ -18,17 +17,6 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
-
-	execute.BeforeAll(func() {
-		// We have to pre-install the cr-scale-operator resources prior to running these tests.
-		By("Check if cr-scale-operator is installed")
-		exists, err := globalhelper.NamespaceExists(tsparams.TnfTargetOperatorNamespace)
-		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scale-operator is installed")
-		if !exists {
-			// Skip the test if cr-scaling-operator is not installed
-			Skip("cr-scale-operator is not installed, skipping test")
-		}
-	})
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
@@ -49,10 +37,22 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 			[]string{},
 			[]string{tsparams.TnfTargetCrdFilters})
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+
+		// We have to pre-install the cr-scale-operator resources prior to running these tests.
+		By("Check if cr-scale-operator is installed")
+		exists, err := globalhelper.NamespaceExists(tsparams.TnfTargetOperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scale-operator is installed")
+		if !exists {
+			// Skip the test if cr-scaling-operator is not installed
+			Skip("cr-scale-operator is not installed, skipping test")
+		}
+	})
+
+	AfterEach(func() {
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 
 	It("Custom resource is deployed, proper role defined", func() {
-
 		By("Create a custom resource")
 		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
 			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
@@ -166,9 +166,5 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		By("Verify test case status in Junit and Claim reports")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
-	})
-
-	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
 	})
 })
