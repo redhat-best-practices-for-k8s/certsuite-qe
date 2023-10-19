@@ -33,6 +33,18 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 			[]string{},
 			[]string{})
 		Expect(err).ToNot(HaveOccurred())
+
+		if globalhelper.IsKindCluster() {
+			Skip("DPDK is not supported on Kind cluster. Skipping.")
+		}
+
+		// Check if 'openshift-sriov-network-operator' namespace exists, if not, skip
+		By("Check if openshift-sriov-network-operator is installed")
+		exists, err := globalhelper.NamespaceExists("openshift-sriov-network-operator")
+		Expect(err).ToNot(HaveOccurred())
+		if !exists {
+			Skip("openshift-sriov-network-operator is not installed, skipping test")
+		}
 	})
 
 	AfterEach(func() {
@@ -40,10 +52,6 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 	})
 
 	It("one dpdk pod with no probe", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("DPDK is not supported on Kind cluster. Skipping.")
-		}
-
 		By("Deploy dpdk pod namespace")
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(dpdkPod, tsparams.WaitingTime)
@@ -65,10 +73,6 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 	})
 
 	It("one dpdk pod with exec probe [negative]", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("DPDK is not supported on Kind cluster. Skipping.")
-		}
-
 		By("Deploy dpdk pod namespace")
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
 
