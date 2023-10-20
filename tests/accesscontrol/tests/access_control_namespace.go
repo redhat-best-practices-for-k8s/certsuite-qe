@@ -11,6 +11,10 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/subscription"
 )
 
+const (
+	CreateInstallPlanInNamespaceStr = "Create Install Plan in Namespace: "
+)
+
 var _ = Describe("Access-control namespace, ", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
@@ -41,6 +45,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -180,7 +185,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
 
-		By("Create Install Plan in Namespace: " + plan.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan.Namespace)
 		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -222,7 +227,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", invalidNamespace)
 
-		By("Create Install Plan in Namespace: " + plan.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan.Namespace)
 		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -264,14 +269,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
 
-		By("Create Install Plan in Namespace: " + plan.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan.Namespace)
 		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Define Install Plan")
 		plan2 := installplan.DefineInstallPlan("test-plan-2", additionalValidNamespace)
 
-		By("Create Install Plan in Namespace: " + plan2.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan2.Namespace)
 		err = globalhelper.CreateInstallPlan(plan2)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -313,14 +318,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
 
-		By("Create Install Plan in Namespace: " + plan.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan.Namespace)
 		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
 		By("Define Install Plan")
 		plan2 := installplan.DefineInstallPlan("test-plan-2", invalidNamespace)
 
-		By("Create Install Plan in Namespace: " + plan2.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan2.Namespace)
 		err = globalhelper.CreateInstallPlan(plan2)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -352,7 +357,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
 
-		By("Create Install Plan in Namespace: " + plan.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan.Namespace)
 		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 
@@ -404,7 +409,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
 
-		By("Create Install Plan in Namespace: " + plan.Namespace)
+		By(CreateInstallPlanInNamespaceStr + plan.Namespace)
 		err = globalhelper.CreateInstallPlan(plan)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
 

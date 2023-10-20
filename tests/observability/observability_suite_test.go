@@ -28,7 +28,7 @@ func TestObservability(t *testing.T) {
 	RunSpecs(t, "CNFCert observability tests", reporterConfig)
 }
 
-var _ = BeforeSuite(func() {
+var _ = SynchronizedBeforeSuite(func() {
 
 	By(fmt.Sprintf("Create %s namespace", tsparams.TestNamespace))
 	err := globalhelper.CreateNamespace(tsparams.TestNamespace)
@@ -42,10 +42,10 @@ var _ = BeforeSuite(func() {
 		[]string{},
 		[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2})
 	Expect(err).ToNot(HaveOccurred())
-})
+}, func() {})
 
-var _ = AfterSuite(func() {
+var _ = SynchronizedAfterSuite(func() {
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestNamespace))
 	err := globalhelper.DeleteNamespaceAndWait(tsparams.TestNamespace, tsparams.NsResourcesDeleteTimeoutMins)
 	Expect(err).ToNot(HaveOccurred())
-})
+}, func() {})

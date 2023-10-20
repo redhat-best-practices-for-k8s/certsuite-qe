@@ -26,7 +26,7 @@ func TestAccessControl(t *testing.T) {
 	RunSpecs(t, "CNFCert access-control tests", reporterConfig)
 }
 
-var _ = BeforeSuite(func() {
+var _ = SynchronizedBeforeSuite(func() {
 	err := globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace")
-})
+}, func() {})

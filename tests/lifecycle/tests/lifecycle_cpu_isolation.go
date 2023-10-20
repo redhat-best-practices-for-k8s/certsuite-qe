@@ -14,6 +14,10 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
 )
 
+const (
+	DeletingRTC = "Deleting RTC: "
+)
+
 var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
@@ -62,7 +66,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
-			By("Deleting rtc " + rtc.Name)
+			By(DeletingRTC + rtc.Name)
 			err := globalhelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -103,7 +107,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
-			By("Deleting rtc " + rtc.Name)
+			By(DeletingRTC + rtc.Name)
 			err := globalhelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -145,7 +149,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
-			By("Deleting rtc " + rtc.Name)
+			By(DeletingRTC + rtc.Name)
 			err := globalhelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -194,7 +198,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
-			By("Deleting rtc " + rtc.Name)
+			By(DeletingRTC + rtc.Name)
 			err := globalhelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -235,7 +239,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
-			By("Deleting rtc " + rtc.Name)
+			By(DeletingRTC + rtc.Name)
 			err := globalhelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -314,7 +318,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
-			By("Deleting rtc " + rtc.Name)
+			By(DeletingRTC + rtc.Name)
 			err := globalhelper.DeleteRunTimeClass(rtc)
 			Expect(err).ToNot(HaveOccurred())
 		})

@@ -12,7 +12,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
-var _ = Describe("Affiliated-certification operator certification,", func() {
+var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo
@@ -45,7 +45,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.UncertifiedOperatorPrefixFalcon)
 
 		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixFalcon,
@@ -71,7 +71,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			tsparams.CertifiedOperatorFullFederatorai,
 			v1alpha1.ApprovalManual,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixFederatorai)
 
 		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullFederatorai,
@@ -100,7 +100,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 			tsparams.CertifiedOperatorFullInstana,
 			v1alpha1.ApprovalManual,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixInstana)
 
 		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
@@ -133,7 +133,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 					randomNamespace,
 					tsparams.OperatorLabel)
 			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-				"Error labeling operator "+tsparams.UncertifiedOperatorPrefixFalcon)
+				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixFalcon)
 
 			By("Start test")
 			err := globalhelper.LaunchTests(
@@ -160,7 +160,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixFederatorai)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixFederatorai)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -168,7 +168,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.UncertifiedOperatorPrefixFalcon)
+			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixFalcon)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -195,7 +195,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInstana)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixInstana)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -221,7 +221,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInstana)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixInstana)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -229,7 +229,7 @@ var _ = Describe("Affiliated-certification operator certification,", func() {
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixFederatorai)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixFederatorai)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

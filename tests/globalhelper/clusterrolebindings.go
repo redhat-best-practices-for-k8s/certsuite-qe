@@ -45,3 +45,21 @@ func deleteClusterRoleBinding(client typedrbacv1.RbacV1Interface, clusterRoleBin
 
 	return nil
 }
+
+func DeleteClusterRoleBindingByName(name string) error {
+	return deleteClusterRoleBindingByName(GetAPIClient().K8sClient.RbacV1(), name)
+}
+
+func deleteClusterRoleBindingByName(client typedrbacv1.RbacV1Interface, name string) error {
+	// Exit if the cluster role binding does not exist
+	_, err := client.ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
+	if k8serrors.IsNotFound(err) {
+		return nil
+	}
+
+	if err := client.ClusterRoleBindings().Delete(context.TODO(), name, metav1.DeleteOptions{}); err != nil {
+		return fmt.Errorf("failed to delete cluster role binding: %w", err)
+	}
+
+	return nil
+}

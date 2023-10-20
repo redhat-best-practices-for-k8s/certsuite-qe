@@ -52,6 +52,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestHelmVersion,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestHelmVersion+" test")
 
@@ -69,7 +70,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		}
 
 		By("Remove helm")
-		cmd := exec.Command("rm", "-rf", "/usr/local/bin/helm")
+		cmd := exec.Command("sudo", "rm", "-rf", "/usr/local/bin/helm")
 		err := cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm")
 
@@ -83,6 +84,10 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm v2")
 
 		DeferCleanup(func() {
+			By("Delete tiller from kube-system namespace")
+			err := globalhelper.DeleteDeployment("tiller-deploy", "kube-system")
+			Expect(err).ToNot(HaveOccurred(), "Error deleting tiller deployment")
+
 			By("Re-install helm v3")
 			cmd = exec.Command("/bin/bash", "-c",
 				"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+

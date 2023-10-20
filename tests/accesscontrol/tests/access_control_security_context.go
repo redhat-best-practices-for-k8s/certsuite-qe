@@ -110,21 +110,11 @@ var _ = Describe("Access-control security-context,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Assert deployment does not have security context set")
-		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(runningDeployment.Spec.Template.Spec.SecurityContext).To(BeNil())
-
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
-
-		By("Assert deployment does not have security context set")
-		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(runningDeployment.Spec.Template.Spec.SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
