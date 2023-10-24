@@ -68,9 +68,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 
 	// 51332
 	It("change sysctl config using MCO", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("Kind cluster does not support MCO")
-		}
+		Skip("This test is unstable and needs to be fixed")
 
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,

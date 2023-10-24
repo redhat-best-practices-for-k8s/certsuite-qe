@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
@@ -53,4 +54,40 @@ func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.No
 	}
 
 	return nil
+}
+
+func NodesHaveHugePagesEnabled(resourceName string) bool {
+	// check if the node has hugepages enabled
+	hugepagesEnabled := false
+	nodes, err := GetAPIClient().Nodes().List(context.TODO(), metav1.ListOptions{
+		LabelSelector: "node-role.kubernetes.io/worker-cnf",
+	})
+
+	if err != nil {
+		return false
+	}
+
+	for _, node := range nodes.Items {
+		if NodeHasHugePagesEnabled(&node, resourceName) {
+			hugepagesEnabled = true
+		}
+	}
+
+	return hugepagesEnabled
+}
+
+func NodeHasHugePagesEnabled(node *corev1.Node, resourceName string) bool {
+	// check if the node has hugepages enabled
+	hugepagesEnabled := false
+	resourceNameStr := "hugepages-" + resourceName
+
+	if node.Status.Capacity != nil {
+		if _, ok := node.Status.Capacity[corev1.ResourceName(resourceNameStr)]; ok {
+			if node.Status.Capacity[corev1.ResourceName(resourceNameStr)] != resource.MustParse("0") {
+				hugepagesEnabled = true
+			}
+		}
+	}
+
+	return hugepagesEnabled
 }
