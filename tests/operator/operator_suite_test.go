@@ -28,7 +28,7 @@ func TestOperator(t *testing.T) {
 	RunSpecs(t, "CNFCert operator tests", reporterConfig)
 }
 
-var _ = BeforeSuite(func() {
+var _ = SynchronizedBeforeSuite(func() {
 
 	if globalhelper.IsKindCluster() {
 		Skip("Skipping operator tests on kind cluster")
@@ -46,9 +46,9 @@ var _ = BeforeSuite(func() {
 		[]string{},
 		[]string{})
 	Expect(err).ToNot(HaveOccurred())
-})
+}, func() {})
 
-var _ = AfterSuite(func() {
+var _ = SynchronizedAfterSuite(func() {
 	if globalhelper.IsKindCluster() {
 		Skip("Skipping operator tests cleanup on kind cluster")
 	}
@@ -63,4 +63,4 @@ var _ = AfterSuite(func() {
 	By("Remove reports from reports directory")
 	err = globalhelper.RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
-})
+}, func() {})

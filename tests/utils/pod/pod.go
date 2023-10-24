@@ -10,6 +10,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	HugePages2Mi = "2Mi"
+	HugePages1Gi = "1Gi"
+)
+
 // DefinePod defines pod manifest based on given params.
 func DefinePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
 	return &corev1.Pod{
@@ -178,8 +183,8 @@ func RedefineWith2MiHugepages(pod *corev1.Pod, hugepages int) {
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
 
 	for i := range pod.Spec.Containers {
-		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
-		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages2Mi] = hugepagesVal
+		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages2Mi] = hugepagesVal
 	}
 }
 
@@ -187,8 +192,8 @@ func RedefineWith1GiHugepages(pod *corev1.Pod, hugepages int) {
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
 
 	for i := range pod.Spec.Containers {
-		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
-		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
+		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 	}
 }
 
@@ -196,8 +201,8 @@ func RedefineFirstContainerWith2MiHugepages(pod *corev1.Pod, hugepages int) erro
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Mi"))
 
 	if len(pod.Spec.Containers) > 0 {
-		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
-		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"] = hugepagesVal
+		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages2Mi] = hugepagesVal
+		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages2Mi] = hugepagesVal
 
 		return nil
 	}
@@ -209,8 +214,8 @@ func RedefineFirstContainerWith1GiHugepages(pod *corev1.Pod, hugepages int) erro
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
 
 	if len(pod.Spec.Containers) > 0 {
-		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
-		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
+		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 
 		return nil
 	}
@@ -222,8 +227,8 @@ func RedefineSecondContainerWith1GHugepages(pod *corev1.Pod, hugepages int) erro
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
 
 	if len(pod.Spec.Containers) > 1 {
-		pod.Spec.Containers[1].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
-		pod.Spec.Containers[1].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"] = hugepagesVal
+		pod.Spec.Containers[1].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
+		pod.Spec.Containers[1].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 
 		return nil
 	}

@@ -18,6 +18,10 @@ var (
 	crdNames = []string{}
 )
 
+const (
+	CreateCRDInClusterStr = "Create CRD in the cluster with suffix "
+)
+
 var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 	AfterEach(func() {
 		By("Removing all CRDs created by previous test case.")
@@ -31,7 +35,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52444
 	It("One CRD created with status subresource", func() {
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
 		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
@@ -51,13 +55,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52445
 	It("Two CRDs created, both with status subresource", func() {
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
 		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix2)
 		crd2 := tshelper.DefineCrdWithStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
 		err = tshelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
@@ -78,7 +82,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52446
 	It("One CRD created without status subresource [negative]", func() {
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrd", tsparams.CrdSuffix1)
 
 		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
@@ -98,13 +102,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52447
 	It("Two CRDs created, one with and the other without status subresource [negative]", func() {
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
 		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix2)
 		crd2 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
 		err = tshelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
@@ -125,13 +129,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52448
 	It("Two CRDs created, both without status subresource [negative]", func() {
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix1)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix1)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne", tsparams.CrdSuffix1)
 
 		err := tshelper.CreateAndWaitUntilCrdIsReady(crd1, tsparams.CrdDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create CRD in the cluster with suffix " + tsparams.CrdSuffix2)
+		By(CreateCRDInClusterStr + tsparams.CrdSuffix2)
 		crd2 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdTwo", tsparams.CrdSuffix2)
 
 		err = tshelper.CreateAndWaitUntilCrdIsReady(crd2, tsparams.CrdDeployTimeoutMins)
@@ -152,7 +156,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 
 	// 52449
 	It("One CRD deployed not having any of the configured suffixes [skip]", func() {
-		By("Create CRD in the cluster with suffix " + tsparams.NotConfiguredCrdSuffix)
+		By(CreateCRDInClusterStr + tsparams.NotConfiguredCrdSuffix)
 		crd1 := tshelper.DefineCrdWithoutStatusSubresource("TestCrdOne",
 			tsparams.NotConfiguredCrdSuffix)
 

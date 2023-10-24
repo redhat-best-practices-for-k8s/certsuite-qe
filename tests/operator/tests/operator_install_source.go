@@ -12,6 +12,12 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
+const (
+	ErrorDeployOperatorStr   = "Error deploying operator "
+	ErrorLabelingOperatorStr = "Error labeling operator "
+	ErrorRemovingLabelStr    = "Error removing label from operator "
+)
+
 var _ = Describe("Operator install-source,", Serial, func() {
 
 	var (
@@ -37,11 +43,12 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixCloudbees)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
 			tsparams.OperatorNamespace)
+		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
 			" is not ready")
 
@@ -62,7 +69,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixAnchore)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixAnchore,
@@ -87,7 +94,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixOpenvino)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
@@ -111,7 +118,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				info.OperatorPrefix,
 				info.Namespace,
 				info.Label)
-			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator "+info.OperatorPrefix)
+			Expect(err).ToNot(HaveOccurred(), ErrorRemovingLabelStr+info.OperatorPrefix)
 		}
 	})
 
@@ -124,7 +131,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -148,7 +155,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixOpenvino)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
 
 		By("Delete operator's subscription")
 		err := globalhelper.DeleteSubscription(tsparams.OperatorNamespace,
@@ -177,7 +184,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -185,7 +192,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixAnchore)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixAnchore)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -209,7 +216,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixAnchore)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixAnchore)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -217,7 +224,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixOpenvino)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
 
 		By("Delete operator's subscription")
 		err := globalhelper.DeleteSubscription(tsparams.OperatorNamespace,

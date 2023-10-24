@@ -15,6 +15,11 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
+const (
+	ErrorDeployOperatorStr   = "Error deploying operator "
+	ErrorLabelingOperatorStr = "Error labeling operator "
+)
+
 var _ = Describe("Affiliated-certification invalid operator certification,", Serial, func() {
 
 	var (
@@ -36,7 +41,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.CertifiedOperatorFullInstana,
 			v1alpha1.ApprovalManual,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixInstana)
 
 		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
@@ -44,6 +49,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			tsparams.TestCertificationNameSpace)
+		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInstana+
 			" is not ready")
 
@@ -84,7 +90,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.UncertifiedOperatorFullSriov,
 			v1alpha1.ApprovalManual,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.UncertifiedOperatorPrefixSriov)
 
 		approveInstallPlanWhenReady(tsparams.UncertifiedOperatorFullSriov,
@@ -142,7 +148,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.UncertifiedOperatorPrefixSriov)
+			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixSriov)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -171,7 +177,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.UncertifiedOperatorPrefixSriov)
+			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixSriov)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -179,7 +185,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.CertifiedOperatorPrefixInstana)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixInstana)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

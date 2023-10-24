@@ -88,3 +88,19 @@ func getRunningDeployment(client typedappsv1.AppsV1Interface, namespace, deploym
 
 	return runningDeployment, nil
 }
+
+func DeleteDeployment(name, namespace string) error {
+	return deleteDeployment(GetAPIClient().K8sClient.AppsV1(), name, namespace)
+}
+
+func deleteDeployment(client typedappsv1.AppsV1Interface, name, namespace string) error {
+	err := client.Deployments(namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+
+	if k8serrors.IsNotFound(err) {
+		glog.V(5).Info(fmt.Sprintf("deployment %s is not found", name))
+
+		return nil
+	}
+
+	return err
+}

@@ -11,7 +11,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
 )
 
-var _ = Describe("Affiliated-certification container-is-certified-digest,", func() {
+var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string

@@ -38,7 +38,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixCloudbees)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
@@ -64,7 +64,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixQuay)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixQuay,
@@ -90,7 +90,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator "+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixKiali)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixKiali,
@@ -127,7 +127,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixQuay)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixQuay)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -151,7 +151,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -175,7 +175,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixKiali)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixKiali)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -199,7 +199,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixQuay)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixQuay)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -207,7 +207,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -231,7 +231,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixKiali)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixKiali)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -239,7 +239,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			"Error labeling operator "+tsparams.OperatorPrefixQuay)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixQuay)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

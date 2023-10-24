@@ -33,7 +33,7 @@ func TestNetworking(t *testing.T) {
 	RunSpecs(t, "CNFCert networking tests", reporterConfig)
 }
 
-var _ = BeforeSuite(func() {
+var _ = SynchronizedBeforeSuite(func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
@@ -59,4 +59,4 @@ var _ = BeforeSuite(func() {
 	By("Ensure all nodes are labeled with 'worker-cnf' label")
 	err = nodes.EnsureAllNodesAreLabeled(globalhelper.GetAPIClient().Nodes(), configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
-})
+}, func() {})
