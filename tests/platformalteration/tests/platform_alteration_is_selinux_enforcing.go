@@ -82,6 +82,8 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 			Skip("Kind cluster does not support SELinux")
 		}
 
+		Skip("Skipping. Remove this skip when we can detect if SELinux is enabled on the node")
+
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)

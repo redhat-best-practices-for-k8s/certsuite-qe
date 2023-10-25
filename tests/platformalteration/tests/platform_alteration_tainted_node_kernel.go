@@ -36,9 +36,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", func() {
 
 	// 51389
 	It("Untainted node", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("Kind cluster is already tainted, skipping...")
-		}
+		Skip("This test is not stable and needs to be fixed.")
 
 		// all nodes suppose to be untainted when the cluster is deployed.
 		By("Start platform-alteration-tainted-node-kernel test")

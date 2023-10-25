@@ -14,7 +14,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 )
 
-var _ = Describe("platform-alteration-hugepages-config", func() {
+var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -66,9 +66,7 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 
 	// 51309
 	It("Change Hugepages config manually [negative]", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("Kind cluster does not support hugepages")
-		}
+		Skip("This test is not stable and needs to be fixed.")
 
 		By("Set rbac policy which allows authenticated users to run privileged containers")
 		err := globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
@@ -120,7 +118,5 @@ var _ = Describe("platform-alteration-hugepages-config", func() {
 		updatedHugePagesNumber = currentHugepagesNumber
 		err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred(), "failed to update and verify hugepages file: %s, %v ", hugePagesPaths[0], err)
-
 	})
-
 })

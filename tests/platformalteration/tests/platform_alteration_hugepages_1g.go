@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("platform-alteration-hugepages-1g-only", func() {
+var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -32,6 +32,11 @@ var _ = Describe("platform-alteration-hugepages-1g-only", func() {
 
 		if globalhelper.IsKindCluster() {
 			Skip("Hugepages are not supported in Kind clusters")
+		}
+
+		By("Check if nodes have hugepages enabled")
+		if !globalhelper.NodesHaveHugePagesEnabled("1Gi") {
+			Skip("Hugepages configuration is not enabled on the cluster")
 		}
 	})
 
