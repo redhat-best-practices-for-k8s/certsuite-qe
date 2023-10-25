@@ -59,8 +59,4 @@ var _ = SynchronizedAfterSuite(func() {
 		tsparams.Timeout,
 	)
 	Expect(err).ToNot(HaveOccurred())
-
-	By("Remove reports from reports directory")
-	err = globalhelper.RemoveContentsFromReportDir()
-	Expect(err).ToNot(HaveOccurred())
 }, func() {})
