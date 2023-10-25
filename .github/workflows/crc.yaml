@@ -1,0 +1,155 @@
+# https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-macos-installer.pkg
+
+name: CRC Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+env:
+  REGISTRY: quay.io
+  REGISTRY_LOCAL: localhost
+  TNF_IMAGE_NAME: testnetworkfunction/cnf-certification-test
+  TNF_IMAGE_TAG: unstable
+  OCT_IMAGE_NAME: testnetworkfunction/oct
+  OCT_IMAGE_TAG: latest
+  TNF_CONTAINER_CLIENT: docker
+  TNF_NON_INTRUSIVE_ONLY: false
+  TNF_ALLOW_PREFLIGHT_INSECURE: false
+  TNF_DISABLE_CONFIG_AUTODISCOVER: false
+  TNF_CONFIG_DIR: /tmp/tnf/config
+  TNF_OUTPUT_DIR: /tmp/tnf/output
+  TNF_SRC_URL: 'https://github.com/${{ github.repository }}'
+  TESTING_CMD_PARAMS: '-n host -i ${REGISTRY_LOCAL}/${TNF_IMAGE_NAME}:${TNF_IMAGE_TAG} -t ${TNF_CONFIG_DIR} -o ${TNF_OUTPUT_DIR}'
+  TNF_SMOKE_TESTS_LOG_LEVEL: trace
+  ON_DEMAND_DEBUG_PODS: false
+  TERM: xterm-color
+  INSTALLER_PKG_URL: https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-macos-installer.pkg
+  TEST_TNF_IMAGE_NAME: quay.io/testnetworkfunction/cnf-certification-test
+  TEST_TNF_IMAGE_TAG: unstable
+
+jobs:
+  smoke-tests:
+    name: Run Smoke Tests Against OpenShift Local
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix: 
+        suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
+    env:
+      SHELL: /bin/bash
+      KUBECONFIG: '/Users/runner/.crc/machines/crc/kubeconfig'
+      PFLT_DOCKERCONFIG: '/Users/runner/.docker/config'
+      OCP_CLUSTER_OVERRIDE: 'true'
+
+    steps:
+      - name: Write temporary docker file
+        run: |
+          mkdir -p /Users/runner/.docker
+          touch ${PFLT_DOCKERCONFIG}
+          echo '{ "auths": {} }' >> ${PFLT_DOCKERCONFIG}
+
+      - name: Set up Go 1.21.3
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21.3
+
+      - name: Install brew binaries
+        run: |
+          brew update
+          brew install coreutils
+          brew install operator-sdk --ignore-dependencies
+          brew install bash
+          brew install openshift-cli
+          brew install kubernetes-cli
+          brew install gnu-sed
+          brew install watch
+          brew install helm
+
+      - name: Adjust PATH for gnu-sed
+        run: |
+          echo "/usr/local/opt/gnu-sed/libexec/gnubin" >> $GITHUB_PATH
+
+      - name: Disable default go problem matcher
+        run: echo "::remove-matcher owner=go::"
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: check if CRC_PULL_SECRET exists
+        env: 
+          super_secret: ${{ secrets.CRC_PULL_SECRET }}
+        if: ${{ env.super_secret == '' }}
+        run: 'echo the secret \"CRC_PULL_SECRET\" has not been made; echo please go to \"settings \> secrets \> actions\" to create it'
+
+      - name: Write the pull secret to json file
+        run: |
+          echo $CRC_PULL_SECRET > temp-ps.json
+          cat temp-ps.json
+        env:
+          CRC_PULL_SECRET: ${{ secrets.CRC_PULL_SECRET }}
+        shell: bash
+
+      # Create a OpenShift Local Cluster for testing
+      - name: Curl the CRC binary
+        run: |
+          wget -O crc-macos-installer.pkg ${INSTALLER_PKG_URL}
+
+      - name: Install CRC
+        run: |
+          sudo installer -pkg crc-macos-installer.pkg -target /
+
+      - name: Set Microshift Preset
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: crc config set preset microshift
+
+      # - name: Set Memory
+      #   uses: nick-fields/retry@v2
+      #   with:
+      #     timeout_minutes: 5
+      #     max_attempts: 3
+      #     command: crc config set memory 14000
+
+      - name: Set Telemetry
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: crc config set consent-telemetry yes
+
+      - name: Run CRC Setup
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          command: crc setup
+
+      - name: Run CRC Start
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          command: crc start --pull-secret-file temp-ps.json --log-level debug
+          on_retry_command: crc delete -f
+
+      - name: Run oc version
+        run: |
+          eval $(crc oc-env)
+          oc version
+
+      - name: Clone the QE repository
+        uses: actions/checkout@v4
+        with:
+          repository: test-network-function/cnf-certification-test
+          path: cnf-certification-test
+
+      # Setup is complete.  Time to run the QE tests.
+      - name: Run the tests
+        run: FEATURES=${{matrix.suite}} TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test TNF_IMAGE=${{env.TEST_TNF_IMAGE_NAME}} TNF_IMAGE_TAG=${{env.TEST_TNF_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true make test-features
