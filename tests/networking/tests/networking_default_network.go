@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -18,7 +16,7 @@ import (
 var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+		glog.Fatalf("can not load config file: %w", err)
 	}
 
 	var randomNamespace string

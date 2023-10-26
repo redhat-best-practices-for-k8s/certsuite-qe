@@ -44,7 +44,7 @@ func GetAPIClient() *testclient.ClientSet {
 	apiclient, err = config.DefineClients()
 
 	if err != nil {
-		glog.Fatal(fmt.Sprintf("can not load api client. Please check KUBECONFIG env var - %s", err))
+		glog.Fatalf("can not load api client. Please check KUBECONFIG env var - %s", err)
 	}
 
 	return apiclient
@@ -59,7 +59,7 @@ func GetConfiguration() *config.Config {
 	conf, err = config.NewConfig()
 
 	if err != nil {
-		glog.Fatal(fmt.Sprintf("can not load configuration - %s", err))
+		glog.Fatalf("can not load configuration - %s", err)
 	}
 
 	return conf

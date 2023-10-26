@@ -4,7 +4,6 @@ package lifecycle
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"runtime"
 	"testing"
@@ -35,7 +34,7 @@ func TestLifecycle(t *testing.T) {
 var _ = SynchronizedBeforeSuite(func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+		glog.Fatalf("can not load config file: %w", err)
 	}
 
 	err = tshelper.WaitUntilClusterIsStable()

@@ -4,7 +4,6 @@ package networking
 
 import (
 	"flag"
-	"fmt"
 	"runtime"
 	"testing"
 	"time"
@@ -37,7 +36,7 @@ var _ = SynchronizedBeforeSuite(func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+		glog.Fatalf("can not load config file: %w", err)
 	}
 
 	By("Validate that cluster is Schedulable")

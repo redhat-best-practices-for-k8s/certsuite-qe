@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -24,7 +22,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatal(fmt.Errorf("can not load config file: %w", err))
+		glog.Fatalf("can not load config file: %w", err)
 	}
 
 	BeforeEach(func() {
