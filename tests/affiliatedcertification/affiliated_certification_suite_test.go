@@ -36,17 +36,20 @@ func TestAffiliatedCertification(t *testing.T) {
 var isCloudCasaAlreadyLabeled bool
 
 var _ = SynchronizedBeforeSuite(func() {
-	// Always install Helm v3 right before running the suite
-	By("Install helm v3")
-	cmd := exec.Command("/bin/bash", "-c",
-		"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
-			" && chmod +x get_helm.sh"+
-			" && ./get_helm.sh")
-	err := cmd.Run()
-	Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
+
+	if !globalhelper.IsKindCluster() {
+		// Always install Helm v3 right before running the suite
+		By("Install helm v3")
+		cmd := exec.Command("/bin/bash", "-c",
+			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
+				" && chmod +x get_helm.sh"+
+				" && ./get_helm.sh")
+		err := cmd.Run()
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
+	}
 
 	By("Preemptively delete tiller-deploy pod if its installed")
-	err = globalhelper.DeleteDeployment("tiller-deploy", "kube-system")
+	err := globalhelper.DeleteDeployment("tiller-deploy", "kube-system")
 	Expect(err).ToNot(HaveOccurred(), "Error deleting tiller deployment")
 
 	By("Preemptively delete clusterrole and clusterrolebinding")
