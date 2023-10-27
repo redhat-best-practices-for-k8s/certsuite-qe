@@ -1,9 +1,12 @@
 package globalhelper
 
 import (
+	"errors"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
@@ -133,5 +136,96 @@ func TestIsDaemonsetReady(t *testing.T) {
 				t.Errorf("isDaemonsetReady() = %v, want %v", got, testCase.expectedOutput)
 			}
 		})
+	}
+}
+
+func TestGetDaemonSetPullPolicy(t *testing.T) {
+	generateDaemonset := func(imagePullPolicy corev1.PullPolicy) *appsv1.DaemonSet {
+		return &appsv1.DaemonSet{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "test-daemonset",
+				Namespace: "test-namespace",
+			},
+			Spec: appsv1.DaemonSetSpec{
+				Template: corev1.PodTemplateSpec{
+					Spec: corev1.PodSpec{
+						Containers: []corev1.Container{
+							{
+								ImagePullPolicy: imagePullPolicy,
+							},
+						},
+					},
+				},
+			},
+		}
+	}
+
+	testCases := []struct {
+		pullPolicy corev1.PullPolicy
+	}{
+		{
+			pullPolicy: corev1.PullAlways,
+		},
+		{
+			pullPolicy: corev1.PullIfNotPresent,
+		},
+	}
+
+	for _, testCase := range testCases {
+		// Create fake daemonset
+		var runtimeObjects []runtime.Object
+
+		testDaemonset := generateDaemonset(testCase.pullPolicy)
+		runtimeObjects = append(runtimeObjects, testDaemonset)
+		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+
+		pullPolicy, err := getDaemonSetPullPolicy(testDaemonset, client.AppsV1())
+		assert.Equal(t, testCase.pullPolicy, pullPolicy)
+		assert.Nil(t, err)
+	}
+}
+
+func TestGetRunningDaemonset(t *testing.T) {
+	generateDaemonset := func() *appsv1.DaemonSet {
+		return &appsv1.DaemonSet{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "test-daemonset",
+				Namespace: "test-namespace",
+			},
+		}
+	}
+
+	testCases := []struct {
+		alreadyExists bool
+		expectedError error
+	}{
+		{
+			alreadyExists: true,
+			expectedError: nil,
+		},
+		{
+			alreadyExists: false,
+			expectedError: errors.New("daemonset not found"),
+		},
+	}
+
+	for _, testCase := range testCases {
+		// Create fake daemonset
+		var runtimeObjects []runtime.Object
+
+		if testCase.alreadyExists {
+			testDaemonset := generateDaemonset()
+			runtimeObjects = append(runtimeObjects, testDaemonset)
+		}
+
+		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		daemonset, err := getRunningDaemonset(generateDaemonset(), client.AppsV1())
+
+		if testCase.expectedError != nil {
+			assert.NotNil(t, err)
+		} else {
+			assert.Nil(t, err)
+			assert.Equal(t, "test-daemonset", daemonset.Name)
+		}
 	}
 }
