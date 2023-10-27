@@ -292,6 +292,6 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
 
 	err = CopyFiles(srcClaim, dstClaim)
 	if err != nil {
-		glog.Error(fmt.Sprintf("failed to copy %s to %s", srcClaim, dstClaim))
+		glog.Fatalf("failed to copy %s to %s", srcClaim, dstClaim)
 	}
 }

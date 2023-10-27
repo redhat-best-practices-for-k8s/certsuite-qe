@@ -26,8 +26,8 @@ func CreateAndWaitUntilNetworkPolicyIsReady(networkPolicy *networkingv1.NetworkP
 	Eventually(func() bool {
 		status, err := doesNetworkPolicyExist(policy.Namespace, policy.Name)
 		if err != nil {
-			glog.Fatal(fmt.Sprintf(
-				"Network Policy %s is not ready.", policy.Name))
+			glog.Errorf(
+				"Network Policy %s is not ready.", policy.Name)
 
 			return false
 		}

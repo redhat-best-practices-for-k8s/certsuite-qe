@@ -34,8 +34,8 @@ func createAndWaitUntilDaemonSetIsReady(client appsv1Typed.AppsV1Interface, daem
 	Eventually(func() bool {
 		status, err := isDaemonSetReady(client, runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
-			glog.Fatal(fmt.Sprintf(
-				"daemonset %s is not ready, retry in 5 seconds", runningDaemonSet.Name))
+			glog.Errorf(
+				"daemonset %s is not ready, retry in 5 seconds", runningDaemonSet.Name)
 
 			return false
 		}
@@ -76,7 +76,7 @@ func getDaemonSetPullPolicy(daemonset *appsv1.DaemonSet, client appsv1Typed.Apps
 		metav1.GetOptions{},
 	)
 	if err != nil {
-		glog.Fatal(fmt.Sprintf("failed to get daemonset %s: %v", daemonset.Name, err))
+		glog.Errorf("failed to get daemonset %s: %v", daemonset.Name, err)
 
 		return "", err
 	}
@@ -95,7 +95,7 @@ func getRunningDaemonset(daemonset *appsv1.DaemonSet, client appsv1Typed.AppsV1I
 		metav1.GetOptions{},
 	)
 	if err != nil {
-		glog.Fatal(fmt.Sprintf("failed to get daemonset %s: %v", daemonset.Name, err))
+		glog.Errorf("failed to get daemonset %s: %v", daemonset.Name, err)
 
 		return nil, err
 	}
