@@ -164,8 +164,8 @@ func RedefineWithPodAffinity(put *corev1.Pod, label map[string]string) {
 		}}
 }
 
-// RedefineWithPodantiAffinity redefines pod with podAntiAffinity spec.
-func RedefineWithPodantiAffinity(put *corev1.Pod, label map[string]string) {
+// RedefineWithPodAntiAffinity redefines pod with podAntiAffinity spec.
+func RedefineWithPodAntiAffinity(put *corev1.Pod, label map[string]string) {
 	put.Spec.Affinity = &corev1.Affinity{
 		PodAntiAffinity: &corev1.PodAntiAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution: []corev1.PodAffinityTerm{
