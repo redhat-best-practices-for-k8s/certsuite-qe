@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
 
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -91,11 +92,6 @@ func namespaceExists(namespace string, client kubernetes.Interface) (bool, error
 }
 
 // CleanPods deletes all pods in namespace.
-func CleanPods(namespace string) error {
-	return cleanPods(namespace, GetAPIClient().K8sClient)
-}
-
-// CleanPods deletes all pods in namespace.
 func cleanPods(namespace string, client kubernetes.Interface) error {
 	nsExist, err := namespaceExists(namespace, client)
 	if err != nil {
@@ -106,20 +102,22 @@ func cleanPods(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.CoreV1().Pods(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: ptr.To[int64](0),
-	}, metav1.ListOptions{})
-
+	// Delete all pods in namespace
+	pods, err := client.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete pods %w", err)
+		return err
+	}
+
+	for _, p := range pods.Items {
+		err = client.CoreV1().Pods(namespace).Delete(context.TODO(), p.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete pod %w", err)
+		}
 	}
 
 	return nil
-}
-
-// CleanDeployments deletes all deployments in namespace.
-func CleanDeployments(namespace string) error {
-	return cleanDeployments(namespace, GetAPIClient().K8sClient)
 }
 
 func cleanDeployments(namespace string, client kubernetes.Interface) error {
@@ -132,19 +130,21 @@ func cleanDeployments(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.AppsV1().Deployments(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: ptr.To[int64](0),
-	}, metav1.ListOptions{})
-
+	deployments, err := client.AppsV1().Deployments(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete deployment %w", err)
+		return err
+	}
+
+	for _, d := range deployments.Items {
+		err = client.AppsV1().Deployments(namespace).Delete(context.TODO(), d.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete deployment %w", err)
+		}
 	}
 
 	return nil
-}
-
-func CleanDaemonSets(namespace string) error {
-	return cleanDaemonSets(namespace, GetAPIClient().K8sClient)
 }
 
 // CleanDaemonSets deletes all daemonsets in namespace.
@@ -158,21 +158,21 @@ func cleanDaemonSets(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.AppsV1().DaemonSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: ptr.To[int64](0),
-	}, metav1.ListOptions{})
-
+	daemoneSets, err := client.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete daemonSet %w", err)
+		return err
+	}
+
+	for _, ds := range daemoneSets.Items {
+		err = client.AppsV1().DaemonSets(namespace).Delete(context.TODO(), ds.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete daemonset %w", err)
+		}
 	}
 
 	return nil
-}
-
-// CleanNetworkAttachmentDefinition deletes all network attachment definitions in namespace.
-func CleanNetworkAttachmentDefinition(namespace string) error {
-	return cleanNetworkAttachmentDefinition(namespace,
-		GetAPIClient().K8sClient, GetAPIClient().Client)
 }
 
 func cleanNetworkAttachmentDefinition(namespace string, client kubernetes.Interface, rtc runtimeclient.Client) error {
@@ -206,11 +206,6 @@ func cleanNetworkAttachmentDefinition(namespace string, client kubernetes.Interf
 	return nil
 }
 
-// CleanReplicaSets deletes all ReplicaSets in namespace.
-func CleanReplicaSets(namespace string) error {
-	return cleanReplicaSets(namespace, GetAPIClient().K8sClient)
-}
-
 func cleanReplicaSets(namespace string, client kubernetes.Interface) error {
 	nsExist, err := namespaceExists(namespace, client)
 	if err != nil {
@@ -221,20 +216,21 @@ func cleanReplicaSets(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.AppsV1().ReplicaSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: ptr.To[int64](0),
-	}, metav1.ListOptions{})
-
+	replicaSets, err := client.AppsV1().ReplicaSets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete ReplicaSet %w", err)
+		return err
+	}
+
+	for _, rs := range replicaSets.Items {
+		err = client.AppsV1().ReplicaSets(namespace).Delete(context.TODO(), rs.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete replicaSet %w", err)
+		}
 	}
 
 	return nil
-}
-
-// CleanStatefulSets deletes all StatefulSets in namespace.
-func CleanStatefulSets(namespace string) error {
-	return cleanStatefulSets(namespace, GetAPIClient().K8sClient)
 }
 
 func cleanStatefulSets(namespace string, client kubernetes.Interface) error {
@@ -247,20 +243,21 @@ func cleanStatefulSets(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.AppsV1().StatefulSets(namespace).DeleteCollection(context.TODO(), metav1.DeleteOptions{
-		GracePeriodSeconds: ptr.To[int64](0),
-	}, metav1.ListOptions{})
-
+	statefulSets, err := client.AppsV1().StatefulSets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete StatefulSet %w", err)
+		return err
+	}
+
+	for _, ss := range statefulSets.Items {
+		err = client.AppsV1().StatefulSets(namespace).Delete(context.TODO(), ss.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete statefulSet %w", err)
+		}
 	}
 
 	return nil
-}
-
-// CleanServices deletes all service in namespace.
-func CleanServices(namespace string) error {
-	return cleanServices(namespace, GetAPIClient().K8sClient)
 }
 
 func cleanServices(namespace string, client kubernetes.Interface) error {
@@ -290,11 +287,6 @@ func cleanServices(namespace string, client kubernetes.Interface) error {
 	return nil
 }
 
-// CleanSubscriptions deletes all subscriptions in namespace.
-func CleanSubscriptions(namespace string) error {
-	return cleanSubscriptions(namespace, GetAPIClient().K8sClient, GetAPIClient().OperatorsV1alpha1Interface)
-}
-
 func cleanSubscriptions(namespace string, k8sclient kubernetes.Interface, subclient v1alpha1typed.OperatorsV1alpha1Interface) error {
 	nsExist, err := namespaceExists(namespace, k8sclient)
 	if err != nil {
@@ -316,11 +308,6 @@ func cleanSubscriptions(namespace string, k8sclient kubernetes.Interface, subcli
 	}
 
 	return nil
-}
-
-// CleanCSVs deletes all CSVs in namespace.
-func CleanCSVs(namespace string) error {
-	return cleanCSVs(namespace, GetAPIClient().K8sClient, GetAPIClient().OperatorsV1alpha1Interface)
 }
 
 func cleanCSVs(namespace string, k8sclient kubernetes.Interface, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
@@ -346,10 +333,6 @@ func cleanCSVs(namespace string, k8sclient kubernetes.Interface, opclient v1alph
 	return nil
 }
 
-func CleanInstallPlans(namespace string) error {
-	return cleanInstallPlans(namespace, GetAPIClient().K8sClient, GetAPIClient().OperatorsV1alpha1Interface)
-}
-
 func cleanInstallPlans(namespace string, k8sclient kubernetes.Interface, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
 	nsExist, err := namespaceExists(namespace, k8sclient)
 	if err != nil {
@@ -371,11 +354,6 @@ func cleanInstallPlans(namespace string, k8sclient kubernetes.Interface, opclien
 	}
 
 	return nil
-}
-
-// CleanPVCs deletes all persistent volume claims in namespace.
-func CleanPVCs(namespace string) error {
-	return cleanPVCs(namespace, GetAPIClient().K8sClient)
 }
 
 func cleanPVCs(namespace string, client kubernetes.Interface) error {
@@ -401,12 +379,7 @@ func cleanPVCs(namespace string, client kubernetes.Interface) error {
 	return nil
 }
 
-// CleanPodDistruptionBudget deletes all pod disruption budget in namespace.
-func CleanPodDistruptionBudget(namespace string) error {
-	return cleanPodDistruptionBudget(namespace, GetAPIClient().K8sClient)
-}
-
-func cleanPodDistruptionBudget(namespace string, client kubernetes.Interface) error {
+func cleanPodDisruptionBudget(namespace string, client kubernetes.Interface) error {
 	nsExist, err := namespaceExists(namespace, client)
 	if err != nil {
 		return err
@@ -429,11 +402,6 @@ func cleanPodDistruptionBudget(namespace string, client kubernetes.Interface) er
 	return nil
 }
 
-// CleanResourceQuotas deletes all resource quotas in namespace.
-func CleanResourceQuotas(namespace string) error {
-	return cleanResourceQuotas(namespace, GetAPIClient().K8sClient)
-}
-
 func cleanResourceQuotas(namespace string, client kubernetes.Interface) error {
 	nsExist, err := namespaceExists(namespace, client)
 	if err != nil {
@@ -444,22 +412,21 @@ func cleanResourceQuotas(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.CoreV1().ResourceQuotas(namespace).DeleteCollection(context.TODO(),
-		metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		},
-		metav1.ListOptions{})
-
+	rqs, err := client.CoreV1().ResourceQuotas(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete resource quotas %w", err)
+		return err
+	}
+
+	for _, rq := range rqs.Items {
+		err = client.CoreV1().ResourceQuotas(namespace).Delete(context.TODO(), rq.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete resource quota %w", err)
+		}
 	}
 
 	return nil
-}
-
-// CleanNetworkPolicies deletes all network policies in namespace.
-func CleanNetworkPolicies(namespace string) error {
-	return cleanNetworkPolicies(namespace, GetAPIClient().K8sClient)
 }
 
 func cleanNetworkPolicies(namespace string, client kubernetes.Interface) error {
@@ -472,93 +439,103 @@ func cleanNetworkPolicies(namespace string, client kubernetes.Interface) error {
 		return nil
 	}
 
-	err = client.NetworkingV1().NetworkPolicies(namespace).DeleteCollection(context.TODO(),
-		metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		},
-		metav1.ListOptions{})
-
+	nps, err := client.NetworkingV1().NetworkPolicies(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to delete network policies %w", err)
+		return err
+	}
+
+	for _, np := range nps.Items {
+		err = client.NetworkingV1().NetworkPolicies(namespace).Delete(context.TODO(), np.Name, metav1.DeleteOptions{
+			GracePeriodSeconds: ptr.To[int64](0),
+		})
+		if err != nil {
+			return fmt.Errorf("failed to delete network policy %w", err)
+		}
 	}
 
 	return nil
 }
 
-// Clean cleans all dangling objects from the given namespace.
 func CleanNamespace(namespace string) error {
-	clientSet := GetAPIClient()
+	return cleanNamespace(namespace, GetAPIClient())
+}
+
+// Clean cleans all dangling objects from the given namespace.
+func cleanNamespace(namespace string, clientSet *client.ClientSet) error {
 	// check if the namespace exists first
-	if _, err := clientSet.Namespaces().Get(context.Background(), namespace, metav1.GetOptions{}); err != nil {
-		if k8serrors.IsNotFound(err) {
-			return nil
-		}
-	}
-
-	err := CleanDeployments(namespace)
+	exists, err := namespaceExists(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanDaemonSets(namespace)
+	if !exists {
+		return nil
+	}
+
+	err = cleanDeployments(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanPods(namespace)
+	err = cleanDaemonSets(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanReplicaSets(namespace)
+	err = cleanPods(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanStatefulSets(namespace)
+	err = cleanReplicaSets(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanNetworkAttachmentDefinition(namespace)
+	err = cleanStatefulSets(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanServices(namespace)
+	err = cleanNetworkAttachmentDefinition(namespace, clientSet.K8sClient, clientSet.Client)
 	if err != nil {
 		return err
 	}
 
-	err = CleanSubscriptions(namespace)
+	err = cleanServices(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanCSVs(namespace)
+	err = cleanSubscriptions(namespace, clientSet.K8sClient, clientSet.OperatorsV1alpha1Interface)
 	if err != nil {
 		return err
 	}
 
-	err = CleanPVCs(namespace)
+	err = cleanCSVs(namespace, clientSet.K8sClient, clientSet.OperatorsV1alpha1Interface)
 	if err != nil {
 		return err
 	}
 
-	err = CleanPodDistruptionBudget(namespace)
+	err = cleanPVCs(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanResourceQuotas(namespace)
+	err = cleanPodDisruptionBudget(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	err = CleanNetworkPolicies(namespace)
+	err = cleanResourceQuotas(namespace, clientSet.K8sClient)
 	if err != nil {
 		return err
 	}
 
-	return CleanInstallPlans(namespace)
+	err = cleanNetworkPolicies(namespace, clientSet.K8sClient)
+	if err != nil {
+		return err
+	}
+
+	return cleanInstallPlans(namespace, clientSet.K8sClient, clientSet.OperatorsV1alpha1Interface)
 }
