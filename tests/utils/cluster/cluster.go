@@ -27,6 +27,17 @@ func IsClusterStable(client corev1Typed.NodeInterface) (bool, error) {
 			if err != nil {
 				return false, err
 			}
+
+			updatedNode, err := client.Get(context.TODO(), node.Name, metav1.GetOptions{})
+			if err != nil {
+				return false, err
+			}
+
+			if updatedNode.Spec.Unschedulable {
+				return false, nil
+			}
+
+			glog.V(5).Info(fmt.Sprintf("node %s is in schedulable state", node.Name))
 		}
 	}
 

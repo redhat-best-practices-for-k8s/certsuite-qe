@@ -2,23 +2,15 @@ package nodes
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
-
-type resourceSpecs struct {
-	Operation string `json:"op"`
-	Path      string `json:"path"`
-	Value     bool   `json:"value"`
-}
 
 const (
 	controlPlaneTaintKey = "node-role.kubernetes.io/control-plane"
@@ -80,21 +72,16 @@ func UnCordon(client corev1Typed.NodeInterface, nodeName string) error {
 
 // setUnSchedulableValue cordones/uncordons a node by a given node name.
 func setUnSchedulableValue(client corev1Typed.NodeInterface, nodeName string, unSchedulable bool) error {
-	cordonPatchBytes, err := json.Marshal(
-		[]resourceSpecs{{
-			Operation: "replace",
-			Path:      "/spec/unschedulable",
-			Value:     unSchedulable,
-		}})
-
+	node, err := client.Get(context.TODO(), nodeName, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
-	_, err = client.Patch(context.TODO(), nodeName, types.JSONPatchType,
-		cordonPatchBytes, metav1.PatchOptions{})
+	node.Spec.Unschedulable = unSchedulable
+	_, err = client.Update(context.TODO(), node, metav1.UpdateOptions{})
+
 	if err != nil {
-		return fmt.Errorf("failed to patch node unschedulable value: %w", err)
+		return fmt.Errorf("failed to update node %s - error: %w", node.Name, err)
 	}
 
 	return nil
