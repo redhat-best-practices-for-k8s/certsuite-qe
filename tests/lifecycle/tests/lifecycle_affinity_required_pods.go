@@ -120,7 +120,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 		globalhelper.AppendLabelsToPod(put, tsparams.TestTargetLabels)
 		globalhelper.AppendLabelsToPod(put, tsparams.AffinityRequiredPodLabels)
-		pod.RedefineWithPodantiAffinity(put, tsparams.TestTargetLabels)
+		pod.RedefineWithPodAntiAffinity(put, tsparams.TestTargetLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
