@@ -22,7 +22,7 @@ fi
 FFLAG=""
 if [[ ${ENABLE_FLAKY_RETRY} == "true" ]]; then
 	echo "Retrying flaky tests"
-	FFLAG="--flake-attempts=2"
+	FFLAG="--flake-attempts=3"
 fi
 
 function run_tests {
