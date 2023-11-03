@@ -10,7 +10,7 @@ require (
 	github.com/onsi/gomega v1.29.0
 	github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
 	github.com/openshift/machine-config-operator v0.0.1-0.20231003014108-282f0be35db2
-	github.com/operator-framework/api v0.18.0
+	github.com/operator-framework/api v0.19.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
