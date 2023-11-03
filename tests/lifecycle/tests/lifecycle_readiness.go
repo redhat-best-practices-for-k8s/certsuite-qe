@@ -155,6 +155,11 @@ var _ = Describe("lifecycle-readiness", func() {
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert daemonSet has no readiness probe")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].ReadinessProbe).To(BeNil())
+
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(tsparams.TnfReadinessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
