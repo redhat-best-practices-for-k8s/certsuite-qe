@@ -87,12 +87,7 @@ func setUnSchedulableValue(client corev1Typed.NodeInterface, nodeName string, un
 	return nil
 }
 
-func IsNodeMaster(name string, client corev1Typed.NodeInterface) (bool, error) {
-	node, err := client.Get(context.TODO(), name, metav1.GetOptions{})
-	if err != nil {
-		return false, err
-	}
-
+func IsNodeMaster(node *corev1.Node, client corev1Typed.NodeInterface) (bool, error) {
 	masterLabels := []string{"node-role.kubernetes.io/master", "node-role.kubernetes.io/control-plane"}
 
 	for _, label := range masterLabels {
@@ -146,7 +141,12 @@ func EnableMasterScheduling(client corev1Typed.NodeInterface, scheduleable bool)
 
 	// Loop through the nodes and modify the taints
 	for _, node := range nodes.Items {
-		if isMasterNode(&node) {
+		isMaster, err := IsNodeMaster(&node, client)
+		if err != nil {
+			return fmt.Errorf("failed to get node %s: %w", node.Name, err)
+		}
+
+		if isMaster {
 			if scheduleable {
 				err = removeControlPlaneTaint(client, &node)
 				if err != nil {
@@ -162,17 +162,6 @@ func EnableMasterScheduling(client corev1Typed.NodeInterface, scheduleable bool)
 	}
 
 	return nil
-}
-
-func isMasterNode(node *corev1.Node) bool {
-	masterLabels := []string{masterTaintKey, controlPlaneTaintKey}
-	for _, label := range masterLabels {
-		if _, exists := node.Labels[label]; exists {
-			return true
-		}
-	}
-
-	return false
 }
 
 func addControlPlaneTaint(client corev1Typed.NodeInterface, node *corev1.Node) error {
@@ -197,7 +186,6 @@ func addControlPlaneTaint(client corev1Typed.NodeInterface, node *corev1.Node) e
 }
 
 func removeControlPlaneTaint(client corev1Typed.NodeInterface, node *corev1.Node) error {
-	// remove the control-plane:NoSchedule taint from the master
 	// remove the control-plane:NoSchedule taint from the master
 	for i, taint := range node.Spec.Taints {
 		if taint.Key == masterTaintKey || taint.Key == controlPlaneTaintKey {
