@@ -6,6 +6,12 @@ if [[ -z "$FORCE_DOWNLOAD_UNSTABLE" ]]; then
 	exit 0
 fi
 
+# If docker isn't installed, exit gracefully
+if ! command -v docker &>/dev/null; then
+	echo >&2 "Docker is not installed. Skipping download of unstable image"
+	exit 0
+fi
+
 # Set the image name and tag
 image_name=quay.io/testnetworkfunction/cnf-certification-test
 image_tag=unstable

@@ -23,7 +23,7 @@ The tests are run on the OCP cluster with certain requirements that are listed b
 
 |  | Conditions | Mandatory |
 | ------ | ------ | ------ |
-| OCP Cluster | Version: >= 4.7, Node Count >= 3 with 2 cnf-worker nodes | Yes
+| OCP Cluster | Version: >= 4.12, Node Count >= 3 with 2 cnf-worker nodes | Yes
 | Installed Operators | Performance Addon, Machine-config-operator | Yes
 |  | Machine config pool, PTP operator, SR-IOV operator| No
 
@@ -70,7 +70,13 @@ The following environment variables are used to configure the test setup.
 
 ### Pre-requisites
 
-Make sure docker or podman is running on the local machine. You could consider using [Colima - container runtime on macOS (and Linux) with minimal setup](https://github.com/abiosoft/colima).
+Make sure [docker](https://www.docker.com/) or [podman](https://podman.io/) is running on the local machine.
+
+Set your local container runtime to your environment with:
+
+```sh
+export TNF_CONTAINER_CLIENT=docker
+```
 
 #### Clone the repo and change directory to the cloned repo
 
@@ -91,8 +97,6 @@ make install
 
 ```sh
 # Mac user
- \
-  export TNF_CONTAINER_CLIENT=docker &&
   DOCKER_CONFIG_DIR=$HOME/.docker \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
@@ -102,7 +106,6 @@ make install
 
 ```sh
 # Linux user
- \
   KUBECONFIG=$HOME/.kube/config \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
@@ -117,12 +120,10 @@ make install
   make test-all
 ```
 
-* To run a specific feature
+* To run a specific test-suite:
 
 ```sh
 # Mac user
- \
-  export TNF_CONTAINER_CLIENT=docker &&
   DOCKER_CONFIG_DIR=$HOME/.docker \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
@@ -133,9 +134,9 @@ make install
 
 ```sh
 # Linux user
- \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
+  DOCKER_CONFIG_DIR=$HOME/.docker \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
@@ -147,8 +148,6 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
 
 ```sh
 # Mac user
- \
-  export TNF_CONTAINER_CLIENT=docker &&
   DEBUG_TNF=true \
   DOCKER_CONFIG_DIR=$HOME/.docker \
   FEATURES=platformalteration \
@@ -161,7 +160,6 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
 
 ```sh
 # Linux user
- \
   DEBUG_TNF=true \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
@@ -185,12 +183,21 @@ make test
 * affiliated-certification-operator-is-certified
 * platform-alteration-tainted-node-kernel
 
+## Nightly Runs Against Various Environments
+
+The QE repo is being used in nightly automated runs in the following files:
+
+* [QE via Kind](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe.yaml)
+* [QE via Kind (Github Hosted)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-hosted.yml)
+* [QE via OCP (Intrusive)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-ocp-intrusive.yaml)
+* [QE via OCP (Non-Intrusive)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-ocp.yaml)
+
 ## Contribution Guidelines
 
 Fork the repo, create a new branch and create a PR with your changes.
 
 ## License
 
-CNF Certification Test Partner is copyright [Red Hat, Inc.](https://www.redhat.com) and available
+CNFCert Tests Verification is copyright [Red Hat, Inc.](https://www.redhat.com) and available
 under an
 [Apache 2 license](https://github.com/test-network-function/cnfcert-tests-verification/blob/main/LICENSE).
