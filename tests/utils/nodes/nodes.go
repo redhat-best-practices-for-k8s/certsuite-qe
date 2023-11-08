@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -99,16 +100,21 @@ func IsNodeMaster(node *corev1.Node, client corev1Typed.NodeInterface) (bool, er
 	return false, nil
 }
 
+func EnsureAllNodesAreLabeled(label string) error {
+	return ensureAllNodesAreLabeled(globalhelper.GetAPIClient().K8sClient.CoreV1(), label)
+}
+
 // EnsureAllNodesAreLabeled ensures that all nodes are labeled with the given label.
-func EnsureAllNodesAreLabeled(client corev1Typed.NodeInterface, label string) error {
-	nodesList, err := client.List(context.TODO(), metav1.ListOptions{})
+func ensureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) error {
+	// Get all nodes in the cluster
+	nodes, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get nodes: %w", err)
 	}
 
-	for _, node := range nodesList.Items {
+	for _, node := range nodes.Items {
 		if _, exists := node.Labels[label]; !exists {
-			err = LabelNode(client, &node, label, "")
+			err := LabelNode(client, &node, label, "")
 
 			if err != nil {
 				return err
@@ -120,13 +126,14 @@ func EnsureAllNodesAreLabeled(client corev1Typed.NodeInterface, label string) er
 }
 
 // LabelNode labels a node by a given node name.
-func LabelNode(client corev1Typed.NodeInterface, node *corev1.Node, label, value string) error {
+func LabelNode(client corev1Typed.CoreV1Interface, node *corev1.Node, label, value string) error {
 	// Set the label
-	node.Labels[label] = value
-
-	var err error
-
-	_, err = client.Update(context.TODO(), node, metav1.UpdateOptions{})
+	_, err := client.Nodes().Update(context.TODO(), &corev1.Node{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   node.Name,
+			Labels: map[string]string{label: value},
+		},
+	}, metav1.UpdateOptions{})
 
 	return err
 }
