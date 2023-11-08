@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/golang/glog"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -41,6 +42,11 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 				csv.Status.Phase != "Installing" &&
 				csv.Status.Phase != "Replacing" &&
 				csv.Status.Phase != "Unknown"
+		}
+
+		// Dump the current status of the CSV
+		if csv != nil {
+			glog.V(5).Infof("Waiting for CSV to be ready. CSV: %s in status: %s", csvPrefix, csv.Status.Phase)
 		}
 
 		return false
