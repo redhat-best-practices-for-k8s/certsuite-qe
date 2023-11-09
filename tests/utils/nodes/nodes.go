@@ -127,13 +127,10 @@ func ensureAllNodesAreLabeled(client corev1Typed.CoreV1Interface, label string) 
 
 // LabelNode labels a node by a given node name.
 func LabelNode(client corev1Typed.CoreV1Interface, node *corev1.Node, label, value string) error {
+	node.Labels[label] = value
+
 	// Set the label
-	_, err := client.Nodes().Update(context.TODO(), &corev1.Node{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:   node.Name,
-			Labels: map[string]string{label: value},
-		},
-	}, metav1.UpdateOptions{})
+	_, err := client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
 
 	return err
 }
