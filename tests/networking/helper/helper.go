@@ -129,7 +129,7 @@ func RedefineServiceToHeadless(service *corev1.Service) {
 }
 
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
-func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetPort int32, withNodePort, headless bool,
+func DefineAndCreateServiceOnCluster(name, namespace string, port, targetPort int32, withNodePort, headless bool,
 	ipFams []corev1.IPFamily, ipFamPolicy string) error {
 	var testService *corev1.Service
 
@@ -182,7 +182,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetP
 	return nil
 }
 
-func DefineAndCreateNadOnCluster(name, namespace string, network string) error {
+func DefineAndCreateNadOnCluster(name, namespace, network string) error {
 	nadOneInterface := nad.DefineNad(name, namespace)
 
 	if network != "" {
@@ -253,7 +253,7 @@ func DefineAndCreateNetworkPolicy(name, ns string, policyTypes []string, labels 
 	return globalhelper.CreateAndWaitUntilNetworkPolicyIsReady(policy, tsparams.WaitingTime)
 }
 
-func findListIntersections(listA []string, listB []string) []string {
+func findListIntersections(listA, listB []string) []string {
 	var overlap []string
 
 	for _, elementA := range listA {
