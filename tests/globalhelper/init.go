@@ -98,12 +98,12 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origConfigDir string, waitingTime time.Duration) {
-	By("Remove reports from report directory")
+	By(fmt.Sprintf("Remove reports from report directory: %s", GetConfiguration().General.TnfReportDir))
 
 	err := RemoveContentsFromReportDir()
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Remove configs from config directory")
+	By(fmt.Sprintf("Remove configs from config directory: %s", GetConfiguration().General.TnfConfigDir))
 
 	err = RemoveContentsFromConfigDir()
 	Expect(err).ToNot(HaveOccurred())
