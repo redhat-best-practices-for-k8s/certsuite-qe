@@ -58,7 +58,7 @@ function run_tests {
 		done
 
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite $command
+		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --output-interceptor-mode=none --require-suite $command
 		;;
 	*)
 		echo "Unknown case"
