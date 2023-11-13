@@ -12,8 +12,8 @@ import (
 
 	"github.com/golang/glog"
 
+	"github.com/test-network-function/cnf-certification-test/pkg/claim"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/test-network-function-claim/pkg/claim"
 )
 
 // OpenClaimReport opens claim.json file and returns struct.

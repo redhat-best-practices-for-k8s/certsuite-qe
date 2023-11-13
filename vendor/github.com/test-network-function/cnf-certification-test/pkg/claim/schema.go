@@ -152,9 +152,6 @@ type Root struct {
 // Versions
 type Versions struct {
 
-	// The claim file format version.
-	ClaimFormat string `json:"claimFormat"`
-
 	// The Kubernetes release version.
 	K8s string `json:"k8s,omitempty"`
 
@@ -1019,23 +1016,7 @@ func (strct *Versions) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0))
 	buf.WriteString("{")
 	comma := false
-	// "ClaimFormat" field is required
-	// only required object types supported for marshal checking (for now)
-	// Marshal the "claimFormat" field
-	if comma {
-		buf.WriteString(",")
-	}
-	buf.WriteString("\"claimFormat\": ")
-	if tmp, err := json.Marshal(strct.ClaimFormat); err != nil {
-		return nil, err
-	} else {
-		buf.Write(tmp)
-	}
-	comma = true
 	// Marshal the "k8s" field
-	if comma {
-		buf.WriteString(",")
-	}
 	buf.WriteString("\"k8s\": ")
 	if tmp, err := json.Marshal(strct.K8s); err != nil {
 		return nil, err
@@ -1096,7 +1077,6 @@ func (strct *Versions) MarshalJSON() ([]byte, error) {
 }
 
 func (strct *Versions) UnmarshalJSON(b []byte) error {
-	claimFormatReceived := false
 	tnfReceived := false
 	var jsonMap map[string]json.RawMessage
 	if err := json.Unmarshal(b, &jsonMap); err != nil {
@@ -1105,11 +1085,6 @@ func (strct *Versions) UnmarshalJSON(b []byte) error {
 	// parse all the defined properties
 	for k, v := range jsonMap {
 		switch k {
-		case "claimFormat":
-			if err := json.Unmarshal([]byte(v), &strct.ClaimFormat); err != nil {
-				return err
-			}
-			claimFormatReceived = true
 		case "k8s":
 			if err := json.Unmarshal([]byte(v), &strct.K8s); err != nil {
 				return err
@@ -1134,10 +1109,6 @@ func (strct *Versions) UnmarshalJSON(b []byte) error {
 		default:
 			return fmt.Errorf("additional property not allowed: \"" + k + "\"")
 		}
-	}
-	// check if claimFormat (a required property) was received
-	if !claimFormatReceived {
-		return errors.New("\"claimFormat\" is required but was not present")
 	}
 	// check if tnf (a required property) was received
 	if !tnfReceived {
