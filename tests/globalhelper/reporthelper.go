@@ -132,26 +132,6 @@ func ConvertSpecNameToFileName(specName string) string {
 	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
 }
 
-func isTestCaseInRequiredStatusInJunitReport(
-	report *globalparameters.JUnitTestSuites,
-	testCaseName string,
-	status string) (bool, error) {
-	for _, testCase := range report.Suites[0].Testcases {
-		tags := extractTags(testCase.Name)
-		if tags == nil {
-			return false, fmt.Errorf("no tags found in name for test case: %s", testCase.Name)
-		}
-
-		if containsString(tags, testCaseName) {
-			glog.V(5).Info(fmt.Sprintf("test case status %s", testCase.Status))
-
-			return testCase.Status == status, nil
-		}
-	}
-
-	return false, nil
-}
-
 func isTestCaseInExpectedStatusInClaimReport(
 	testCaseName string,
 	claimReport claim.Root,
@@ -203,34 +183,6 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 
 func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
-}
-
-func extractTags(tcName string) []string {
-	lastClosingBracket := strings.LastIndex(tcName, "]")
-	lastOpeningBracket := strings.LastIndex(tcName, "[")
-
-	if lastClosingBracket >= 0 && lastOpeningBracket >= 0 && lastClosingBracket > lastOpeningBracket {
-		tagsString := tcName[lastOpeningBracket+1 : lastClosingBracket]
-		tags := strings.Split(tagsString, ",")
-
-		for i := range tags {
-			tags[i] = strings.TrimSpace(tags[i])
-		}
-
-		return tags
-	}
-
-	return nil
-}
-
-func containsString(list []string, item string) bool {
-	for _, i := range list {
-		if i == item {
-			return true
-		}
-	}
-
-	return false
 }
 
 func CopyClaimFileToTcFolder(tcName, formattedTcName string) {

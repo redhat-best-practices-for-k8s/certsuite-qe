@@ -45,7 +45,6 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 

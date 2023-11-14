@@ -49,7 +49,6 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			tsparams.TestCertificationNameSpace)
-		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInstana+
 			" is not ready")
 

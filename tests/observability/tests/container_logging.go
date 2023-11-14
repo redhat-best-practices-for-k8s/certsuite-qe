@@ -45,7 +45,6 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		//nolint:goconst
 		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))

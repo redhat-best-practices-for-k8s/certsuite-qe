@@ -48,7 +48,6 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
 			tsparams.OperatorNamespace)
-		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
 			" is not ready")
 

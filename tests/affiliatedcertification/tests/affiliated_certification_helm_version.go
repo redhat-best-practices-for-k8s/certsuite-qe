@@ -52,7 +52,6 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestHelmVersion,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestHelmVersion+" test")
 
