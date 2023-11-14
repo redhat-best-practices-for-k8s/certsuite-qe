@@ -55,7 +55,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodServiceAccount,
 			globalparameters.TestCasePassed)
@@ -79,7 +79,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodServiceAccount,
 			globalparameters.TestCaseFailed)
@@ -103,7 +103,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfPodServiceAccount,
 			globalparameters.TestCaseFailed)

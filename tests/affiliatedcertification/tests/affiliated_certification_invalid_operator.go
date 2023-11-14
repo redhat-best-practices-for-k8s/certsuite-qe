@@ -157,7 +157,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCaseFailed)
@@ -194,7 +194,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCaseFailed)

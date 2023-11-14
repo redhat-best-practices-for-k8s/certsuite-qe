@@ -51,7 +51,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -72,7 +72,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -93,7 +93,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -117,7 +117,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -151,7 +151,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -182,7 +182,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -201,7 +201,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -220,7 +220,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -241,7 +241,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -262,7 +262,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -292,7 +292,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -311,7 +311,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -342,7 +342,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -367,7 +367,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -393,7 +393,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -413,7 +413,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})

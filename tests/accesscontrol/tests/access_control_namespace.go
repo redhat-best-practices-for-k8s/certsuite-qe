@@ -49,7 +49,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
@@ -84,7 +84,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
@@ -119,7 +119,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
@@ -164,7 +164,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
@@ -196,7 +196,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
@@ -238,7 +238,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
@@ -287,7 +287,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
@@ -336,7 +336,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)
@@ -378,7 +378,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCasePassed)
@@ -430,7 +430,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalparameters.TestCaseFailed)

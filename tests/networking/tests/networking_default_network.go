@@ -53,7 +53,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCasePassed)
@@ -81,7 +81,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCasePassed)
@@ -113,7 +113,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCaseFailed)
@@ -138,7 +138,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCaseSkipped)
@@ -172,7 +172,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDefaultNetworkTcName,
 			globalparameters.TestCasePassed)

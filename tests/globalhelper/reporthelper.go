@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"os"
@@ -52,46 +51,6 @@ func IsTestCaseFailedInClaimReport(testCaseName string, claimReport claim.Root) 
 // IsTestCaseSkippedInClaimReport test if test case is failed as expected in claim.json file.
 func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root) (bool, error) {
 	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCaseSkipped)
-}
-
-// OpenJunitTestReport returns junit struct.
-func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
-	junitReportFile, err := os.Open(
-		path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultJunitReportName),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultJunitReportName, err)
-	}
-
-	junitReportByte, err := io.ReadAll(junitReportFile)
-
-	if err != nil {
-		return nil, fmt.Errorf("error reading %s report file: %w", globalparameters.DefaultJunitReportName, err)
-	}
-
-	var junitReport globalparameters.JUnitTestSuites
-	err = xml.Unmarshal(junitReportByte, &junitReport)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &junitReport, nil
-}
-
-// IsTestCasePassedInJunitReport tests if test case is passed as expected in junit report file.
-func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCasePassed)
-}
-
-// IsTestCaseFailedInJunitReport tests if test case is failed as expected in junit report file.
-func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseFailed)
-}
-
-// IsTestCaseSkippedInJunitReport tests if test case is skipped as expected in junit report file.
-func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseSkipped)
 }
 
 // RemoveContentsFromReportDir removes all files from report dir.

@@ -48,7 +48,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -75,7 +75,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -95,7 +95,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -122,7 +122,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -149,7 +149,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -170,7 +170,7 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName, globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})

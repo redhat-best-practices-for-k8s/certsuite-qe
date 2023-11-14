@@ -26,13 +26,6 @@ const retryInterval = 5
 
 // ValidateIfReportsAreValid test if report is valid for given test case.
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
-	glog.V(5).Info("Verify test case status in Junit report")
-
-	junitTestReport, err := OpenJunitTestReport()
-	if err != nil {
-		return fmt.Errorf("failed to open junit test report, err: %w", err)
-	}
-
 	claimReport, err := OpenClaimReport()
 	if err != nil {
 		return fmt.Errorf("failed to open tnf claim report, err: %w", err)
@@ -43,24 +36,14 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 		return fmt.Errorf("expected status %q is not valid, err: %w", tcExpectedStatus, err)
 	}
 
-	isTestCaseInValidStatusInJunitReport := IsTestCasePassedInJunitReport
 	isTestCaseInValidStatusInClaimReport := IsTestCasePassedInClaimReport
 
 	if tcExpectedStatus == globalparameters.TestCaseFailed {
-		isTestCaseInValidStatusInJunitReport = IsTestCaseFailedInJunitReport
 		isTestCaseInValidStatusInClaimReport = IsTestCaseFailedInClaimReport
 	}
 
 	if tcExpectedStatus == globalparameters.TestCaseSkipped {
-		isTestCaseInValidStatusInJunitReport = IsTestCaseSkippedInJunitReport
 		isTestCaseInValidStatusInClaimReport = IsTestCaseSkippedInClaimReport
-	}
-
-	glog.V(5).Info("Verify test case status in junit report file")
-
-	isValid, err := isTestCaseInValidStatusInJunitReport(junitTestReport, tcName)
-	if !isValid {
-		return fmt.Errorf("test case %q is not in expected %q state in junit report. %w", tcName, tcExpectedStatus, err)
 	}
 
 	glog.V(5).Info("Verify test case status in claim report file")

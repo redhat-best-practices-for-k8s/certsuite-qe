@@ -58,7 +58,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlSysPtraceCapability,
 			globalparameters.TestCaseSkipped)
@@ -90,7 +90,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlSysPtraceCapability,
 			globalparameters.TestCasePassed)
@@ -119,7 +119,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlSysPtraceCapability,
 			globalparameters.TestCaseFailed)
@@ -167,7 +167,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlSysPtraceCapability,
 			globalparameters.TestCasePassed)
@@ -212,7 +212,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlSysPtraceCapability,
 			globalparameters.TestCaseFailed)

@@ -55,7 +55,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
@@ -80,7 +80,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
 			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
@@ -103,7 +103,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
 			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())

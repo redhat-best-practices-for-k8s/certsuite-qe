@@ -83,7 +83,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -123,7 +123,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -164,7 +164,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -211,7 +211,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -252,7 +252,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -333,7 +333,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})

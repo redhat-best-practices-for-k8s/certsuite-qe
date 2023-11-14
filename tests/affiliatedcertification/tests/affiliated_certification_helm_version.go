@@ -56,7 +56,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestHelmVersion+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestHelmVersion,
 			globalparameters.TestCasePassed)
@@ -104,7 +104,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestHelmVersion+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestHelmVersion,
 			globalparameters.TestCaseFailed)

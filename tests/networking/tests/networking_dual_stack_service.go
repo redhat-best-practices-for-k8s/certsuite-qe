@@ -48,7 +48,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDualStackServiceTcName,
 			globalparameters.TestCaseFailed)
@@ -69,7 +69,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDualStackServiceTcName,
 			globalparameters.TestCaseFailed)
@@ -92,7 +92,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 			Expect(err).To(HaveOccurred())
 
-			By("Verify test case status in Junit and Claim reports")
+			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
 				tsparams.TnfDualStackServiceTcName,
 				globalparameters.TestCaseFailed)

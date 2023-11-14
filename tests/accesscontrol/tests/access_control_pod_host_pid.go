@@ -57,7 +57,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodHostPid,
 			globalparameters.TestCasePassed)
@@ -86,7 +86,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodHostPid,
 			globalparameters.TestCaseFailed)
@@ -128,7 +128,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodHostPid,
 			globalparameters.TestCasePassed)
@@ -170,7 +170,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodHostPid,
 			globalparameters.TestCaseFailed)
