@@ -48,7 +48,7 @@ var _ = SynchronizedBeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 }, func() {})
 
-var _ = SynchronizedAfterSuite(func() {
+var _ = SynchronizedAfterSuite(func() {}, func() {
 	if globalhelper.IsKindCluster() {
 		Skip("Skipping operator tests cleanup on kind cluster")
 	}
@@ -59,4 +59,4 @@ var _ = SynchronizedAfterSuite(func() {
 		tsparams.Timeout,
 	)
 	Expect(err).ToNot(HaveOccurred())
-}, func() {})
+})

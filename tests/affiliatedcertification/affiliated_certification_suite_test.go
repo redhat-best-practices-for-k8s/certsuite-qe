@@ -90,8 +90,7 @@ var _ = SynchronizedBeforeSuite(func() {
 
 }, func() {})
 
-var _ = SynchronizedAfterSuite(func() {
-
+var _ = SynchronizedAfterSuite(func() {}, func() {
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestCertificationNameSpace))
 	err := globalhelper.DeleteNamespaceAndWait(tsparams.TestCertificationNameSpace, tsparams.Timeout)
 	Expect(err).ToNot(HaveOccurred())
@@ -104,4 +103,4 @@ var _ = SynchronizedAfterSuite(func() {
 			tsparams.OperatorLabel)
 		Expect(err).ToNot(HaveOccurred())
 	}
-}, func() {})
+})
