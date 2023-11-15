@@ -55,7 +55,7 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPrivilegeEscalation,
 			globalparameters.TestCasePassed)
@@ -86,7 +86,7 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPrivilegeEscalation,
 			globalparameters.TestCaseFailed)
@@ -127,7 +127,7 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPrivilegeEscalation,
 			globalparameters.TestCasePassed)
@@ -168,7 +168,7 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPrivilegeEscalation,
 			globalparameters.TestCaseFailed)

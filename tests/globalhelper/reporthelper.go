@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"os"
@@ -52,46 +51,6 @@ func IsTestCaseFailedInClaimReport(testCaseName string, claimReport claim.Root) 
 // IsTestCaseSkippedInClaimReport test if test case is failed as expected in claim.json file.
 func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root) (bool, error) {
 	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCaseSkipped)
-}
-
-// OpenJunitTestReport returns junit struct.
-func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
-	junitReportFile, err := os.Open(
-		path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultJunitReportName),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultJunitReportName, err)
-	}
-
-	junitReportByte, err := io.ReadAll(junitReportFile)
-
-	if err != nil {
-		return nil, fmt.Errorf("error reading %s report file: %w", globalparameters.DefaultJunitReportName, err)
-	}
-
-	var junitReport globalparameters.JUnitTestSuites
-	err = xml.Unmarshal(junitReportByte, &junitReport)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &junitReport, nil
-}
-
-// IsTestCasePassedInJunitReport tests if test case is passed as expected in junit report file.
-func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCasePassed)
-}
-
-// IsTestCaseFailedInJunitReport tests if test case is failed as expected in junit report file.
-func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseFailed)
-}
-
-// IsTestCaseSkippedInJunitReport tests if test case is skipped as expected in junit report file.
-func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseSkipped)
 }
 
 // RemoveContentsFromReportDir removes all files from report dir.
@@ -173,26 +132,6 @@ func ConvertSpecNameToFileName(specName string) string {
 	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
 }
 
-func isTestCaseInRequiredStatusInJunitReport(
-	report *globalparameters.JUnitTestSuites,
-	testCaseName string,
-	status string) (bool, error) {
-	for _, testCase := range report.Suites[0].Testcases {
-		tags := extractTags(testCase.Name)
-		if tags == nil {
-			return false, fmt.Errorf("no tags found in name for test case: %s", testCase.Name)
-		}
-
-		if containsString(tags, testCaseName) {
-			glog.V(5).Info(fmt.Sprintf("test case status %s", testCase.Status))
-
-			return testCase.Status == status, nil
-		}
-	}
-
-	return false, nil
-}
-
 func isTestCaseInExpectedStatusInClaimReport(
 	testCaseName string,
 	claimReport claim.Root,
@@ -244,34 +183,6 @@ func removeCharactersFromString(stringToFormat string, charactersToRemove []stri
 
 func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
-}
-
-func extractTags(tcName string) []string {
-	lastClosingBracket := strings.LastIndex(tcName, "]")
-	lastOpeningBracket := strings.LastIndex(tcName, "[")
-
-	if lastClosingBracket >= 0 && lastOpeningBracket >= 0 && lastClosingBracket > lastOpeningBracket {
-		tagsString := tcName[lastOpeningBracket+1 : lastClosingBracket]
-		tags := strings.Split(tagsString, ",")
-
-		for i := range tags {
-			tags[i] = strings.TrimSpace(tags[i])
-		}
-
-		return tags
-	}
-
-	return nil
-}
-
-func containsString(list []string, item string) bool {
-	for _, i := range list {
-		if i == item {
-			return true
-		}
-	}
-
-	return false
 }
 
 func CopyClaimFileToTcFolder(tcName, formattedTcName string) {

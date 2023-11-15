@@ -88,7 +88,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestHelmChartCertified+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestHelmChartCertified,
 			globalparameters.TestCasePassed)
@@ -148,7 +148,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestHelmChartCertified+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestHelmChartCertified,
 			globalparameters.TestCaseFailed)

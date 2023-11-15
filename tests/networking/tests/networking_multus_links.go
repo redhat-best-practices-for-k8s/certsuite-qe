@@ -51,7 +51,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
@@ -85,7 +85,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
@@ -119,7 +119,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
@@ -143,7 +143,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
@@ -177,7 +177,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
@@ -212,7 +212,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
@@ -237,7 +237,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
@@ -267,7 +267,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseSkipped)
@@ -297,7 +297,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
@@ -327,7 +327,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCasePassed)
@@ -358,7 +358,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
@@ -396,7 +396,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)
@@ -435,7 +435,7 @@ var _ = Describe("Networking custom namespace,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
 			globalparameters.TestCaseFailed)

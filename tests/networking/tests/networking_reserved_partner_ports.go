@@ -47,7 +47,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
@@ -73,7 +73,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
@@ -95,7 +95,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
@@ -116,7 +116,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
@@ -137,7 +137,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
@@ -162,7 +162,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)
@@ -186,7 +186,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed)
@@ -215,7 +215,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed)

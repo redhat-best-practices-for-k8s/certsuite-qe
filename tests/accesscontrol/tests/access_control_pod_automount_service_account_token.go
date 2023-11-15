@@ -65,7 +65,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCasePassed)
@@ -98,7 +98,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCaseFailed)
@@ -133,7 +133,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCasePassed)
@@ -171,7 +171,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCaseFailed)
@@ -208,7 +208,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCaseFailed)
@@ -248,7 +248,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCasePassed)
@@ -298,7 +298,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCasePassed)
@@ -348,7 +348,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlPodAutomountToken,
 			globalparameters.TestCaseFailed)

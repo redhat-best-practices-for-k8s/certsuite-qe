@@ -51,7 +51,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).NotTo(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtExclusiveCPUPoolSchedulingPolicy,
 			globalparameters.TestCasePassed)
@@ -78,7 +78,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).NotTo(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtExclusiveCPUPoolSchedulingPolicy,
 			globalparameters.TestCasePassed)
@@ -105,7 +105,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtExclusiveCPUPoolSchedulingPolicy,
 			globalparameters.TestCaseFailed)
@@ -126,7 +126,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtExclusiveCPUPoolSchedulingPolicy,
 			globalparameters.TestCaseSkipped)
