@@ -41,7 +41,7 @@ function run_tests {
 			fi
 		done
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}"  --require-suite -r $all_default_suites
+		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
 		;;
 	features)
 		if [ -z "$FEATURES" ]; then

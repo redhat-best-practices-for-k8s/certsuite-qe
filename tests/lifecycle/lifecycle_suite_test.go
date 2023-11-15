@@ -45,7 +45,7 @@ var _ = SynchronizedBeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 }, func() {})
 
-var _ = SynchronizedAfterSuite(func() {
+var _ = SynchronizedAfterSuite(func() {}, func() {
 	err := os.Unsetenv("TNF_NON_INTRUSIVE_ONLY")
 	Expect(err).ToNot(HaveOccurred())
-}, func() {})
+})
