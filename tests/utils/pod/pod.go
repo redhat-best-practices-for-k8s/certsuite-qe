@@ -102,27 +102,35 @@ func RedefineWithPVC(pod *corev1.Pod, volumeName string, claimName string) {
 
 func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
 	for i := range pod.Spec.Containers {
-		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
-			Limits: corev1.ResourceList{
-				corev1.ResourceCPU: resource.MustParse(limit),
-			},
-			Requests: corev1.ResourceList{
-				corev1.ResourceCPU: resource.MustParse(req),
-			},
+		containerResources := &pod.Spec.Containers[i].Resources
+
+		if containerResources.Requests == nil {
+			containerResources.Requests = corev1.ResourceList{}
 		}
+
+		if containerResources.Limits == nil {
+			containerResources.Limits = corev1.ResourceList{}
+		}
+
+		containerResources.Requests[corev1.ResourceCPU] = resource.MustParse(req)
+		containerResources.Limits[corev1.ResourceCPU] = resource.MustParse(limit)
 	}
 }
 
 func RedefineWithMemoryResources(pod *corev1.Pod, limit string, req string) {
 	for i := range pod.Spec.Containers {
-		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
-			Limits: corev1.ResourceList{
-				corev1.ResourceMemory: resource.MustParse(limit),
-			},
-			Requests: corev1.ResourceList{
-				corev1.ResourceMemory: resource.MustParse(req),
-			},
+		containerResources := &pod.Spec.Containers[i].Resources
+
+		if containerResources.Requests == nil {
+			containerResources.Requests = corev1.ResourceList{}
 		}
+
+		if containerResources.Limits == nil {
+			containerResources.Limits = corev1.ResourceList{}
+		}
+
+		containerResources.Requests[corev1.ResourceMemory] = resource.MustParse(req)
+		containerResources.Limits[corev1.ResourceMemory] = resource.MustParse(limit)
 	}
 }
 
