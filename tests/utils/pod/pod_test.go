@@ -155,3 +155,18 @@ func TestRedefineWithContainerExecCommand(t *testing.T) {
 	assert.Nil(t, RedefineWithContainerExecCommand(testPod, []string{"ls"}, 0))
 	assert.Equal(t, testPod.Spec.Containers[0].Command, []string{"ls"})
 }
+
+func TestRedefineWithReadinessProbe(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+
+	RedefineWithReadinessProbe(testPod)
+	assert.Equal(t, testPod.Spec.Containers[0].ReadinessProbe.Exec.Command, []string{"ls"})
+}
+
+func TestRedefineFirstContainerWith1GiHugepages(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+
+	assert.Nil(t, RedefineFirstContainerWith1GiHugepages(testPod, 2))
+	assert.Equal(t, testPod.Spec.Containers[0].Resources.Requests["hugepages-1Gi"], resource.MustParse("2Gi"))
+	assert.Equal(t, testPod.Spec.Containers[0].Resources.Limits["hugepages-1Gi"], resource.MustParse("2Gi"))
+}
