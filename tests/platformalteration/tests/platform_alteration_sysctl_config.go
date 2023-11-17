@@ -54,8 +54,16 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
+		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert sysctl config is unchanged")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Privileged).To(BeTrue())
+		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].MountPath).To(Equal("/host"))
+		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].Name).To(Equal("host"))
 
 		By("Start platform-alteration-sysctl-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfSysctlConfigName,

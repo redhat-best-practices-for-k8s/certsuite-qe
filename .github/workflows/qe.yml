@@ -1,8 +1,8 @@
 name: QE Testing (Ubuntu-hosted)
 
 on:
-  # pull_request:
-  #   branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
   # Schedule a daily cron at midnight UTC
   schedule:
@@ -26,6 +26,7 @@ jobs:
       TEST_TNF_IMAGE_NAME: quay.io/testnetworkfunction/cnf-certification-test
       TEST_TNF_IMAGE_TAG: unstable
       DOCKER_CONFIG_DIR: '/home/runner/.docker/'
+      SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
 
     steps:
       - name: Free Disk Space (Ubuntu)
@@ -97,6 +98,9 @@ jobs:
           repository: ${{ env.TEST_REPO }}
           path: cnf-certification-test
 
-      # Setup is complete.  Time to run the QE tests.
       - name: Run the tests
-        run: FEATURES=${{matrix.suite}} TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test TNF_IMAGE=${{env.TEST_TNF_IMAGE_NAME}} TNF_IMAGE_TAG=${{env.TEST_TNF_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true make test-features
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: FEATURES=${{matrix.suite}} TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test TNF_IMAGE=${{env.TEST_TNF_IMAGE_NAME}} TNF_IMAGE_TAG=${{env.TEST_TNF_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true make test-features
