@@ -222,6 +222,15 @@ func RedefineFirstContainerWith1GiHugepages(pod *corev1.Pod, hugepages int) erro
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
 
 	if len(pod.Spec.Containers) > 0 {
+		// Check if the maps are initialized
+		if pod.Spec.Containers[0].Resources.Requests == nil {
+			pod.Spec.Containers[0].Resources.Requests = make(map[corev1.ResourceName]resource.Quantity)
+		}
+
+		if pod.Spec.Containers[0].Resources.Limits == nil {
+			pod.Spec.Containers[0].Resources.Limits = make(map[corev1.ResourceName]resource.Quantity)
+		}
+
 		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 
