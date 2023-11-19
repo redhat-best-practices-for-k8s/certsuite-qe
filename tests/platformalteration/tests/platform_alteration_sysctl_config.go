@@ -61,7 +61,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		By("Assert sysctl config is unchanged")
 		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Privileged).To(BeTrue())
+		Expect(*runningDaemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Privileged).To(BeTrue())
 		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].MountPath).To(Equal("/host"))
 		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].Name).To(Equal("host"))
 
