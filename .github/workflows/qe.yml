@@ -60,6 +60,11 @@ jobs:
         with:
           ref: ${{ github.sha }}
 
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install dependencies
         run: |
           sudo apt-get update
