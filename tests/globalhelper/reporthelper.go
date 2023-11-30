@@ -199,7 +199,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 	expectedStatus string) (bool, error) {
 	for testCaseClaim := range claimReport.Claim.Results {
 		if formatTestCaseName(testCaseClaim) == formatTestCaseName(testCaseName) {
-			var testCaseResult []*claim.Result
+			var testCaseResult *claim.Result
 
 			encodedTestResult, err := json.Marshal(claimReport.Claim.Results[testCaseClaim])
 
@@ -213,14 +213,14 @@ func isTestCaseInExpectedStatusInClaimReport(
 				return false, err
 			}
 
-			if testCaseResult[0].State == expectedStatus {
+			if testCaseResult.State == expectedStatus {
 				glog.V(5).Info("claim report test case status passed")
 
 				return true, nil
 			}
 
 			return false, fmt.Errorf("invalid test status %s instead expected %s",
-				testCaseResult[0].State,
+				testCaseResult.State,
 				expectedStatus)
 		}
 	}
