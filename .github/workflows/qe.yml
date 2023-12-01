@@ -24,7 +24,7 @@ jobs:
       KUBECONFIG: '/home/runner/.kube/config'
       PFLT_DOCKERCONFIG: '/home/runner/.docker/config'
       TEST_TNF_IMAGE_NAME: quay.io/testnetworkfunction/cnf-certification-test
-      TEST_TNF_IMAGE_TAG: unstable
+      TEST_TNF_IMAGE_TAG: localtest
       DOCKER_CONFIG_DIR: '/home/runner/.docker/'
       SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
 
@@ -97,6 +97,15 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: cnf-certification-test
+
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the test image
+        run: make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest
+        working-directory: cnf-certification-test
 
       - name: Run the tests
         uses: nick-fields/retry@v2
