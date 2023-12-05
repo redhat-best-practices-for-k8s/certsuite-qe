@@ -143,7 +143,7 @@ make install
 
 * To debug
 
-Use `DEBUG_TNF=true` and `TNF_LOG_LEVEL=trace` while running the above commands.
+Use `DEBUG_TNF=true` and `TNF_LOG_LEVEL=debug` while running the above commands.
 This would create a `Debug` folder containing suites folders with TNF logs for each of the tests.
 
 ```sh
@@ -153,7 +153,7 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
-  TNF_LOG_LEVEL=trace \
+  TNF_LOG_LEVEL=debug \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
@@ -163,7 +163,7 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
   DEBUG_TNF=true \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
-  TNF_LOG_LEVEL=trace \
+  TNF_LOG_LEVEL=debug \
   TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```

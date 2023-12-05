@@ -93,7 +93,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 	It("One daemonset with two containers, both with terminationMessagePolicy "+
 		"set to FallbackToLogsOnError", func() {
 
-		By("Create daemonset in the cluster")
+		By("Define daemonset")
 		daemonSet := tshelper.DefineDaemonSetWithTerminationMsgPolicies(tsparams.TestDaemonSetBaseName,
 			randomNamespace,
 			[]corev1.TerminationMessagePolicy{
@@ -101,8 +101,16 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 				corev1.TerminationMessageFallbackToLogsOnError,
 			})
 
+		By("Create daemonset in the cluster")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonset has terminationMessagePolicy set to FallbackToLogsOnError in both containers")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		for _, container := range runningDaemonSet.Spec.Template.Spec.Containers {
+			Expect(container.TerminationMessagePolicy).To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
+		}
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
@@ -272,19 +280,21 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 	It("One deployment and one daemonset, both with one pod with one container, "+
 		"only the deployment has terminationMessagePolicy set to FallbackToLogsOnError [negative]", func() {
 
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
 			[]corev1.TerminationMessagePolicy{corev1.TerminationMessageFallbackToLogsOnError})
 
+		By("Create daemonset")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create daemonset in the cluster")
+		By("Define daemonset")
 		daemonSet := tshelper.DefineDaemonSetWithTerminationMsgPolicies(tsparams.TestDaemonSetBaseName,
 			randomNamespace,
 			[]corev1.TerminationMessagePolicy{tsparams.UseDefaultTerminationMsgPolicy})
 
+		By("Create daemonset")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
