@@ -14,6 +14,7 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
+	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/remotecommand"
 )
 
@@ -144,4 +145,17 @@ func AppendLabelsToPod(pod *corev1.Pod, labels map[string]string) {
 	}
 
 	pod.Labels = newMap
+}
+
+func GetRunningPod(namespace, name string) (*corev1.Pod, error) {
+	return getRunningPod(GetAPIClient().K8sClient.CoreV1(), namespace, name)
+}
+
+func getRunningPod(client typedcorev1.CoreV1Interface, namespace, name string) (*corev1.Pod, error) {
+	pod, err := client.Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pod %q (ns %s): %w", name, namespace, err)
+	}
+
+	return pod, nil
 }

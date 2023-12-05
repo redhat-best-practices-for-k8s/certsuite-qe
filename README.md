@@ -1,7 +1,7 @@
 <!-- markdownlint-disable line-length no-bare-urls -->
 # cnfcert-tests-verification
 
-[![makefile ci](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/makefile.yml)
+[![Test Incoming Changes](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/pre-main.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/pre-main.yml)
 [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift)
 [![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
 

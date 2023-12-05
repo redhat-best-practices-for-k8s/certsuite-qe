@@ -95,8 +95,15 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")
 
+		By("Create and wait until pod is ready")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod has modified resources")
+		runningPod, err := globalhelper.GetRunningPod(testPod.Namespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Spec.Containers[0].Resources.Requests.Memory().String()).To(Equal("512Mi"))
+		Expect(runningPod.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal("1"))
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,

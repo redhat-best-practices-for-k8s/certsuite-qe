@@ -82,6 +82,12 @@ var _ = Describe("platform-alteration-boot-params", func() {
 					By("Update the current machineConfig")
 					_, err := globalhelper.GetAPIClient().MachineConfigs().Update(context.TODO(), &machineConfig, metav1.UpdateOptions{})
 					Expect(err).ToNot(HaveOccurred())
+
+					By("Assert machineConfig has been updated")
+					updatedMachineConfig, err := globalhelper.GetAPIClient().MachineConfigs().Get(context.TODO(),
+						machineConfig.Name, metav1.GetOptions{})
+					Expect(err).ToNot(HaveOccurred())
+					Expect(updatedMachineConfig.Spec.KernelArguments).To(Equal([]string{"skew_tick=1", "nohz=off"}))
 				}
 			}
 		}

@@ -31,8 +31,9 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	BeforeAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Install istio")
-			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.19.3 sh - "+
-				"&& istio-1.19.3/bin/istioctl install --set profile=demo -y")
+			//nolint:goconst
+			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.20.0 sh - "+
+				"&& istio-1.20.0/bin/istioctl install --set profile=demo -y")
 			err := cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error installing istio")
 		}
@@ -41,8 +42,8 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	AfterAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Uninstall istio")
-			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.19.3 sh - "+
-				"&& istio-1.19.3/bin/istioctl uninstall -y --purge")
+			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.20.0 sh - "+
+				"&& istio-1.20.0/bin/istioctl uninstall -y --purge")
 			err := cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
 		}
@@ -169,8 +170,8 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 		if err == nil {
 			By("Uninstall istio")
 			if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
-				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.19.3 sh - "+
-					"&& istio-1.19.3/bin/istioctl uninstall -y --purge")
+				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.20.0 sh - "+
+					"&& istio-1.20.0/bin/istioctl uninstall -y --purge")
 				err := cmd.Run()
 				Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
 			}
