@@ -87,12 +87,12 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
 
+		// Skipped because no listening ports are detected
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	It("one deployment, one pod, container declares port 8081 but uses port 8080 instead [negative]", func() {

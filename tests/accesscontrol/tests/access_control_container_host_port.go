@@ -42,6 +42,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -71,6 +72,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -102,6 +104,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -136,6 +139,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		dep, err := tshelper.DefineDeploymentWithContainerPorts("acdeployment", randomNamespace, 1, ports)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

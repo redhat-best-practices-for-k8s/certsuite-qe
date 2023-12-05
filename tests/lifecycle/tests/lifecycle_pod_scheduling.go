@@ -152,6 +152,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
+		By("Create daemonSet")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

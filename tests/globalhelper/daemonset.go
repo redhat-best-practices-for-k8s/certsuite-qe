@@ -20,8 +20,9 @@ func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout tim
 }
 
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
-func createAndWaitUntilDaemonSetIsReady(client appsv1Typed.AppsV1Interface, daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
-	runningDaemonSet, err := client.DaemonSets(daemonSet.Namespace).Create(
+func createAndWaitUntilDaemonSetIsReady(appsClient appsv1Typed.AppsV1Interface,
+	daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
+	runningDaemonSet, err := appsClient.DaemonSets(daemonSet.Namespace).Create(
 		context.TODO(), daemonSet, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("daemonset %s already exists", daemonSet.Name))
@@ -32,7 +33,7 @@ func createAndWaitUntilDaemonSetIsReady(client appsv1Typed.AppsV1Interface, daem
 	}
 
 	Eventually(func() bool {
-		status, err := isDaemonSetReady(client, runningDaemonSet.Namespace, runningDaemonSet.Name)
+		status, err := isDaemonSetReady(appsClient, runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
 			glog.Errorf(
 				"daemonset %s is not ready, retry in 5 seconds", runningDaemonSet.Name)
@@ -56,8 +57,9 @@ func isDaemonSetReady(client appsv1Typed.AppsV1Interface, namespace string, name
 		return false, err
 	}
 
-	if daemonSet.Status.NumberAvailable == daemonSet.Status.DesiredNumberScheduled &&
-		daemonSet.Status.NumberUnavailable == 0 &&
+	// Get number of nodes and compare with the number of scheduled pods
+	numNodes := GetNumberOfNodes()
+	if daemonSet.Status.DesiredNumberScheduled == int32(numNodes) &&
 		daemonSet.Status.NumberReady == daemonSet.Status.DesiredNumberScheduled {
 		return true, nil
 	}

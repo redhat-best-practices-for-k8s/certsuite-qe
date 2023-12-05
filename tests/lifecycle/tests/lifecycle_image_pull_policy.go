@@ -198,6 +198,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, "registry.access.redhat.com/ubi8/ubi",
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
+		By("Create DaemonSet")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -318,6 +319,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, globalhelper.GetConfiguration().General.TestImage, corev1.PullNever)
 
+		By("Create DaemonSet")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

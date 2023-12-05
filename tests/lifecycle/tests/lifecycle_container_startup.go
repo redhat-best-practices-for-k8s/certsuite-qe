@@ -152,6 +152,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
+		By("Deploy daemonSet")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

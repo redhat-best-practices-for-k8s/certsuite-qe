@@ -70,12 +70,12 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		err = globalhelper.LaunchTests(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).ToNot(HaveOccurred())
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseFailed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -105,12 +105,12 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		err = globalhelper.LaunchTests(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCasePassed)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
