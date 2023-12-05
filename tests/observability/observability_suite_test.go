@@ -44,8 +44,8 @@ var _ = SynchronizedBeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 }, func() {})
 
-var _ = SynchronizedAfterSuite(func() {
+var _ = SynchronizedAfterSuite(func() {}, func() {
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestNamespace))
 	err := globalhelper.DeleteNamespaceAndWait(tsparams.TestNamespace, tsparams.NsResourcesDeleteTimeoutMins)
 	Expect(err).ToNot(HaveOccurred())
-}, func() {})
+})

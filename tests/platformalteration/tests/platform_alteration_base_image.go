@@ -52,6 +52,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels)
 
+		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -75,6 +76,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
+		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -105,6 +107,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert there is at least one pod")
 		Expect(len(podsList.Items)).NotTo(BeZero())
 
 		By("Change container base image")

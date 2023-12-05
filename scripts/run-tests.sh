@@ -15,14 +15,14 @@ fi
 PFLAG=""
 if [[ ${ENABLE_PARALLEL} == "true" ]]; then
 	echo "Running tests in parallel"
-	PFLAG="-procs=4"
+	PFLAG="-p"
 fi
 
 # Allow for flake retries
 FFLAG=""
 if [[ ${ENABLE_FLAKY_RETRY} == "true" ]]; then
 	echo "Retrying flaky tests"
-	FFLAG="--flake-attempts=3"
+	FFLAG="--flake-attempts=2"
 fi
 
 function run_tests {

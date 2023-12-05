@@ -102,27 +102,35 @@ func RedefineWithPVC(pod *corev1.Pod, volumeName string, claimName string) {
 
 func RedefineWithCPUResources(pod *corev1.Pod, limit string, req string) {
 	for i := range pod.Spec.Containers {
-		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
-			Limits: corev1.ResourceList{
-				corev1.ResourceCPU: resource.MustParse(limit),
-			},
-			Requests: corev1.ResourceList{
-				corev1.ResourceCPU: resource.MustParse(req),
-			},
+		containerResources := &pod.Spec.Containers[i].Resources
+
+		if containerResources.Requests == nil {
+			containerResources.Requests = corev1.ResourceList{}
 		}
+
+		if containerResources.Limits == nil {
+			containerResources.Limits = corev1.ResourceList{}
+		}
+
+		containerResources.Requests[corev1.ResourceCPU] = resource.MustParse(req)
+		containerResources.Limits[corev1.ResourceCPU] = resource.MustParse(limit)
 	}
 }
 
 func RedefineWithMemoryResources(pod *corev1.Pod, limit string, req string) {
 	for i := range pod.Spec.Containers {
-		pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
-			Limits: corev1.ResourceList{
-				corev1.ResourceMemory: resource.MustParse(limit),
-			},
-			Requests: corev1.ResourceList{
-				corev1.ResourceMemory: resource.MustParse(req),
-			},
+		containerResources := &pod.Spec.Containers[i].Resources
+
+		if containerResources.Requests == nil {
+			containerResources.Requests = corev1.ResourceList{}
 		}
+
+		if containerResources.Limits == nil {
+			containerResources.Limits = corev1.ResourceList{}
+		}
+
+		containerResources.Requests[corev1.ResourceMemory] = resource.MustParse(req)
+		containerResources.Limits[corev1.ResourceMemory] = resource.MustParse(limit)
 	}
 }
 
@@ -214,6 +222,15 @@ func RedefineFirstContainerWith1GiHugepages(pod *corev1.Pod, hugepages int) erro
 	hugepagesVal := resource.MustParse(fmt.Sprintf("%d%s", hugepages, "Gi"))
 
 	if len(pod.Spec.Containers) > 0 {
+		// Check if the maps are initialized
+		if pod.Spec.Containers[0].Resources.Requests == nil {
+			pod.Spec.Containers[0].Resources.Requests = make(map[corev1.ResourceName]resource.Quantity)
+		}
+
+		if pod.Spec.Containers[0].Resources.Limits == nil {
+			pod.Spec.Containers[0].Resources.Limits = make(map[corev1.ResourceName]resource.Quantity)
+		}
+
 		pod.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 		pod.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages1Gi] = hugepagesVal
 
