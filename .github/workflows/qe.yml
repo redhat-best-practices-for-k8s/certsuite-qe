@@ -29,6 +29,28 @@ jobs:
       SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
 
     steps:
+      - name: Get SHA of CNF test PR1
+        id: pr_sha
+        env:
+            TITLE: ${{ github.event.pull_request.title }}
+            DESCRIPTION: ${{ github.event.pull_request.body }}
+        run: |
+          echo The Title of your PR is $TITLE
+          echo The Title of your PR is $DESCRIPTION
+          prNum=$(echo "$DESCRIPTION"| grep -m1 "test-with" | sed -E 's@test-with: https://github.com/test-network-function/cnf-certification-test/pull/([0..9]*)@\1@')
+          if [ "$prNum" != "" ]; then
+            echo "prNum=$prNum"
+            prSha=$(curl -s -H \"Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}\" -H \"Accept: application/vnd.github.v3+json\" https://api.github.com/repos/test-network-function/cnf-certification-test/pulls/$prNum | jq -r '.head.sha')
+            echo "prSha=$prSha"
+            echo "pr_sha=$prSha" >> $GITHUB_OUTPUT
+          else
+            echo "pr_sha=ginkgo_removal" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Use PR SHA
+        run: |
+          echo "PR SHA: ${{ steps.pr_sha.outputs.pr_sha }}"
+
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@main
         with:
@@ -97,7 +119,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: cnf-certification-test
-          ref: ginkgo_removal
+          ref: ${{steps.pr_sha.outputs.pr_sha}}
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@main
