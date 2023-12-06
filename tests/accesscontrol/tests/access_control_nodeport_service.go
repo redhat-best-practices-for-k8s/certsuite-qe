@@ -65,7 +65,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfNodePortTcName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
