@@ -13,7 +13,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
-var _ = Describe("lifecycle-container-poststart", func() {
+var _ = Describe("lifecycle-container-startup", func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -52,7 +52,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
 
-		By("Start lifecycle-container-poststart test")
+		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
@@ -92,7 +92,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
 
-		By("Start lifecycle-container-poststart test")
+		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
@@ -116,7 +116,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].Lifecycle).ToNot(BeNil())
 
-		By("Start lifecycle-container-poststart test")
+		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
@@ -135,7 +135,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-container-poststart test")
+		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).ToNot(HaveOccurred())
@@ -162,7 +162,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		Expect(runningDaemonset.Spec.Template.Spec.Containers).To(HaveLen(1))
 		Expect(runningDaemonset.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
-		By("Start lifecycle-container-poststart test")
+		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())
@@ -200,7 +200,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
-		By("Start lifecycle-container-poststart test")
+		By("Start lifecycle-container-startup test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
 		Expect(err).To(HaveOccurred())

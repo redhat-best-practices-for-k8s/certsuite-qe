@@ -47,7 +47,7 @@ const (
 
 	// Test Case names.
 	TnfCrdScaling                          = "lifecycle-crd-scaling"
-	TnfShutdownTcName                      = "lifecycle-container-prestop"
+	TnfShutdownTcName                      = "lifecycle-container-shutdown"
 	TnfDeploymentScalingTcName             = "lifecycle-deployment-scaling"
 	TnfPodOwnerTypeTcName                  = "lifecycle-pod-owner-type"
 	TnfPodRecreationTcName                 = "lifecycle-pod-recreation"
@@ -61,7 +61,7 @@ const (
 	TnfCPUIsolationTcName                  = "lifecycle-cpu-isolation"
 	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"
 	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
-	TnfContainerStartUpTcName              = "lifecycle-container-poststart"
+	TnfContainerStartUpTcName              = "lifecycle-container-startup"
 	TnfPodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
 	TnfStorageProvisioner                  = "lifecycle-storage-provisioner"
 )
