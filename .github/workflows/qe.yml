@@ -92,17 +92,18 @@ jobs:
         run: ./scripts/wait-for-all-pods-running.sh
         working-directory: cnf-certification-test-partner
 
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@extra-dirs
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          extra-dirs: cnf-certification-test
+
       - name: Clone the cnf-certification-test repository
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEST_REPO }}
           path: cnf-certification-test
           ref: ginkgo_removal
-
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the test image
         run: make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest
