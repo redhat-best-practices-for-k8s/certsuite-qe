@@ -37,6 +37,7 @@ type Config struct {
 		TnfImage              string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
 		TnfImageTag           string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
 		DisableIntrusiveTests string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
+		ContainerEngine       string `default:"docker" yaml:"container_engine" envconfig:"CONTAINER_ENGINE"`
 	} `yaml:"general"`
 }
 

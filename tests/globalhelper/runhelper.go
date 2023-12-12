@@ -9,7 +9,6 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 
 	"github.com/golang/glog"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 )
 
 // OverrideReportDir overrides the report directory.
@@ -34,12 +33,10 @@ func OverrideTnfConfigDir(configDir string) {
 
 // LaunchTests stats tests based on given parameters.
 func LaunchTests(testCaseName string, tcNameForReport string) error {
-	containerEngine, err := container.SelectEngine()
-	if err != nil {
-		return fmt.Errorf("failed to select engine: %w", err)
-	}
+	containerEngine := GetConfiguration().General.ContainerEngine
+	glog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
 
-	err = os.Setenv("TNF_CONTAINER_CLIENT", containerEngine)
+	err := os.Setenv("TNF_CONTAINER_CLIENT", containerEngine)
 	if err != nil {
 		return fmt.Errorf("failed to set TNF_CONTAINER_CLIENT: %w", err)
 	}

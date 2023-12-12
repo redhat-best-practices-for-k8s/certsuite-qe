@@ -12,3 +12,4 @@ general:
   tnf_image: quay.io/testnetworkfunction/cnf-certification-test
   tnf_image_tag: latest
   disable_intrusive_tests: false
+  container_engine: docker
