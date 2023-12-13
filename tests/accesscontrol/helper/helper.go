@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
+	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/container"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
@@ -22,7 +22,7 @@ func DefineDeployment(replica int32, containers int, name, namespace string) (*a
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
@@ -33,7 +33,7 @@ func DefineDeployment(replica int32, containers int, name, namespace string) (*a
 func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32,
 	containers int, name, namespace, serviceAccountName string) (*appsv1.Deployment, error) {
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
@@ -48,7 +48,7 @@ func DefineDeploymentWithNamespace(replica int32, containers int, name string, n
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
@@ -63,7 +63,7 @@ func DefineDeploymentWithContainerPorts(name, namespace string, replicaNumber in
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, parameters.TestDeploymentLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
 	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
@@ -120,7 +120,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetP
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
-			parameters.TestDeploymentLabels,
+			tsparams.TestDeploymentLabels,
 			ipFams,
 			nil)
 	} else {
@@ -132,7 +132,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetP
 			port,
 			targetPort,
 			corev1.ProtocolTCP,
-			parameters.TestDeploymentLabels,
+			tsparams.TestDeploymentLabels,
 			ipFams,
 			&ipPolicy)
 	}
