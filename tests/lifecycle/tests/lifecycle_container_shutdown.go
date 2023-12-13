@@ -12,7 +12,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-container-prestop", func() {
+var _ = Describe("lifecycle-container-shutdown", func() {
 	var randomNamespace string
 	var origReportDir string
 	var origTnfConfigDir string
@@ -52,7 +52,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PreStop).ToNot(BeNil())
 
-		By("Start lifecycle-container-prestop test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -78,7 +78,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
-		By("Start lifecycle-container-prestop test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -106,7 +106,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PreStop).ToNot(BeNil())
 
-		By("Start lifecycle-container-prestop test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -148,7 +148,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PreStop).ToNot(BeNil())
 
-		By("Start lifecycle-container-prestop test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -172,7 +172,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-container-prestop test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
@@ -210,7 +210,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
-		By("Start lifecycle-container-prestop test")
+		By("Start lifecycle-container-shutdown test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
