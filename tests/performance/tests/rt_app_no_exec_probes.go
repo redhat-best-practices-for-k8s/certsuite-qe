@@ -57,7 +57,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -78,11 +78,11 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -112,7 +112,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseSkipped)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

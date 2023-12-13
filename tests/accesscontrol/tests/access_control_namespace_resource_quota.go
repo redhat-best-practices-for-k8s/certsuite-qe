@@ -51,6 +51,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -81,6 +82,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -99,10 +101,11 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 	// 56471
 	It("two deployments, one pod each, both in a namespace with resource quota", func() {
-		By("Define deployments")
+		By("Define deployment 1")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -114,10 +117,12 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		err = globalhelper.CreateResourceQuota(resourceQuota)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Define deployment 2")
 		dep2, err := tshelper.DefineDeploymentWithNamespace(1, 1, "accesscontroldeployment2",
 			randomNamespace2)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -144,17 +149,20 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 	// 56472
 	It("two deployments, one pod each, one in a namespace without resource quota [negative]", func() {
-		By("Define deployments")
+		By("Define deployment 1")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Define deployment 2")
 		dep2, err := tshelper.DefineDeploymentWithNamespace(1, 1, "accesscontroldeployment2",
 			randomNamespace2)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
