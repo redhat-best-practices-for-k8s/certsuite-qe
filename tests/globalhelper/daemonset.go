@@ -11,16 +11,18 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	appsv1Typed "k8s.io/client-go/kubernetes/typed/apps/v1"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 
 	. "github.com/onsi/gomega"
 )
 
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
-	return createAndWaitUntilDaemonSetIsReady(GetAPIClient().K8sClient.AppsV1(), daemonSet, timeout)
+	return createAndWaitUntilDaemonSetIsReady(GetAPIClient().K8sClient.AppsV1(), GetAPIClient().K8sClient.CoreV1(), daemonSet, timeout)
 }
 
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
 func createAndWaitUntilDaemonSetIsReady(appsClient appsv1Typed.AppsV1Interface,
+	coreClient corev1Typed.CoreV1Interface,
 	daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
 	runningDaemonSet, err := appsClient.DaemonSets(daemonSet.Namespace).Create(
 		context.TODO(), daemonSet, metav1.CreateOptions{})
@@ -33,7 +35,7 @@ func createAndWaitUntilDaemonSetIsReady(appsClient appsv1Typed.AppsV1Interface,
 	}
 
 	Eventually(func() bool {
-		status, err := isDaemonSetReady(appsClient, runningDaemonSet.Namespace, runningDaemonSet.Name)
+		status, err := isDaemonSetReady(appsClient, coreClient, runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
 			glog.Errorf(
 				"daemonset %s is not ready, retry in 5 seconds", runningDaemonSet.Name)
@@ -47,7 +49,7 @@ func createAndWaitUntilDaemonSetIsReady(appsClient appsv1Typed.AppsV1Interface,
 	return nil
 }
 
-func isDaemonSetReady(client appsv1Typed.AppsV1Interface, namespace string, name string) (bool, error) {
+func isDaemonSetReady(client appsv1Typed.AppsV1Interface, coreClient corev1Typed.CoreV1Interface, namespace string, name string) (bool, error) {
 	daemonSet, err := client.DaemonSets(namespace).Get(
 		context.TODO(),
 		name,
@@ -58,7 +60,7 @@ func isDaemonSetReady(client appsv1Typed.AppsV1Interface, namespace string, name
 	}
 
 	// Get number of nodes and compare with the number of scheduled pods
-	numNodes := GetNumberOfNodes()
+	numNodes := GetNumberOfNodes(coreClient)
 	if daemonSet.Status.DesiredNumberScheduled == int32(numNodes) &&
 		daemonSet.Status.NumberReady == daemonSet.Status.DesiredNumberScheduled {
 		return true, nil
