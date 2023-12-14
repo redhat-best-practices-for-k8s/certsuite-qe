@@ -139,6 +139,8 @@ github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f/go.mod h1:C7bjc5oqhe5AlcoXr3RIDuSBiLn5VSOUtz76aJv6GkI=
 github.com/test-network-function/test-network-function-claim v1.0.31 h1:Yqb9/8QPEEZO0LAIeuw65uPzDPnKSG8z/njpXAN2CJs=
 github.com/test-network-function/test-network-function-claim v1.0.31/go.mod h1:itpxi9Ehhv9oNC9MiSAt52SKFtJBbQ/T1njTXspl1Hk=
+github.com/test-network-function/test-network-function-claim v1.0.32 h1:GeUwbHYaXL5Yx785NmbuSQbqby8LVPEWHeW3bFEpQ9g=
+github.com/test-network-function/test-network-function-claim v1.0.32/go.mod h1:+0c6DMF/ycFmEH3EB5mJ9rSQ+3T/d48NuqmY2aXjrqQ=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
