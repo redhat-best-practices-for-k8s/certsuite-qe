@@ -48,9 +48,9 @@ jobs:
           echo '{ "auths": {} }' >> ${PFLT_DOCKERCONFIG}
 
       - name: Set up Go 1.21
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.21.4
+          go-version: 1.21.5
 
       - name: Disable default go problem matcher
         run: echo "::remove-matcher owner=go::"
@@ -60,6 +60,26 @@ jobs:
         with:
           ref: ${{ github.sha }}
 
+      - name: Check out `cnf-certification-test-partner`
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: test-network-function/cnf-certification-test-partner
+          path: cnf-certification-test-partner
+
+      - name: Clone the cnf-certification-test repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: ${{ env.TEST_REPO }}
+          path: cnf-certification-test
+
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@extra-dirs
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          extra-dirs: cnfcert-tests-verification/cnf-certification-test-partner cnfcert-tests-verification/cnf-certification-test
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -67,12 +87,6 @@ jobs:
           sudo pip3 install j2cli
 
       # Create a Kind cluster for testing.
-      - name: Check out `cnf-certification-test-partner`
-        uses: actions/checkout@v4
-        with:
-          repository: test-network-function/cnf-certification-test-partner
-          path: cnf-certification-test-partner
-
       - name: Bootstrap the Kind and OC/Kubectl binaries for the `local-test-infra`
         run: make bootstrap-cluster
         working-directory: cnf-certification-test-partner
@@ -91,19 +105,6 @@ jobs:
       - name: Wait for all pods to be ready
         run: ./scripts/wait-for-all-pods-running.sh
         working-directory: cnf-certification-test-partner
-
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@extra-dirs
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: cnf-certification-test
-
-      - name: Clone the cnf-certification-test repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.TEST_REPO }}
-          path: cnf-certification-test
-          ref: ginkgo_removal
 
       - name: Build the test image
         run: make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest
