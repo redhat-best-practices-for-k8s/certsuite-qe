@@ -96,7 +96,7 @@ jobs:
         uses: depends-on/depends-on-action@extra-dirs
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: cnf-certification-test
+          extra-dirs: cnfcert-tests-verification/cnf-certification-test-partner cnfcert-tests-verification/cnf-certification-test
 
       - name: Clone the cnf-certification-test repository
         uses: actions/checkout@v4
