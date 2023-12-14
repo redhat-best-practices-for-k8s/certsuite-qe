@@ -49,7 +49,8 @@ func createAndWaitUntilDaemonSetIsReady(appsClient appsv1Typed.AppsV1Interface,
 	return nil
 }
 
-func isDaemonSetReady(client appsv1Typed.AppsV1Interface, coreClient corev1Typed.CoreV1Interface, namespace string, name string) (bool, error) {
+func isDaemonSetReady(client appsv1Typed.AppsV1Interface,
+	coreClient corev1Typed.CoreV1Interface, namespace string, name string) (bool, error) {
 	daemonSet, err := client.DaemonSets(namespace).Get(
 		context.TODO(),
 		name,
