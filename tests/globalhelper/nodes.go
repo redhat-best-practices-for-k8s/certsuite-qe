@@ -92,8 +92,8 @@ func NodeHasHugePagesEnabled(node *corev1.Node, resourceName string) bool {
 	return hugepagesEnabled
 }
 
-func GetNumberOfNodes() int {
-	return getNumberOfNodes(GetAPIClient().K8sClient.CoreV1())
+func GetNumberOfNodes(client corev1Typed.CoreV1Interface) int {
+	return getNumberOfNodes(client)
 }
 
 func getNumberOfNodes(client corev1Typed.CoreV1Interface) int {
