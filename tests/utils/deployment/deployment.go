@@ -77,9 +77,9 @@ func RedefineWithLabels(deployment *appsv1.Deployment, label map[string]string) 
 }
 
 // RedefineWithMultus redefines deployment with additional labels.
-func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) *appsv1.Deployment {
+func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) {
 	if len(nadNames) < 1 {
-		return deployment
+		return
 	}
 
 	var nadAnnotations []MultusAnnotation
@@ -93,8 +93,6 @@ func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) *appsv
 	deployment.Spec.Template.Annotations = map[string]string{
 		"k8s.v1.cni.cncf.io/networks": string(bString),
 	}
-
-	return deployment
 }
 
 // RedefineWithReplicaNumber redefines deployment with requested replica number.

@@ -138,9 +138,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetP
 	}
 
 	if withNodePort {
-		var err error
-
-		testService, err = service.RedefineWithNodePort(testService)
+		err := service.RedefineWithNodePort(testService)
 		if err != nil {
 			return err
 		}

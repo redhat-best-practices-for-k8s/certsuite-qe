@@ -25,7 +25,7 @@ func TestRedefineWithNodePort(t *testing.T) {
 	singleStack := corev1.IPFamilyPolicySingleStack
 	testService := DefineService("testService", "testNamespace", 80, 8080, "TCP",
 		map[string]string{"app": "test"}, []corev1.IPFamily{corev1.IPv4Protocol}, &singleStack)
-	testService, err := RedefineWithNodePort(testService)
+	err := RedefineWithNodePort(testService)
 	assert.Nil(t, err)
 	assert.NotNil(t, testService)
 	assert.Equal(t, corev1.ServiceTypeNodePort, testService.Spec.Type)
