@@ -25,12 +25,10 @@ func DefineNad(name string, namespace string) *netattdefv1.NetworkAttachmentDefi
 
 // RedefineNadWithWhereaboutsIpam updates nad with whereabouts ipam config.
 func RedefineNadWithWhereaboutsIpam(
-	nad *netattdefv1.NetworkAttachmentDefinition, network string) *netattdefv1.NetworkAttachmentDefinition {
+	nad *netattdefv1.NetworkAttachmentDefinition, network string) {
 	nad.Spec.Config = strings.Trim(nad.Spec.Config, `}`)
 	nad.Spec.Config = fmt.Sprintf(
 		"%s, %s}", nad.Spec.Config,
 		fmt.Sprintf(`"ipam":{ "type": "whereabouts", "range": "%s"}`, network),
 	)
-
-	return nad
 }

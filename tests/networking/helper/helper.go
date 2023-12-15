@@ -158,9 +158,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port, targetPort in
 	}
 
 	if withNodePort {
-		var err error
-
-		testService, err = service.RedefineWithNodePort(testService)
+		err := service.RedefineWithNodePort(testService)
 		if err != nil {
 			return err
 		}
@@ -186,7 +184,7 @@ func DefineAndCreateNadOnCluster(name, namespace, network string) error {
 	nadOneInterface := nad.DefineNad(name, namespace)
 
 	if network != "" {
-		nadOneInterface = nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
+		nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
 	}
 
 	err := globalhelper.GetAPIClient().Create(context.TODO(), nadOneInterface)
@@ -317,7 +315,7 @@ func defineDeploymentBasedOnArgs(
 	}
 
 	if len(multus) > 0 {
-		deploymentStruct = deployment.RedefineWithMultus(deploymentStruct, multus)
+		deployment.RedefineWithMultus(deploymentStruct, multus)
 	}
 
 	return deploymentStruct
