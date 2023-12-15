@@ -41,13 +41,13 @@ func DefineService(name string,
 }
 
 // RedefineWithNodePort redefines service struct with NodePort.
-func RedefineWithNodePort(testService *corev1.Service) (*corev1.Service, error) {
+func RedefineWithNodePort(testService *corev1.Service) error {
 	testService.Spec.Type = "NodePort"
 	if len(testService.Spec.Ports) < 1 {
-		return nil, fmt.Errorf("service does not have available ports")
+		return fmt.Errorf("service does not have available ports")
 	}
 
 	testService.Spec.Ports[0].NodePort = testService.Spec.Ports[0].Port
 
-	return testService, nil
+	return nil
 }
