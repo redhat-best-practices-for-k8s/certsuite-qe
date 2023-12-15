@@ -1,8 +1,10 @@
+---
+
 name: QE Testing (Ubuntu-hosted)
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main, ginkgo_removal]
   workflow_dispatch:
   # Schedule a daily cron at midnight UTC
   schedule:
@@ -10,14 +12,12 @@ on:
 env:
   TEST_REPO: test-network-function/cnf-certification-test
 
-
-
 jobs:
   qe-testing:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
-      matrix: 
+      matrix:
         suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
     env:
       SHELL: /bin/bash
@@ -60,6 +60,24 @@ jobs:
         with:
           ref: ${{ github.sha }}
 
+      - name: Check out `cnf-certification-test-partner`
+        uses: actions/checkout@v4
+        with:
+          repository: test-network-function/cnf-certification-test-partner
+          path: cnf-certification-test-partner
+
+      - name: Clone the cnf-certification-test repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TEST_REPO }}
+          path: cnf-certification-test
+
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          extra-dirs: cnfcert-tests-verification/cnf-certification-test-partner cnfcert-tests-verification/cnf-certification-test
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -67,12 +85,6 @@ jobs:
           sudo pip3 install j2cli
 
       # Create a Kind cluster for testing.
-      - name: Check out `cnf-certification-test-partner`
-        uses: actions/checkout@v4
-        with:
-          repository: test-network-function/cnf-certification-test-partner
-          path: cnf-certification-test-partner
-
       - name: Bootstrap the Kind and OC/Kubectl binaries for the `local-test-infra`
         run: make bootstrap-cluster
         working-directory: cnf-certification-test-partner
@@ -92,17 +104,6 @@ jobs:
         run: ./scripts/wait-for-all-pods-running.sh
         working-directory: cnf-certification-test-partner
 
-      - name: Clone the cnf-certification-test repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.TEST_REPO }}
-          path: cnf-certification-test
-
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build the test image
         run: make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest
         working-directory: cnf-certification-test
@@ -113,3 +114,15 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           command: FEATURES=${{matrix.suite}} TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test TNF_IMAGE=${{env.TEST_TNF_IMAGE_NAME}} TNF_IMAGE_TAG=${{env.TEST_TNF_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true make test-features
+
+  check-all-dependencies-are-merged:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Extract dependent PR
+        uses: depends-on/depends-on-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          check-unmerged-pr: true
+
+...
