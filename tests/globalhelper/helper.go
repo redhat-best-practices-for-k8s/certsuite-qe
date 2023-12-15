@@ -84,7 +84,10 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
 	}
 
-	defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
+	err = defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
+	if err != nil {
+		return fmt.Errorf("failed to create target operator labels section in tnf yaml config file: %w", err)
+	}
 
 	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
 	if err != nil {
@@ -92,7 +95,10 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 	}
 
 	// CRD filters is an optional field.
-	defineCrdFilters(&tnfConfig, crdFilters)
+	err = defineCrdFilters(&tnfConfig, crdFilters)
+	if err != nil {
+		return fmt.Errorf("failed to create crd filters section in tnf yaml config file: %w", err)
+	}
 
 	err = configFileEncoder.Encode(tnfConfig)
 	if err != nil {
@@ -189,6 +195,10 @@ func definePodUnderTestLabels(config *globalparameters.TnfConfig, podsUnderTestL
 		return fmt.Errorf("pods under test labels cannot be empty list")
 	}
 
+	if config == nil {
+		return fmt.Errorf("config struct cannot be nil")
+	}
+
 	for _, podsUnderTestLabel := range podsUnderTestLabels {
 		prefixNameValue := strings.Split(podsUnderTestLabel, ":")
 		if len(prefixNameValue) != 2 {
@@ -201,13 +211,23 @@ func definePodUnderTestLabels(config *globalparameters.TnfConfig, podsUnderTestL
 	return nil
 }
 
-func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) {
+func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) error {
+	if config == nil {
+		return fmt.Errorf("config struct cannot be nil")
+	}
+
 	if len(operatorsUnderTestLabels) > 0 {
 		config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
 	}
+
+	return nil
 }
 
-func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) {
+func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) error {
+	if config == nil {
+		return fmt.Errorf("config struct cannot be nil")
+	}
+
 	for _, crdSuffix := range crdSuffixes {
 		glog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to tnf configuration file", crdSuffix))
 
@@ -215,6 +235,8 @@ func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) 
 			NameSuffix: crdSuffix,
 		})
 	}
+
+	return nil
 }
 
 func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []string) error {
