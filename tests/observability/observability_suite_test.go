@@ -40,7 +40,7 @@ var _ = SynchronizedBeforeSuite(func() {
 		tshelper.GetTnfTargetPodLabelsSlice(),
 		[]string{},
 		[]string{},
-		[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2})
+		[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, globalhelper.GetConfiguration().General.TnfConfigDir)
 	Expect(err).ToNot(HaveOccurred())
 }, func() {})
 

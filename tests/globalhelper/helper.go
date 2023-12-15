@@ -25,8 +25,8 @@ import (
 const retryInterval = 5
 
 // ValidateIfReportsAreValid test if report is valid for given test case.
-func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
-	claimReport, err := OpenClaimReport()
+func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir string) error {
+	claimReport, err := OpenClaimReport(reportDir)
 	if err != nil {
 		return fmt.Errorf("failed to open tnf claim report, err: %w", err)
 	}
@@ -62,8 +62,8 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string) error {
 
 // DefineTnfConfig creates tnf_config.yml file under tnf config directory.
 func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
-	certifiedContainerInfo []string, crdFilters []string) error {
-	tnfConfigFilePath := path.Join(GetConfiguration().General.TnfConfigDir, globalparameters.DefaultTnfConfigFileName)
+	certifiedContainerInfo []string, crdFilters []string, configDir string) error {
+	tnfConfigFilePath := path.Join(configDir, globalparameters.DefaultTnfConfigFileName)
 
 	configFile, err := os.OpenFile(tnfConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -106,7 +106,7 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 	}
 
 	glog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
-		globalparameters.DefaultTnfConfigFileName, GetConfiguration().General.TnfConfigDir))
+		globalparameters.DefaultTnfConfigFileName, configDir))
 
 	return nil
 }

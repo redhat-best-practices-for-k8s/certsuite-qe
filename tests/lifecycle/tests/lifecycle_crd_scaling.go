@@ -18,8 +18,8 @@ import (
 
 var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
@@ -33,7 +33,7 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
@@ -41,7 +41,7 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{tsparams.TnfTargetCrdFilters})
+			[]string{tsparams.TnfTargetCrdFilters}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
@@ -54,7 +54,7 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("Custom resource is deployed, scale in and out", func() {
@@ -74,11 +74,11 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdScaling,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdScaling, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdScaling, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

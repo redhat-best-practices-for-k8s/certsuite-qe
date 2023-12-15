@@ -11,28 +11,8 @@ import (
 	"github.com/golang/glog"
 )
 
-// OverrideReportDir overrides the report directory.
-func OverrideReportDir(reportDir string) {
-	err := os.MkdirAll(reportDir, os.ModePerm)
-	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
-	}
-
-	GetConfiguration().General.TnfReportDir = reportDir
-}
-
-// OverrideTnfConfigDir overrides the TNF config directory.
-func OverrideTnfConfigDir(configDir string) {
-	err := os.MkdirAll(configDir, os.ModePerm)
-	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", configDir, err)
-	}
-
-	GetConfiguration().General.TnfConfigDir = configDir
-}
-
 // LaunchTests stats tests based on given parameters.
-func LaunchTests(testCaseName string, tcNameForReport string) error {
+func LaunchTests(testCaseName string, tcNameForReport string, reportDir string, configDir string) error {
 	containerEngine := GetConfiguration().General.ContainerEngine
 	glog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
 
@@ -51,8 +31,8 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 	testArgs := []string{
 		"-k", os.Getenv("KUBECONFIG"),
 		"-c", GetConfiguration().General.DockerConfigDir + "/config",
-		"-t", GetConfiguration().General.TnfConfigDir,
-		"-o", GetConfiguration().General.TnfReportDir,
+		"-t", configDir,
+		"-o", reportDir,
 		"-i", fmt.Sprintf("%s:%s", GetConfiguration().General.TnfImage, GetConfiguration().General.TnfImageTag),
 		"-l", testCaseName,
 	}
@@ -86,7 +66,7 @@ func LaunchTests(testCaseName string, tcNameForReport string) error {
 			testCaseName, err, cmd.String())
 	}
 
-	CopyClaimFileToTcFolder(testCaseName, tcNameForReport)
+	CopyClaimFileToTcFolder(testCaseName, tcNameForReport, reportDir)
 
 	return err
 }

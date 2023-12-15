@@ -16,12 +16,12 @@ import (
 
 var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -30,7 +30,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.IsKindCluster() {
@@ -39,7 +39,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51308
@@ -55,12 +55,12 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 		// cluster should be set with kernel hugepages = MC hugepages configuration by performance profile.
 		By("Start platform-alteration-hugepages-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePagesConfigName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfHugePagesConfigName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -108,10 +108,10 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 
 		By("Start platform-alteration-hugepages-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePagesConfigName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePagesConfigName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePagesConfigName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Fix hugepages config")
