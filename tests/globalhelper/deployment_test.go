@@ -131,3 +131,54 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 		assert.Equal(t, testCase.expectedError, err)
 	}
 }
+
+func TestGetRunningDeployment(t *testing.T) {
+	generateDeployment := func() *appsv1.Deployment {
+		return &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "test-deployment",
+				Namespace: "test-namespace",
+			},
+			Status: appsv1.DeploymentStatus{},
+			Spec:   appsv1.DeploymentSpec{},
+		}
+	}
+
+	var runtimeObjects []runtime.Object
+	runtimeObjects = append(runtimeObjects, generateDeployment())
+	client := k8sfake.NewSimpleClientset(runtimeObjects...)
+
+	testDeployment, err := getRunningDeployment(client.AppsV1(), "test-namespace", "test-deployment")
+	assert.Nil(t, err)
+	assert.Equal(t, "test-deployment", testDeployment.Name)
+	assert.Equal(t, "test-namespace", testDeployment.Namespace)
+
+	// Test deployment not found
+	testDeployment, err = getRunningDeployment(client.AppsV1(), "test-namespace", "test-deployment2")
+	assert.NotNil(t, err)
+	assert.Nil(t, testDeployment)
+}
+
+func TestDeleteDeployment(t *testing.T) {
+	generateDeployment := func() *appsv1.Deployment {
+		return &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "test-deployment",
+				Namespace: "test-namespace",
+			},
+			Status: appsv1.DeploymentStatus{},
+			Spec:   appsv1.DeploymentSpec{},
+		}
+	}
+
+	var runtimeObjects []runtime.Object
+	runtimeObjects = append(runtimeObjects, generateDeployment())
+	client := k8sfake.NewSimpleClientset(runtimeObjects...)
+
+	err := deleteDeployment(client.AppsV1(), "test-namespace", "test-deployment")
+	assert.Nil(t, err)
+
+	// Test deployment not found
+	err = deleteDeployment(client.AppsV1(), "test-namespace", "test-deployment2")
+	assert.Nil(t, err)
+}
