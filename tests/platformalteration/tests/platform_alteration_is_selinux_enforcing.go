@@ -13,12 +13,12 @@ import (
 
 var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -27,7 +27,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
@@ -37,7 +37,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51310
@@ -67,12 +67,12 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 		By("Start platform-alteration-is-selinux-enforcing test")
 		err = globalhelper.LaunchTests(tsparams.TnfIsSelinuxEnforcingName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfIsSelinuxEnforcingName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -103,12 +103,12 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 		By("Start platform-alteration-is-selinux-enforcing test")
 		err = globalhelper.LaunchTests(tsparams.TnfIsSelinuxEnforcingName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfIsSelinuxEnforcingName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verifying SELinux is enforcing on the node")

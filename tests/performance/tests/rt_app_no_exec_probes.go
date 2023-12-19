@@ -12,12 +12,12 @@ import (
 
 var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -25,7 +25,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Create service account and roles and roles binding
@@ -34,7 +34,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("Rt app pod with no exec probes", func() {
@@ -52,12 +52,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -77,12 +77,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -107,12 +107,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

@@ -16,8 +16,8 @@ import (
 )
 
 // OpenClaimReport opens claim.json file and returns struct.
-func OpenClaimReport() (*claim.Root, error) {
-	dataClaim, err := os.Open(path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName))
+func OpenClaimReport(reportDir string) (*claim.Root, error) {
+	dataClaim, err := os.Open(path.Join(reportDir, globalparameters.DefaultClaimFileName))
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultClaimFileName, err)
 	}
@@ -54,10 +54,10 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 }
 
 // RemoveContentsFromReportDir removes all files from report dir.
-func RemoveContentsFromReportDir() error {
-	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", GetConfiguration().General.TnfReportDir))
+func RemoveContentsFromReportDir(reportDir string) error {
+	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
 
-	tnfReportDir, err := os.Open(GetConfiguration().General.TnfReportDir)
+	tnfReportDir, err := os.Open(reportDir)
 	if err != nil {
 		return fmt.Errorf("failed to open report directory: %w", err)
 	}
@@ -70,18 +70,18 @@ func RemoveContentsFromReportDir() error {
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(GetConfiguration().General.TnfReportDir, name))
+		err = os.RemoveAll(filepath.Join(reportDir, name))
 		if err != nil {
 			return fmt.Errorf("failed to remove content from report directory: %w", err)
 		}
 
 		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
-			GetConfiguration().General.TnfReportDir))
+			reportDir))
 	}
 
 	// Delete the report directory
-	err = os.Remove(GetConfiguration().General.TnfReportDir)
+	err = os.Remove(reportDir)
 	if err != nil {
 		return fmt.Errorf("failed to remove report directory: %w", err)
 	}
@@ -89,8 +89,8 @@ func RemoveContentsFromReportDir() error {
 	return nil
 }
 
-func RemoveContentsFromConfigDir() error {
-	tnfConfigDir, err := os.Open(GetConfiguration().General.TnfConfigDir)
+func RemoveContentsFromConfigDir(configDir string) error {
+	tnfConfigDir, err := os.Open(configDir)
 	if err != nil {
 		return fmt.Errorf("failed to open config directory: %w", err)
 	}
@@ -103,18 +103,18 @@ func RemoveContentsFromConfigDir() error {
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(GetConfiguration().General.TnfConfigDir, name))
+		err = os.RemoveAll(filepath.Join(configDir, name))
 		if err != nil {
 			return fmt.Errorf("failed to remove content from config directory: %w", err)
 		}
 
 		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
-			GetConfiguration().General.TnfConfigDir))
+			configDir))
 	}
 
 	// Delete the config directory
-	err = os.Remove(GetConfiguration().General.TnfConfigDir)
+	err = os.Remove(configDir)
 	if err != nil {
 		return fmt.Errorf("failed to remove config directory: %w", err)
 	}
@@ -185,8 +185,8 @@ func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
 }
 
-func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
-	srcClaim := path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName)
+func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
+	srcClaim := path.Join(reportDir, globalparameters.DefaultClaimFileName)
 	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName)
 	dstClaim := path.Join(dstDir, globalparameters.DefaultClaimFileName)
 

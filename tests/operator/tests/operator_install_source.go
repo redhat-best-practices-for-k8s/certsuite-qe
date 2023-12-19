@@ -135,13 +135,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallSource,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallSource,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -164,13 +166,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallSource,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallSource,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -196,13 +200,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallSource,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallSource,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -233,13 +239,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallSource,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallSource,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

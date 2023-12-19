@@ -18,8 +18,8 @@ import (
 
 var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		By("Enable intrusive tests")
@@ -33,7 +33,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err = globalhelper.DefineTnfConfig(
@@ -41,7 +41,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
@@ -54,7 +54,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 47405
@@ -84,11 +84,11 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -133,11 +133,11 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCasePassed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -166,11 +166,11 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -218,11 +218,11 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
