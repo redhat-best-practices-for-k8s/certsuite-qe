@@ -14,12 +14,12 @@ import (
 
 var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestAccessControlNameSpace)
 
 		By("Define tnf config file")
@@ -28,12 +28,12 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 63736
@@ -53,13 +53,13 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -71,6 +71,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 
 		deployment.RedefineWithContainersSecurityContextIpcLock(dep)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -83,13 +84,13 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -99,6 +100,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -110,6 +112,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -121,13 +124,13 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -139,6 +142,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 
 		deployment.RedefineWithContainersSecurityContextIpcLock(dep)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -148,9 +152,11 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].
 			SecurityContext.Capabilities.Add).To(ContainElement(corev1.Capability("IPC_LOCK")))
 
+		By("Define deployment 2")
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -162,13 +168,13 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

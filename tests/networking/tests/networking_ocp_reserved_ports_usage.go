@@ -13,12 +13,13 @@ import (
 
 var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
+		randomNamespace, randomReportDir, randomTnfConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -26,12 +27,12 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 59536
@@ -44,13 +45,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -65,13 +66,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -87,13 +88,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -108,13 +109,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -129,13 +130,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -154,13 +155,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -179,13 +180,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -209,13 +210,13 @@ var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOcpReservedPortsUsageTcName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

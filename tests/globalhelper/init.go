@@ -2,6 +2,7 @@ package globalhelper
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang/glog"
@@ -65,53 +66,56 @@ func GetConfiguration() *config.Config {
 	return conf
 }
 
-func GetOriginalTNFPaths() (string, string) {
-	return GetConfiguration().General.TnfReportDir, GetConfiguration().General.TnfConfigDir
+func GenerateDirectories(randomStr string) (reportDir, configDir string) {
+	reportDir = GetConfiguration().General.TnfReportDir + "/" + randomStr
+	configDir = GetConfiguration().General.TnfConfigDir + "/" + randomStr
+
+	err := os.MkdirAll(reportDir, os.ModePerm)
+	if err != nil {
+		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+	}
+
+	err = os.MkdirAll(configDir, os.ModePerm)
+	if err != nil {
+		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+	}
+
+	return reportDir, configDir
 }
 
-func OverrideDirectories(randomStr string) {
-	reportDir := GetConfiguration().General.TnfReportDir + "/" + randomStr
-	OverrideReportDir(reportDir)
-
-	configDir := GetConfiguration().General.TnfConfigDir + "/" + randomStr
-	OverrideTnfConfigDir(configDir)
-}
-
-func RestoreOriginalTNFPaths(reportDir, configDir string) {
-	GetConfiguration().General.TnfReportDir = reportDir
-	GetConfiguration().General.TnfConfigDir = configDir
-}
-
-func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespace, origReportDir, origConfigDir string) {
+func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespace, randomReportDir, randomConfigDir string) {
 	randomNamespace = incomingNamespace + "-" + GenerateRandomString(10)
 
 	By(fmt.Sprintf("Create %s namespace", randomNamespace))
 	err := CreateNamespace(randomNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
-	origReportDir, origConfigDir = GetOriginalTNFPaths()
+	By("Generate directories")
 
-	By("Override directories")
-	OverrideDirectories(randomNamespace)
+	randomReportDir, randomConfigDir = GenerateDirectories(randomNamespace)
 
-	return randomNamespace, origReportDir, origConfigDir
+	return randomNamespace, randomReportDir, randomConfigDir
 }
 
-func AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origConfigDir string, waitingTime time.Duration) {
-	By(fmt.Sprintf("Remove reports from report directory: %s", GetConfiguration().General.TnfReportDir))
+func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {
+	// logfile := "cnf-certsuite.log"
+	// By("Print logs")
+	// myFile, err := os.ReadFile(GetConfiguration().General.TnfReportDir + "/" + logfile)
+	// if err != nil {
+	// 	glog.Errorf("can not read file %s - %s", logfile, err)
+	// }
+	// fmt.Println(string(myFile))
+	By(fmt.Sprintf("Remove reports from report directory: %s", randomReportDir))
 
-	err := RemoveContentsFromReportDir()
+	err := RemoveContentsFromReportDir(randomReportDir)
 	Expect(err).ToNot(HaveOccurred())
 
-	By(fmt.Sprintf("Remove configs from config directory: %s", GetConfiguration().General.TnfConfigDir))
+	By(fmt.Sprintf("Remove configs from config directory: %s", randomConfigDir))
 
-	err = RemoveContentsFromConfigDir()
+	err = RemoveContentsFromConfigDir(randomConfigDir)
 	Expect(err).ToNot(HaveOccurred())
 
 	By(fmt.Sprintf("Remove %s namespace", randomNamespace))
 	err = DeleteNamespaceAndWait(randomNamespace, waitingTime)
 	Expect(err).ToNot(HaveOccurred())
-
-	By("Restore directories")
-	RestoreOriginalTNFPaths(origReportDir, origConfigDir)
 }

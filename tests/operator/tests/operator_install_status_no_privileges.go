@@ -132,13 +132,15 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -156,13 +158,15 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -180,13 +184,15 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -212,13 +218,15 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -244,13 +252,15 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

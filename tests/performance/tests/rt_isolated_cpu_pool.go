@@ -13,12 +13,12 @@ import (
 
 var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -26,7 +26,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Create service account and roles and roles binding
@@ -35,7 +35,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
@@ -69,13 +69,13 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).ToNot(HaveOccurred())
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -104,13 +104,13 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		Expect(err).To(HaveOccurred())
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -125,13 +125,13 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

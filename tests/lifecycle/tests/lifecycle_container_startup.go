@@ -13,14 +13,14 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
 )
 
-var _ = Describe("lifecycle-container-startup", func() {
+var _ = Describe("lifecycle-container-poststart", func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -28,12 +28,12 @@ var _ = Describe("lifecycle-container-startup", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 55910
@@ -52,13 +52,13 @@ var _ = Describe("lifecycle-container-startup", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
 
-		By("Start lifecycle-container-startup test")
+		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -92,13 +92,13 @@ var _ = Describe("lifecycle-container-startup", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
 
-		By("Start lifecycle-container-startup test")
+		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -116,13 +116,13 @@ var _ = Describe("lifecycle-container-startup", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].Lifecycle).ToNot(BeNil())
 
-		By("Start lifecycle-container-startup test")
+		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -135,13 +135,13 @@ var _ = Describe("lifecycle-container-startup", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start lifecycle-container-startup test")
+		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -152,6 +152,7 @@ var _ = Describe("lifecycle-container-startup", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
+		By("Deploy daemonSet")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -161,13 +162,13 @@ var _ = Describe("lifecycle-container-startup", func() {
 		Expect(runningDaemonset.Spec.Template.Spec.Containers).To(HaveLen(1))
 		Expect(runningDaemonset.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
-		By("Start lifecycle-container-startup test")
+		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCaseFailed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -199,13 +200,13 @@ var _ = Describe("lifecycle-container-startup", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].Lifecycle).To(BeNil())
 
-		By("Start lifecycle-container-startup test")
+		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCaseFailed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

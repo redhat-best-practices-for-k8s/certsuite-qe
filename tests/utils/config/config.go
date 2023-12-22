@@ -104,7 +104,7 @@ func NewConfig() (*Config, error) {
 // DebugTnf activates debug mode.
 func (c *Config) DebugTnf() (bool, error) {
 	if c.General.DebugTnf == "true" {
-		err := os.Setenv("TNF_LOG_LEVEL", "trace")
+		err := os.Setenv("TNF_LOG_LEVEL", "debug")
 		if err != nil {
 			return false, fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
 		}

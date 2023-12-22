@@ -49,7 +49,6 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			tsparams.TestCertificationNameSpace)
-		//nolint:goconst
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInstana+
 			" is not ready")
 
@@ -131,7 +130,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		}
 
 		By("Remove reports from report directory")
-		err := globalhelper.RemoveContentsFromReportDir()
+		err := globalhelper.RemoveContentsFromReportDir(globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -153,14 +152,16 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -190,14 +191,16 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			globalhelper.GetConfiguration().General.TnfReportDir,
+			globalhelper.GetConfiguration().General.TnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 
 	})

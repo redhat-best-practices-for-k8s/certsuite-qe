@@ -62,7 +62,7 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		t.Run(testCase.name, func(t *testing.T) {
-			err := createAndWaitUntilDaemonSetIsReady(client.AppsV1(),
+			err := createAndWaitUntilDaemonSetIsReady(client.AppsV1(), client.CoreV1(),
 				generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable, testCase.numReady), 5)
 			if (err != nil) != testCase.wantErr {
 				t.Errorf("CreateAndWaitUntilDaemonSetIsReady() error = %v, wantErr %v", err, testCase.wantErr)
@@ -123,10 +123,19 @@ func TestIsDaemonsetReady(t *testing.T) {
 		var runtimeObjects []runtime.Object
 		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.numAvailable,
 			testCase.numScheduled, testCase.numUnavailable, testCase.numReady))
+		runtimeObjects = append(runtimeObjects, &corev1.Node{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "test-node",
+				Labels: map[string]string{
+					"node-role.kubernetes.io/worker-cnf": "",
+				},
+			},
+		})
+
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		t.Run(testCase.name, func(t *testing.T) {
-			got, err := isDaemonSetReady(client.AppsV1(), "default", "test-daemonset")
+			got, err := isDaemonSetReady(client.AppsV1(), client.CoreV1(), "default", "test-daemonset")
 			if (err != nil) != testCase.wantErr {
 				t.Errorf("isDaemonsetReady() error = %v, wantErr %v", err, testCase.wantErr)
 

@@ -16,12 +16,12 @@ import (
 
 var _ = Describe("platform-alteration-boot-params", func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -30,7 +30,7 @@ var _ = Describe("platform-alteration-boot-params", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
@@ -40,7 +40,7 @@ var _ = Describe("platform-alteration-boot-params", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51302
@@ -56,12 +56,12 @@ var _ = Describe("platform-alteration-boot-params", func() {
 
 		By("Start platform-alteration-boot-params test")
 		err = globalhelper.LaunchTests(tsparams.TnfBootParamsName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfBootParamsName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -94,12 +94,12 @@ var _ = Describe("platform-alteration-boot-params", func() {
 
 		By("Start platform-alteration-boot-params test")
 		err = globalhelper.LaunchTests(tsparams.TnfBootParamsName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfBootParamsName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

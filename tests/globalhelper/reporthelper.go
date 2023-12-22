@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"os"
@@ -17,8 +16,8 @@ import (
 )
 
 // OpenClaimReport opens claim.json file and returns struct.
-func OpenClaimReport() (*claim.Root, error) {
-	dataClaim, err := os.Open(path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName))
+func OpenClaimReport(reportDir string) (*claim.Root, error) {
+	dataClaim, err := os.Open(path.Join(reportDir, globalparameters.DefaultClaimFileName))
 	if err != nil {
 		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultClaimFileName, err)
 	}
@@ -54,51 +53,11 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 	return isTestCaseInExpectedStatusInClaimReport(testCaseName, claimReport, globalparameters.TestCaseSkipped)
 }
 
-// OpenJunitTestReport returns junit struct.
-func OpenJunitTestReport() (*globalparameters.JUnitTestSuites, error) {
-	junitReportFile, err := os.Open(
-		path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultJunitReportName),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultJunitReportName, err)
-	}
-
-	junitReportByte, err := io.ReadAll(junitReportFile)
-
-	if err != nil {
-		return nil, fmt.Errorf("error reading %s report file: %w", globalparameters.DefaultJunitReportName, err)
-	}
-
-	var junitReport globalparameters.JUnitTestSuites
-	err = xml.Unmarshal(junitReportByte, &junitReport)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &junitReport, nil
-}
-
-// IsTestCasePassedInJunitReport tests if test case is passed as expected in junit report file.
-func IsTestCasePassedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCasePassed)
-}
-
-// IsTestCaseFailedInJunitReport tests if test case is failed as expected in junit report file.
-func IsTestCaseFailedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseFailed)
-}
-
-// IsTestCaseSkippedInJunitReport tests if test case is skipped as expected in junit report file.
-func IsTestCaseSkippedInJunitReport(report *globalparameters.JUnitTestSuites, testCaseName string) (bool, error) {
-	return isTestCaseInRequiredStatusInJunitReport(report, testCaseName, globalparameters.TestCaseSkipped)
-}
-
 // RemoveContentsFromReportDir removes all files from report dir.
-func RemoveContentsFromReportDir() error {
-	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", GetConfiguration().General.TnfReportDir))
+func RemoveContentsFromReportDir(reportDir string) error {
+	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
 
-	tnfReportDir, err := os.Open(GetConfiguration().General.TnfReportDir)
+	tnfReportDir, err := os.Open(reportDir)
 	if err != nil {
 		return fmt.Errorf("failed to open report directory: %w", err)
 	}
@@ -111,18 +70,18 @@ func RemoveContentsFromReportDir() error {
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(GetConfiguration().General.TnfReportDir, name))
+		err = os.RemoveAll(filepath.Join(reportDir, name))
 		if err != nil {
 			return fmt.Errorf("failed to remove content from report directory: %w", err)
 		}
 
 		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
-			GetConfiguration().General.TnfReportDir))
+			reportDir))
 	}
 
 	// Delete the report directory
-	err = os.Remove(GetConfiguration().General.TnfReportDir)
+	err = os.Remove(reportDir)
 	if err != nil {
 		return fmt.Errorf("failed to remove report directory: %w", err)
 	}
@@ -130,8 +89,8 @@ func RemoveContentsFromReportDir() error {
 	return nil
 }
 
-func RemoveContentsFromConfigDir() error {
-	tnfConfigDir, err := os.Open(GetConfiguration().General.TnfConfigDir)
+func RemoveContentsFromConfigDir(configDir string) error {
+	tnfConfigDir, err := os.Open(configDir)
 	if err != nil {
 		return fmt.Errorf("failed to open config directory: %w", err)
 	}
@@ -144,18 +103,18 @@ func RemoveContentsFromConfigDir() error {
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(GetConfiguration().General.TnfConfigDir, name))
+		err = os.RemoveAll(filepath.Join(configDir, name))
 		if err != nil {
 			return fmt.Errorf("failed to remove content from config directory: %w", err)
 		}
 
 		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
-			GetConfiguration().General.TnfConfigDir))
+			configDir))
 	}
 
 	// Delete the config directory
-	err = os.Remove(GetConfiguration().General.TnfConfigDir)
+	err = os.Remove(configDir)
 	if err != nil {
 		return fmt.Errorf("failed to remove config directory: %w", err)
 	}
@@ -171,26 +130,6 @@ func ConvertSpecNameToFileName(specName string) string {
 	}
 
 	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
-}
-
-func isTestCaseInRequiredStatusInJunitReport(
-	report *globalparameters.JUnitTestSuites,
-	testCaseName string,
-	status string) (bool, error) {
-	for _, testCase := range report.Suites[0].Testcases {
-		tags := extractTags(testCase.Name)
-		if tags == nil {
-			return false, fmt.Errorf("no tags found in name for test case: %s", testCase.Name)
-		}
-
-		if containsString(tags, testCaseName) {
-			glog.V(5).Info(fmt.Sprintf("test case status %s", testCase.Status))
-
-			return testCase.Status == status, nil
-		}
-	}
-
-	return false, nil
 }
 
 func isTestCaseInExpectedStatusInClaimReport(
@@ -246,36 +185,8 @@ func formatTestCaseName(tcName string) string {
 	return removeCharactersFromString(tcName, []string{"-", "_", " ", "online,"})
 }
 
-func extractTags(tcName string) []string {
-	lastClosingBracket := strings.LastIndex(tcName, "]")
-	lastOpeningBracket := strings.LastIndex(tcName, "[")
-
-	if lastClosingBracket >= 0 && lastOpeningBracket >= 0 && lastClosingBracket > lastOpeningBracket {
-		tagsString := tcName[lastOpeningBracket+1 : lastClosingBracket]
-		tags := strings.Split(tagsString, ",")
-
-		for i := range tags {
-			tags[i] = strings.TrimSpace(tags[i])
-		}
-
-		return tags
-	}
-
-	return nil
-}
-
-func containsString(list []string, item string) bool {
-	for _, i := range list {
-		if i == item {
-			return true
-		}
-	}
-
-	return false
-}
-
-func CopyClaimFileToTcFolder(tcName, formattedTcName string) {
-	srcClaim := path.Join(GetConfiguration().General.TnfReportDir, globalparameters.DefaultClaimFileName)
+func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
+	srcClaim := path.Join(reportDir, globalparameters.DefaultClaimFileName)
 	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName)
 	dstClaim := path.Join(dstDir, globalparameters.DefaultClaimFileName)
 

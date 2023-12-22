@@ -4,7 +4,7 @@ name: QE Testing (Ubuntu-hosted)
 
 on:
   pull_request:
-    branches: [main, ginkgo_removal]
+    branches: [ ginkgo_removal ]
   workflow_dispatch:
   # Schedule a daily cron at midnight UTC
   schedule:
@@ -103,6 +103,18 @@ jobs:
       - name: Wait for all pods to be ready
         run: ./scripts/wait-for-all-pods-running.sh
         working-directory: cnf-certification-test-partner
+
+      - name: Clone the cnf-certification-test repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TEST_REPO }}
+          path: cnf-certification-test
+          ref: ginkgo_removal
+
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the test image
         run: make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest

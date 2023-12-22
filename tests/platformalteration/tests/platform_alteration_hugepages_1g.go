@@ -13,12 +13,12 @@ import (
 
 var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -27,7 +27,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.IsKindCluster() {
@@ -41,7 +41,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One deployment, one pod with 1Gi hugepages", func() {
@@ -57,11 +57,11 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Start platform-alteration-hugepages-1g-only test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -78,11 +78,11 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Start platform-alteration-hugepages-1g-only test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -100,11 +100,11 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Start platform-alteration-hugepages-1g-only test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -128,11 +128,11 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Start platform-alteration-hugepages-1g-only test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -155,11 +155,11 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Start platform-alteration-hugepages-1g-only test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCaseFailed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
