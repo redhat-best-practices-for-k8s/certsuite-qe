@@ -10,10 +10,15 @@ import (
 	nodev1 "k8s.io/api/node/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
 func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
-	rtc, err := GetAPIClient().RuntimeClasses().Create(context.TODO(), rtc, metav1.CreateOptions{})
+	return createRunTimeClass(GetAPIClient().K8sClient, rtc)
+}
+
+func createRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) error {
+	rtc, err := client.NodeV1().RuntimeClasses().Create(context.TODO(), rtc, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("runtimeclass %s already created", rtc.Name))
 	} else if err != nil {
@@ -21,7 +26,7 @@ func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 	}
 
 	Eventually(func() bool {
-		rtcCreated, err := isRtcCreated(rtc)
+		rtcCreated, err := isRtcCreated(client, rtc)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf("rtc %s was not created, retry in %d seconds", rtc.Name, retryInterval))
 
@@ -34,8 +39,8 @@ func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 	return nil
 }
 
-func isRtcCreated(rtc *nodev1.RuntimeClass) (bool, error) {
-	rtc, err := GetAPIClient().RuntimeClasses().Get(context.TODO(), rtc.Name, metav1.GetOptions{})
+func isRtcCreated(client kubernetes.Interface, rtc *nodev1.RuntimeClass) (bool, error) {
+	rtc, err := client.NodeV1().RuntimeClasses().Get(context.TODO(), rtc.Name, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -44,13 +49,17 @@ func isRtcCreated(rtc *nodev1.RuntimeClass) (bool, error) {
 }
 
 func DeleteRunTimeClass(rtc *nodev1.RuntimeClass) error {
-	err := GetAPIClient().RuntimeClasses().Delete(context.TODO(), rtc.Name, metav1.DeleteOptions{})
+	return deleteRunTimeClass(GetAPIClient().K8sClient, rtc)
+}
+
+func deleteRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) error {
+	err := client.NodeV1().RuntimeClasses().Delete(context.TODO(), rtc.Name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
 	}
 
 	Eventually(func() bool {
-		rtcDeleted, err := isRtcDeleted(rtc)
+		rtcDeleted, err := isRtcDeleted(client, rtc)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf("rtc %s was not deleted, retry in %d seconds", rtc.Name, retryInterval))
 
@@ -63,8 +72,8 @@ func DeleteRunTimeClass(rtc *nodev1.RuntimeClass) error {
 	return nil
 }
 
-func isRtcDeleted(rtc *nodev1.RuntimeClass) (bool, error) {
-	_, err := GetAPIClient().RuntimeClasses().Get(context.TODO(), rtc.Name, metav1.GetOptions{})
+func isRtcDeleted(client kubernetes.Interface, rtc *nodev1.RuntimeClass) (bool, error) {
+	_, err := client.NodeV1().RuntimeClasses().Get(context.TODO(), rtc.Name, metav1.GetOptions{})
 	if err != nil && k8serrors.IsNotFound(err) {
 		return true, nil
 	}
