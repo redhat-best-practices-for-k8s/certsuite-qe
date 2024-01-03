@@ -91,3 +91,19 @@ func NodeHasHugePagesEnabled(node *corev1.Node, resourceName string) bool {
 
 	return hugepagesEnabled
 }
+
+func GetNumberOfNodes(client corev1Typed.CoreV1Interface) int {
+	return getNumberOfNodes(client)
+}
+
+func getNumberOfNodes(client corev1Typed.CoreV1Interface) int {
+	nodes, err := client.Nodes().List(context.TODO(), metav1.ListOptions{
+		LabelSelector: "node-role.kubernetes.io/worker-cnf",
+	})
+
+	if err != nil {
+		return 0
+	}
+
+	return len(nodes.Items)
+}

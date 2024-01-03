@@ -17,8 +17,8 @@ import (
 
 var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		By("Enable intrusive tests")
@@ -32,7 +32,7 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err = globalhelper.DefineTnfConfig(
@@ -40,7 +40,7 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
@@ -53,7 +53,7 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
 	})
 
 	// 45439
@@ -66,11 +66,11 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 
 		By("start lifecycle-statefulset-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfStatefulSetScalingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Junit and Claim reports")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStatefulSetScalingTcName, globalparameters.TestCasePassed)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStatefulSetScalingTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

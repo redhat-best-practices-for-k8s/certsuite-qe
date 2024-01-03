@@ -44,7 +44,7 @@ var _ = SynchronizedBeforeSuite(func() {
 		[]string{tsparams.TestPodLabel},
 		[]string{},
 		[]string{},
-		[]string{})
+		[]string{}, globalhelper.GetConfiguration().General.TnfConfigDir)
 	Expect(err).ToNot(HaveOccurred())
 }, func() {})
 

@@ -67,3 +67,31 @@ func TestDeleteClusterRoleBinding(t *testing.T) {
 		assert.Nil(t, deleteClusterRoleBinding(client.RbacV1(), testCRB))
 	}
 }
+
+func TestDeleteClusterRoleBindingByName(t *testing.T) {
+	testCases := []struct {
+		crbAlreadyExists bool
+	}{
+		{crbAlreadyExists: false},
+		{crbAlreadyExists: true},
+	}
+
+	for _, testCase := range testCases {
+		var runtimeObjects []runtime.Object
+
+		testCRB := &rbacv1.ClusterRoleBinding{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "testCRB",
+			},
+		}
+
+		if testCase.crbAlreadyExists {
+			// Create a fake cluster role binding object
+			runtimeObjects = append(runtimeObjects, testCRB)
+		}
+
+		// Create a fake clientset
+		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		assert.Nil(t, deleteClusterRoleBindingByName(client.RbacV1(), testCRB.Name))
+	}
+}

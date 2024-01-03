@@ -17,17 +17,17 @@ const (
 
 var _ = Describe("Access-control namespace, ", Serial, func() {
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestAccessControlNameSpace)
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 51860
@@ -38,21 +38,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
-		//nolint:goconst
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -74,20 +73,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -109,20 +108,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -154,20 +153,20 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{})
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -179,7 +178,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"})
+			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -192,14 +191,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -221,7 +220,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"})
+			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -234,14 +233,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -263,7 +262,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"})
+			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -283,14 +282,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -312,7 +311,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"})
+			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -332,14 +331,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -351,7 +350,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
+			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -374,14 +373,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -403,7 +402,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"})
+			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -426,14 +425,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 })

@@ -19,12 +19,12 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	)
 
 	var randomNamespace string
-	var origReportDir string
-	var origTnfConfigDir string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, origReportDir, origTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestCertificationNameSpace)
 
 		// If Kind cluster, skip.
@@ -120,7 +120,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, origReportDir, origTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 46699
@@ -138,14 +138,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			By("Start test")
 			err := globalhelper.LaunchTests(
 				tsparams.TestCaseOperatorAffiliatedCertName,
-				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 			Expect(err).To(HaveOccurred(), "Error running "+
 				tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-			By("Verify test case status in Junit and Claim reports")
+			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
 				tsparams.TestCaseOperatorAffiliatedCertName,
-				globalparameters.TestCaseFailed)
+				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 		})
 
@@ -173,14 +173,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).To(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -200,14 +200,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -234,14 +234,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCasePassed)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -250,14 +250,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()))
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
-		By("Verify test case status in Junit and Claim reports")
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
