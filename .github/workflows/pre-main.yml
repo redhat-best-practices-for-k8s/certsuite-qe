@@ -3,9 +3,9 @@ name: Test Incoming Changes
 
 'on':
   push:
-    branches: [main, ginkgo_removal]
+    branches: [main]
   pull_request:
-    branches: [main, ginkgo_removal]
+    branches: [main]
 
 jobs:
   lint:
