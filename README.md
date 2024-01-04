@@ -187,7 +187,6 @@ make test
 
 The QE repo is being used in nightly automated runs in the following files:
 
-* [QE via Kind](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe.yaml)
 * [QE via Kind (Github Hosted)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-hosted.yml)
 * [QE via OCP (Intrusive)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-ocp-intrusive.yaml)
 * [QE via OCP (Non-Intrusive)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-ocp.yaml)
