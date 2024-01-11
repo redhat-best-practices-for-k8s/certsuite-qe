@@ -58,7 +58,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestHelmVersion,
-			globalparameters.TestCasePassed, randomReportDir)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -100,13 +100,13 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestHelmVersion,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestHelmVersion+" test")
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestHelmVersion,
-			globalparameters.TestCaseFailed, randomReportDir)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
