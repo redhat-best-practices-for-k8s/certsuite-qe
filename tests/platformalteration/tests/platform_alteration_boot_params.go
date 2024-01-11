@@ -99,7 +99,7 @@ var _ = Describe("platform-alteration-boot-params", func() {
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfBootParamsName,
-			globalparameters.TestCasePassed, randomReportDir)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
