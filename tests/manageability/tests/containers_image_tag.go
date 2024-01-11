@@ -34,11 +34,11 @@ var _ = Describe("manageability-containers-image-tag", func() {
 	})
 
 	It("One pod with valid image tag", func() {
-
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
 
+		By("Create pod")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

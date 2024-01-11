@@ -18,7 +18,7 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	TestImageWithValidTag = "httpd:2.4.58"
+	TestImageWithValidTag = "quay.io/bapalm/httpd:2.4.58"
 	InvalidPortName       = "sftp"
 )
 
