@@ -52,6 +52,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
 
+		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

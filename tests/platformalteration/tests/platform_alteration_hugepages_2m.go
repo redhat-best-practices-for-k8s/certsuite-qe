@@ -53,6 +53,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith2MiHugepages(dep, 4)
 
+		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -76,6 +77,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		pod.RedefineWithCPUResources(puta, "500m", "250m")
 		pod.RedefineWith2MiHugepages(puta, 4)
 
+		By("Create and wait until pod is ready")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -99,6 +101,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		deployment.RedefineWith2MiHugepages(dep, 4)
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
+		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -128,6 +131,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		err = pod.RedefineSecondContainerWith1GHugepages(put, 1)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create and wait until pod is ready")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -139,6 +143,5 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages2mOnlyName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })
