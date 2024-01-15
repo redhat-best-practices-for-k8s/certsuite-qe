@@ -1,6 +1,6 @@
 module github.com/test-network-function/cnfcert-tests-verification
 
-go 1.21.5
+go 1.21.6
 
 require (
 	github.com/golang/glog v1.2.0
