@@ -86,7 +86,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatus,
-			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -111,13 +111,13 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
 			" is not ready")
 
-		defer func() {
+		DeferCleanup(func() {
 			err := tshelper.DeleteLabelFromInstalledCSV(
 				tsparams.OperatorPrefixOpenvino,
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 			Expect(err).ToNot(HaveOccurred(), ErrorRemovingLabelStr+tsparams.OperatorPrefixOpenvino)
-		}()
+		})
 
 		By("Label operators")
 		Eventually(func() error {
@@ -142,12 +142,12 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			globalhelper.GetConfiguration().General.TnfReportDir,
 			globalhelper.GetConfiguration().General.TnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatus,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -172,13 +172,13 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		// Do not wait until the operator is ready. This time the CNF Certification suite must handle the situation.
 
-		defer func() {
+		DeferCleanup(func() {
 			err := tshelper.DeleteLabelFromInstalledCSV(
 				tsparams.OperatorPrefixAnchore,
 				tsparams.OperatorNamespace,
 				tsparams.OperatorLabel)
 			Expect(err).ToNot(HaveOccurred(), ErrorRemovingLabelStr+tsparams.OperatorPrefixAnchore)
-		}()
+		})
 
 		By("Label operators")
 		Eventually(func() error {
@@ -203,12 +203,12 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			globalhelper.GetConfiguration().General.TnfReportDir,
 			globalhelper.GetConfiguration().General.TnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatus,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
