@@ -68,6 +68,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 			globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
 
+		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -93,6 +94,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		// Append UBI-based container.
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
+		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
