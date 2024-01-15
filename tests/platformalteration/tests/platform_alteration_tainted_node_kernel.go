@@ -10,7 +10,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
 )
 
-var _ = Describe("platform-alteration-tainted-node-kernel", func() {
+var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomTnfConfigDir string
