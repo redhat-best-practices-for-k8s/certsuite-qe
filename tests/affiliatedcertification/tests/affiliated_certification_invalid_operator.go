@@ -28,7 +28,10 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 	execute.BeforeAll(func() {
 		Skip("Impractical to test under current circumstances")
-		preConfigureAffiliatedCertificationEnvironment(tsparams.TestCertificationNameSpace)
+		preConfigureAffiliatedCertificationEnvironment(
+			tsparams.TestCertificationNameSpace,
+			globalhelper.GetConfiguration().General.TnfConfigDir,
+		)
 
 		By("Deploy instana-agent-operator for testing")
 		// instana-agent-operator: in certified-operators group and version is certified
