@@ -65,8 +65,8 @@ func deleteServiceAccount(client corev1Typed.CoreV1Interface, serviceAccountName
 	return nil
 }
 
-func DefineRole(roleName, namespace string) rbacv1.Role {
-	return rbacv1.Role{
+func DefineRole(roleName, namespace string) *rbacv1.Role {
+	return &rbacv1.Role{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Role",
 			APIVersion: "v1",
@@ -84,22 +84,22 @@ func DefineRole(roleName, namespace string) rbacv1.Role {
 	}
 }
 
-func RedefineRoleWithAPIGroups(role rbacv1.Role, newAPIGroups []string) {
+func RedefineRoleWithAPIGroups(role *rbacv1.Role, newAPIGroups []string) {
 	role.Rules[0].APIGroups = newAPIGroups
 }
 
-func RedefineRoleWithResources(role rbacv1.Role, newResources []string) {
+func RedefineRoleWithResources(role *rbacv1.Role, newResources []string) {
 	role.Rules[0].Resources = newResources
 }
 
 // CreateRole creates a role.
-func CreateRole(aRole rbacv1.Role) error {
+func CreateRole(aRole *rbacv1.Role) error {
 	return createRole(GetAPIClient().K8sClient.RbacV1(), aRole)
 }
 
-func createRole(client rbacv1Typed.RbacV1Interface, aRole rbacv1.Role) error {
+func createRole(client rbacv1Typed.RbacV1Interface, aRole *rbacv1.Role) error {
 	_, err :=
-		client.Roles(aRole.Namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
+		client.Roles(aRole.Namespace).Create(context.TODO(), aRole, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("role %s already installed", aRole.Name))

@@ -104,7 +104,7 @@ func DefineCustomResource(name, namespace, operatorLabels string, operatorLabels
 	}
 }
 
-func RedefineCustomResourceWithReplica(aCustomResource crscaleoperator.Memcached, replicas int) {
+func RedefineCustomResourceWithReplica(aCustomResource *crscaleoperator.Memcached, replicas int) {
 	aCustomResource.Spec.Size = int32(replicas)
 }
 
