@@ -44,6 +44,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -70,6 +71,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -98,6 +100,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -126,6 +129,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -140,6 +144,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		deployment.RedefineAllContainersWithPreStopSpec(deploymentb, tsparams.PreStopCommand)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -169,6 +174,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		err = deployment.RedefineFirstContainerWithPreStopSpec(deploymenta, tsparams.PreStopCommand)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -190,6 +196,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -202,6 +209,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		deploymentb, err := tshelper.DefineDeployment(3, 2, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

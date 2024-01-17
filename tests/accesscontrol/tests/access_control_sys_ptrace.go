@@ -44,6 +44,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 
 		deployment.RedefineWithShareProcessNamespace(dep, false)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -74,6 +75,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 		deployment.RedefineWithShareProcessNamespace(dep, true)
 		deployment.RedefineWithSysPtrace(dep)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -105,6 +107,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 
 		deployment.RedefineWithShareProcessNamespace(dep, true)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -135,6 +138,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 		deployment.RedefineWithShareProcessNamespace(dep, true)
 		deployment.RedefineWithSysPtrace(dep)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -151,6 +155,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 		deployment.RedefineWithShareProcessNamespace(dep2, true)
 		deployment.RedefineWithSysPtrace(dep2)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -183,6 +188,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 		deployment.RedefineWithShareProcessNamespace(dep, true)
 		deployment.RedefineWithSysPtrace(dep)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -198,6 +204,7 @@ var _ = Describe("Access-control sys-ptrace-capability ", func() {
 
 		deployment.RedefineWithShareProcessNamespace(dep2, true)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -45,6 +45,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -72,6 +73,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -85,6 +87,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -98,6 +101,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymentc, corev1.PullIfNotPresent)
 
+		By("Create deployment 3")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentc, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -226,6 +230,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			"registry.access.redhat.com/ubi8/ubi:latest", tsparams.TestTargetLabels)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -253,6 +258,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullAlways)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -280,6 +286,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullNever)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -294,6 +301,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymentb, corev1.PullIfNotPresent)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -334,6 +342,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 
 		deployment.RedefineWithImagePullPolicy(deploymenta, corev1.PullIfNotPresent)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

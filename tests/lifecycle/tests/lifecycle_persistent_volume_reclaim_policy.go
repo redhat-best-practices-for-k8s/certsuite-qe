@@ -70,6 +70,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -201,6 +202,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -317,6 +319,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		deployment.RedefineWithPVC(depb, persistentVolumeb.Name, pvcb.Name)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depa, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -325,6 +328,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvca.Name))
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(depb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -42,6 +42,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -65,6 +66,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		err = deployment.RedefineContainerCommand(dep, 0, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -88,6 +90,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -114,6 +117,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		err = deployment.RedefineContainerCommand(dep, 1, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

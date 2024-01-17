@@ -144,6 +144,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 
 		deployment.RedefineWithContainersSecurityContextNetAdmin(dep)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -153,9 +154,11 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].
 			SecurityContext.Capabilities.Add).To(ContainElement(corev1.Capability("NET_ADMIN")))
 
+		By("Define deployment 2")
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -68,12 +68,13 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		// at least one "clean of any resource" worker is needed.
 		maxPodsPerDeployment := schedulableNodes - 1
 
-		By("Define and create deployment")
+		By("Define deployment")
 		deploymenta, err := tshelper.DefineDeployment(maxPodsPerDeployment, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -109,6 +110,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -123,6 +125,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -150,12 +153,13 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define and create deployment")
+		By("Define deployment")
 		deploymenta, err := tshelper.DefineDeployment(schedulableNodes, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -193,6 +197,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -208,6 +213,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

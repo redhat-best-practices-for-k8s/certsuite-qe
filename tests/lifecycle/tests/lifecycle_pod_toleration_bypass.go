@@ -40,6 +40,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -64,6 +65,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		deployment.RedefineWithNoExecuteToleration(dep)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -88,6 +90,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		deployment.RedefineWithPreferNoScheduleToleration(dep)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -112,6 +115,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		deployment.RedefineWithNoScheduleToleration(dep)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -134,12 +138,14 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -165,12 +171,14 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		deployment.RedefineWithNoScheduleToleration(dep)
 		deployment.RedefineWithNoExecuteToleration(dep)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

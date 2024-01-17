@@ -45,6 +45,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -68,6 +69,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -94,12 +96,14 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
+		By("Create deployment 1")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -126,12 +130,14 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
+		By("Create deployment 1")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

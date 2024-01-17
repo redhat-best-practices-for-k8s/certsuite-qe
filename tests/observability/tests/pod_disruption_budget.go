@@ -39,12 +39,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56635
 	It("One deployment, pod disruption budget minAvailable value meet requirements", func() {
-		By("Create deployment")
+		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -72,12 +73,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56636
 	It("One deployment, pod disruption budget maxUnavailable value meet requirements", func() {
-		By("Create deployment")
+		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -111,6 +113,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		statefulset.RedefineWithReplicaNumber(myStatefulSet, 1)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(myStatefulSet, tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -138,12 +141,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56638
 	It("One deployment, pod disruption budget maxUnavailable equals to replica number [negative]", func() {
-		By("Create deployment")
+		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -171,12 +175,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	// 56746
 	It("One deployment, pod disruption budget maxUnavailable is bigger than the replica number [negative]", func() {
-		By("Create deployment")
+		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -203,12 +208,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	})
 
 	It("One deployment, pod disruption budget matchLabels does not match deployment label [negative]", func() {
-		By("Create deployment")
+		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -235,12 +241,13 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	})
 
 	It("One deployment, no pod disruption budget [negative]", func() {
-		By("Create deployment")
+		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 

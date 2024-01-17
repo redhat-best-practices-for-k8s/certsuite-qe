@@ -42,6 +42,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -46,6 +46,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -72,6 +73,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -86,6 +88,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymentb)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -156,6 +159,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -203,6 +207,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -215,6 +220,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

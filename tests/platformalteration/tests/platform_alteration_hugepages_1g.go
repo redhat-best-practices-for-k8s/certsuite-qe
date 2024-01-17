@@ -74,6 +74,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 		pod.RedefineWith1GiHugepages(put, 1)
 
+		By("Create and wait until pod is ready")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
