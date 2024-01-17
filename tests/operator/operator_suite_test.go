@@ -46,6 +46,13 @@ var _ = SynchronizedBeforeSuite(func() {
 		[]string{},
 		[]string{}, globalhelper.GetConfiguration().General.TnfConfigDir)
 	Expect(err).ToNot(HaveOccurred())
+
+	// Safeguard against running the operator tests on a cluster without catalog sources
+	if !globalhelper.IsKindCluster() {
+		By("Check if catalog sources are available")
+		err = globalhelper.ValidateCatalogSources()
+		Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
+	}
 }, func() {})
 
 var _ = SynchronizedAfterSuite(func() {}, func() {
