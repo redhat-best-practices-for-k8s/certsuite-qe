@@ -16,7 +16,7 @@ import (
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
-func preConfigureAffiliatedCertificationEnvironment(namespace string) {
+func preConfigureAffiliatedCertificationEnvironment(namespace, configDir string) {
 	By("Clean test namespace")
 
 	err := globalhelper.CleanNamespace(namespace)
@@ -66,7 +66,7 @@ func preConfigureAffiliatedCertificationEnvironment(namespace string) {
 		[]string{tsparams.TestPodLabel},
 		[]string{},
 		[]string{},
-		[]string{}, globalhelper.GetConfiguration().General.TnfConfigDir)
+		[]string{}, configDir)
 	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
 }
 
