@@ -51,12 +51,13 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define and create deployment")
+		By("Define deployment")
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -90,6 +91,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymenta, tsparams.TestTargetLabels)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -104,6 +106,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 
 		deployment.RedefineWithPodAntiAffinity(deploymentb, tsparams.TestTargetLabels)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -131,10 +134,11 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define and create deployment")
+		By("Define deployment")
 		deployment, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -205,7 +209,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 			Skip("The cluster does not have enough schedulable nodes.")
 		}
 
-		By("Define and create deployment")
+		By("Define deployment")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 

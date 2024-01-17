@@ -36,11 +36,12 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51747
 	It("One deployment one pod one container that prints two log lines", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.TwoLogLines})
 
+		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
@@ -57,7 +58,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51753
 	It("One deployment one pod one container that prints one log line", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
@@ -78,7 +79,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51754
 	It("One deployment one pod with two containers, both containers print two log lines to stdout", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.TwoLogLines, tsparams.TwoLogLines})
@@ -158,7 +159,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51757
 	It("One deployment and one statefulset, both having one pod with one container that prints one log "+
 		"line each", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
@@ -226,7 +227,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51760
 	It("One deployment one pod one container without any log line to stdout [negative]", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.NoLogLines})
@@ -247,7 +248,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 
 	// 51761
 	It("One deployment one pod two containers but only one printing one log line [negative]", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.NoLogLines})
@@ -318,7 +319,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 	// 51764
 	It("One deployment and one statefulset both one container each, but only deployment prints "+
 		"one log line [negative]", func() {
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine})
@@ -352,7 +353,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLineWithoutNewLine})
@@ -378,7 +379,7 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
-		By("Create deployment in the cluster")
+		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName, randomNamespace, 1,
 			[]string{tsparams.OneLogLine, tsparams.OneLogLineWithoutNewLine})

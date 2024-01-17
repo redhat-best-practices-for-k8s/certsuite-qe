@@ -43,6 +43,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		deployment.RedefineWithHostIpc(dep, false)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -72,6 +73,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		deployment.RedefineWithHostIpc(dep, true)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,6 +103,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		deployment.RedefineWithHostIpc(dep, false)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -109,11 +112,13 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.HostIPC).To(BeFalse())
 
+		By("Define deployment 2")
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithHostIpc(dep2, false)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -143,6 +148,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		deployment.RedefineWithHostIpc(dep, true)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -156,6 +162,7 @@ var _ = Describe("Access-control pod-host-ipc, ", func() {
 
 		deployment.RedefineWithHostIpc(dep2, false)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

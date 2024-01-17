@@ -44,6 +44,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 
 		deployment.RedefineWithPostStart(deploymenta)
 
+		By("Deploy deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -70,6 +71,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 
 		deployment.RedefineWithPostStart(deploymenta)
 
+		By("Deploy deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -84,6 +86,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 
 		deployment.RedefineWithPostStart(deploymentb)
 
+		By("Deploy deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -180,6 +183,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 
 		deployment.RedefineWithPostStart(deploymenta)
 
+		By("Deploy deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -192,6 +196,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Deploy deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

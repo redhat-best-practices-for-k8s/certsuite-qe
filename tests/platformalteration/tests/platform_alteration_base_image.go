@@ -101,6 +101,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
+		By("Create first deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -76,6 +76,7 @@ var _ = Describe("Access-control security-context,", func() {
 
 		deployment.RedefineWithHostPid(dep, true)
 
+		By("Create and wait until deployment is ready")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -107,12 +108,14 @@ var _ = Describe("Access-control security-context,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -137,6 +140,7 @@ var _ = Describe("Access-control security-context,", func() {
 
 		deployment.RedefineWithContainersSecurityContextIpcLock(dep)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -149,6 +153,7 @@ var _ = Describe("Access-control security-context,", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

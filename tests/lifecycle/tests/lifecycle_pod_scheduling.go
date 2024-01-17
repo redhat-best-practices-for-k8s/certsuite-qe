@@ -50,6 +50,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -73,6 +74,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deployment.RedefineWithNodeSelector(deploymenta, map[string]string{configSuite.General.CnfNodeLabel: ""})
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -95,6 +97,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		deployment.RedefineWithNodeAffinity(deploymenta, configSuite.General.CnfNodeLabel)
 
+		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -115,6 +118,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -124,6 +128,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		deployment.RedefineWithNodeAffinity(deploymentb, configSuite.General.CnfNodeLabel)
 
+		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -144,6 +149,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -46,6 +46,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -81,6 +82,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -121,6 +123,7 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -152,10 +155,11 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define deployment and create it on cluster")
+		By("Define deployment")
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -193,10 +197,11 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define deployment and create it on cluster")
+		By("Define deployment")
 		dep, err := tshelper.DefineDeployment(3, 1, "acdeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 

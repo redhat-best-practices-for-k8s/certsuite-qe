@@ -157,6 +157,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		deployment.RedefineWithRunTimeClass(dep, rtc.Name)
 		deployment.RedefineWithCPUResources(dep, "1", "1")
 
+		By("Deploy deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -278,6 +279,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		dep.Spec.Template.SetAnnotations(annotationsMap)
 		deployment.RedefineWithCPUResources(dep, "1", "1")
 
+		By("Deploy deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

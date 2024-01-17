@@ -46,6 +46,7 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		deployment.RedefineWithReadinessProbe(deploymenta)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -72,6 +73,7 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		deployment.RedefineWithReadinessProbe(deploymenta)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -86,6 +88,7 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		deployment.RedefineWithReadinessProbe(deploymentb)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -179,6 +182,7 @@ var _ = Describe("lifecycle-readiness", func() {
 
 		deployment.RedefineWithReadinessProbe(deploymenta)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -191,6 +195,7 @@ var _ = Describe("lifecycle-readiness", func() {
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 

@@ -41,6 +41,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -70,6 +71,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 
 		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1337)
 
+		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -98,6 +100,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -111,6 +114,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 
 		deployment.RedefineWithPodSecurityContextRunAsUser(dep2, 1338)
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -140,6 +144,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 
 		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 1337)
 
+		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -152,6 +157,7 @@ var _ = Describe("Access-control no-1337-uid,", func() {
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
