@@ -116,9 +116,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the test image
-        run: make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest
-        working-directory: cnf-certification-test
+      - name: Build the `cnf-certification-test` image
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 90
+          max_attempts: 3
+          command: cd cnf-certification-test; make build-image-local # quay.io/testnetworkfunction/cnf-certification-test:localtest
 
       - name: Run the tests
         uses: nick-fields/retry@v2
