@@ -123,8 +123,8 @@ github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcU
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f h1:qy5MGTizgcbU/VS+oIsX4x3eDh4FcsniB9A2PaMQ1y0=
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f/go.mod h1:C7bjc5oqhe5AlcoXr3RIDuSBiLn5VSOUtz76aJv6GkI=
-github.com/test-network-function/test-network-function-claim v1.0.33 h1:thLfqtzpXMNlmA8ZGpee3BUN+OfhRiFoTuEHWsE3d7Y=
-github.com/test-network-function/test-network-function-claim v1.0.33/go.mod h1:+0c6DMF/ycFmEH3EB5mJ9rSQ+3T/d48NuqmY2aXjrqQ=
+github.com/test-network-function/test-network-function-claim v1.0.34 h1:OoCvKueaOlKL6n4BSQaDkIsYe0usaXy9dSJZjEY1Qqc=
+github.com/test-network-function/test-network-function-claim v1.0.34/go.mod h1:Ao6lfuE9dyLes3z3g3vpQttZFBuPHWoOQUK1YqAMM2c=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
