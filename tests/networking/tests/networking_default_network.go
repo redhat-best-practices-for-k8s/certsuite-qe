@@ -167,6 +167,12 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		// Note: We cannot perform the icmpv4 connectivity test on a single node cluster when defining a daemonset.
+		expectedState := globalparameters.TestCasePassed
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			expectedState = globalparameters.TestCaseSkipped
+		}
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfDefaultNetworkTcName,
@@ -176,7 +182,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfDefaultNetworkTcName,
-			globalparameters.TestCasePassed, randomReportDir)
+			expectedState, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
