@@ -107,3 +107,35 @@ func getNumberOfNodes(client corev1Typed.CoreV1Interface) int {
 
 	return len(nodes.Items)
 }
+
+func IsClusterOvercommitted() (bool, error) {
+	return isClusterOvercommitted(GetAPIClient().Nodes())
+}
+
+func isClusterOvercommitted(client corev1Typed.NodeInterface) (bool, error) {
+	nodes, err := client.List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	for _, node := range nodes.Items {
+		if isNodeOvercommitted(&node) {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func isNodeOvercommitted(node *corev1.Node) bool {
+	// check if the node is overcommitted
+	if node.Status.Allocatable.Memory().Cmp(resource.MustParse("0")) > 0 {
+		return true
+	}
+
+	if node.Status.Allocatable.Cpu().Cmp(resource.MustParse("0")) > 0 {
+		return true
+	}
+
+	return false
+}

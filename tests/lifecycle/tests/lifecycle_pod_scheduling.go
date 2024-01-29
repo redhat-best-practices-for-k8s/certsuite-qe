@@ -45,7 +45,6 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 	// 48120
 	It("One deployment, no nodeSelector nor nodeAffinity", func() {
-
 		By("Define Deployment")
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -59,14 +58,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCasePassed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCasePassed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 
 	// 48458
 	It("One deployment with nodeSelector [negative]", func() {
-
 		By("Define Deployment with nodeSelector")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -81,16 +85,22 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			Expect(err).ToNot(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			Expect(err).To(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 
 	// 48470
 	It("One deployment with nodeAffinity [negative]", func() {
-
 		By("Define Deployment with nodeAffinity")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -104,11 +114,18 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			Expect(err).ToNot(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			Expect(err).To(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 
 	// 48471
@@ -135,11 +152,18 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			Expect(err).ToNot(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			Expect(err).To(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 
 	// 48472
@@ -165,10 +189,23 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			Expect(err).ToNot(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.TnfPodSchedulingTcName,
+				globalparameters.TestCaseSkipped,
+				randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			Expect(err).To(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.TnfPodSchedulingTcName,
+				globalparameters.TestCaseFailed,
+				randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 })
