@@ -129,12 +129,17 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-affinity-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		err = globalhelper.LaunchTests(
+			tsparams.TnfAffinityRequiredPodsTcName,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TnfAffinityRequiredPodsTcName,
+			globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

@@ -91,6 +91,14 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	It("One pod two containers with conditions met", func() {
 		annotationsMap := make(map[string]string)
 
+		// Check if nodes in the cluster are overcommitted as far as resources
+		// are concerned. If so, skip the test.
+		overcommitted, err := globalhelper.IsClusterOvercommitted()
+		Expect(err).ToNot(HaveOccurred())
+		if overcommitted {
+			Skip("This test requires nodes to be undercommitted")
+		}
+
 		By("Define pod with resources and runTimeClass")
 		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
@@ -103,7 +111,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Define runTimeClass")
 		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
-		err := globalhelper.CreateRunTimeClass(rtc)
+		err = globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
@@ -112,9 +120,11 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
+		By("Redefine the first container with CPU resources")
 		pod.RedefineWithRunTimeClass(put, rtc.Name)
 		pod.RedefineWithCPUResources(put, "1", "1")
 
+		By("Create pod and wait until it is ready")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -303,6 +313,14 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	It("Two pods one with conditions met, other lacks runTimeClass [negative]", func() {
 		annotationsMap := make(map[string]string)
 
+		// Check if nodes in the cluster are overcommitted as far as resources
+		// are concerned. If so, skip the test.
+		overcommitted, err := globalhelper.IsClusterOvercommitted()
+		Expect(err).ToNot(HaveOccurred())
+		if overcommitted {
+			Skip("This test requires nodes to be undercommitted")
+		}
+
 		By("Define pod with resources and runTimeClass")
 		puta := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
 			tsparams.TestTargetLabels)
@@ -318,7 +336,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Define runTimeClass")
 		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
-		err := globalhelper.CreateRunTimeClass(rtc)
+		err = globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {

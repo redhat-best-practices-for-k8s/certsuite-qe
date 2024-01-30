@@ -54,8 +54,11 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 	It("One pod with a storage, PVC with no storageclass defined", func() {
 		By("Define PVC")
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+
 		By("Define PV")
 		persistentVolume := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
+
+		By("Redefine PV with reclaim policy")
 		persistentvolume.RedefineWithPVReclaimPolicy(persistentVolume, corev1.PersistentVolumeReclaimDelete)
 
 		err := globalhelper.CreatePersistentVolume(persistentVolume)
@@ -71,6 +74,7 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
+		By("Create PVC and wait until it is bound")
 		err = globalhelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.WaitingTime, persistentVolume.Name)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -78,29 +82,43 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		testPod := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 
 		pod.RedefineWithPVC(testPod, persistentVolume.Name, pvc.Name)
+
+		By("Create pod and wait until it is ready")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start storage-provisioner test")
 		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).ToNot(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			Expect(err).To(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			Expect(err).ToNot(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 
 	It("One pod with local storage, PVC with storageclass defined", func() {
 		By("Define PVC")
 		pvc := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
+
+		By("Redefine PVC with storageclass")
 		persistentvolumeclaim.RedefineWithStorageClass(pvc, randomStorageClassName)
 
 		By("Define PV")
 		testPv := persistentvolume.DefinePersistentVolume(randomPV, pvc.Name, pvc.Namespace)
+
+		By("Redefine PV with reclaim policy and storageclass")
 		persistentvolume.RedefineWithPVReclaimPolicy(testPv, corev1.PersistentVolumeReclaimDelete)
 		persistentvolume.RedefineWithStorageClass(testPv, randomStorageClassName)
 
+		By("Create PV")
 		err := globalhelper.CreatePersistentVolume(testPv)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -114,6 +132,7 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
+		By("Create PVC and wait until it is bound")
 		err = globalhelper.CreateAndWaitUntilPVCIsBound(pvc, tsparams.WaitingTime, testPv.Name)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -127,10 +146,17 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		By("Start storage-provisioner test")
 		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
+			Expect(err).ToNot(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		} else {
+			Expect(err).To(HaveOccurred())
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		}
 	})
 })
