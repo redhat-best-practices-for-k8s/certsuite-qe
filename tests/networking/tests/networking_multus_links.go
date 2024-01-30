@@ -391,28 +391,16 @@ var _ = Describe("Networking custom namespace,", func() {
 		err = tshelper.DefineAndCreateDaemonsetWithMultusOnCluster(tsparams.TestNadNameB, randomNamespace, "ds5")
 		Expect(err).ToNot(HaveOccurred())
 
-		// Note: We cannot perform the icmpv4 connectivity test on a single node cluster when defining a daemonset.
-		// Since this is a [negative] test case, we expect it to fail.
-		expectedState := globalparameters.TestCaseFailed
-		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
-			expectedState = globalparameters.TestCasePassed
-		}
-
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfMultusIpv4TcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-
-		if expectedState == globalparameters.TestCasePassed {
-			Expect(err).ToNot(HaveOccurred())
-		} else {
-			Expect(err).To(HaveOccurred())
-		}
+		Expect(err).To(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfMultusIpv4TcName,
-			expectedState, randomReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
