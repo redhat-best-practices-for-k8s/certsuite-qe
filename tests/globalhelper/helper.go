@@ -22,7 +22,12 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
-const retryInterval = 5
+const (
+	retryInterval = 5
+	ExecutedBy    = "QE"
+	AppPwd        = "qepwd"
+	PartnerName   = "qeuser"
+)
 
 // ValidateIfReportsAreValid test if report is valid for given test case.
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir string) error {
@@ -73,6 +78,18 @@ func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperat
 	defer configFile.Close()
 	configFileEncoder := yaml.NewEncoder(configFile)
 	tnfConfig := globalparameters.TnfConfig{}
+
+	// Configure the collector submission details
+	tnfConfig.ExecutedBy = ExecutedBy
+	tnfConfig.CollectorAppPassword = AppPwd
+	tnfConfig.PartnerName = PartnerName
+
+	// Check if job ID environment variable is set and append to partner name
+	// Example, this should look like "qeuser_1234"
+	jobID := os.Getenv("JOB_ID")
+	if jobID != "" {
+		tnfConfig.PartnerName = fmt.Sprintf("%s_%s", PartnerName, jobID)
+	}
 
 	err = defineTnfNamespaces(&tnfConfig, namespaces)
 	if err != nil {
