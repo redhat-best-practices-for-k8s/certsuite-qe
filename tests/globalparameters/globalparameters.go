@@ -9,6 +9,9 @@ type (
 		OperatorsUnderTestLabels []string                     `yaml:"operatorsUnderTestLabels" json:"operatorsUnderTestLabels"`
 		Certifiedcontainerinfo   []CertifiedContainerRepoInfo `yaml:"certifiedcontainerinfo" json:"certifiedcontainerinfo"`
 		TargetCrdFilters         []TargetCrdFilter            `yaml:"targetCrdFilters" json:"targetCrdFilters"`
+		ExecutedBy               string                       `yaml:"executedBy" json:"executedBy"`
+		CollectorAppPassword     string                       `yaml:"CollectorAppPassword" json:"CollectorAppPassword"`
+		PartnerName              string                       `yaml:"partnerName" json:"partnerName"`
 	}
 
 	TargetCrdFilter struct {
