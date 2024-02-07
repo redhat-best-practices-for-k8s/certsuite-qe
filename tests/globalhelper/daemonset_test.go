@@ -141,6 +141,7 @@ func TestIsDaemonsetReady(t *testing.T) {
 
 				return
 			}
+
 			if got != testCase.expectedOutput {
 				t.Errorf("isDaemonsetReady() = %v, want %v", got, testCase.expectedOutput)
 			}

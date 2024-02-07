@@ -18,7 +18,9 @@ func TestDebugTnf(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.value, func(t *testing.T) {
 			t.Setenv("DEBUG_TNF", testCase.value)
+
 			c, err := NewConfig()
+
 			assert.Nil(t, err)
 			result, err := c.DebugTnf()
 			assert.Nil(t, err)

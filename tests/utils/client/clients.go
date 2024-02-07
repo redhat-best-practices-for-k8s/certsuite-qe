@@ -64,6 +64,7 @@ func New(kubeconfig string) *ClientSet {
 		config, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
 	} else {
 		glog.V(4).Infof("Using in-cluster kube client config")
+
 		config, err = rest.InClusterConfig()
 	}
 
