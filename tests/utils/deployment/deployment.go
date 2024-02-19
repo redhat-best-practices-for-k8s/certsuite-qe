@@ -24,7 +24,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas:        ptr.To[int32](1),
-			MinReadySeconds: 15,
+			MinReadySeconds: 5,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},

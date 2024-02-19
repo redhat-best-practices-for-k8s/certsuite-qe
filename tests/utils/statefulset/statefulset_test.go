@@ -17,7 +17,7 @@ func TestDefineStatefulSet(t *testing.T) {
 	assert.Equal(t, "test", testStatefulSet.Spec.Template.ObjectMeta.Labels["app"])
 	assert.Equal(t, "testImage", testStatefulSet.Spec.Template.Spec.Containers[0].Image)
 	assert.Equal(t, int64(0), *testStatefulSet.Spec.Template.Spec.TerminationGracePeriodSeconds)
-	assert.Equal(t, int32(15), testStatefulSet.Spec.MinReadySeconds)
+	assert.Equal(t, int32(5), testStatefulSet.Spec.MinReadySeconds)
 }
 
 func TestRedefineWithReadinessProbe(t *testing.T) {
