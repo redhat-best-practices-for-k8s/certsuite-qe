@@ -12,7 +12,7 @@ func TestDefineDaemonSet(t *testing.T) {
 	assert.NotNil(t, ds)
 	assert.Equal(t, "nginx", ds.Name)
 	assert.Equal(t, "default", ds.Namespace)
-	assert.Equal(t, int32(15), ds.Spec.MinReadySeconds)
+	assert.Equal(t, int32(5), ds.Spec.MinReadySeconds)
 	assert.Equal(t, "testpod-", ds.Spec.Template.ObjectMeta.Name)
 }
 
@@ -25,7 +25,7 @@ func TestDefineDaemonSetWithContainerSpecs(t *testing.T) {
 	assert.NotNil(t, testDS)
 	assert.Equal(t, "nginx", testDS.Name)
 	assert.Equal(t, "default", testDS.Namespace)
-	assert.Equal(t, int32(15), testDS.Spec.MinReadySeconds)
+	assert.Equal(t, int32(5), testDS.Spec.MinReadySeconds)
 }
 
 func TestRedefineDaemonSetWithNodeSelector(t *testing.T) {
