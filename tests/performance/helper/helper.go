@@ -25,7 +25,7 @@ import (
 
 func DefineExclusivePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
 	cpuLimit := "1"
-	memoryLimit := "512Mi"
+	memoryLimit := "112Mi"
 	containerCommand := []string{"/bin/bash", "-c", "sleep INF"}
 
 	containerResource := corev1.ResourceRequirements{
@@ -69,7 +69,7 @@ func DefineExclusivePod(podName string, namespace string, image string, label ma
 
 func DefineRtPod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
 	cpuLimit := "1"
-	memoryLimit := "512Mi"
+	memoryLimit := "112Mi"
 	containerCommand := []string{"/bin/bash", "-c", "sleep INF"}
 
 	containerResource := corev1.ResourceRequirements{
@@ -111,7 +111,7 @@ func DefineRtPod(podName string, namespace string, image string, label map[strin
 func RedefinePodWithSharedContainer(pod *corev1.Pod, containerIndex int) {
 	totalContainers := len(pod.Spec.Containers)
 	limit := "1"
-	req := "250m"
+	req := "150m"
 
 	if containerIndex >= 0 && containerIndex < totalContainers {
 		pod.Spec.Containers[containerIndex].Resources = corev1.ResourceRequirements{
