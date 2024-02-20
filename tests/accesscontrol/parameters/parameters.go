@@ -71,8 +71,8 @@ const (
 	SSHDaemonImageName = "quay.io/testnetworkfunction/debug-partner:latest"
 
 	ServiceAccountName = "automount-test-sa"
-	MemoryLimit        = "512Mi"
-	MemoryRequest      = "500Mi"
+	MemoryLimit        = "112Mi"
+	MemoryRequest      = "100Mi"
 	CPULimit           = "1"
 	CPURequest         = "1"
 
