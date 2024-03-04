@@ -10,6 +10,7 @@ func BeforeAll(function func()) {
 	ginkgo.BeforeEach(func() {
 		if first {
 			first = false
+
 			function()
 		}
 	})

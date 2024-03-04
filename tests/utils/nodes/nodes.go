@@ -26,11 +26,13 @@ func WaitForNodesReady(client corev1Typed.NodeInterface, timeout, interval time.
 			if err != nil {
 				return false, nil
 			}
+
 			for _, node := range nodesList.Items {
 				if !IsNodeInCondition(&node, corev1.NodeReady) {
 					return false, nil
 				}
 			}
+
 			glog.V(5).Info("All nodes are Ready")
 
 			return true, nil
