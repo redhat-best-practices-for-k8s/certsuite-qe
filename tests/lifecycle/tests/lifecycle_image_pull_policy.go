@@ -214,7 +214,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -242,7 +242,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -270,7 +270,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -313,7 +313,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -354,7 +354,7 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 		By("Start lifecycle-image-pull-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfImagePullPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfImagePullPolicyTcName, globalparameters.TestCaseFailed, randomReportDir)

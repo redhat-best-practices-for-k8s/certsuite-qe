@@ -120,7 +120,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -150,7 +150,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -211,7 +211,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -236,7 +236,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfUndeclaredContainerPortsUsageTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

@@ -132,7 +132,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -166,7 +166,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -200,7 +200,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -233,7 +233,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -259,7 +259,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)

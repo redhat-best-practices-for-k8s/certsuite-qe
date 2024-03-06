@@ -127,7 +127,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -160,7 +160,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

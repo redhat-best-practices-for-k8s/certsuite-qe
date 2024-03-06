@@ -266,7 +266,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -301,7 +301,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -363,7 +363,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)

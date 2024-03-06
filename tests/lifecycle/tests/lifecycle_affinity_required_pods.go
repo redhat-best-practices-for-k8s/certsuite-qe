@@ -110,7 +110,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,
@@ -134,7 +134,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -166,7 +166,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,

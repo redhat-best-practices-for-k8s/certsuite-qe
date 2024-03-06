@@ -89,7 +89,7 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfDpdkCPUPinningExecProbe,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

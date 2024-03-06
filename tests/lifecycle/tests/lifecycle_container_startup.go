@@ -168,7 +168,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -208,7 +208,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerStartUpTcName, globalparameters.TestCaseFailed, randomReportDir)

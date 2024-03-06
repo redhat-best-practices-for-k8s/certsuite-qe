@@ -171,7 +171,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -225,7 +225,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodRecreationTcName, globalparameters.TestCaseFailed, randomReportDir)

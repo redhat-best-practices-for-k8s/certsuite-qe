@@ -173,7 +173,7 @@ var _ = Describe("lifecycle-liveness", func() {
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -213,7 +213,7 @@ var _ = Describe("lifecycle-liveness", func() {
 		By("Start lifecycle-liveness test")
 		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCaseFailed, randomReportDir)

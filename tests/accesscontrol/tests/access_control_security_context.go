@@ -89,7 +89,7 @@ var _ = Describe("Access-control security-context,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfSecurityContextTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -166,7 +166,7 @@ var _ = Describe("Access-control security-context,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfSecurityContextTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

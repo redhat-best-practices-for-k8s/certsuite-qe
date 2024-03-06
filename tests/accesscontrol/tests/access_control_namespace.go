@@ -80,7 +80,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Claim report")
@@ -160,7 +160,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Claim report")
@@ -234,7 +234,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Claim report")
@@ -332,7 +332,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Claim report")
@@ -426,7 +426,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
 		By("Verify test case status in Claim report")

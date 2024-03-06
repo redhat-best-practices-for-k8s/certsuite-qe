@@ -192,7 +192,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStartUpProbeTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -232,7 +232,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStartUpProbeTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -259,7 +259,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		By("Start lifecycle-startup-probe test")
 		err = globalhelper.LaunchTests(tsparams.TnfStartUpProbeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStartUpProbeTcName, globalparameters.TestCaseFailed, randomReportDir)

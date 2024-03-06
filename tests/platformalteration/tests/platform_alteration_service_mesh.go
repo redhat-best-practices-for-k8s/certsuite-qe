@@ -103,7 +103,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -128,7 +128,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())

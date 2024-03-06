@@ -70,7 +70,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		err = globalhelper.LaunchTests(
 			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

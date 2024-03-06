@@ -103,7 +103,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCaseFailed, randomReportDir)
@@ -132,7 +132,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCaseFailed, randomReportDir)

@@ -90,14 +90,13 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		By("Start storage-provisioner test")
 		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
-			Expect(err).To(HaveOccurred())
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
-			Expect(err).ToNot(HaveOccurred())
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
@@ -146,14 +145,13 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		By("Start storage-provisioner test")
 		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
-			Expect(err).ToNot(HaveOccurred())
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
-			Expect(err).To(HaveOccurred())
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
