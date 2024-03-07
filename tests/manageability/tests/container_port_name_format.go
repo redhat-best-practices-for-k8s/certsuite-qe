@@ -67,7 +67,7 @@ var _ = Describe("manageability-container-port-name", func() {
 		By("Start container-port-name test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerPortName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerPortName,

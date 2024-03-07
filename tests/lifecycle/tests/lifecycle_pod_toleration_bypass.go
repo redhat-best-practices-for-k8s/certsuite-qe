@@ -73,7 +73,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfPodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -98,7 +98,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfPodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -123,7 +123,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfPodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -186,7 +186,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfPodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

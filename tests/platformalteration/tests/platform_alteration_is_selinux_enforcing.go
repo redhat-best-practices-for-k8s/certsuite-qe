@@ -106,7 +106,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		By("Start platform-alteration-is-selinux-enforcing test")
 		err = globalhelper.LaunchTests(tsparams.TnfIsSelinuxEnforcingName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfIsSelinuxEnforcingName,

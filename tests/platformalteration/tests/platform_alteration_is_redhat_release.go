@@ -102,7 +102,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfIsRedHatReleaseName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -123,7 +123,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfIsRedHatReleaseName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

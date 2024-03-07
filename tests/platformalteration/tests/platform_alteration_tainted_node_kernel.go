@@ -81,7 +81,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 		By("Start platform-alteration-tainted-node-kernel test")
 		err = globalhelper.LaunchTests(tsparams.TnfTaintedNodeKernelName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTaintedNodeKernelName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())

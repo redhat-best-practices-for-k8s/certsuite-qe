@@ -65,7 +65,7 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		By("Start containers-image-tag test")
 		err = globalhelper.LaunchTests(tsparams.TnfContainerImageTag,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerImageTag,

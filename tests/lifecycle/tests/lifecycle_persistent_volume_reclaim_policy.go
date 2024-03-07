@@ -214,7 +214,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
@@ -256,7 +256,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
@@ -340,7 +340,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
 		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,

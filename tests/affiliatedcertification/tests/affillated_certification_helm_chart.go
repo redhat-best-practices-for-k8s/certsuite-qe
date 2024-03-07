@@ -145,7 +145,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		err = globalhelper.LaunchTests(
 			tsparams.TestHelmChartCertified,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestHelmChartCertified+" test")
 
 		By("Verify test case status in Claim report")

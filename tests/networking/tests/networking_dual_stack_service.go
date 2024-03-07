@@ -47,7 +47,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfDualStackServiceTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -68,7 +68,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfDualStackServiceTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -91,7 +91,7 @@ var _ = Describe("Networking dual-stack-service,", func() {
 			err = globalhelper.LaunchTests(
 				tsparams.TnfDualStackServiceTcName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-			Expect(err).To(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
 
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(

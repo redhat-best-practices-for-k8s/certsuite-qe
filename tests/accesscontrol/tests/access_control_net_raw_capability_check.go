@@ -86,7 +86,7 @@ var _ = Describe("Access-control net-raw-capability-check,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNetRawCapability,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -169,7 +169,7 @@ var _ = Describe("Access-control net-raw-capability-check,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNetRawCapability,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

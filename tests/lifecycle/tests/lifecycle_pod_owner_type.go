@@ -113,7 +113,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -146,7 +146,7 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)

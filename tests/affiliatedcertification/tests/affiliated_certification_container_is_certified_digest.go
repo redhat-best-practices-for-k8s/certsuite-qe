@@ -77,7 +77,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -145,7 +145,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

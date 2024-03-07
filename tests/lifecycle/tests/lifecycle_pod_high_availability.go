@@ -150,7 +150,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -193,7 +193,7 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -226,9 +226,9 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 		By("Start lifecycle pod-high-availability test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
-			Expect(err).ToNot(HaveOccurred())
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
 				tsparams.TnfPodHighAvailabilityTcName,
@@ -236,7 +236,6 @@ var _ = Describe("lifecycle-pod-high-availability", func() {
 				randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
-			Expect(err).To(HaveOccurred())
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName,
 				globalparameters.TestCaseFailed, randomReportDir)

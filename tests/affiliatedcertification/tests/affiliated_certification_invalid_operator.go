@@ -158,7 +158,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			globalhelper.GetConfiguration().General.TnfReportDir,
 			globalhelper.GetConfiguration().General.TnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Claim report")
@@ -197,7 +197,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			globalhelper.GetConfiguration().General.TnfReportDir,
 			globalhelper.GetConfiguration().General.TnfConfigDir)
-		Expect(err).To(HaveOccurred(), "Error running "+
+		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Claim report")

@@ -74,7 +74,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlOneProcessPerContainer,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -125,7 +125,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlOneProcessPerContainer,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

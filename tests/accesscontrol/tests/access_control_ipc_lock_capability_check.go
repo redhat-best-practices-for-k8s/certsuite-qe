@@ -86,7 +86,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
@@ -170,7 +170,7 @@ var _ = Describe("Access-control ipc-lock-capability-check,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlIpcLockCapability,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(

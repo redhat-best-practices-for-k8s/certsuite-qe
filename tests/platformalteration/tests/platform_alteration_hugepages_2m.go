@@ -138,7 +138,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		By("Start platform-alteration-hugepages-2m-only test")
 		err = globalhelper.LaunchTests(tsparams.TnfHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages2mOnlyName, globalparameters.TestCaseFailed, randomReportDir)

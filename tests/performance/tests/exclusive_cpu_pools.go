@@ -81,7 +81,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfExclusiveCPUPool,

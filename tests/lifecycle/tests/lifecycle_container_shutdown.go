@@ -84,7 +84,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -182,7 +182,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
@@ -222,7 +222,7 @@ var _ = Describe("lifecycle-container-prestop", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)

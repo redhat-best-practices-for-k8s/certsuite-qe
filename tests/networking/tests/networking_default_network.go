@@ -112,7 +112,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err = globalhelper.LaunchTests(
 			tsparams.TnfDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
-		Expect(err).To(HaveOccurred())
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
