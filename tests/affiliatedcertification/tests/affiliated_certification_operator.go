@@ -151,7 +151,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
 				tsparams.TestCaseOperatorAffiliatedCertName,
-				globalparameters.TestCaseSkipped, randomReportDir)
+				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 		})
 
@@ -186,7 +186,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped, randomReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -213,7 +213,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped, randomReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -247,7 +247,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped, randomReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
