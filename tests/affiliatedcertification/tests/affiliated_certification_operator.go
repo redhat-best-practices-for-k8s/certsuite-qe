@@ -252,7 +252,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	})
 
 	// 46698
-	It("no operators are labeled for testing [skip]", func() {
+	It("no operators are labeled for testing [negative]", func() {
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
@@ -263,7 +263,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseSkipped, randomReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
