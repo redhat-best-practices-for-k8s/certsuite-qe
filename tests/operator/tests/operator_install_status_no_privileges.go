@@ -140,7 +140,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -166,7 +166,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -192,7 +192,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -226,7 +226,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -260,7 +260,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseSkipped, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
