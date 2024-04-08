@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
-var _ = Describe("Operator install-source,", Serial, func() {
+var _ = Describe("Operator install-source,", Ordered, func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo

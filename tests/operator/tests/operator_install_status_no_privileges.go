@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
-var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
+var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo
@@ -57,7 +57,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Deploy quay operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"project-quay",
-			"stable-3.7",
+			"stable-3.11",
 			tsparams.OperatorNamespace,
 			tsparams.CommunityOperatorGroup,
 			tsparams.OperatorSourceNamespace,
