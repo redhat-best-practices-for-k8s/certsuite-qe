@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 
@@ -82,6 +83,11 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 				csv.Status.Phase != "Deleting" &&
 				csv.Status.Phase != "Replacing" &&
 				csv.Status.Phase != "Unknown"
+		}
+
+		if err != nil {
+			log.Printf("Error getting csv: %s", err)
+			return false
 		}
 
 		return false

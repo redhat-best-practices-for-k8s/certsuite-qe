@@ -34,11 +34,11 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomTnfConfigDir)
 
-		By("Deploy falcon-operator for testing")
-		// falcon-operator: not in certified-operators group in catalog, for negative test cases
+		By("Deploy cockroachdb for testing")
+		// cockroachdb: not in certified-operators group in catalog, for negative test cases
 		err := tshelper.DeployOperatorSubscription(
-			"falcon-operator",
-			"alpha",
+			"cockroachdb",
+			"stable-v6.x",
 			randomNamespace,
 			tsparams.CommunityOperatorGroup,
 			tsparams.OperatorSourceNamespace,
@@ -46,45 +46,47 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.UncertifiedOperatorPrefixFalcon)
+			tsparams.UncertifiedOperatorPrefixCockroach)
 
-		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixFalcon,
+		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCockroach,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixFalcon+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
 			" is not ready")
 
 		// add falcon operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.UncertifiedOperatorPrefixFalcon,
+			OperatorPrefix: tsparams.UncertifiedOperatorPrefixCockroach,
 			Namespace:      randomNamespace,
 			Label:          tsparams.OperatorLabel,
 		})
 
-		By("Deploy federatorai operator for testing")
-		// federatorai operator: in certified-operators group and version is certified
+		By("Deploy cockroachdb-certified operator for testing")
+		// cockroachdb-certified operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
-			"federatorai-certified",
+			"cockroachdb-certified",
 			"stable",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorFullFederatorai,
-			v1alpha1.ApprovalManual,
+			tsparams.CertifiedOperatorFullCockroachCertified,
+			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixFederatorai)
+			tsparams.CertifiedOperatorPrefixCockroachCertified)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullFederatorai,
-			randomNamespace)
+		// time.Sleep(5 * time.Minute)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixFederatorai,
+		// approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullCockroachCertified,
+		// 	randomNamespace)
+
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorFullCockroachCertified,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixFederatorai+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorFullCockroachCertified+
 			" is not ready")
 
-		// add federatorai operator info to array for cleanup in AfterEach
+		// add cockroachdb-certified operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixFederatorai,
+			OperatorPrefix: tsparams.CertifiedOperatorPrefixCockroachCertified,
 			Namespace:      randomNamespace,
 			Label:          tsparams.OperatorLabel,
 		})
@@ -98,13 +100,13 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
 			tsparams.CertifiedOperatorFullInstana,
-			v1alpha1.ApprovalManual,
+			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixInstana)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
-			randomNamespace)
+		// approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
+		// 	randomNamespace)
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			randomNamespace)
@@ -129,11 +131,11 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			By("Label operator to be certified")
 			Eventually(func() error {
 				return tshelper.AddLabelToInstalledCSV(
-					tsparams.UncertifiedOperatorPrefixFalcon,
+					tsparams.UncertifiedOperatorPrefixCockroach,
 					randomNamespace,
 					tsparams.OperatorLabel)
 			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixFalcon)
+				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
 			// Assert that the random report dir exists
 			Expect(randomReportDir).To(BeADirectory(), "Random report dir does not exist")
@@ -162,19 +164,19 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixFederatorai,
+				tsparams.CertifiedOperatorPrefixCockroachCertified,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixFederatorai)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.UncertifiedOperatorPrefixFalcon,
+				tsparams.UncertifiedOperatorPrefixCockroach,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixFalcon)
+			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -231,11 +233,11 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixFederatorai,
+				tsparams.CertifiedOperatorPrefixCockroachCertified,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixFederatorai)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

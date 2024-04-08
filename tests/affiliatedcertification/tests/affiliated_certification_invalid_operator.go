@@ -42,13 +42,13 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
 			tsparams.CertifiedOperatorFullInstana,
-			v1alpha1.ApprovalManual,
+			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixInstana)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
-			tsparams.TestCertificationNameSpace)
+		// approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
+		// 	tsparams.TestCertificationNameSpace)
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
 			tsparams.TestCertificationNameSpace)
