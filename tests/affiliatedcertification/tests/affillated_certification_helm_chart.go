@@ -47,16 +47,24 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 			Skip("helm does not exist please install it to run the test.")
 		}
 
+		By("Check that helm version is v3")
+		cmd = exec.Command("/bin/bash", "-c",
+			"helm version --short | grep v3")
+		err = cmd.Run()
+		if err != nil {
+			Fail("Helm version is not v3")
+		}
+
 		By("Add openshift-helm-charts repo")
 		cmd = exec.Command("/bin/bash", "-c",
-			"helm repo add openshift-helm-charts https://charts.openshift.io/ --force-update "+
+			"helm repo add hashicorp https://helm.releases.hashicorp.com --force-update "+
 				"&& helm repo update")
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error adding openshift-helm-carts repo")
 
 		By("Install helm chart")
 		cmd = exec.Command("/bin/bash", "-c",
-			"helm install example-vault1 openshift-helm-charts/hashicorp-vault -n "+randomNamespace)
+			"helm install example-vault1 hashicorp/vault -n "+randomNamespace)
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing hashicorp-vault helm chart")
 
@@ -106,6 +114,14 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		err := cmd.Run()
 		if err != nil {
 			Skip("helm does not exist please install it to run the test.")
+		}
+
+		By("Check that helm version is v3")
+		cmd = exec.Command("/bin/bash", "-c",
+			"helm version --short | grep v3")
+		err = cmd.Run()
+		if err != nil {
+			Fail("Helm version is not v3")
 		}
 
 		By("Create istio-system namespace")

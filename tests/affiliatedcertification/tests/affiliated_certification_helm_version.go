@@ -48,6 +48,14 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 			Skip("helm does not exist please install it to run the test.")
 		}
 
+		By("Check that helm version is v3")
+		cmd = exec.Command("/bin/bash", "-c",
+			"helm version --short | grep v3")
+		err = cmd.Run()
+		if err != nil {
+			Fail("Helm version is not v3")
+		}
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestHelmVersion,
