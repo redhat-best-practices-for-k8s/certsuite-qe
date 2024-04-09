@@ -3,6 +3,7 @@ package helper
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -82,6 +83,8 @@ func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterSe
 	}
 
 	var neededCSV v1alpha1.ClusterServiceVersion
+
+	log.Printf("Found %d CSVs in namespace %s", len(csvs.Items), namespace)
 
 	for _, csv := range csvs.Items {
 		if strings.Contains(csv.Name, prefixCsvName) {

@@ -124,6 +124,10 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 			Fail("Helm version is not v3")
 		}
 
+		By("Delete istio-system namespace")
+		err = globalhelper.DeleteNamespaceAndWait("istio-system", tsparams.Timeout)
+		Expect(err).ToNot(HaveOccurred(), "Error deleting istio-system namespace")
+
 		By("Create istio-system namespace")
 		err = globalhelper.CreateNamespace("istio-system")
 		Expect(err).ToNot(HaveOccurred(), "Error creating istio-system namespace")

@@ -87,6 +87,7 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 
 		if err != nil {
 			log.Printf("Error getting csv: %s", err)
+
 			return false
 		}
 
