@@ -100,7 +100,7 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {
 	// logfile := "cnf-certsuite.log"
 	// By("Print logs")
-	// myFile, err := os.ReadFile(GetConfiguration().General.TnfReportDir + "/" + logfile)
+	// myFile, err := os.ReadFile(randomReportDir + "/" + logfile)
 	// if err != nil {
 	// 	glog.Errorf("can not read file %s - %s", logfile, err)
 	// }

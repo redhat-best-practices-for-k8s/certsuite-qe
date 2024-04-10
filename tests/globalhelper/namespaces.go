@@ -112,7 +112,7 @@ func cleanPods(namespace string, client kubernetes.Interface) error {
 		err = client.CoreV1().Pods(namespace).Delete(context.TODO(), p.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete pod %w", err)
 		}
 	}
@@ -139,7 +139,7 @@ func cleanDeployments(namespace string, client kubernetes.Interface) error {
 		err = client.AppsV1().Deployments(namespace).Delete(context.TODO(), d.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete deployment %w", err)
 		}
 	}
@@ -167,7 +167,7 @@ func cleanDaemonSets(namespace string, client kubernetes.Interface) error {
 		err = client.AppsV1().DaemonSets(namespace).Delete(context.TODO(), ds.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete daemonset %w", err)
 		}
 	}
@@ -225,7 +225,7 @@ func cleanReplicaSets(namespace string, client kubernetes.Interface) error {
 		err = client.AppsV1().ReplicaSets(namespace).Delete(context.TODO(), rs.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete replicaSet %w", err)
 		}
 	}
@@ -252,7 +252,7 @@ func cleanStatefulSets(namespace string, client kubernetes.Interface) error {
 		err = client.AppsV1().StatefulSets(namespace).Delete(context.TODO(), ss.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete statefulSet %w", err)
 		}
 	}
@@ -279,7 +279,7 @@ func cleanServices(namespace string, client kubernetes.Interface) error {
 		err = client.CoreV1().Services(namespace).Delete(context.TODO(), s.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete service %w", err)
 		}
 	}
@@ -303,7 +303,7 @@ func cleanSubscriptions(namespace string, k8sclient kubernetes.Interface, subcli
 		},
 		metav1.ListOptions{})
 
-	if err != nil {
+	if err != nil && !k8serrors.IsNotFound(err) {
 		return fmt.Errorf("failed to delete subscriptions %w", err)
 	}
 
@@ -326,7 +326,7 @@ func cleanCSVs(namespace string, k8sclient kubernetes.Interface, opclient v1alph
 		},
 		metav1.ListOptions{})
 
-	if err != nil {
+	if err != nil && !k8serrors.IsNotFound(err) {
 		return fmt.Errorf("failed to delete CSVs %w", err)
 	}
 
@@ -349,7 +349,7 @@ func cleanInstallPlans(namespace string, k8sclient kubernetes.Interface, opclien
 		},
 		metav1.ListOptions{})
 
-	if err != nil {
+	if err != nil && !k8serrors.IsNotFound(err) {
 		return fmt.Errorf("failed to delete installplans %w", err)
 	}
 
@@ -372,7 +372,7 @@ func cleanPVCs(namespace string, client kubernetes.Interface) error {
 		},
 		metav1.ListOptions{})
 
-	if err != nil {
+	if err != nil && !k8serrors.IsNotFound(err) {
 		return fmt.Errorf("failed to delete persistent volume claim %w", err)
 	}
 
@@ -395,7 +395,7 @@ func cleanPodDisruptionBudget(namespace string, client kubernetes.Interface) err
 		},
 		metav1.ListOptions{})
 
-	if err != nil {
+	if err != nil && !k8serrors.IsNotFound(err) {
 		return fmt.Errorf("failed to delete pod disruption budget %w", err)
 	}
 
@@ -421,7 +421,7 @@ func cleanResourceQuotas(namespace string, client kubernetes.Interface) error {
 		err = client.CoreV1().ResourceQuotas(namespace).Delete(context.TODO(), rq.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete resource quota %w", err)
 		}
 	}
@@ -448,7 +448,7 @@ func cleanNetworkPolicies(namespace string, client kubernetes.Interface) error {
 		err = client.NetworkingV1().NetworkPolicies(namespace).Delete(context.TODO(), np.Name, metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		})
-		if err != nil {
+		if err != nil && !k8serrors.IsNotFound(err) {
 			return fmt.Errorf("failed to delete network policy %w", err)
 		}
 	}
