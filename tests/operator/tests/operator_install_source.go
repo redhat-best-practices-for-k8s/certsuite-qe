@@ -1,6 +1,8 @@
 package operator
 
 import (
+	"log"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -18,7 +20,7 @@ const (
 	ErrorRemovingLabelStr    = "Error removing label from operator "
 )
 
-var _ = Describe("Operator install-source,", Ordered, func() {
+var _ = Describe("Operator install-source,", Serial, func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo
@@ -33,6 +35,31 @@ var _ = Describe("Operator install-source,", Ordered, func() {
 		err = tshelper.DeployTestOperatorGroup()
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
+		By("Deploy openvino operator for testing")
+		err = tshelper.DeployOperatorSubscription(
+			"ovms-operator",
+			"alpha",
+			tsparams.OperatorNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixOpenvino)
+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
+			tsparams.OperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
+			" is not ready")
+
+		// add openvino operator info to array for cleanup in AfterEach
+		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
+			OperatorPrefix: tsparams.OperatorPrefixOpenvino,
+			Namespace:      tsparams.OperatorNamespace,
+			Label:          tsparams.OperatorLabel,
+		})
+
 		By("Deploy cloudbees-ci operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"cloudbees-ci",
@@ -43,6 +70,11 @@ var _ = Describe("Operator install-source,", Ordered, func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
+
+		if err != nil {
+			log.Printf("Error deploying operator: %v", err)
+		}
+
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixCloudbees)
 
@@ -79,31 +111,6 @@ var _ = Describe("Operator install-source,", Ordered, func() {
 		// add anchore-engine operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
 			OperatorPrefix: tsparams.OperatorPrefixAnchore,
-			Namespace:      tsparams.OperatorNamespace,
-			Label:          tsparams.OperatorLabel,
-		})
-
-		By("Deploy openvino operator for testing")
-		err = tshelper.DeployOperatorSubscription(
-			"ovms-operator",
-			"alpha",
-			tsparams.OperatorNamespace,
-			tsparams.CertifiedOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixOpenvino)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
-			tsparams.OperatorNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
-			" is not ready")
-
-		// add openvino operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.OperatorPrefixOpenvino,
 			Namespace:      tsparams.OperatorNamespace,
 			Label:          tsparams.OperatorLabel,
 		})

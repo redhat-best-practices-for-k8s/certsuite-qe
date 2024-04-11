@@ -33,31 +33,28 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			globalhelper.GetConfiguration().General.TnfConfigDir,
 		)
 
-		By("Deploy instana-agent-operator for testing")
-		// instana-agent-operator: in certified-operators group and version is certified
+		By("Deploy nginx-ingress-operator for testing")
+		// nginx-ingress-operator: in certified-operators group and version is certified
 		err := tshelper.DeployOperatorSubscription(
-			"instana-agent-operator",
-			"stable",
+			"nginx-ingress-operator",
+			"alpha",
 			tsparams.TestCertificationNameSpace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorFullInstana,
-			v1alpha1.ApprovalManual,
+			tsparams.CertifiedOperatorFullNginx,
+			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixInstana)
+			tsparams.CertifiedOperatorPrefixNginx)
 
-		approveInstallPlanWhenReady(tsparams.CertifiedOperatorFullInstana,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
 			tsparams.TestCertificationNameSpace)
-
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixInstana,
-			tsparams.TestCertificationNameSpace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixInstana+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
 			" is not ready")
 
-		// add instana-agent-operator info to array for cleanup in AfterEach
+		// add nginx-ingress-operator info to array for cleanup in AfterEach
 		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixInstana,
+			OperatorPrefix: tsparams.CertifiedOperatorPrefixNginx,
 			Namespace:      tsparams.TestCertificationNameSpace,
 			Label:          tsparams.OperatorLabel,
 		})
@@ -185,11 +182,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixInstana,
+				tsparams.CertifiedOperatorPrefixNginx,
 				tsparams.TestCertificationNameSpace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixInstana)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

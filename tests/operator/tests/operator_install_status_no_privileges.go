@@ -12,7 +12,7 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
-var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
+var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 
 	var (
 		installedLabeledOperators []tsparams.OperatorLabelInfo
@@ -140,7 +140,7 @@ var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -166,7 +166,7 @@ var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -192,7 +192,7 @@ var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -226,12 +226,12 @@ var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 66385
-	It("two operators, one with clusterPermissions and resourceNames [negative]", func() {
+	It("two operators, one with clusterPermissions and resourceNames", func() {
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -260,8 +260,7 @@ var _ = Describe("Operator install-status-no-privileges,", Ordered, func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })
