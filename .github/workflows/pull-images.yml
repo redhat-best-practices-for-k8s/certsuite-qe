@@ -1,0 +1,37 @@
+name: Pull Images Verification
+
+# This is a simple cron job that runs every day at midnight UTC
+# that pulls images from registries to verify they actually exist.
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  REGISTRY: quay.io
+
+jobs:
+  pull-images:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate against Quay.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          # Use a Robot Account to authenticate against Quay.io
+          # https://docs.quay.io/glossary/robot-accounts.html
+          username: ${{ secrets.QUAY_ROBOT_USERNAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+
+      - name: Pull and check image health
+        run: |
+          docker pull registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9
+          docker pull registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17
+          docker pull registry.access.redhat.com/ubi8/nodejs-12:latest
+          docker pull quay.io/nginx/nginx-ingress-operator@sha256:38bb2a104462808eb800445db354535151fbe2632931b9c2a56da3a526923605
+          docker pull registry.connect.redhat.com/anchore/engine-operator-bundle@sha256:fbbe7e6c1d75c4de2f47e2c825c930568e85f1134545e9d890a0c9f3d9187a4d
+          docker pull registry.redhat.io/quay/quay-operator-rhel8@sha256:59c6daa886c01039cb96da04ae250e0e9b89c73dbd7ece934cf8bf9e9f529812
