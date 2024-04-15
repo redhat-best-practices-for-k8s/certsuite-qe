@@ -32,19 +32,16 @@ jobs:
 
       - name: Configure docker config file
         run: |
-          python -c "import os; file = open('/home/runner/.docker/config', 'w'); file.write(os.environ['YOUR_SECRET']); file.close()"
+          python -c "import os; file = open('/home/runner/pull-secret.txt', 'w'); file.write(os.environ['YOUR_SECRET']); file.close()"
         shell: bash
         env:
           YOUR_SECRET: ${{secrets.REDHAT_PULL_SECRET}}
 
-      - name: tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Pull and check image health
         run: |
-          docker pull registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9
-          docker pull registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17
-          docker pull registry.access.redhat.com/ubi8/nodejs-12:latest
-          docker pull quay.io/nginx/nginx-ingress-operator@sha256:38bb2a104462808eb800445db354535151fbe2632931b9c2a56da3a526923605
-          docker pull registry.connect.redhat.com/anchore/engine-operator-bundle@sha256:fbbe7e6c1d75c4de2f47e2c825c930568e85f1134545e9d890a0c9f3d9187a4d
-          docker pull registry.redhat.io/quay/quay-operator-rhel8@sha256:59c6daa886c01039cb96da04ae250e0e9b89c73dbd7ece934cf8bf9e9f529812
+          podman pull --authfile /home/runner/pull-secret.txt registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9
+          podman pull --authfile /home/runner/pull-secret.txt registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17
+          podman pull --authfile /home/runner/pull-secret.txt registry.access.redhat.com/ubi8/nodejs-12:latest
+          podman pull --authfile /home/runner/pull-secret.txt quay.io/nginx/nginx-ingress-operator@sha256:38bb2a104462808eb800445db354535151fbe2632931b9c2a56da3a526923605
+          podman pull --authfile /home/runner/pull-secret.txt registry.connect.redhat.com/anchore/engine-operator-bundle@sha256:fbbe7e6c1d75c4de2f47e2c825c930568e85f1134545e9d890a0c9f3d9187a4d
+          podman pull --authfile /home/runner/pull-secret.txt registry.redhat.io/quay/quay-operator-rhel8@sha256:59c6daa886c01039cb96da04ae250e0e9b89c73dbd7ece934cf8bf9e9f529812
