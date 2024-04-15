@@ -28,6 +28,11 @@ jobs:
           username: ${{ secrets.QUAY_ROBOT_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
 
+      - name: Write pull secret to docker config
+        run: |
+          mkdir -p ~/.docker
+          cat << EOF > ~/docker/config.json ${{ secrets.REDHAT_PULL_SECRET }} EOF
+
       - name: Pull and check image health
         run: |
           docker pull registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9
