@@ -4,9 +4,10 @@ name: Pull Images Verification
 # that pulls images from registries to verify they actually exist.
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
-
+  
 env:
   REGISTRY: quay.io
 
