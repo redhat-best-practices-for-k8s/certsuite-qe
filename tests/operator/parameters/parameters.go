@@ -53,4 +53,7 @@ const (
 	TnfOperatorInstallSource             = "operator-install-source"
 	TnfOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
 	TnfOperatorInstallStatus             = "operator-install-status-succeeded"
+	TnfOperatorSemanticVersioning        = "operator-semantic-versioning"
+	TnfOperatorCrdVersioning             = "operator-crd-versioning"
+	TnfOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
 )
