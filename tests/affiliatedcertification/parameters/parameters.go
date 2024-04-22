@@ -42,7 +42,7 @@ var (
 	EmptyFieldsContainer                = ";;;"
 	ContainerNameOnlyCockroachDB        = "cockroachdb/cockroach;;;"
 	ContainerRepoOnlyRedHatRegistry     = ";registry.connect.redhat.com;;"
-	CertifiedContainerURLNodeJs         = "registry.access.redhat.com/ubi8/nodejs-12:latest"
+	CertifiedContainerURLNodeJs         = "registry.access.redhat.com/ubi9/nodejs-20:latest"
 	CertifiedContainerURLCockroachDB    = "registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17" // 'latest' tag is not available
 	UncertifiedContainerURLCnfTest      = "quay.io/testnetworkfunction/cnf-test-partner:latest"
 
