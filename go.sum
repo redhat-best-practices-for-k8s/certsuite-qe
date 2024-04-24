@@ -1,3 +1,5 @@
+github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0rYXWg0=
+github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
 github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
@@ -111,6 +113,8 @@ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsT
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f h1:qy5MGTizgcbU/VS+oIsX4x3eDh4FcsniB9A2PaMQ1y0=
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f/go.mod h1:C7bjc5oqhe5AlcoXr3RIDuSBiLn5VSOUtz76aJv6GkI=
+github.com/test-network-function/oct v0.0.10 h1:aIHZmq4D/OkZxRMcWjYOQBjgvUM/pTMxUpsMT9uYUrM=
+github.com/test-network-function/oct v0.0.10/go.mod h1:uQkGcKyfiFfur/YqMuYgYC3+qwc4cKhUdHaenoyjyGo=
 github.com/test-network-function/test-network-function-claim v1.0.36 h1:Gez1dX3nIjDexd4e8qsnXBbV7v7EhxKfYmejBNIivMU=
 github.com/test-network-function/test-network-function-claim v1.0.36/go.mod h1:gCHWd+bVmlmyuNe8iLGjYSdfw1bNQaKccV/Zb0edgwE=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
@@ -193,6 +197,8 @@ gopkg.in/yaml.v2 v2.4.0/go.mod h1:RDklbk79AGWmwhnvt/jBztapEOGDOx6ZbXqjP6csGnQ=
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+helm.sh/helm/v3 v3.14.4 h1:6FSpEfqyDalHq3kUr4gOMThhgY55kXUEjdQoyODYnrM=
+helm.sh/helm/v3 v3.14.4/go.mod h1:Tje7LL4gprZpuBNTbG34d1Xn5NmRT3OWfBRwpOSer9I=
 k8s.io/api v0.30.0 h1:siWhRq7cNjy2iHssOB9SCGNCl2spiF1dO3dABqZ8niA=
 k8s.io/api v0.30.0/go.mod h1:OPlaYhoHs8EQ1ql0R/TsUgaRPhpKNxIMrKQfWUp8QSE=
 k8s.io/apiextensions-apiserver v0.30.0 h1:jcZFKMqnICJfRxTgnC4E+Hpcq8UEhT8B2lhBcQ+6uAs=
