@@ -9,6 +9,8 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
 
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+
+	"github.com/test-network-function/oct/pkg/certdb/onlinecheck"
 )
 
 var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, func() {
@@ -29,6 +31,17 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 			[]string{},
 			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+
+		By("Check if the test image is certified prior to deployment")
+		// Using the 'oct' repo, we should do a quick assertion to see if the image is available
+		// and certified.
+		onlineValidator := onlinecheck.NewOnlineValidator()
+
+		// The information for this is gathered from:
+		//nolint:lll
+		// https://catalog.redhat.com/api/containers/v1/images?filter=image_id==sha256:41bc5b622db8b5e0d608e7524c39928b191270666252578edbf1e0f84a9e3cab
+		//nolint:lll
+		Expect(onlineValidator.IsContainerCertified("registry.access.redhat.com", "ubi8/nodejs-12", "latest", "sha256:41bc5b622db8b5e0d608e7524c39928b191270666252578edbf1e0f84a9e3cab")).To(BeTrue())
 	})
 
 	AfterEach(func() {
