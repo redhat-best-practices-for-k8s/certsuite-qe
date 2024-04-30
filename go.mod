@@ -9,7 +9,6 @@ require (
 	github.com/onsi/ginkgo/v2 v2.17.2
 	github.com/onsi/gomega v1.33.0
 	github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
-	github.com/openshift/machine-config-operator v0.0.1-0.20231003014108-282f0be35db2
 	github.com/operator-framework/api v0.23.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/sirupsen/logrus v1.9.3
@@ -79,7 +78,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
-
-replace github.com/openshift/machine-config-operator => github.com/openshift/machine-config-operator v0.0.1-0.20231003014108-282f0be35db2
 
 replace github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1

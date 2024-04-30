@@ -9,7 +9,6 @@ import (
 	"github.com/golang/glog"
 	netattdefv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	ocpclientconfigv1 "github.com/openshift/client-go/config/clientset/versioned/typed/config/v1"
-	clientmcv1 "github.com/openshift/machine-config-operator/pkg/generated/clientset/versioned/typed/machineconfiguration.openshift.io/v1"
 	olm "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme"
 	"github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	apiextv1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
@@ -41,7 +40,6 @@ type ClientSet struct {
 	Config *rest.Config
 	runtimeclient.Client
 	v1alpha1.OperatorsV1alpha1Interface
-	clientmcv1.MachineconfigurationV1Interface
 	nodev1.NodeV1Interface
 	policyv1.PolicyV1Interface
 	policyv1beta1.PolicyV1beta1Interface
@@ -81,7 +79,6 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.NetworkingV1Client = *networkv1client.NewForConfigOrDie(config)
 	clientSet.OperatorsV1alpha1Interface = v1alpha1.NewForConfigOrDie(config)
 	clientSet.ApiextensionsV1Interface = apiextv1client.NewForConfigOrDie(config)
-	clientSet.MachineconfigurationV1Interface = clientmcv1.NewForConfigOrDie(config)
 	clientSet.NodeV1Interface = nodev1.NewForConfigOrDie(config)
 	clientSet.PolicyV1Interface = policyv1.NewForConfigOrDie(config)
 	clientSet.PolicyV1beta1Interface = policyv1beta1.NewForConfigOrDie(config)
