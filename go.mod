@@ -8,7 +8,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.17.2
 	github.com/onsi/gomega v1.33.0
-	github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
+	github.com/openshift/client-go v0.0.0-20240422164335-6c851f4919dd
 	github.com/openshift/machine-config-operator v0.0.1-0.20231003014108-282f0be35db2
 	github.com/operator-framework/api v0.23.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
@@ -57,7 +57,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
-	github.com/openshift/api v0.0.0-20231003083825-c3f7566f6ef6 // indirect
+	github.com/openshift/api v0.0.0-20240422085825-2624175e9673 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.6-0.20210604193023-d5e0c0615ace // indirect
@@ -81,5 +81,3 @@ require (
 )
 
 replace github.com/openshift/machine-config-operator => github.com/openshift/machine-config-operator v0.0.1-0.20231003014108-282f0be35db2
-
-replace github.com/openshift/client-go => github.com/openshift/client-go v0.0.0-20230926161409-848405da69e1
