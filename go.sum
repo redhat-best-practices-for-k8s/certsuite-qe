@@ -89,8 +89,8 @@ github.com/openshift/api v0.0.0-20240425081546-8203151f085f h1:MH6RaWREjGgf1NUcB
 github.com/openshift/api v0.0.0-20240425081546-8203151f085f/go.mod h1:CxgbWAlvu2iQB0UmKTtRu1YfepRg1/vJ64n2DlIEVz4=
 github.com/openshift/client-go v0.0.0-20240422164335-6c851f4919dd h1:z5TPsTaB8Zzvv9fK/kVB6X+FG1GtwM56WfoanhlbyyQ=
 github.com/openshift/client-go v0.0.0-20240422164335-6c851f4919dd/go.mod h1:OC07uJXbaW/s21N6XDucROlmfUOhMXD5OrY3ZN3DmiM=
-github.com/operator-framework/api v0.23.0 h1:kHymOwcHBpBVujT49SKOCd4EVG7Odwj4wl3NbOR2LLA=
-github.com/operator-framework/api v0.23.0/go.mod h1:oKcFOz+Xc1UhMi2Pzcp6qsO7wjS4r+yP7EQprQBXrfM=
+github.com/operator-framework/api v0.24.0 h1:fHynWEzuY/YhUTlsK9hd+QQ0bZcFakxCTdaZbFaVXbc=
+github.com/operator-framework/api v0.24.0/go.mod h1:EXKrka63NyQDDpWZ+DGTDEliNV0xRq6UMZRoUPhilVM=
 github.com/operator-framework/operator-lifecycle-manager v0.22.0 h1:7DEWOq24HQ0l5xPOXMhn17XaJACgwoipz+JfQ7QCXZw=
 github.com/operator-framework/operator-lifecycle-manager v0.22.0/go.mod h1:4zssIIl23ohxS1nXRU9xTkBmwt+qleuHMO02BaWOHLA=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
