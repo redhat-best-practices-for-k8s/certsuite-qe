@@ -15,7 +15,7 @@ fi
 PFLAG=""
 if [[ ${ENABLE_PARALLEL} == "true" ]]; then
 	echo "Running tests in parallel"
-	PFLAG="-procs=4"
+	PFLAG="-p"
 fi
 
 # Allow for flake retries
