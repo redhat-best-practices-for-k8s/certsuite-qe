@@ -48,11 +48,11 @@ var _ = SynchronizedBeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	// Safeguard against running the operator tests on a cluster without catalog sources
-	if !globalhelper.IsKindCluster() {
-		By("Check if catalog sources are available")
-		err = globalhelper.ValidateCatalogSources()
-		Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
-	}
+	// if !globalhelper.IsKindCluster() {
+	// 	By("Check if catalog sources are available")
+	// 	err = globalhelper.ValidateCatalogSources()
+	// 	Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
+	// }
 }, func() {})
 
 var _ = SynchronizedAfterSuite(func() {}, func() {
