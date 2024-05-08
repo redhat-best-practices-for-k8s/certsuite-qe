@@ -141,7 +141,8 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 
 		By("Install istio-base helm chart")
 		cmd = exec.Command("/bin/bash", "-c",
-			"helm install istio-base istio/base --set defaultRevision=default -n "+randomNamespace)
+			"helm install istio-base istio/base --set defaultRevision=default -n "+randomNamespace+
+				" --set hub=gcr.io/istio-release")
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing istio-base helm chart")
 
