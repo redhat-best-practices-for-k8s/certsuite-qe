@@ -13,7 +13,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-high-availability", func() {
+var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomTnfConfigDir string
