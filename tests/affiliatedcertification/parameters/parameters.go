@@ -59,7 +59,7 @@ var (
 	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
 	CertifiedOperatorFullCockroachCertified   = "cockroach-operator.v2.13.0"
 	CertifiedOperatorPrefixNginx              = "nginx-ingress-operator"
-	CertifiedOperatorFullNginx                = "nginx-ingress-operator.v2.2.0"
+	CertifiedOperatorFullNginx                = "nginx-ingress-operator.v2.2.1"
 	UncertifiedOperatorPrefixSriov            = "sriov-fec"
 	UncertifiedOperatorFullSriov              = "sriov-fec.v1.2.1"
 )
