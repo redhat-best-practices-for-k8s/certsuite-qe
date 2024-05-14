@@ -17,7 +17,7 @@ func ValidateCatalogSources() error {
 }
 
 func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
-	validCatalogSources := []string{"certified-operators", "community-operators", "redhat-operators", "redhat-marketplace"}
+	validCatalogSources := []string{"certified-operators", "community-operators"}
 
 	catalogSources, err := opclient.CatalogSources(CatalogSourceNamespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
