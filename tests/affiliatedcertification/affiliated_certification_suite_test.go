@@ -89,6 +89,10 @@ var _ = SynchronizedBeforeSuite(func() {
 	}
 
 	if !globalhelper.IsKindCluster() {
+		By("Create community-operators catalog source")
+		err = globalhelper.CreateCommunityOperatorsCatalogSource()
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Check if catalog sources are available")
 		err = globalhelper.ValidateCatalogSources()
 		Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
