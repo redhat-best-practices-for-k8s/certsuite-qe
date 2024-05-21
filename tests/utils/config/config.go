@@ -32,12 +32,14 @@ type Config struct {
 		TnfConfigDir          string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
 		TnfRepoPath           string `envconfig:"TNF_REPO_PATH"`
 		TnfEntryPointScript   string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
+		TnfEntryPointBinary   string `yaml:"tnf_entry_point_binary" envconfig:"TNF_ENTRY_POINT_BINARY"`
 		TnfReportDir          string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
 		DockerConfigDir       string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
 		TnfImage              string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
 		TnfImageTag           string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
 		DisableIntrusiveTests string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
 		ContainerEngine       string `default:"docker" yaml:"container_engine" envconfig:"CONTAINER_ENGINE"`
+		UseBinary             string `default:"false" yaml:"use_binary" envconfig:"USE_BINARY"`
 	} `yaml:"general"`
 }
 
