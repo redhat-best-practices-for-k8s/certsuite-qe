@@ -14,7 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
-	github.com/test-network-function/oct v0.0.10
+	github.com/test-network-function/oct v0.0.11
 	github.com/test-network-function/test-network-function-claim v1.0.36
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.30.1
