@@ -196,8 +196,8 @@ github.com/stretchr/testify/assert
 # github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 ## explicit; go 1.19
 github.com/test-network-function/cr-scale-operator/api/v1
-# github.com/test-network-function/oct v0.0.10
-## explicit; go 1.22.2
+# github.com/test-network-function/oct v0.0.11
+## explicit; go 1.22.3
 github.com/test-network-function/oct/pkg/certdb/config
 github.com/test-network-function/oct/pkg/certdb/offlinecheck
 github.com/test-network-function/oct/pkg/certdb/onlinecheck
