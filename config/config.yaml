@@ -6,6 +6,8 @@ general:
   verification_log_level: 4
   test_image: quay.io/testnetworkfunction/cnf-test-partner
   tnf_entry_point_script: run-tnf-container.sh
+  tnf_entry_point_binary: certsuite
+  use_binary: false
   tnf_config_dir: /tmp/tnf_config
   tnf_report_dir: /tmp/tnf_report
   docker_config_dir: /home/runner/.docker
