@@ -27,7 +27,6 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	)
 
 	execute.BeforeAll(func() {
-		Skip("Impractical to test under current circumstances")
 		preConfigureAffiliatedCertificationEnvironment(
 			tsparams.TestCertificationNameSpace,
 			globalhelper.GetConfiguration().General.TnfConfigDir,
@@ -119,7 +118,6 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	})
 
 	AfterEach(func() {
-		Skip("Impractical to test under current circumstances")
 		By("Remove labels from operators")
 		for _, info := range installedLabeledOperators {
 			err := tshelper.DeleteLabelFromInstalledCSV(
@@ -138,7 +136,9 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	It("one operator to test, operator is in certified-operators organization but its version"+
 		" is not certified [negative]", func() {
 
-		Skip("Impractical to test under current circumstances")
+		if globalhelper.IsKindCluster() {
+			Skip("Skip on kind cluster")
+		}
 
 		By("Label operator to be certified")
 		Eventually(func() error {
@@ -169,7 +169,9 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	It("two operators to test, both are in certified-operators organization,"+
 		" one’s version is certified, the other’s is not [negative]", func() {
 
-		Skip("Impractical to test under current circumstances")
+		if globalhelper.IsKindCluster() {
+			Skip("Skip on kind cluster")
+		}
 
 		By("Label operators to be certified")
 		Eventually(func() error {
@@ -202,6 +204,5 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-
 	})
 })
