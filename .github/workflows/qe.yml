@@ -36,7 +36,7 @@ jobs:
           echo '{ "auths": {} }' >> ${PFLT_DOCKERCONFIG}
 
       - name: Set up Go 1.22
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
         with:
           go-version: 1.22.3
 
@@ -44,18 +44,18 @@ jobs:
         run: echo "::remove-matcher owner=go::"
 
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           ref: ${{ github.sha }}
 
       - name: Check out `cnf-certification-test-partner`
-        uses: actions/checkout@v4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           repository: test-network-function/cnf-certification-test-partner
           path: cnf-certification-test-partner
 
       - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@main
+        uses: depends-on/depends-on-action@9e8a61fce18b15281e831f1bba0e14c71d1e1f46 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           extra-dirs: cnfcert-tests-verification/cnf-certification-test-partner cnfcert-tests-verification/cnf-certification-test
@@ -107,19 +107,19 @@ jobs:
         timeout-minutes: 10
 
       - name: Clone the cnf-certification-test repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           repository: ${{ env.TEST_REPO }}
           path: cnf-certification-test
           ref: main
 
       - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@main
+        uses: depends-on/depends-on-action@9e8a61fce18b15281e831f1bba0e14c71d1e1f46 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run the tests
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 60
           max_attempts: 3
@@ -130,7 +130,7 @@ jobs:
     steps:
 
       - name: Extract dependent PR
-        uses: depends-on/depends-on-action@main
+        uses: depends-on/depends-on-action@9e8a61fce18b15281e831f1bba0e14c71d1e1f46 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           check-unmerged-pr: true
