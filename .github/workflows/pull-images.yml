@@ -11,16 +11,19 @@ on:
 env:
   REGISTRY: quay.io
 
+permissions:
+  contents: read
+
 jobs:
   pull-images:
     runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
       - name: Authenticate against Quay.io
-        uses: docker/login-action@v3
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v3.1.0
         with:
           registry: ${{ env.REGISTRY }}
           # Use a Robot Account to authenticate against Quay.io
