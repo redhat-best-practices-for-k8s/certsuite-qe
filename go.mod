@@ -9,7 +9,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.18.0
 	github.com/onsi/gomega v1.33.1
 	github.com/openshift/client-go v0.0.0-20240510131258-f646d5f29250
-	github.com/operator-framework/api v0.24.0
+	github.com/operator-framework/api v0.25.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
