@@ -15,11 +15,6 @@ import (
 )
 
 var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
-
-	var (
-		installedLabeledOperators []tsparams.OperatorLabelInfo
-	)
-
 	var randomNamespace string
 	var randomReportDir string
 	var randomTnfConfigDir string
@@ -55,13 +50,6 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
 			" is not ready")
 
-		// add cockroach operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.UncertifiedOperatorPrefixCockroach,
-			Namespace:      randomNamespace,
-			Label:          tsparams.OperatorLabel,
-		})
-
 		By("Query the packagemanifest for the cockroachdb-certified operator")
 		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", tsparams.TestCertificationNameSpace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
@@ -84,13 +72,6 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorFullCockroachCertified+
 			" is not ready")
-
-		// add cockroachdb-certified operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixCockroachCertified,
-			Namespace:      randomNamespace,
-			Label:          tsparams.OperatorLabel,
-		})
 
 		By("Query the packagemanifest for the nginx-ingress-operator")
 		version, err = globalhelper.QueryPackageManifestForVersion(
@@ -115,13 +96,6 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
 			" is not ready")
-
-		// add nginx-ingress-operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixNginx,
-			Namespace:      randomNamespace,
-			Label:          tsparams.OperatorLabel,
-		})
 	})
 
 	AfterEach(func() {
