@@ -11,7 +11,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 )
 
-var _ = Describe("Operator crd-versioning,", Serial, func() {
+var _ = Describe("Operator crd-versioning,", func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomTnfConfigDir string

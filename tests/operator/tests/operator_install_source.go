@@ -19,7 +19,7 @@ const (
 	ErrorRemovingLabelStr    = "Error removing label from operator "
 )
 
-var _ = Describe("Operator install-source,", Serial, func() {
+var _ = Describe("Operator install-source,", func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomTnfConfigDir string

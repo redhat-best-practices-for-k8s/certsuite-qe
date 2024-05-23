@@ -25,6 +25,10 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	var randomTnfConfigDir string
 
 	BeforeEach(func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Skipping operator certification tests on kind cluster")
+		}
+
 		// Create random namespace and keep original report and TNF config directories
 		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestCertificationNameSpace)

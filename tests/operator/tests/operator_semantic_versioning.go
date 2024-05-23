@@ -11,7 +11,7 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 )
 
-var _ = Describe("Operator semantic-versioning,", Serial, func() {
+var _ = Describe("Operator semantic-versioning,", func() {
 
 	var randomNamespace string
 	var randomReportDir string
