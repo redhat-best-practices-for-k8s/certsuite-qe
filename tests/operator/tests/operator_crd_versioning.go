@@ -9,29 +9,36 @@ import (
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 )
 
 var _ = Describe("Operator crd-versioning,", Serial, func() {
+	var randomNamespace string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
-	var (
-		installedLabeledOperators []tsparams.OperatorLabelInfo
-	)
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.OperatorNamespace)
 
-	execute.BeforeAll(func() {
-		By("Clean namespace")
-		err := globalhelper.CleanNamespace(tsparams.OperatorNamespace)
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
-		err = tshelper.DeployTestOperatorGroup()
+		err = tshelper.DeployTestOperatorGroup(randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Deploy openvino operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"ovms-operator",
 			"alpha",
-			tsparams.OperatorNamespace,
+			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
 			"",
@@ -41,27 +48,13 @@ var _ = Describe("Operator crd-versioning,", Serial, func() {
 			tsparams.OperatorPrefixOpenvino)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
-			tsparams.OperatorNamespace)
+			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
 			" is not ready")
-
-		// add openvino operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.OperatorPrefixOpenvino,
-			Namespace:      tsparams.OperatorNamespace,
-			Label:          tsparams.OperatorLabel,
-		})
 	})
 
 	AfterEach(func() {
-		By("Remove labels from operators")
-		for _, info := range installedLabeledOperators {
-			err := tshelper.DeleteLabelFromInstalledCSV(
-				info.OperatorPrefix,
-				info.Namespace,
-				info.Label)
-			Expect(err).ToNot(HaveOccurred(), ErrorRemovingLabelStr+info.OperatorPrefix)
-		}
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
 	})
 
 	It("operator crd has valid versioning", func() {
@@ -69,7 +62,7 @@ var _ = Describe("Operator crd-versioning,", Serial, func() {
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				tsparams.OperatorPrefixOpenvino,
-				tsparams.OperatorNamespace,
+				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
@@ -78,14 +71,14 @@ var _ = Describe("Operator crd-versioning,", Serial, func() {
 		err := globalhelper.LaunchTests(
 			tsparams.TnfOperatorCrdVersioning,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TnfOperatorCrdVersioning,
-			globalparameters.TestCasePassed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

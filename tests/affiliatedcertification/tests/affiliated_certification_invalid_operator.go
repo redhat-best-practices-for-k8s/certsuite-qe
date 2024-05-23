@@ -9,7 +9,6 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/execute"
 
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
@@ -21,15 +20,18 @@ const (
 )
 
 var _ = Describe("Affiliated-certification invalid operator certification,", Serial, func() {
+	var randomNamespace string
+	var randomReportDir string
+	var randomTnfConfigDir string
 
-	var (
-		installedLabeledOperators []tsparams.OperatorLabelInfo
-	)
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+			tsparams.TestCertificationNameSpace)
 
-	execute.BeforeAll(func() {
 		preConfigureAffiliatedCertificationEnvironment(
-			tsparams.TestCertificationNameSpace,
-			globalhelper.GetConfiguration().General.TnfConfigDir,
+			randomNamespace,
+			randomTnfConfigDir,
 		)
 
 		By("Deploy nginx-ingress-operator for testing")
@@ -37,7 +39,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		err := tshelper.DeployOperatorSubscription(
 			"nginx-ingress-operator",
 			"alpha",
-			tsparams.TestCertificationNameSpace,
+			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
 			tsparams.CertifiedOperatorFullNginx,
@@ -47,16 +49,9 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.CertifiedOperatorPrefixNginx)
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
-			tsparams.TestCertificationNameSpace)
+			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
 			" is not ready")
-
-		// add nginx-ingress-operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.CertifiedOperatorPrefixNginx,
-			Namespace:      tsparams.TestCertificationNameSpace,
-			Label:          tsparams.OperatorLabel,
-		})
 
 		// sriov-fec.v1.1.0 operator : in certified-operators group, version is not certified
 		By("Deploy alternate operator catalog source")
@@ -82,7 +77,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.UncertifiedOperatorPrefixSriov,
 			"stable",
-			tsparams.TestCertificationNameSpace,
+			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
 			tsparams.UncertifiedOperatorFullSriov,
@@ -92,44 +87,25 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.UncertifiedOperatorPrefixSriov)
 
 		approveInstallPlanWhenReady(tsparams.UncertifiedOperatorFullSriov,
-			tsparams.TestCertificationNameSpace)
+			randomNamespace)
 
 		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixSriov,
-			tsparams.TestCertificationNameSpace)
+			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixSriov+
 			" is not ready")
 
 		By("Re-enable default catalog source")
 		err = globalhelper.DeleteCatalogSource(tsparams.CertifiedOperatorGroup,
-			tsparams.TestCertificationNameSpace,
+			randomNamespace,
 			"redhat-certified")
 		Expect(err).ToNot(HaveOccurred(), "Error removing alternate catalog source")
 
 		err = globalhelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)
 		Expect(err).ToNot(HaveOccurred(), "Error enabling default catalog source")
-
-		// add sriov-fec operator info to array for cleanup in AfterEach
-		installedLabeledOperators = append(installedLabeledOperators, tsparams.OperatorLabelInfo{
-			OperatorPrefix: tsparams.UncertifiedOperatorPrefixSriov,
-			Namespace:      tsparams.TestCertificationNameSpace,
-			Label:          tsparams.OperatorLabel,
-		})
-
 	})
 
 	AfterEach(func() {
-		By("Remove labels from operators")
-		for _, info := range installedLabeledOperators {
-			err := tshelper.DeleteLabelFromInstalledCSV(
-				info.OperatorPrefix,
-				info.Namespace,
-				info.Label)
-			Expect(err).ToNot(HaveOccurred(), "Error removing label from operator "+info.OperatorPrefix)
-		}
-
-		By("Remove reports from report directory")
-		err := globalhelper.RemoveContentsFromReportDir(globalhelper.GetConfiguration().General.TnfReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
 	})
 
 	// 46695
@@ -144,7 +120,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				tsparams.UncertifiedOperatorPrefixSriov,
-				tsparams.TestCertificationNameSpace,
+				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixSriov)
@@ -153,15 +129,15 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 
@@ -177,7 +153,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				tsparams.UncertifiedOperatorPrefixSriov,
-				tsparams.TestCertificationNameSpace,
+				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixSriov)
@@ -185,7 +161,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixNginx,
-				tsparams.TestCertificationNameSpace,
+				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
@@ -194,15 +170,15 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, globalhelper.GetConfiguration().General.TnfReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 })

@@ -16,13 +16,13 @@ import (
 	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
 )
 
-func DeployTestOperatorGroup() error {
+func DeployTestOperatorGroup(namespace string) error {
 	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
-		tsparams.OperatorNamespace) != nil {
-		return globalhelper.DeployOperatorGroup(tsparams.OperatorNamespace,
+		namespace) != nil {
+		return globalhelper.DeployOperatorGroup(namespace,
 			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
-				tsparams.OperatorNamespace,
-				[]string{tsparams.OperatorNamespace}),
+				namespace,
+				[]string{namespace}),
 		)
 	}
 
@@ -69,28 +69,6 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 	}
 
 	for k, v := range label {
-		newMap[k] = v
-	}
-
-	csv.SetLabels(newMap)
-
-	return updateCsv(namespace, csv)
-}
-
-// DeleteLabelFromInstalledCSV removes given label from existing csv object.
-func DeleteLabelFromInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
-	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
-	if err != nil {
-		return err
-	}
-
-	newMap := make(map[string]string)
-
-	for k, v := range csv.GetLabels() {
-		if _, ok := label[k]; ok {
-			continue
-		}
-
 		newMap[k] = v
 	}
 
