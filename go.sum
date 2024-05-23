@@ -89,8 +89,8 @@ github.com/openshift/api v0.0.0-20240509165319-a8a5b79cc248 h1:W0FcSznRzX/R/5AAf
 github.com/openshift/api v0.0.0-20240509165319-a8a5b79cc248/go.mod h1:CxgbWAlvu2iQB0UmKTtRu1YfepRg1/vJ64n2DlIEVz4=
 github.com/openshift/client-go v0.0.0-20240510131258-f646d5f29250 h1:WQ0e89xebsNeChdYw8QrxggYkFtEQOaLBEKJDkMmcUk=
 github.com/openshift/client-go v0.0.0-20240510131258-f646d5f29250/go.mod h1:tjGjTE59N1+5W0YE4Wqf0zJpFLIY4d+EpMihDKOn1oA=
-github.com/operator-framework/api v0.24.0 h1:fHynWEzuY/YhUTlsK9hd+QQ0bZcFakxCTdaZbFaVXbc=
-github.com/operator-framework/api v0.24.0/go.mod h1:EXKrka63NyQDDpWZ+DGTDEliNV0xRq6UMZRoUPhilVM=
+github.com/operator-framework/api v0.25.0 h1:pSQwFSoPmZaTIERadawxtCwicehLkC7i9n3w3+70SVI=
+github.com/operator-framework/api v0.25.0/go.mod h1:PvyCQb0x53ytIqdTECH5e+iqv+am3uZ0qGsZWmL35gQ=
 github.com/operator-framework/operator-lifecycle-manager v0.22.0 h1:7DEWOq24HQ0l5xPOXMhn17XaJACgwoipz+JfQ7QCXZw=
 github.com/operator-framework/operator-lifecycle-manager v0.22.0/go.mod h1:4zssIIl23ohxS1nXRU9xTkBmwt+qleuHMO02BaWOHLA=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -111,8 +111,6 @@ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsT
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f h1:qy5MGTizgcbU/VS+oIsX4x3eDh4FcsniB9A2PaMQ1y0=
 github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f/go.mod h1:C7bjc5oqhe5AlcoXr3RIDuSBiLn5VSOUtz76aJv6GkI=
-github.com/test-network-function/oct v0.0.10 h1:aIHZmq4D/OkZxRMcWjYOQBjgvUM/pTMxUpsMT9uYUrM=
-github.com/test-network-function/oct v0.0.10/go.mod h1:uQkGcKyfiFfur/YqMuYgYC3+qwc4cKhUdHaenoyjyGo=
 github.com/test-network-function/oct v0.0.11 h1:/LUYAuPAgEHL3hhKvqy0xMSQ13myEGhGMBpbFR8Zo24=
 github.com/test-network-function/oct v0.0.11/go.mod h1:bKPt5YXnXJPMq4VezYZJZ4qi4n2uY8j1Oop0kHw+BXY=
 github.com/test-network-function/test-network-function-claim v1.0.36 h1:Gez1dX3nIjDexd4e8qsnXBbV7v7EhxKfYmejBNIivMU=
