@@ -23,6 +23,24 @@ const (
 )
 
 var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
+	var randomNamespace string
+	var randomReportDir string
+	var randomTnfConfigDir string
+
+	BeforeEach(func() {
+		// Create random namespace and keep original report and TNF config directories
+		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
+
+		By("Define TNF config file")
+		err := globalhelper.DefineTnfConfig(
+			[]string{randomNamespace},
+			tshelper.GetTnfTargetPodLabelsSlice(),
+			[]string{},
+			[]string{},
+			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	AfterEach(func() {
 		By("Removing all CRDs created by previous test case.")
 		for _, crd := range crdNames {
@@ -31,6 +49,8 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		}
 		// Clear list.
 		crdNames = []string{}
+
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.CrdDeployTimeoutMins)
 	})
 
 	// 52444
@@ -47,13 +67,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed,
-			globalhelper.GetConfiguration().General.TnfReportDir)
+			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -78,13 +98,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed,
-			globalhelper.GetConfiguration().General.TnfReportDir)
+			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -102,13 +122,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed,
-			globalhelper.GetConfiguration().General.TnfReportDir)
+			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -133,13 +153,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed,
-			globalhelper.GetConfiguration().General.TnfReportDir)
+			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -164,13 +184,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed,
-			globalhelper.GetConfiguration().General.TnfReportDir)
+			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -189,13 +209,13 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			globalhelper.GetConfiguration().General.TnfReportDir,
-			globalhelper.GetConfiguration().General.TnfConfigDir)
+			randomReportDir,
+			randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseSkipped,
-			globalhelper.GetConfiguration().General.TnfReportDir)
+			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
