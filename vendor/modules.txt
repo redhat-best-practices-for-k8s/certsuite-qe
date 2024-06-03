@@ -196,7 +196,7 @@ github.com/stretchr/testify/assert
 # github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 ## explicit; go 1.19
 github.com/test-network-function/cr-scale-operator/api/v1
-# github.com/test-network-function/oct v0.0.11
+# github.com/test-network-function/oct v0.0.12
 ## explicit; go 1.22.3
 github.com/test-network-function/oct/pkg/certdb/config
 github.com/test-network-function/oct/pkg/certdb/offlinecheck
@@ -313,8 +313,8 @@ gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# helm.sh/helm/v3 v3.14.4
-## explicit; go 1.21
+# helm.sh/helm/v3 v3.15.1
+## explicit; go 1.22.0
 helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/release
 helm.sh/helm/v3/pkg/time
