@@ -51,7 +51,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			" is not ready")
 
 		By("Query the packagemanifest for the cockroachdb-certified operator")
-		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", tsparams.TestCertificationNameSpace)
+		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
 
 		By(fmt.Sprintf("Deploy cockroachdb-certified operator %s for testing", "v"+version))
@@ -68,14 +68,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixCockroachCertified)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorFullCockroachCertified,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixCockroachCertified,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorFullCockroachCertified+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version+
 			" is not ready")
 
 		By("Query the packagemanifest for the nginx-ingress-operator")
 		version, err = globalhelper.QueryPackageManifestForVersion(
-			tsparams.CertifiedOperatorPrefixNginx, tsparams.TestCertificationNameSpace)
+			tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+tsparams.CertifiedOperatorPrefixNginx)
 
 		By(fmt.Sprintf("Deploy nginx-ingress-operator.v%s for testing", version))
