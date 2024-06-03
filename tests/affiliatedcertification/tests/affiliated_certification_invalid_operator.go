@@ -38,15 +38,19 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			randomTnfConfigDir,
 		)
 
-		By("Deploy nginx-ingress-operator for testing")
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
 		// nginx-ingress-operator: in certified-operators group and version is certified
-		err := tshelper.DeployOperatorSubscription(
-			"nginx-ingress-operator",
+		err = tshelper.DeployOperatorSubscription(
+			tsparams.CertifiedOperatorPrefixNginx,
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorFullNginx,
+			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
@@ -54,7 +58,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
 			" is not ready")
 
 		// sriov-fec.v1.1.0 operator : in certified-operators group, version is not certified
