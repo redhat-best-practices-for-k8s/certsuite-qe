@@ -81,36 +81,27 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	containerEngine := GetConfiguration().General.ContainerEngine
 	glog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
 
-	err := os.Setenv("TNF_CONTAINER_CLIENT", containerEngine)
-	if err != nil {
-		return fmt.Errorf("failed to set TNF_CONTAINER_CLIENT: %w", err)
+	certsuiteCmdArgs := []string{
+		"run",
+		"--rm",
+		"--network", "host",
+		"-v", fmt.Sprintf("%s:%s", os.Getenv("KUBECONFIG"), "/usr/tnf/kubeconfig/config:Z"),
+		"-v", fmt.Sprintf("%s:%s", GetConfiguration().General.DockerConfigDir+"/config", "/usr/tnf/dockerconfig/config:Z"),
+		"-v", fmt.Sprintf("%s:%s", configDir, "/usr/tnf/config:Z"),
+		"-v", fmt.Sprintf("%s:%s", reportDir, "/usr/tnf/results:Z"),
+		fmt.Sprintf("%s:%s", GetConfiguration().General.TnfImage, GetConfiguration().General.TnfImageTag),
+		"./cnf-certification-test/certsuite",
+		"run",
+		"--kubeconfig", "/usr/tnf/kubeconfig/config",
+		"--preflight-dockerconfig", "/usr/tnf/dockerconfig/config",
+		"--config-file", "/usr/tnf/config/tnf_config.yml",
+		"--output-dir", "/usr/tnf/results",
+		"--omit-artifacts-zip-file", "true",
+		"--enable-data-collection", "true",
+		"--label-filter", testCaseName,
 	}
 
-	// disable the zip file creation
-	err = os.Setenv("TNF_OMIT_ARTIFACTS_ZIP_FILE", "true")
-	if err != nil {
-		return fmt.Errorf("failed to set TNF_OMIT_ARTIFACTS_ZIP_FILE: %w", err)
-	}
-
-	// enable the collector
-	err = os.Setenv("TNF_ENABLE_DATA_COLLECTION", "true")
-	if err != nil {
-		return fmt.Errorf("failed to set TNF_ENABLE_DATA_COLLECTION: %w", err)
-	}
-
-	glog.V(5).Info(fmt.Sprintf("container engine set to %s", containerEngine))
-	testArgs := []string{
-		"-k", os.Getenv("KUBECONFIG"),
-		"-c", GetConfiguration().General.DockerConfigDir + "/config",
-		"-t", configDir,
-		"-o", reportDir,
-		"-i", fmt.Sprintf("%s:%s", GetConfiguration().General.TnfImage, GetConfiguration().General.TnfImageTag),
-		"-l", testCaseName,
-	}
-
-	cmd := exec.Command(fmt.Sprintf("./%s", GetConfiguration().General.TnfEntryPointScript))
-	cmd.Args = append(cmd.Args, testArgs...)
-	cmd.Dir = GetConfiguration().General.TnfRepoPath
+	cmd := exec.Command(containerEngine, certsuiteCmdArgs...)
 
 	debugTnf, err := GetConfiguration().DebugTnf()
 	if err != nil {
