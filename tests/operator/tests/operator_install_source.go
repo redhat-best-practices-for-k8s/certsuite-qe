@@ -1,8 +1,6 @@
 package operator
 
 import (
-	"log"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -19,7 +17,7 @@ const (
 	ErrorRemovingLabelStr    = "Error removing label from operator "
 )
 
-var _ = Describe("Operator install-source,", func() {
+var _ = Describe("Operator install-source,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomTnfConfigDir string
@@ -37,6 +35,8 @@ var _ = Describe("Operator install-source,", func() {
 			[]string{},
 			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
+
+		// Install 3 separate operators for testing
 
 		By("Deploy operator group")
 		err = tshelper.DeployTestOperatorGroup(randomNamespace)
@@ -70,10 +70,6 @@ var _ = Describe("Operator install-source,", func() {
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
-
-		if err != nil {
-			log.Printf("Error deploying operator: %v", err)
-		}
 
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPrefixCloudbees)
