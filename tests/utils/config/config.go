@@ -31,7 +31,6 @@ type Config struct {
 		DebugTnf              string `envconfig:"DEBUG_TNF"`
 		TnfConfigDir          string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
 		TnfRepoPath           string `envconfig:"TNF_REPO_PATH"`
-		TnfEntryPointScript   string `yaml:"tnf_entry_point_script" envconfig:"TNF_ENTRY_POINT_SCRIPT"`
 		TnfEntryPointBinary   string `yaml:"tnf_entry_point_binary" envconfig:"TNF_ENTRY_POINT_BINARY"`
 		TnfReportDir          string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
 		DockerConfigDir       string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
@@ -155,12 +154,6 @@ func (c *Config) GetReportPath(file string) string {
 func (c *Config) defineTnfRepoPath() (string, error) {
 	if c.General.TnfRepoPath == "" {
 		return "", fmt.Errorf("TNF_REPO_PATH env variable is not set. Please export TNF_REPO_PATH")
-	}
-
-	_, err := checkFileExists(c.General.TnfRepoPath, c.General.TnfEntryPointScript)
-
-	if err != nil {
-		return "", err
 	}
 
 	return c.General.TnfRepoPath, nil
