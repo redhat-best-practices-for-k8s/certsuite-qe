@@ -82,6 +82,7 @@ func createCatalogSourceWithClient(opclient v1alpha1typed.OperatorsV1alpha1Inter
 func CreateCommunityOperatorsCatalogSource() error {
 	communityOperatorIndex414 := "registry.redhat.io/redhat/community-operator-index:v4.14"
 	communityOperatorIndex415 := "registry.redhat.io/redhat/community-operator-index:v4.15"
+	communityOperatorIndex416 := "registry.redhat.io/redhat/community-operator-index:v4.16"
 
 	// determine which index to use based on ocp version
 	ocpVersion, err := GetClusterVersion()
@@ -98,6 +99,8 @@ func CreateCommunityOperatorsCatalogSource() error {
 		return createCatalogSource("community-operators", communityOperatorIndex414)
 	case "4.15":
 		return createCatalogSource("community-operators", communityOperatorIndex415)
+	case "4.16":
+		return createCatalogSource("community-operators", communityOperatorIndex416)
 	default:
 		return fmt.Errorf("unsupported ocp version %s", ocpVersion)
 	}
