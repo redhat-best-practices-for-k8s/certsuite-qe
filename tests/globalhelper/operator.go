@@ -99,6 +99,18 @@ func ApproveInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
 }
 
 func DeployRHCertifiedOperatorSource(ocpVersion string) error {
+	// if the ocpVersion is empty, we will use have to look up the version
+	ocpVersionToUse := ocpVersion
+
+	if ocpVersion == "" {
+		o, err := GetClusterVersion()
+		if err != nil {
+			return fmt.Errorf("unable to get OCP version: %w", err)
+		}
+
+		ocpVersionToUse = o[:4]
+	}
+
 	err := GetAPIClient().Create(context.TODO(),
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
@@ -107,7 +119,7 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
-				Image:       "registry.redhat.io/redhat/certified-operator-index:v" + ocpVersion,
+				Image:       "registry.redhat.io/redhat/certified-operator-index:v" + ocpVersionToUse,
 				DisplayName: "redhat-certified",
 				Publisher:   "Redhat",
 				Secrets:     []string{"redhat-registry-secret", "redhat-connect-registry-secret"},
