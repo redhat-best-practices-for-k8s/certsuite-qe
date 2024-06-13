@@ -65,7 +65,7 @@ var _ = Describe("Operator crd-versioning,", func() {
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
