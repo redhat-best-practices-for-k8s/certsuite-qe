@@ -44,12 +44,12 @@ jobs:
         run: echo "::remove-matcher owner=go::"
 
       - name: Check out code
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           ref: ${{ github.sha }}
 
       - name: Check out `cnf-certification-test-partner`
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: test-network-function/cnf-certification-test-partner
           path: cnf-certification-test-partner
@@ -107,7 +107,7 @@ jobs:
         timeout-minutes: 10
 
       - name: Clone the cnf-certification-test repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: ${{ env.TEST_REPO }}
           path: cnf-certification-test
