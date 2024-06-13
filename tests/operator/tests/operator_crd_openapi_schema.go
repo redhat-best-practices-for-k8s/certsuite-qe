@@ -25,7 +25,7 @@ var _ = Describe("Operator crd-openapi-schema", func() {
 		err := globalhelper.DefineTnfConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{},
+			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
