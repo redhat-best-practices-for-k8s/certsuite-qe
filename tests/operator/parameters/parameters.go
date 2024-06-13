@@ -33,6 +33,7 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
+	TnfTargetOperatorLabels  = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
 	OperatorGroupName        = "operator-test-operator-group"
 	OperatorLabel            = map[string]string{"test-network-function.com/operator": "target"}
 	CertifiedOperatorGroup   = "certified-operators"
