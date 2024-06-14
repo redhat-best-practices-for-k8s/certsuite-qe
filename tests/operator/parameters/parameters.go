@@ -34,6 +34,7 @@ var (
 		"app":                  "test",
 	}
 	TnfTargetOperatorLabels  = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
+	TnfTargetCrdFilters      = []string{"charts.operatorhub.io"}
 	OperatorGroupName        = "operator-test-operator-group"
 	OperatorLabel            = map[string]string{"test-network-function.com/operator": "target"}
 	CertifiedOperatorGroup   = "certified-operators"

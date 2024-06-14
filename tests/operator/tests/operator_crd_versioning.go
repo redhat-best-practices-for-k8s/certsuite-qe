@@ -27,7 +27,7 @@ var _ = Describe("Operator crd-versioning,", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			tsparams.TnfTargetCrdFilters, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")

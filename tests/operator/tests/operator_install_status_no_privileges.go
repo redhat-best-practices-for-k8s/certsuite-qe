@@ -27,7 +27,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			tsparams.TnfTargetCrdFilters, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")

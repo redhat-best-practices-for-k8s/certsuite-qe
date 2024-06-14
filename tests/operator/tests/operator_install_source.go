@@ -33,7 +33,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			tsparams.TnfTargetCrdFilters, randomTnfConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Install 3 separate operators for testing
