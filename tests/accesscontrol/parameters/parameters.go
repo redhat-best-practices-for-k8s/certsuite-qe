@@ -73,8 +73,8 @@ const (
 	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "112Mi"
 	MemoryRequest      = "100Mi"
-	CPULimit           = "1"
-	CPURequest         = "1"
+	CPULimit           = "500m"
+	CPURequest         = "500m"
 
 	TestServiceAccount   = "my-sa"
 	TestRoleBindingName  = "my-rb"
