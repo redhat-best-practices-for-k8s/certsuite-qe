@@ -36,7 +36,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 	})
 
 	// 55021
-	It("one deployment, one container with all requests and limits set", func() {
+	It("one deployment, one container with all requests and limits set", Serial, func() {
 		By("Define deployment with requests and limits set")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -196,7 +196,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 	})
 
 	// 55027
-	It("two deployments, one container each with all limits and requests set", func() {
+	It("two deployments, one container each with all limits and requests set", Serial, func() {
 		By("Define deployments with requests and limits set")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -248,7 +248,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 	})
 
 	// 55028
-	It("two deployments, one container each, one with memory limits not set [negative]", func() {
+	It("two deployments, one container each, one with memory limits not set [negative]", Serial, func() {
 		By("Define deployments with memory limits not set on one")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
