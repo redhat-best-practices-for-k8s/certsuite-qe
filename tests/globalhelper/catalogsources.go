@@ -54,6 +54,7 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+//nolint:unparam
 func createCatalogSource(name, url string) error {
 	return createCatalogSourceWithClient(GetAPIClient().OperatorsV1alpha1Interface, name, url)
 }
@@ -83,6 +84,7 @@ func CreateCommunityOperatorsCatalogSource() error {
 	communityOperatorIndex414 := "registry.redhat.io/redhat/community-operator-index:v4.14"
 	communityOperatorIndex415 := "registry.redhat.io/redhat/community-operator-index:v4.15"
 	communityOperatorIndex416 := "registry.redhat.io/redhat/community-operator-index:v4.16"
+	communityOperatorIndex417 := "registry.redhat.io/redhat/community-operator-index:v4.17"
 
 	// determine which index to use based on ocp version
 	ocpVersion, err := GetClusterVersion()
@@ -101,6 +103,8 @@ func CreateCommunityOperatorsCatalogSource() error {
 		return createCatalogSource("community-operators", communityOperatorIndex415)
 	case "4.16":
 		return createCatalogSource("community-operators", communityOperatorIndex416)
+	case "4.17":
+		return createCatalogSource("community-operators", communityOperatorIndex417)
 	default:
 		return fmt.Errorf("unsupported ocp version %s", ocpVersion)
 	}
