@@ -1,9 +1,8 @@
 run:
+  go: "1.22"
   timeout: 15m0s
   skip-dirs-use-default: true
   fast: false
-  skip-files:
-    - test/tools.go
 
 linters-settings:
   revive:
@@ -29,8 +28,6 @@ linters-settings:
     dot-import-whitelist:
       - github.com/onsi/gomega
       - github.com/onsi/ginkgo/v2
-    # Select the Go version to target. The default is '1.13'.
-    go: "1.22"
     # https://staticcheck.io/docs/options#checks
     checks: [ "all", "-ST1001"]
 
@@ -89,10 +86,12 @@ linters:
     - nlreturn
 
 output:
-  format: colored-line-number
+  formats: colored-line-number
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
   new: false
   include:
     - EXC0002 # disable excluding of issues about comments from golint
+  exclude-files:
+    - test/tools.go
