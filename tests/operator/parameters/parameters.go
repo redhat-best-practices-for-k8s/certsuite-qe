@@ -59,4 +59,8 @@ const (
 	TnfOperatorSemanticVersioning        = "operator-semantic-versioning"
 	TnfOperatorCrdVersioning             = "operator-crd-versioning"
 	TnfOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
+	TnfOperatorNonRoot                   = "operator-run-as-non-root"
+	TnfOperatorReadOnlyFilesystem        = "operator-read-only-file-system"
+	TnfOperatorPodAutomountToken         = "operator-automount-tokens"
+	TnfOperatorPodRunAsUserID            = "operator-run-as-user-id"
 )

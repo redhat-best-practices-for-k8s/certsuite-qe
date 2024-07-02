@@ -7,6 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 )
@@ -36,6 +37,10 @@ var _ = Describe("Operator pods non-root", func() {
 	})
 
 	It("Operator pods should not run as root", func() {
+		// TODO: Find an operator that runs completely as non-root
+	})
+
+	It("Operator pods should not run as root [negative]", func() {
 		// Deploy an operator that runs as root
 		By("Deploy operator group")
 		err := tshelper.DeployTestOperatorGroup(randomNamespace)
@@ -77,16 +82,27 @@ var _ = Describe("Operator pods non-root", func() {
 		controllerPod, err := globalhelper.GetControllerPodFromOperator(randomNamespace, tsparams.CertifiedOperatorPrefixNginx)
 		Expect(err).ToNot(HaveOccurred(), "Error getting controller pod")
 
-		By(fmt.Sprintf("Checking if pod %s is running as root", controllerPod.Name))
+		By(fmt.Sprintf("Checking if pod %s is not running as root", controllerPod.Name))
 		Expect(controllerPod.Spec.SecurityContext).ToNot(BeNil())
 		Expect(*controllerPod.Spec.SecurityContext.RunAsNonRoot).To(BeTrue())
 
-		// TODO: Run the actual tests
-	})
+		for _, container := range controllerPod.Spec.Containers {
+			Expect(container.SecurityContext).ToNot(BeNil())
+			if container.SecurityContext.RunAsNonRoot != nil {
+				Expect(*container.SecurityContext.RunAsNonRoot).To(BeTrue())
+			}
+		}
 
-	It("Operator pods should not run as root [negative]", func() {
-		// Deploy an operator that runs as root
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.TnfOperatorNonRoot,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
 
-		// TODO: Find an operator that runs as root
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TnfOperatorNonRoot,
+			globalparameters.TestCaseFailed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
 	})
 })

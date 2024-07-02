@@ -7,6 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 )
@@ -83,6 +84,9 @@ var _ = Describe("Operator pods read only filesystem", func() {
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
 
+		// We are expecting the operator being deployed to not have a read-only filesystem.
+		// Thus, this will fail the test eventually and we will have to expect failure.
+
 		By("Assert that the manager pod has read-only filesystem")
 		controllerPod, err := globalhelper.GetControllerPodFromOperator(randomNamespace, tsparams.CertifiedOperatorPrefixNginx)
 		Expect(err).ToNot(HaveOccurred(), "Error getting controller pod")
@@ -93,6 +97,16 @@ var _ = Describe("Operator pods read only filesystem", func() {
 			Expect(container.SecurityContext.ReadOnlyRootFilesystem).To(BeNil())
 		}
 
-		// TODO: Run the actual tests
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.TnfOperatorReadOnlyFilesystem,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TnfOperatorReadOnlyFilesystem,
+			globalparameters.TestCaseFailed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
 	})
 })

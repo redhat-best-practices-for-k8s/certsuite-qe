@@ -7,6 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
 	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
 )
@@ -88,7 +89,17 @@ var _ = Describe("Operator pods automount token", func() {
 			Expect(controllerPod.Spec.AutomountServiceAccountToken).To(BeNil())
 		}
 
-		// TODO: Run the actual tests
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.TnfOperatorPodAutomountToken,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TnfOperatorPodAutomountToken,
+			globalparameters.TestCasePassed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("Operator pods have automount token [negative]", func() {
