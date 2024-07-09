@@ -33,19 +33,20 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	TnfTargetOperatorLabels  = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
-	TnfTargetCrdFilters      = []string{"charts.operatorhub.io"}
-	OperatorGroupName        = "operator-test-operator-group"
-	OperatorLabel            = map[string]string{"test-network-function.com/operator": "target"}
-	CertifiedOperatorGroup   = "certified-operators"
-	CommunityOperatorGroup   = "community-operators"
-	OperatorSourceNamespace  = "openshift-marketplace"
-	OperatorPrefixCloudbees  = "cloudbees-ci"
-	OperatorPrefixAnchore    = "anchore-engine"
-	OperatorPrefixQuay       = "quay-operator"
-	OperatorPrefixKiali      = "kiali-operator"
-	OperatorPrefixOpenvino   = "openvino-operator"
-	SubscriptionNameOpenvino = "ovms-operator-subscription"
+	TnfTargetOperatorLabels      = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
+	TnfTargetCrdFilters          = []string{"charts.operatorhub.io"}
+	OperatorGroupName            = "operator-test-operator-group"
+	OperatorLabel                = map[string]string{"test-network-function.com/operator": "target"}
+	CertifiedOperatorGroup       = "certified-operators"
+	CommunityOperatorGroup       = "community-operators"
+	OperatorSourceNamespace      = "openshift-marketplace"
+	OperatorPrefixCloudbees      = "cloudbees-ci"
+	OperatorPrefixAnchore        = "anchore-engine"
+	OperatorPrefixQuay           = "quay-operator"
+	OperatorPrefixKiali          = "kiali-operator"
+	OperatorPrefixOpenvino       = "openvino-operator"
+	CertifiedOperatorPrefixNginx = "nginx-ingress-operator"
+	SubscriptionNameOpenvino     = "ovms-operator-subscription"
 )
 
 const (
@@ -58,4 +59,8 @@ const (
 	TnfOperatorSemanticVersioning        = "operator-semantic-versioning"
 	TnfOperatorCrdVersioning             = "operator-crd-versioning"
 	TnfOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
+	TnfOperatorNonRoot                   = "operator-run-as-non-root"
+	TnfOperatorReadOnlyFilesystem        = "operator-read-only-file-system"
+	TnfOperatorPodAutomountToken         = "operator-automount-tokens"
+	TnfOperatorPodRunAsUserID            = "operator-run-as-user-id"
 )
