@@ -201,8 +201,8 @@ github.com/test-network-function/cr-scale-operator/api/v1
 github.com/test-network-function/oct/pkg/certdb/config
 github.com/test-network-function/oct/pkg/certdb/offlinecheck
 github.com/test-network-function/oct/pkg/certdb/onlinecheck
-# github.com/test-network-function/test-network-function-claim v1.0.41
-## explicit; go 1.22.4
+# github.com/test-network-function/test-network-function-claim v1.0.42
+## explicit; go 1.22.5
 github.com/test-network-function/test-network-function-claim/pkg/claim
 # go.uber.org/zap v1.27.0
 ## explicit; go 1.19
