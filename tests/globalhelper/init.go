@@ -98,7 +98,7 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {
-	// logfile := "cnf-certsuite.log"
+	// logfile := "certsuite.log"
 	// By("Print logs")
 	// myFile, err := os.ReadFile(randomReportDir + "/" + logfile)
 	// if err != nil {
