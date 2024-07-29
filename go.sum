@@ -115,6 +115,8 @@ github.com/test-network-function/oct v0.0.16 h1:03928xEEwYTVOx+NzSTO6yn1ZwJC0I6G
 github.com/test-network-function/oct v0.0.16/go.mod h1:fO+xvJYjjDOAX2xlmrhLF4UmVzMMxVGqurcAda+HkSs=
 github.com/test-network-function/test-network-function-claim v1.0.42 h1:foTI7W6tWjE6+jgjg8ywXWx6P8V+cBSM91zYWj4vts0=
 github.com/test-network-function/test-network-function-claim v1.0.42/go.mod h1:qx39rLEBKV1Th5IcmaapgVpNbOtBYPpzvgg6Qw/hkxI=
+github.com/test-network-function/test-network-function-claim v1.0.44 h1:5zTSJxCuTkxIAMP8Otz1KQye0mF2CRTrikTUO2SUUoI=
+github.com/test-network-function/test-network-function-claim v1.0.44/go.mod h1:qx39rLEBKV1Th5IcmaapgVpNbOtBYPpzvgg6Qw/hkxI=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
