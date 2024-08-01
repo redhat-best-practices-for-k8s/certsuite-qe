@@ -39,6 +39,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--config-file", configDir + "/" + globalparameters.DefaultTnfConfigFileName,
 		"--output-dir", reportDir,
 		"--label-filter", testCaseName,
+		"--sanitize-claim", "true",
 	}
 
 	cmd := exec.Command(fmt.Sprintf("%s/%s", GetConfiguration().General.TnfRepoPath, GetConfiguration().General.TnfEntryPointBinary))
@@ -98,6 +99,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"--output-dir", "/usr/certsuite/results",
 		"--omit-artifacts-zip-file", "true",
 		"--enable-data-collection", "true",
+		"--sanitize-claim", "true",
 		"--label-filter", testCaseName,
 	}
 
