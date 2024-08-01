@@ -16,7 +16,7 @@ import (
 var _ = Describe("access-control-crd-roles", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
@@ -26,7 +26,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestAccessControlNameSpace)
 
 		By("Define tnf config file")
@@ -35,7 +35,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{tsparams.TnfTargetCrdFilters}, randomTnfConfigDir)
+			[]string{tsparams.TnfTargetCrdFilters}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		// We have to pre-install the cr-scale-operator resources prior to running these tests.
@@ -49,7 +49,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	It("Custom resource is deployed, proper role defined", func() {
@@ -73,7 +73,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -102,7 +102,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -131,7 +131,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -160,7 +160,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 
 		By("Start lifecycle-crd-scaling test")
 		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

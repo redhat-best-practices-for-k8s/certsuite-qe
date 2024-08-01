@@ -15,11 +15,11 @@ import (
 var _ = Describe("Operator pods read only filesystem", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.OperatorNamespace)
 
 		By("Define TNF config file")
@@ -28,7 +28,7 @@ var _ = Describe("Operator pods read only filesystem", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			tsparams.TnfTargetCrdFilters, randomTnfConfigDir)
+			tsparams.TnfTargetCrdFilters, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
@@ -37,7 +37,7 @@ var _ = Describe("Operator pods read only filesystem", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	It("Operator pods should have read-only filesystem", func() {
@@ -100,7 +100,7 @@ var _ = Describe("Operator pods read only filesystem", func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfOperatorReadOnlyFilesystem,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

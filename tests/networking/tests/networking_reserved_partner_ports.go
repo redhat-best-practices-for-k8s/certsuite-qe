@@ -14,11 +14,11 @@ import (
 var _ = Describe("Networking reserved-partner-ports,", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir =
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
 		By("Define TNF config file")
@@ -27,12 +27,12 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 61487
@@ -45,7 +45,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -71,7 +71,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -93,7 +93,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -114,7 +114,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -135,7 +135,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -160,7 +160,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -184,7 +184,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -213,7 +213,7 @@ var _ = Describe("Networking reserved-partner-ports,", func() {
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfReservedPartnerPortsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

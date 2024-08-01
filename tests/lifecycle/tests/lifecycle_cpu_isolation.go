@@ -21,11 +21,11 @@ const (
 var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -33,7 +33,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.IsKindCluster() && runtime.NumCPU() <= 2 {
@@ -42,7 +42,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	const disableVar = "disable"
@@ -79,7 +79,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -130,7 +130,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -180,7 +180,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -231,7 +231,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -265,7 +265,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -300,7 +300,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -362,7 +362,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Start lifecycle-cpu-isolation test")
 		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

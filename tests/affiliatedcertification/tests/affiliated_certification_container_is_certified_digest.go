@@ -16,11 +16,11 @@ import (
 var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestCertificationNameSpace)
 
 		By("Define tnf config file")
@@ -29,7 +29,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Check if the test image is certified prior to deployment")
@@ -45,7 +45,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 66765
@@ -65,7 +65,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -89,7 +89,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -123,7 +123,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -157,7 +157,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

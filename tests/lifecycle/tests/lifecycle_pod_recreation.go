@@ -19,11 +19,11 @@ import (
 var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		By("Enable intrusive tests")
-		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
+		err := os.Setenv("CERTSUITE_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.IsKindCluster() {
@@ -33,7 +33,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err = globalhelper.DefineTnfConfig(
@@ -41,7 +41,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
@@ -51,10 +51,10 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	AfterEach(func() {
 		By("Disable intrusive tests")
-		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
+		err := os.Setenv("CERTSUITE_NON_INTRUSIVE_ONLY", "true")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 47405
@@ -85,7 +85,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -136,7 +136,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -170,7 +170,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -224,7 +224,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 		By("Start lifecycle-pod-recreation test")
 		err = globalhelper.LaunchTests(tsparams.TnfPodRecreationTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

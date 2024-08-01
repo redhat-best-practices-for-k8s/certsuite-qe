@@ -22,7 +22,7 @@ const (
 var _ = Describe("Affiliated-certification invalid operator certification,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
@@ -30,12 +30,12 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestCertificationNameSpace)
 
 		preConfigureAffiliatedCertificationEnvironment(
 			randomNamespace,
-			randomTnfConfigDir,
+			randomCertsuiteConfigDir,
 		)
 
 		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
@@ -113,7 +113,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 46695
@@ -138,7 +138,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -179,7 +179,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 

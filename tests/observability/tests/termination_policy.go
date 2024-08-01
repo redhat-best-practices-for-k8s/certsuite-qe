@@ -14,11 +14,11 @@ import (
 var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -26,12 +26,12 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			tshelper.GetTnfTargetPodLabelsSlice(),
 			[]string{},
 			[]string{},
-			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomTnfConfigDir)
+			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.CrdDeployTimeoutMins)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.CrdDeployTimeoutMins)
 	})
 
 	// Positive #1.
@@ -54,7 +54,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -84,7 +84,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -118,7 +118,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -163,7 +163,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -186,7 +186,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -219,7 +219,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -244,7 +244,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -283,7 +283,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -316,7 +316,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -338,7 +338,7 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 
 		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

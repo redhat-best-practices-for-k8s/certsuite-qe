@@ -23,22 +23,22 @@ const (
 // Config type keeps general GetConfiguration().
 type Config struct {
 	General struct {
-		ReportDirAbsPath      string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
-		CnfNodeLabel          string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
-		WorkerNodeLabel       string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
-		TestImage             string `yaml:"test_image" envconfig:"TEST_IMAGE"`
-		VerificationLogLevel  string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
-		DebugTnf              string `envconfig:"DEBUG_TNF"`
-		TnfConfigDir          string `yaml:"tnf_config_dir" envconfig:"TNF_CONFIG_DIR"`
-		TnfRepoPath           string `envconfig:"TNF_REPO_PATH"`
-		TnfEntryPointBinary   string `yaml:"tnf_entry_point_binary" envconfig:"TNF_ENTRY_POINT_BINARY"`
-		TnfReportDir          string `yaml:"tnf_report_dir" envconfig:"TNF_REPORT_DIR"`
-		DockerConfigDir       string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
-		TnfImage              string `yaml:"tnf_image" envconfig:"TNF_IMAGE"`
-		TnfImageTag           string `yaml:"tnf_image_tag" envconfig:"TNF_IMAGE_TAG"`
-		DisableIntrusiveTests string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
-		ContainerEngine       string `default:"docker" yaml:"container_engine" envconfig:"CONTAINER_ENGINE"`
-		UseBinary             string `default:"false" yaml:"use_binary" envconfig:"USE_BINARY"`
+		ReportDirAbsPath          string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
+		CnfNodeLabel              string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
+		WorkerNodeLabel           string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
+		TestImage                 string `yaml:"test_image" envconfig:"TEST_IMAGE"`
+		VerificationLogLevel      string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
+		DebugCertsuite            string `envconfig:"DEBUG_TNF"`
+		CertsuiteConfigDir        string `yaml:"certsuite_config_dir" envconfig:"CERTSUITE_CONFIG_DIR"`
+		CertsuiteRepoPath         string `envconfig:"CERTSUITE_REPO_PATH"`
+		CertsuiteEntryPointBinary string `yaml:"certsuite_entry_point_binary" envconfig:"CERTSUITE_ENTRY_POINT_BINARY"`
+		CertsuiteReportDir        string `yaml:"certsuite_report_dir" envconfig:"CERTSUITE_REPORT_DIR"`
+		DockerConfigDir           string `yaml:"docker_config_dir" envconfig:"DOCKER_CONFIG_DIR"`
+		CertsuiteImage            string `yaml:"certsuite_image" envconfig:"CERTSUITE_IMAGE"`
+		CertsuiteImageTag         string `yaml:"certsuite_image_tag" envconfig:"CERTSUITE_IMAGE_TAG"`
+		DisableIntrusiveTests     string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
+		ContainerEngine           string `default:"docker" yaml:"container_engine" envconfig:"CONTAINER_ENGINE"`
+		UseBinary                 string `default:"false" yaml:"use_binary" envconfig:"USE_BINARY"`
 	} `yaml:"general"`
 }
 
@@ -77,13 +77,13 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
-	err = conf.deployTnfConfigDir(confFile)
+	err = conf.deployCertsuiteConfigDir(confFile)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = conf.deployTnfReportDir(confFile)
+	err = conf.deployCertsuiteReportDir(confFile)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
-	conf.General.TnfRepoPath, err = conf.defineTnfRepoPath()
+	conf.General.CertsuiteRepoPath, err = conf.defineCertsuiteRepoPath()
 
 	if err != nil {
 		glog.Fatal(err)
@@ -102,12 +102,12 @@ func NewConfig() (*Config, error) {
 	return &conf, nil
 }
 
-// DebugTnf activates debug mode.
-func (c *Config) DebugTnf() (bool, error) {
-	if c.General.DebugTnf == "true" {
-		err := os.Setenv("TNF_LOG_LEVEL", "debug")
+// DebugCertsuite activates debug mode.
+func (c *Config) DebugCertsuite() (bool, error) {
+	if c.General.DebugCertsuite == "true" {
+		err := os.Setenv("CERTSUITE_LOG_LEVEL", "debug")
 		if err != nil {
-			return false, fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
+			return false, fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 		}
 
 		return true, nil
@@ -151,12 +151,12 @@ func (c *Config) GetReportPath(file string) string {
 	return fmt.Sprintf("%s.xml", filepath.Join(c.General.ReportDirAbsPath, reportFileName))
 }
 
-func (c *Config) defineTnfRepoPath() (string, error) {
-	if c.General.TnfRepoPath == "" {
-		return "", fmt.Errorf("TNF_REPO_PATH env variable is not set. Please export TNF_REPO_PATH")
+func (c *Config) defineCertsuiteRepoPath() (string, error) {
+	if c.General.CertsuiteRepoPath == "" {
+		return "", fmt.Errorf("CERTSUITE_REPO_PATH env variable is not set. Please export CERTSUITE_REPO_PATH")
 	}
 
-	return c.General.TnfRepoPath, nil
+	return c.General.CertsuiteRepoPath, nil
 }
 
 func readFile(cfg *Config, cfgFile string) error {
@@ -185,18 +185,18 @@ func readEnv(c *Config) error {
 	return nil
 }
 
-func (c *Config) deployTnfConfigDir(configFileName string) error {
-	return deployTnfDir(configFileName, c.General.TnfConfigDir, "tnf_config_dir", "TNF_CONFIG_DIR")
+func (c *Config) deployCertsuiteConfigDir(configFileName string) error {
+	return deployTnfDir(configFileName, c.General.CertsuiteConfigDir, "certsuite_config_dir", "CERTSUITE_CONFIG_DIR")
 }
 
-func (c *Config) deployTnfReportDir(configFileName string) error {
-	return deployTnfDir(configFileName, c.General.TnfReportDir, "tnf_report_dir", "TNF_REPORT_DIR")
+func (c *Config) deployCertsuiteReportDir(configFileName string) error {
+	return deployTnfDir(configFileName, c.General.CertsuiteReportDir, "certsuite_report_dir", "CERTSUITE_REPORT_DIR")
 }
 
 func checkFileExists(filePath, name string) (string, error) {
 	if !filepath.IsAbs(filePath) {
 		return "", fmt.Errorf(
-			"make sure env var TNF_REPO_PATH is configured with absolute path instead of relative",
+			"make sure env var CERTSUITE_REPO_PATH is configured with absolute path instead of relative",
 		)
 	}
 

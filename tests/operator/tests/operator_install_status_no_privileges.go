@@ -14,11 +14,11 @@ import (
 var _ = Describe("Operator install-status-no-privileges,", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.OperatorNamespace)
 
 		By("Define TNF config file")
@@ -27,7 +27,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			tsparams.TnfTargetCrdFilters, randomTnfConfigDir)
+			tsparams.TnfTargetCrdFilters, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
@@ -93,7 +93,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 66381
@@ -112,7 +112,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -138,7 +138,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -164,7 +164,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -198,7 +198,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -232,7 +232,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			tsparams.TnfOperatorInstallStatusNoPrivileges,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

@@ -13,7 +13,7 @@ import (
 
 func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir string, configDir string) error {
 	// check that the binary exists and is executable in the tnf repo path
-	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.TnfRepoPath, GetConfiguration().General.TnfEntryPointBinary))
+	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath, GetConfiguration().General.CertsuiteEntryPointBinary))
 	if err != nil {
 		glog.V(5).Info(fmt.Sprintf("binary does not exist: %s. "+
 			"Please run `make build-certsuite-tool` in the cnf-certification-test repo.", err))
@@ -22,15 +22,15 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	}
 
 	// disable the zip file creation
-	err = os.Setenv("TNF_OMIT_ARTIFACTS_ZIP_FILE", "true")
+	err = os.Setenv("CERTSUITE_OMIT_ARTIFACTS_ZIP_FILE", "true")
 	if err != nil {
-		return fmt.Errorf("failed to set TNF_OMIT_ARTIFACTS_ZIP_FILE: %w", err)
+		return fmt.Errorf("failed to set CERTSUITE_OMIT_ARTIFACTS_ZIP_FILE: %w", err)
 	}
 
 	// enable the collector
-	err = os.Setenv("TNF_ENABLE_DATA_COLLECTION", "true")
+	err = os.Setenv("CERTSUITE_ENABLE_DATA_COLLECTION", "true")
 	if err != nil {
-		return fmt.Errorf("failed to set TNF_ENABLE_DATA_COLLECTION: %w", err)
+		return fmt.Errorf("failed to set CERTSUITE_ENABLE_DATA_COLLECTION: %w", err)
 	}
 
 	// populate the arguments for the binary
@@ -42,14 +42,14 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--sanitize-claim", "true",
 	}
 
-	cmd := exec.Command(fmt.Sprintf("%s/%s", GetConfiguration().General.TnfRepoPath, GetConfiguration().General.TnfEntryPointBinary))
+	cmd := exec.Command(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath, GetConfiguration().General.CertsuiteEntryPointBinary))
 	cmd.Args = append(cmd.Args, testArgs...)
 
 	fmt.Printf("cmd: %s\n", cmd.String())
 
-	debugTnf, err := GetConfiguration().DebugTnf()
+	debugTnf, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
-		return fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
+		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
 	if debugTnf {
@@ -90,7 +90,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"-v", fmt.Sprintf("%s:%s", GetConfiguration().General.DockerConfigDir+"/config", "/usr/certsuite/dockerconfig/config:Z"),
 		"-v", fmt.Sprintf("%s:%s", configDir, "/usr/certsuite/config:Z"),
 		"-v", fmt.Sprintf("%s:%s", reportDir, "/usr/certsuite/results:Z"),
-		fmt.Sprintf("%s:%s", GetConfiguration().General.TnfImage, GetConfiguration().General.TnfImageTag),
+		fmt.Sprintf("%s:%s", GetConfiguration().General.CertsuiteImage, GetConfiguration().General.CertsuiteImageTag),
 		"certsuite",
 		"run",
 		"--kubeconfig", "/usr/certsuite/kubeconfig/config",
@@ -113,9 +113,9 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 	cmd := exec.Command(containerEngine, certsuiteCmdArgs...)
 
-	debugTnf, err := GetConfiguration().DebugTnf()
+	debugTnf, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
-		return fmt.Errorf("failed to set env var TNF_LOG_LEVEL: %w", err)
+		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
 	if debugTnf {

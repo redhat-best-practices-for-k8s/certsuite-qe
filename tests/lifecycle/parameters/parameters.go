@@ -56,7 +56,7 @@ const (
 	TnfLivenessTcName                      = "lifecycle-liveness-probe"
 	TnfReadinessTcName                     = "lifecycle-readiness-probe"
 	TnfStatefulSetScalingTcName            = "lifecycle-statefulset-scaling"
-	TnfImagePullPolicyTcName               = "lifecycle-image-pull-policy"
+	CertsuiteImagePullPolicyTcName         = "lifecycle-image-pull-policy"
 	TnfPersistentVolumeReclaimPolicyTcName = "lifecycle-persistent-volume-reclaim-policy"
 	TnfCPUIsolationTcName                  = "lifecycle-cpu-isolation"
 	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"

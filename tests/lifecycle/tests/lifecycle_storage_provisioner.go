@@ -20,14 +20,14 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 	var randomStorageClassName string
 	var randomPV string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		randomStorageClassName = tsparams.TestLocalStorageClassName + "-" + globalhelper.GenerateRandomString(10)
 		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -35,7 +35,7 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By(fmt.Sprintf("Create %s storageclass", randomStorageClassName))
@@ -44,7 +44,7 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 
 		By(fmt.Sprintf("Remove %s storageclass", randomStorageClassName))
 		err := globalhelper.DeleteStorageClass(randomStorageClassName)
@@ -89,7 +89,7 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 
 		By("Start storage-provisioner test")
 		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
@@ -144,7 +144,7 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 
 		By("Start storage-provisioner test")
 		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {

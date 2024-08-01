@@ -67,8 +67,8 @@ func GetConfiguration() *config.Config {
 }
 
 func GenerateDirectories(randomStr string) (reportDir, configDir string) {
-	reportDir = GetConfiguration().General.TnfReportDir + "/" + randomStr
-	configDir = GetConfiguration().General.TnfConfigDir + "/" + randomStr
+	reportDir = GetConfiguration().General.CertsuiteReportDir + "/" + randomStr
+	configDir = GetConfiguration().General.CertsuiteConfigDir + "/" + randomStr
 
 	err := os.MkdirAll(reportDir, os.ModePerm)
 	if err != nil {
