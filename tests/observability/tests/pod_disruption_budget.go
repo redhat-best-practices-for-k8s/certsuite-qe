@@ -21,7 +21,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -34,7 +35,8 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.CrdDeployTimeoutMins)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.CrdDeployTimeoutMins)
 	})
 
 	// 56635

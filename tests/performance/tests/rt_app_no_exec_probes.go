@@ -17,7 +17,8 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -34,7 +35,8 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	It("Rt app pod with no exec probes", func() {

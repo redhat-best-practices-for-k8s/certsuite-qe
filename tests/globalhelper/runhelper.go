@@ -13,7 +13,8 @@ import (
 
 func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir string, configDir string) error {
 	// check that the binary exists and is executable in the tnf repo path
-	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath, GetConfiguration().General.CertsuiteEntryPointBinary))
+	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
+		GetConfiguration().General.CertsuiteEntryPointBinary))
 	if err != nil {
 		glog.V(5).Info(fmt.Sprintf("binary does not exist: %s. "+
 			"Please run `make build-certsuite-tool` in the cnf-certification-test repo.", err))
@@ -42,7 +43,8 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--sanitize-claim", "true",
 	}
 
-	cmd := exec.Command(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath, GetConfiguration().General.CertsuiteEntryPointBinary))
+	cmd := exec.Command(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
+		GetConfiguration().General.CertsuiteEntryPointBinary))
 	cmd.Args = append(cmd.Args, testArgs...)
 
 	fmt.Printf("cmd: %s\n", cmd.String())

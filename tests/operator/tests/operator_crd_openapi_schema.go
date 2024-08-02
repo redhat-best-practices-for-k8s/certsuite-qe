@@ -18,8 +18,9 @@ var _ = Describe("Operator crd-openapi-schema", func() {
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.OperatorNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.OperatorNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -54,7 +55,8 @@ var _ = Describe("Operator crd-openapi-schema", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	It("operator crd is defined with openapi schema", func() {

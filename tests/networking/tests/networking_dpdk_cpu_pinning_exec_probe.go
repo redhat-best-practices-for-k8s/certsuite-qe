@@ -49,7 +49,8 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	It("one dpdk pod with no probe", func() {

@@ -20,8 +20,9 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.TestAccessControlNameSpace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.TestAccessControlNameSpace)
 
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
@@ -37,7 +38,8 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 45447
