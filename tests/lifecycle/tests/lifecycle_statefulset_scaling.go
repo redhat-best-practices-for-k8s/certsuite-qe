@@ -32,7 +32,8 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err = globalhelper.DefineTnfConfig(
@@ -53,7 +54,8 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 		err := os.Setenv("CERTSUITE_NON_INTRUSIVE_ONLY", "true")
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 45439

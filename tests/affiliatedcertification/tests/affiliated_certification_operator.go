@@ -21,8 +21,9 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.TestCertificationNameSpace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.TestCertificationNameSpace)
 
 		// If Kind cluster, skip.
 		if globalhelper.IsKindCluster() {
@@ -99,7 +100,8 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 46699

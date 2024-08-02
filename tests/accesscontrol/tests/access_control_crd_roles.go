@@ -26,8 +26,9 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.TestAccessControlNameSpace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.TestAccessControlNameSpace)
 
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
@@ -49,7 +50,8 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	It("Custom resource is deployed, proper role defined", func() {

@@ -30,8 +30,9 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		}
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.TestCertificationNameSpace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.TestCertificationNameSpace)
 
 		preConfigureAffiliatedCertificationEnvironment(
 			randomNamespace,
@@ -113,7 +114,8 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 46695

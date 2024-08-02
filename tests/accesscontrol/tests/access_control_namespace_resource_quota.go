@@ -19,8 +19,9 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.TestAccessControlNameSpace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.TestAccessControlNameSpace)
 
 		By("Create additional namespace for deployment2")
 		randomNamespace2 = tsparams.AdditionalNamespaceForResourceQuotas + "-" + globalhelper.GenerateRandomString(5)
@@ -38,7 +39,8 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 
 		By("Delete additional namespace for deployment2")
 		err := globalhelper.DeleteNamespaceAndWait(randomNamespace2, tsparams.Timeout)

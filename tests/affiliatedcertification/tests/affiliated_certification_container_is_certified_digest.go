@@ -20,8 +20,9 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
-			tsparams.TestCertificationNameSpace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(
+				tsparams.TestCertificationNameSpace)
 
 		By("Define tnf config file")
 		err := globalhelper.DefineTnfConfig(
@@ -45,7 +46,8 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 66765

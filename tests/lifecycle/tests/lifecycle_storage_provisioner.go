@@ -27,7 +27,8 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
 
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -44,7 +45,8 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+			randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 
 		By(fmt.Sprintf("Remove %s storageclass", randomStorageClassName))
 		err := globalhelper.DeleteStorageClass(randomStorageClassName)
