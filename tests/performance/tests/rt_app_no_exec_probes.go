@@ -13,11 +13,11 @@ import (
 var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -25,7 +25,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Create service account and roles and roles binding
@@ -34,7 +34,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	It("Rt app pod with no exec probes", func() {
@@ -52,7 +52,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -77,7 +77,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -107,7 +107,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Start rt-apps-no-exec-probes test")
 		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

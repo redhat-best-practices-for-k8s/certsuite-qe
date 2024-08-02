@@ -17,11 +17,11 @@ import (
 var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestCertificationNameSpace)
 
 		// If Kind cluster, skip.
@@ -29,7 +29,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			Skip("This test is not supported on Kind cluster")
 		}
 
-		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomTnfConfigDir)
+		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomCertsuiteConfigDir)
 
 		By("Deploy cockroachdb for testing")
 		// cockroachdb: not in certified-operators group in catalog, for negative test cases
@@ -99,7 +99,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 46699
@@ -118,12 +118,12 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			Expect(randomReportDir).To(BeADirectory(), "Random report dir does not exist")
 
 			// Assert that the random TNF config dir exists
-			Expect(randomTnfConfigDir).To(BeADirectory(), "Random TNF config dir does not exist")
+			Expect(randomCertsuiteConfigDir).To(BeADirectory(), "Random TNF config dir does not exist")
 
 			By("Start test")
 			err := globalhelper.LaunchTests(
 				tsparams.TestCaseOperatorAffiliatedCertName,
-				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 			Expect(err).ToNot(HaveOccurred(), "Error running "+
 				tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -158,7 +158,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -185,7 +185,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -219,7 +219,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 
@@ -235,7 +235,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseOperatorAffiliatedCertName+" test")
 

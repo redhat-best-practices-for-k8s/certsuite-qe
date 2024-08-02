@@ -23,8 +23,8 @@ jobs:
       SHELL: /bin/bash
       KUBECONFIG: '/home/runner/.kube/config'
       PFLT_DOCKERCONFIG: '/home/runner/.docker/config'
-      TEST_TNF_IMAGE_NAME: quay.io/testnetworkfunction/cnf-certification-test
-      TEST_TNF_IMAGE_TAG: unstable
+      TEST_CERTSUITE_IMAGE_NAME: quay.io/testnetworkfunction/cnf-certification-test
+      TEST_CERTSUITE_IMAGE_TAG: unstable
       DOCKER_CONFIG_DIR: '/home/runner/.docker/'
       SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
 
@@ -123,7 +123,7 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: FEATURES=${{matrix.suite}} TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test TNF_IMAGE=${{env.TEST_TNF_IMAGE_NAME}} TNF_IMAGE_TAG=${{env.TEST_TNF_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
+          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test CERTSUITE_IMAGE=${{env.TEST_CERTSUITE_IMAGE_NAME}} CERTSUITE_IMAGE_TAG=${{env.TEST_CERTSUITE_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
 
       # Only run against the binary during a scheduled run
       - name: Build the binary
@@ -135,7 +135,7 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: FEATURES=${{matrix.suite}} TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
+          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
 
   check-all-dependencies-are-merged:
     runs-on: ubuntu-22.04

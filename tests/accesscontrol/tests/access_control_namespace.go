@@ -18,16 +18,16 @@ const (
 var _ = Describe("Access-control namespace, ", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.TestAccessControlNameSpace)
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.Timeout)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
 	// 51860
@@ -38,13 +38,13 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -73,13 +73,13 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -108,13 +108,13 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -153,13 +153,13 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -178,7 +178,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
+			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -191,7 +191,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -220,7 +220,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
+			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -233,7 +233,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -262,7 +262,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
+			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -282,7 +282,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -311,7 +311,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com"}, randomTnfConfigDir)
+			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -331,7 +331,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -350,7 +350,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomTnfConfigDir)
+			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -373,7 +373,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 
@@ -402,7 +402,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomTnfConfigDir)
+			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
 
 		By("Define Install Plan")
@@ -425,7 +425,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlNamespace,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
 			tsparams.TestCaseNameAccessControlNamespace+" test")
 

@@ -17,7 +17,7 @@ import (
 var _ = Describe("lifecycle-affinity-required-pods", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
@@ -26,7 +26,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err = globalhelper.DefineTnfConfig(
@@ -34,12 +34,12 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 55327
@@ -56,7 +56,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -88,7 +88,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -109,7 +109,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -133,7 +133,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 			tsparams.TnfAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
-			randomTnfConfigDir)
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -165,7 +165,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

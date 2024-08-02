@@ -84,7 +84,7 @@ var (
 	DefaultClaimFileName             = "claim.json"
 	DefaultTnfConfigFileName         = "tnf_config.yml"
 	DefaultJunitReportName           = "cnf-certification-tests_junit.xml"
-	PartnerNamespaceEnvVarName       = "TNF_PARTNER_NAMESPACE"
+	PartnerNamespaceEnvVarName       = "CERTSUITE_PARTNER_NAMESPACE"
 	TestCasePassed                   = "passed"
 	TestCaseFailed                   = "failed"
 	TestCaseSkipped                  = "skipped"

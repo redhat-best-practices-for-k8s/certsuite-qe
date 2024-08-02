@@ -13,11 +13,11 @@ import (
 var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -25,7 +25,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Create service account and roles and roles binding
@@ -34,7 +34,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One pod with container running in shared cpu pool", func() {
@@ -49,7 +49,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfSharedCPUPoolSchedulingPolicy,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -74,7 +74,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfSharedCPUPoolSchedulingPolicy,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).NotTo(HaveOccurred())
 
 		By("Verify test case status in Claim report")

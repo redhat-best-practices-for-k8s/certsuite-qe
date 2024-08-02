@@ -17,11 +17,11 @@ import (
 var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -29,11 +29,11 @@ var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{tsparams.TnfTargetOperatorLabels},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Enable intrusive tests")
-		err = os.Setenv("TNF_NON_INTRUSIVE_ONLY", "false")
+		err = os.Setenv("CERTSUITE_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
@@ -42,10 +42,10 @@ var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 
 		By("Disable intrusive tests")
-		err := os.Setenv("TNF_NON_INTRUSIVE_ONLY", "true")
+		err := os.Setenv("CERTSUITE_NON_INTRUSIVE_ONLY", "true")
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -63,7 +63,7 @@ var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
 		By("Start lifecycle-deployment-scaling test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfDeploymentScalingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

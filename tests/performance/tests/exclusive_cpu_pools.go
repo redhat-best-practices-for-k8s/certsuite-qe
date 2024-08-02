@@ -15,11 +15,11 @@ import (
 var _ = Describe("performance-exclusive-cpu-pool", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
 		By("Define TNF config file")
 		err := globalhelper.DefineTnfConfig(
@@ -27,7 +27,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		// Create service account and roles and roles binding
@@ -40,7 +40,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	It("One pod with only exclusive containers", func() {
@@ -58,7 +58,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -80,7 +80,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -102,7 +102,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).NotTo(HaveOccurred())
 
 		By("Verify test case status in Claim report")

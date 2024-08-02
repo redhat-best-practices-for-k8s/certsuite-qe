@@ -14,11 +14,11 @@ import (
 var _ = Describe("platform-alteration-is-redhat-release", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -27,12 +27,12 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51319
@@ -50,7 +50,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfIsRedHatReleaseName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -75,7 +75,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfIsRedHatReleaseName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -101,7 +101,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfIsRedHatReleaseName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
@@ -122,7 +122,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
 			tsparams.TnfIsRedHatReleaseName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

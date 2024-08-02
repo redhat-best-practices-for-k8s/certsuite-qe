@@ -19,11 +19,11 @@ import (
 var _ = Describe("platform-alteration-sysctl-config", func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -32,7 +32,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
@@ -42,7 +42,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 51302
@@ -67,7 +67,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 
 		By("Start platform-alteration-sysctl-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfSysctlConfigName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)
@@ -124,7 +124,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 
 		By("Start platform-alteration-sysctl-config test")
 		err = globalhelper.LaunchTests(tsparams.TnfSysctlConfigName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)

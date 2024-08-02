@@ -85,5 +85,5 @@ jobs:
           path: cnf-certification-test
 
       - name: Run Unit Tests
-        run: TNF_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test make unit-tests
+        run: CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test make unit-tests
 

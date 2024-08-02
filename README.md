@@ -55,12 +55,12 @@ The following environment variables are used to configure the test setup.
 | Env Variable Name | Purpose |
 | ------ | ------ |
 | FEATURES | To select the test scenarios that you are going to test, comma separated
-| TNF_REPO_PATH | Points to the absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
-| TNF_IMAGE | Links to the TNF image. Default is quay.io/testnetworkfunction/cnf-certification-test
-| TNF_IMAGE_TAG | image tag that is going to be tested. Default is latest
+| CERTSUITE_REPO_PATH | Points to the absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
+| CERTSUITE_IMAGE | Links to the TNF image. Default is quay.io/testnetworkfunction/cnf-certification-test
+| CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest
 | TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
 | DEBUG_TNF | Generate `Debug` folder that will contain TNF suites folders with TNF logs for each test.
-| TNF_LOG_LEVEL | Log level. Default is 4
+| CERTSUITE_LOG_LEVEL | Log level. Default is 4
 | DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`.
 | ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`.
 | FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false`.
@@ -75,7 +75,7 @@ Make sure [docker](https://www.docker.com/) or [podman](https://podman.io/) is r
 Set your local container runtime to your environment with:
 
 ```sh
-export TNF_CONTAINER_CLIENT=docker
+export CERTSUITE_CONTAINER_CLIENT=docker
 ```
 
 #### Clone the repo and change directory to the cloned repo
@@ -100,14 +100,14 @@ make install
   DOCKER_CONFIG_DIR=$HOME/.docker \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
 ```
 
 ```sh
 # Linux user
   KUBECONFIG=$HOME/.kube/config \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
 ```
 
@@ -116,7 +116,7 @@ make install
  \
   FORCE_DOWNLOAD_UNSTABLE=true \
   KUBECONFIG=$HOME/.kube/config \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-all
 ```
 
@@ -128,7 +128,7 @@ make install
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
 
@@ -137,13 +137,13 @@ make install
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   DOCKER_CONFIG_DIR=$HOME/.docker \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
 
 * To debug
 
-Use `DEBUG_TNF=true` and `TNF_LOG_LEVEL=debug` while running the above commands.
+Use `DEBUG_TNF=true` and `CERTSUITE_LOG_LEVEL=debug` while running the above commands.
 This would create a `Debug` folder containing suites folders with TNF logs for each of the tests.
 
 ```sh
@@ -153,8 +153,8 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
-  TNF_LOG_LEVEL=debug \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_LOG_LEVEL=debug \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
 
@@ -163,8 +163,8 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
   DEBUG_TNF=true \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
-  TNF_LOG_LEVEL=debug \
-  TNF_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_LOG_LEVEL=debug \
+  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
   make test-features
 ```
 

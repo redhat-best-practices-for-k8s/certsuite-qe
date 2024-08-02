@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDebugTnf(t *testing.T) {
+func TestDebugCertsuite(t *testing.T) {
 	testCases := []struct {
 		value    string
 		expected bool
@@ -21,7 +21,7 @@ func TestDebugTnf(t *testing.T) {
 
 			c, err := NewConfig()
 			assert.Nil(t, err)
-			result, err := c.DebugTnf()
+			result, err := c.DebugCertsuite()
 			assert.Nil(t, err)
 			assert.Equal(t, testCase.expected, result)
 		})

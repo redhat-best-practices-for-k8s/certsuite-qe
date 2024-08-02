@@ -26,7 +26,7 @@ const (
 var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
@@ -51,7 +51,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -60,7 +60,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.IsKindCluster() {
@@ -69,7 +69,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 56594
@@ -84,7 +84,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCasePassed, randomReportDir)
@@ -102,7 +102,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed, randomReportDir)
@@ -127,7 +127,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed, randomReportDir)
@@ -138,11 +138,11 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
-	var randomTnfConfigDir string
+	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and TNF config directories
-		randomNamespace, randomReportDir, randomTnfConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
+		randomNamespace, randomReportDir, randomCertsuiteConfigDir = globalhelper.BeforeEachSetupWithRandomNamespace(
 			tsparams.PlatformAlterationNamespace)
 
 		By("Define TNF config file")
@@ -151,12 +151,12 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			[]string{}, randomTnfConfigDir)
+			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomTnfConfigDir, tsparams.WaitingTime)
+		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomCertsuiteConfigDir, tsparams.WaitingTime)
 	})
 
 	// 56595
@@ -187,7 +187,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomTnfConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseSkipped, randomReportDir)
