@@ -18,12 +18,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -57,12 +57,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		By("Start lifecycle-container-prestop test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfShutdownTcName,
+			tsparams.CertsuiteShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteShutdownTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -84,12 +84,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		By("Start lifecycle-container-prestop test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfShutdownTcName,
+			tsparams.CertsuiteShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -113,12 +113,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		By("Start lifecycle-container-prestop test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfShutdownTcName,
+			tsparams.CertsuiteShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteShutdownTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -157,12 +157,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		By("Start lifecycle-container-prestop test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfShutdownTcName,
+			tsparams.CertsuiteShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteShutdownTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -182,12 +182,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		By("Start lifecycle-container-prestop test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfShutdownTcName,
+			tsparams.CertsuiteShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -222,12 +222,12 @@ var _ = Describe("lifecycle-container-prestop", func() {
 
 		By("Start lifecycle-container-prestop test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfShutdownTcName,
+			tsparams.CertsuiteShutdownTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteShutdownTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

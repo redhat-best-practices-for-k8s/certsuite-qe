@@ -21,13 +21,13 @@ var _ = Describe("platform-alteration-base-image", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -36,8 +36,8 @@ var _ = Describe("platform-alteration-base-image", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.IsKindCluster() {
-			// The TNF suite actually proactively skips this test if the cluster is Non-OCP.
-			Skip(fmt.Sprintf("%s test is not applicable for Kind cluster", tsparams.TnfBaseImageName))
+			// The Certsuite actually proactively skips this test if the cluster is Non-OCP.
+			Skip(fmt.Sprintf("%s test is not applicable for Kind cluster", tsparams.CertsuiteBaseImageName))
 		}
 	})
 
@@ -52,7 +52,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName,
 			randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 
 		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
@@ -60,13 +60,13 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -76,7 +76,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -84,13 +84,13 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -99,7 +99,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("Two deployments, one pod each, change container base image by creating a file [negative]", func() {
 		By("Define first deployment")
 		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
@@ -120,20 +120,20 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define second deployment")
 		deploymentb := deployment.DefineDeployment("platform-alteration-dpb",
 			randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -143,7 +143,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		statefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
 			randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 		statefulset.RedefineWithPrivilegedContainer(statefulSet)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
@@ -160,13 +160,13 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfBaseImageName,
+			tsparams.CertsuiteBaseImageName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

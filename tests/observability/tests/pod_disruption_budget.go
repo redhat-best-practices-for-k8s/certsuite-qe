@@ -14,20 +14,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
+var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
-			tshelper.GetTnfTargetPodLabelsSlice(),
+			tshelper.GetCertsuiteTargetPodLabelsSlice(),
 			[]string{},
 			[]string{},
 			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomCertsuiteConfigDir)
@@ -43,7 +43,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget minAvailable value meet requirements", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -58,18 +58,19 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, randomNamespace,
-			intstr.FromInt(1), tsparams.TnfTargetPodLabels)
+			intstr.FromInt(1), tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -77,7 +78,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget maxUnavailable value meet requirements", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -92,18 +93,19 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, randomNamespace,
-			intstr.FromInt(1), tsparams.TnfTargetPodLabels)
+			intstr.FromInt(1), tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -111,7 +113,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	It("One statefulSet, pod disruption budget minAvailable value is zero [negative]", func() {
 		By("Create statefulSet")
 		myStatefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		statefulset.RedefineWithReplicaNumber(myStatefulSet, 1)
 
@@ -126,18 +128,19 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, randomNamespace,
-			intstr.FromInt(0), tsparams.TnfTargetPodLabels)
+			intstr.FromInt(0), tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -145,7 +148,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget maxUnavailable equals to replica number [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -160,18 +163,19 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, randomNamespace,
-			intstr.FromInt(2), tsparams.TnfTargetPodLabels)
+			intstr.FromInt(2), tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -179,7 +183,7 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget maxUnavailable is bigger than the replica number [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -194,25 +198,26 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMaxUnAvailable(tsparams.TestPdbBaseName, randomNamespace,
-			intstr.FromInt(3), tsparams.TnfTargetPodLabels)
+			intstr.FromInt(3), tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("One deployment, pod disruption budget matchLabels does not match deployment label [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -227,25 +232,26 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 
 		By("Create pod disruption budget")
 		pdb := poddisruptionbudget.DefinePodDisruptionBudgetMinAvailable(tsparams.TestPdbBaseName, randomNamespace,
-			intstr.FromInt(1), tsparams.TnfUnknownPodLabels)
+			intstr.FromInt(1), tsparams.CertsuiteUnknownPodLabels)
 
 		err = globalhelper.CreatePodDisruptionBudget(pdb, tsparams.PdbDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("One deployment, no pod disruption budget [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -258,13 +264,14 @@ var _ = Describe(tsparams.TnfPodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(*runningDeployment.Spec.Replicas).To(Equal(int32(1)))
 
-		By("Start TNF " + tsparams.TnfPodDisruptionBudgetTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfPodDisruptionBudgetTcName,
+		By("Start Certsuite " + tsparams.CertsuitePodDisruptionBudgetTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodDisruptionBudgetTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodDisruptionBudgetTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodDisruptionBudgetTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

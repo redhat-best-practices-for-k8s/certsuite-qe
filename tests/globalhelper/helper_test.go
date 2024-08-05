@@ -12,7 +12,7 @@ import (
 )
 
 func TestDefinePodUnderTestLabels(t *testing.T) {
-	testConfig := globalparameters.TnfConfig{}
+	testConfig := globalparameters.CertsuiteConfig{}
 	assert.Empty(t, testConfig.PodsUnderTestLabels)
 
 	testPodLabels := []string{"test1:value", "test2:value"}
@@ -75,7 +75,7 @@ func TestAppendContainersToDeployment(t *testing.T) {
 	assert.Equal(t, "container2", dep.Spec.Template.Spec.Containers[1].Name)
 }
 
-func TestDefineTnfNamespaces(t *testing.T) {
+func TestDefineCertsuiteNamespaces(t *testing.T) {
 	testCases := []struct {
 		testNamespaces []string
 		nilConfig      bool
@@ -97,13 +97,13 @@ func TestDefineTnfNamespaces(t *testing.T) {
 
 	for _, testCase := range testCases {
 		if testCase.nilConfig {
-			assert.NotNil(t, defineTnfNamespaces(nil, testCase.testNamespaces))
+			assert.NotNil(t, defineCertsuiteNamespaces(nil, testCase.testNamespaces))
 		} else {
-			config := globalparameters.TnfConfig{}
+			config := globalparameters.CertsuiteConfig{}
 			if len(testCase.testNamespaces) > 0 {
-				assert.Nil(t, defineTnfNamespaces(&config, testCase.testNamespaces))
+				assert.Nil(t, defineCertsuiteNamespaces(&config, testCase.testNamespaces))
 			} else {
-				assert.NotNil(t, defineTnfNamespaces(&config, testCase.testNamespaces))
+				assert.NotNil(t, defineCertsuiteNamespaces(&config, testCase.testNamespaces))
 				assert.Equal(t, len(testCase.testNamespaces), len(config.TargetNameSpaces))
 			}
 		}
@@ -111,7 +111,7 @@ func TestDefineTnfNamespaces(t *testing.T) {
 }
 
 func TestDefineOperatorsUnderTestLabels(t *testing.T) {
-	testConfig := globalparameters.TnfConfig{}
+	testConfig := globalparameters.CertsuiteConfig{}
 	assert.Empty(t, testConfig.OperatorsUnderTestLabels)
 
 	testOperatorLabels := []string{"test1:value", "test2:value"}
@@ -146,7 +146,7 @@ func TestDefineCrdFilters(t *testing.T) {
 		if testCase.nilConfig {
 			assert.NotNil(t, defineCrdFilters(nil, testCase.testCrdFilters))
 		} else {
-			config := globalparameters.TnfConfig{}
+			config := globalparameters.CertsuiteConfig{}
 			if len(testCase.testCrdFilters) > 0 {
 				assert.Nil(t, defineCrdFilters(&config, testCase.testCrdFilters))
 			} else {

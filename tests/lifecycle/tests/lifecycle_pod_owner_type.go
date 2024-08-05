@@ -18,15 +18,15 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -48,12 +48,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodOwnerTypeTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -76,12 +76,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodOwnerTypeTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -94,12 +94,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodOwnerTypeTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -113,12 +113,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -146,12 +146,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-owner-type test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodOwnerTypeTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

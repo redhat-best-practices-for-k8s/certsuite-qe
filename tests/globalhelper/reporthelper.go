@@ -57,14 +57,14 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 func RemoveContentsFromReportDir(reportDir string) error {
 	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
 
-	tnfReportDir, err := os.Open(reportDir)
+	certsuiteReportDir, err := os.Open(reportDir)
 	if err != nil {
 		return fmt.Errorf("failed to open report directory: %w", err)
 	}
 
-	defer tnfReportDir.Close()
+	defer certsuiteReportDir.Close()
 
-	names, err := tnfReportDir.Readdirnames(-1)
+	names, err := certsuiteReportDir.Readdirnames(-1)
 	if err != nil {
 		return err
 	}
@@ -90,14 +90,14 @@ func RemoveContentsFromReportDir(reportDir string) error {
 }
 
 func RemoveContentsFromConfigDir(configDir string) error {
-	tnfConfigDir, err := os.Open(configDir)
+	certsuiteConfigDir, err := os.Open(configDir)
 	if err != nil {
 		return fmt.Errorf("failed to open config directory: %w", err)
 	}
 
-	defer tnfConfigDir.Close()
+	defer certsuiteConfigDir.Close()
 
-	names, err := tnfConfigDir.Readdirnames(-1)
+	names, err := certsuiteConfigDir.Readdirnames(-1)
 	if err != nil {
 		return err
 	}

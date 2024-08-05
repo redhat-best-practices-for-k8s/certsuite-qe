@@ -19,15 +19,15 @@ var _ = Describe("lifecycle-image-pull-policy", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())

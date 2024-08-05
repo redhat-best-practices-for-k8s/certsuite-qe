@@ -21,15 +21,15 @@ var _ = Describe("lifecycle-liveness", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -58,12 +58,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].LivenessProbe).ToNot(BeNil())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -104,12 +104,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		}
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -128,12 +128,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].LivenessProbe).ToNot(BeNil())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -147,12 +147,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteLivenessTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -173,12 +173,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(runningDaemonset.Spec.Template.Spec.Containers[0].LivenessProbe).To(BeNil())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteLivenessTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -213,12 +213,12 @@ var _ = Describe("lifecycle-liveness", func() {
 		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].LivenessProbe).To(BeNil())
 
 		By("Start lifecycle-liveness test")
-		err = globalhelper.LaunchTests(tsparams.TnfLivenessTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteLivenessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfLivenessTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteLivenessTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

@@ -17,13 +17,13 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -42,7 +42,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		globalhelper.AppendContainersToDeployment(deployment, 3, globalhelper.GetConfiguration().General.TestImage)
 
@@ -51,13 +51,13 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -68,7 +68,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
@@ -76,13 +76,13 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -102,13 +102,13 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -123,13 +123,13 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfIsRedHatReleaseName,
+			tsparams.CertsuiteIsRedHatReleaseName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

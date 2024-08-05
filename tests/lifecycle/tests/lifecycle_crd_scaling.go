@@ -32,18 +32,18 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		}
 
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
-			[]string{tsparams.TnfTargetCrdFilters}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+			[]string{tsparams.CertsuiteTargetCrdFilters}, randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
 			Skip("Intrusive tests are disabled via config")
@@ -62,7 +62,7 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 	It("Custom resource is deployed, scale in and out", func() {
 		// We have to pre-install the crd-operator-scaling resources prior to running these tests.
 		By("Check if cr-scale-operator is installed")
-		exists, err := globalhelper.NamespaceExists(tsparams.TnfTargetOperatorNamespace)
+		exists, err := globalhelper.NamespaceExists(tsparams.CertsuiteTargetOperatorNamespace)
 		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scaling-operator is installed")
 		if !exists {
 			// Skip the test if cr-scaling-operator is not installed
@@ -70,17 +70,17 @@ var _ = Describe("lifecycle-crd-scaling", Serial, func() {
 		}
 
 		By("Create a scale custom resource")
-		_, err = crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
-			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
+		_, err = crdutils.CreateCustomResourceScale(tsparams.CertsuiteCustomResourceName, randomNamespace,
+			tsparams.CertsuiteTargetOperatorLabels, tsparams.CertsuiteTargetOperatorLabelsMap)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-crd-scaling test")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdScaling,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdScaling,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdScaling, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdScaling, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

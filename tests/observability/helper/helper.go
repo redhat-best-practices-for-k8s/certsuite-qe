@@ -26,7 +26,7 @@ import (
 
 // For some reason, there's a function that expects labels' key/values separated
 // by colon instead of the equal char.
-func GetTnfTargetPodLabelsSlice() []string {
+func GetCertsuiteTargetPodLabelsSlice() []string {
 	return []string{tsparams.TestPodLabelKey + ":" + tsparams.TestPodLabelValue}
 }
 
@@ -57,7 +57,7 @@ func DefineDaemonSetWithStdoutBuffers(name, namespace string, stdoutBuffers []st
 }
 
 func DefinePodWithStdoutBuffer(name, namespace string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, namespace, globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+	newPod := pod.DefinePod(name, namespace, globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
@@ -225,7 +225,7 @@ func defineDeploymentWithContainerSpecs(name, namespace string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.Deployment {
 	// Define base deployment
 	dep := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	deployment.RedefineWithReplicaNumber(dep, int32(replicas))
@@ -238,7 +238,7 @@ func defineStatefulSetWithContainerSpecs(name, namespace string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.StatefulSet {
 	// Define base statefulSet
 	sts := statefulset.DefineStatefulSet(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
@@ -251,7 +251,7 @@ func defineDaemonSetWithContainerSpecs(name, namespace string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
 	daemonSet := daemonset.DefineDaemonSet(namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels, name)
+		globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels, name)
 
 	// Customize its container specs.
 	daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)

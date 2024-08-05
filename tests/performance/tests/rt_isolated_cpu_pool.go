@@ -17,12 +17,12 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -43,7 +43,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
 
 		By("Define runtime class")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		Expect(rtc).ToNot(BeNil())
 
 		By("Create runtime class")
@@ -70,20 +70,20 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteRtIsolatedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteRtIsolatedCPUPoolSchedulingPolicy,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("One pod running in isolated cpu pool and non-rt scheduling policy", func() {
 		By("Define runtime class")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		Expect(rtc).ToNot(BeNil())
 
 		By("Create runtime class")
@@ -105,13 +105,13 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteRtIsolatedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteRtIsolatedCPUPoolSchedulingPolicy,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -119,20 +119,20 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 	It("One pod running in shared cpu pool", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteRtIsolatedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfRtIsolatedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteRtIsolatedCPUPoolSchedulingPolicy,
 			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

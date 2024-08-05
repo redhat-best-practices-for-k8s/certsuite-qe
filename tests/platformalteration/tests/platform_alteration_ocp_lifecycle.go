@@ -15,13 +15,13 @@ var _ = Describe("platform-alteration-ocp-lifecycle", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -41,11 +41,11 @@ var _ = Describe("platform-alteration-ocp-lifecycle", func() {
 		}
 
 		By("Start platform-alteration-ocp-lifecycle test")
-		err := globalhelper.LaunchTests(tsparams.TnfOCPLifecycleName,
+		err := globalhelper.LaunchTests(tsparams.CertsuiteOCPLifecycleName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfOCPLifecycleName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteOCPLifecycleName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

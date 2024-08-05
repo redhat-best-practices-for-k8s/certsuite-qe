@@ -20,7 +20,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.TestCertificationNameSpace)
@@ -119,8 +119,8 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			// Assert that the random report dir exists
 			Expect(randomReportDir).To(BeADirectory(), "Random report dir does not exist")
 
-			// Assert that the random TNF config dir exists
-			Expect(randomCertsuiteConfigDir).To(BeADirectory(), "Random TNF config dir does not exist")
+			// Assert that the random certsuite config dir exists
+			Expect(randomCertsuiteConfigDir).To(BeADirectory(), "Random certsuite config dir does not exist")
 
 			By("Start test")
 			err := globalhelper.LaunchTests(

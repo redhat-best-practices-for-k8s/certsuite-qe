@@ -22,12 +22,12 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -63,13 +63,13 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDpdkCPUPinningExecProbe,
+			tsparams.CertsuiteDpdkCPUPinningExecProbe,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDpdkCPUPinningExecProbe,
+			tsparams.CertsuiteDpdkCPUPinningExecProbe,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -88,13 +88,13 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDpdkCPUPinningExecProbe,
+			tsparams.CertsuiteDpdkCPUPinningExecProbe,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDpdkCPUPinningExecProbe,
+			tsparams.CertsuiteDpdkCPUPinningExecProbe,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

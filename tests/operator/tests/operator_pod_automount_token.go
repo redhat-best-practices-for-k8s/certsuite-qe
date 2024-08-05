@@ -18,18 +18,18 @@ var _ = Describe("Operator pods automount token", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.OperatorNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
-			tsparams.TnfTargetCrdFilters, randomCertsuiteConfigDir)
+			tsparams.CertsuiteTargetCrdFilters, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
@@ -93,13 +93,13 @@ var _ = Describe("Operator pods automount token", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOperatorPodAutomountToken,
+			tsparams.CertsuiteOperatorPodAutomountToken,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOperatorPodAutomountToken,
+			tsparams.CertsuiteOperatorPodAutomountToken,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

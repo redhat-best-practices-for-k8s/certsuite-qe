@@ -16,13 +16,13 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -42,12 +42,12 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 
 		// all nodes suppose to be untainted when the cluster is deployed.
 		By("Start platform-alteration-tainted-node-kernel test")
-		err := globalhelper.LaunchTests(tsparams.TnfTaintedNodeKernelName,
+		err := globalhelper.LaunchTests(tsparams.CertsuiteTaintedNodeKernelName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfTaintedNodeKernelName,
+			tsparams.CertsuiteTaintedNodeKernelName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -64,7 +64,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
@@ -85,11 +85,12 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-tainted-node-kernel test")
-		err = globalhelper.LaunchTests(tsparams.TnfTaintedNodeKernelName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTaintedNodeKernelName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTaintedNodeKernelName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTaintedNodeKernelName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Reboot the node to remove the taint")

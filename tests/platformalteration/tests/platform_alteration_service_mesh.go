@@ -50,13 +50,13 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	})
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -78,18 +78,19 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	It("istio is installed", func() {
 		By("Define a test pod with istio container")
 		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-service-mesh-usage test")
-		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteServiceMeshUsageName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -97,17 +98,18 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	It("istio is installed but proxy containers does not exist [negative]", func() {
 		By("Define a test pod without istio container")
 		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-service-mesh-usage test")
-		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteServiceMeshUsageName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -115,24 +117,25 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	It("istio is installed but proxy container exist on one pod only [negative]", func() {
 		By("Define first pod with istio container")
 		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		putb := pod.DefinePod("lifecycle-putb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-service-mesh-usage test")
-		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteServiceMeshUsageName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
@@ -143,13 +146,13 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -183,18 +186,19 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 
 		By("Define a test pod with istio container")
 		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-service-mesh-usage test")
-		err = globalhelper.LaunchTests(tsparams.TnfServiceMeshUsageName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfServiceMeshUsageName, globalparameters.TestCaseSkipped, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteServiceMeshUsageName,
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

@@ -17,12 +17,12 @@ var _ = Describe("Networking dual-stack-service,", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -46,13 +46,13 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDualStackServiceTcName,
+			tsparams.CertsuiteDualStackServiceTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDualStackServiceTcName,
+			tsparams.CertsuiteDualStackServiceTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -67,13 +67,13 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDualStackServiceTcName,
+			tsparams.CertsuiteDualStackServiceTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDualStackServiceTcName,
+			tsparams.CertsuiteDualStackServiceTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -90,13 +90,13 @@ var _ = Describe("Networking dual-stack-service,", func() {
 
 			By("Start tests")
 			err = globalhelper.LaunchTests(
-				tsparams.TnfDualStackServiceTcName,
+				tsparams.CertsuiteDualStackServiceTcName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfDualStackServiceTcName,
+				tsparams.CertsuiteDualStackServiceTcName,
 				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		})

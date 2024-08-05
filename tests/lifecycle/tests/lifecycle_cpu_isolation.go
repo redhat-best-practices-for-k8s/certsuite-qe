@@ -24,15 +24,15 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -63,7 +63,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		put.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -80,12 +80,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -112,7 +112,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		put.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		err = globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -131,12 +131,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -156,7 +156,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		dep.Spec.Template.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -181,12 +181,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String()).To(Equal("1"))
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -206,7 +206,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		daemonSet.Spec.Template.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -232,12 +232,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(*runningDaemonset.Spec.Template.Spec.RuntimeClassName).To(Equal(rtc.Name))
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -248,7 +248,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		err := globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -266,12 +266,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -301,12 +301,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.RuntimeClassName).To(BeNil())
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -337,7 +337,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		putb.SetAnnotations(annotationsMap)
 
 		By("Define runTimeClass")
-		rtc := runtimeclass.DefineRunTimeClass(tsparams.TnfRunTimeClass)
+		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		err = globalhelper.CreateRunTimeClass(rtc)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -363,12 +363,12 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-cpu-isolation test")
-		err = globalhelper.LaunchTests(tsparams.TnfCPUIsolationTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCPUIsolationTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

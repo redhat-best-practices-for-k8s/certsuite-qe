@@ -56,10 +56,10 @@ The following environment variables are used to configure the test setup.
 | ------ | ------ |
 | FEATURES | To select the test scenarios that you are going to test, comma separated
 | CERTSUITE_REPO_PATH | Points to the absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
-| CERTSUITE_IMAGE | Links to the TNF image. Default is quay.io/testnetworkfunction/cnf-certification-test
+| CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/testnetworkfunction/k8s-best-practices-certsuite
 | CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest
-| TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/cnf-test-partner
-| DEBUG_TNF | Generate `Debug` folder that will contain TNF suites folders with TNF logs for each test.
+| TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/k8s-best-practices-debug
+| DEBUG_CERTSUITE | Generate `Debug` folder that will contain Certsuite suites folders with Certsuite logs for each test.
 | CERTSUITE_LOG_LEVEL | Log level. Default is 4
 | DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`.
 | ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`.
@@ -143,12 +143,12 @@ make install
 
 * To debug
 
-Use `DEBUG_TNF=true` and `CERTSUITE_LOG_LEVEL=debug` while running the above commands.
-This would create a `Debug` folder containing suites folders with TNF logs for each of the tests.
+Use `DEBUG_CERTSUITE=true` and `CERTSUITE_LOG_LEVEL=debug` while running the above commands.
+This would create a `Debug` folder containing suites folders with Certsuite logs for each of the tests.
 
 ```sh
 # Mac user
-  DEBUG_TNF=true \
+  DEBUG_CERTSUITE=true \
   DOCKER_CONFIG_DIR=$HOME/.docker \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
@@ -160,7 +160,7 @@ This would create a `Debug` folder containing suites folders with TNF logs for e
 
 ```sh
 # Linux user
-  DEBUG_TNF=true \
+  DEBUG_CERTSUITE=true \
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   CERTSUITE_LOG_LEVEL=debug \

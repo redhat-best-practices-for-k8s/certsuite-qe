@@ -10,11 +10,11 @@ const (
 )
 
 var (
-	testPodLabelPrefixName = "test-network-function.com/manageability"
-	testPodLabelValue      = "testing"
-	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
-	TestPodName            = "manageability-pod"
-	TnfTargetPodLabels     = map[string]string{
+	testPodLabelPrefixName   = "test-network-function.com/manageability"
+	testPodLabelValue        = "testing"
+	TestPodLabel             = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	TestPodName              = "manageability-pod"
+	CertsuiteTargetPodLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
@@ -23,10 +23,10 @@ var (
 )
 
 const (
-	TnfTestSuiteName       = "manageability"
+	CertsuiteTestSuiteName = "manageability"
 	ManageabilityNamespace = "manageability-ns"
 
-	// TNF test cases names.
-	TnfContainerPortName = "manageability-container-port-name-format"
-	TnfContainerImageTag = "manageability-containers-image-tag"
+	// Certsuite test case names.
+	CertsuiteContainerPortName = "manageability-container-port-name-format"
+	CertsuiteContainerImageTag = "manageability-containers-image-tag"
 )

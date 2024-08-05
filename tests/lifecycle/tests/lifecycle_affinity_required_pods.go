@@ -25,12 +25,12 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 	}
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -57,12 +57,12 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-affinity-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteAffinityRequiredPodsTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -89,12 +89,12 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-affinity-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteAffinityRequiredPodsTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -110,12 +110,12 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-affinity-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -132,7 +132,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Start lifecycle-affinity-required-pods test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfAffinityRequiredPodsTcName,
+			tsparams.CertsuiteAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
@@ -140,7 +140,7 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfAffinityRequiredPodsTcName,
+			tsparams.CertsuiteAffinityRequiredPodsTcName,
 			globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -166,12 +166,12 @@ var _ = Describe("lifecycle-affinity-required-pods", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-affinity-required-pods test")
-		err = globalhelper.LaunchTests(tsparams.TnfAffinityRequiredPodsTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteAffinityRequiredPodsTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteAffinityRequiredPodsTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

@@ -15,12 +15,12 @@ var _ = Describe("manageability-container-port-name", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.ManageabilityNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -38,18 +38,18 @@ var _ = Describe("manageability-container-port-name", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, randomNamespace,
-			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
+			tsparams.TestImageWithValidTag, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start container-port-name test")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerPortName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerPortName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerPortName,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerPortName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -58,7 +58,7 @@ var _ = Describe("manageability-container-port-name", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, randomNamespace,
-			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
+			tsparams.TestImageWithValidTag, tsparams.CertsuiteTargetPodLabels)
 
 		tshelper.RedefinePodWithContainerPort(testPod, 0, tsparams.InvalidPortName)
 
@@ -66,12 +66,12 @@ var _ = Describe("manageability-container-port-name", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start container-port-name test")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerPortName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerPortName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerPortName,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerPortName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

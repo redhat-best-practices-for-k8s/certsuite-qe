@@ -21,7 +21,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.TestAccessControlNameSpace)
@@ -34,14 +34,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 51860
 	It("one namespace, no invalid prefixes", func() {
-		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -69,14 +69,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{invalidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -104,14 +104,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -149,14 +149,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{invalidNamespace, additionalValidNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -174,14 +174,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 51971
 	It("one custom resource in a valid namespace", func() {
-		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{randomNamespace, "tnf"},
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace, "certsuite"},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
@@ -216,14 +216,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
-			[]string{randomNamespace, "tnf"},
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace, "certsuite"},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", invalidNamespace)
@@ -258,14 +258,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
-			[]string{randomNamespace, additionalValidNamespace, "tnf"},
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace, additionalValidNamespace, "certsuite"},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
@@ -307,14 +307,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
-			[]string{randomNamespace, "tnf"},
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace, "certsuite"},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com"}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
@@ -346,14 +346,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 
 	// 52073
 	It("two custom resources of different CRDs, both in valid namespace", func() {
-		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
-			[]string{randomNamespace, "tnf"},
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace, "certsuite"},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)
@@ -398,14 +398,14 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace")
 		})
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
-			[]string{randomNamespace, "tnf"},
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace, "certsuite"},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{"installplans.operators.coreos.com", "subscriptions.operators.coreos.com"}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Define Install Plan")
 		plan := installplan.DefineInstallPlan("test-plan", randomNamespace)

@@ -26,15 +26,15 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		randomStorageClassName = tsparams.TestLocalStorageClassName + "-" + globalhelper.GenerateRandomString(10)
 		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
 
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -90,17 +90,17 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start storage-provisioner test")
-		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}
 	})
@@ -145,17 +145,17 @@ var _ = Describe("lifecycle-storage-provisioner", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start storage-provisioner test")
-		err = globalhelper.LaunchTests(tsparams.TnfStorageProvisioner,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteStorageProvisioner,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteStorageProvisioner, globalparameters.TestCasePassed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteStorageProvisioner, globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}
 	})

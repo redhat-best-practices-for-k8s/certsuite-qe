@@ -18,12 +18,12 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -53,18 +53,18 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool test")
-		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteExclusiveCPUPool,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfExclusiveCPUPool,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteExclusiveCPUPool,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -73,7 +73,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		tshelper.RedefinePodWithSharedContainer(testPod, 0)
 
@@ -81,12 +81,12 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool test")
-		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteExclusiveCPUPool,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfExclusiveCPUPool,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteExclusiveCPUPool,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -95,7 +95,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "0.75", "0.5")
 
@@ -103,12 +103,12 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool test")
-		err = globalhelper.LaunchTests(tsparams.TnfExclusiveCPUPool,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteExclusiveCPUPool,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).NotTo(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfExclusiveCPUPool,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteExclusiveCPUPool,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

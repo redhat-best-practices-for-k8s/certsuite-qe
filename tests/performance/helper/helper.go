@@ -282,7 +282,7 @@ func getPrivilegedServiceAccountObjects(namespace string) (aRole rbacv1.Role,
 
 func DefineRtPodInIsolatedCPUPool(namespace string, rtc *nodev1.RuntimeClass) (*corev1.Pod, error) {
 	testPod := DefineRtPod(tsparams.TestPodName, namespace,
-		tsparams.RtImageName, tsparams.TnfTargetPodLabels)
+		tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 	annotationsMap := make(map[string]string)
 	annotationsMap["cpu-load-balancing.crio.io"] = tsparams.DisableStr

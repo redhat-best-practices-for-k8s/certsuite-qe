@@ -17,13 +17,13 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -45,7 +45,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 	// 51310
 	It("SELinux is enforcing on all nodes", func() {
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
@@ -69,12 +69,12 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		}
 
 		By("Start platform-alteration-is-selinux-enforcing test")
-		err = globalhelper.LaunchTests(tsparams.TnfIsSelinuxEnforcingName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteIsSelinuxEnforcingName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfIsSelinuxEnforcingName,
+			tsparams.CertsuiteIsSelinuxEnforcingName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -88,7 +88,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		Skip("Skipping. Remove this skip when we can detect if SELinux is enabled on the node")
 
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
@@ -106,12 +106,12 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-is-selinux-enforcing test")
-		err = globalhelper.LaunchTests(tsparams.TnfIsSelinuxEnforcingName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteIsSelinuxEnforcingName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfIsSelinuxEnforcingName,
+			tsparams.CertsuiteIsSelinuxEnforcingName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 

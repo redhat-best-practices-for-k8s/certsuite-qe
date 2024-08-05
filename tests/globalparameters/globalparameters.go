@@ -3,7 +3,7 @@ package globalparameters
 import "encoding/xml"
 
 type (
-	TnfConfig struct {
+	CertsuiteConfig struct {
 		TargetNameSpaces         []TargetNameSpace            `yaml:"targetNameSpaces" json:"targetNameSpaces"`
 		PodsUnderTestLabels      []string                     `yaml:"podsUnderTestLabels" json:"podsUnderTestLabels"`
 		OperatorsUnderTestLabels []string                     `yaml:"operatorsUnderTestLabels" json:"operatorsUnderTestLabels"`
@@ -82,7 +82,7 @@ type (
 
 var (
 	DefaultClaimFileName             = "claim.json"
-	DefaultTnfConfigFileName         = "tnf_config.yml"
+	DefaultCertsuiteConfigFileName   = "tnf_config.yml"
 	DefaultJunitReportName           = "cnf-certification-tests_junit.xml"
 	PartnerNamespaceEnvVarName       = "CERTSUITE_PARTNER_NAMESPACE"
 	TestCasePassed                   = "passed"

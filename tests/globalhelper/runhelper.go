@@ -12,7 +12,7 @@ import (
 )
 
 func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir string, configDir string) error {
-	// check that the binary exists and is executable in the tnf repo path
+	// check that the binary exists and is executable in the certsuite repo path
 	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
 		GetConfiguration().General.CertsuiteEntryPointBinary))
 	if err != nil {
@@ -37,7 +37,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	// populate the arguments for the binary
 	testArgs := []string{
 		"run",
-		"--config-file", configDir + "/" + globalparameters.DefaultTnfConfigFileName,
+		"--config-file", configDir + "/" + globalparameters.DefaultCertsuiteConfigFileName,
 		"--output-dir", reportDir,
 		"--label-filter", testCaseName,
 		"--sanitize-claim", "true",
@@ -49,12 +49,12 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 
 	fmt.Printf("cmd: %s\n", cmd.String())
 
-	debugTnf, err := GetConfiguration().DebugCertsuite()
+	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
-	if debugTnf {
+	if debugCertsuite {
 		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
@@ -115,12 +115,12 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 	cmd := exec.Command(containerEngine, certsuiteCmdArgs...)
 
-	debugTnf, err := GetConfiguration().DebugCertsuite()
+	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
-	if debugTnf {
+	if debugCertsuite {
 		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
