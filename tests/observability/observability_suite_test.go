@@ -11,10 +11,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/observability/tests"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/parameters"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/tests"
 )
 
 func TestObservability(t *testing.T) {

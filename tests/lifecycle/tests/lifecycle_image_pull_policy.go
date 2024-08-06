@@ -4,12 +4,12 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 	corev1 "k8s.io/api/core/v1"
 )
 

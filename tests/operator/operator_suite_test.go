@@ -10,8 +10,8 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/operator/tests"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/tests"
 )
 
 func TestOperator(t *testing.T) {

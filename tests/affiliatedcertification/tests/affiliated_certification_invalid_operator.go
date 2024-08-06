@@ -7,11 +7,11 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 )
 
 const (

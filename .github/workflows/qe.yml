@@ -10,7 +10,7 @@ on:
   schedule:
     - cron: '0 0 * * *'
 env:
-  TEST_REPO: test-network-function/cnf-certification-test
+  TEST_REPO: redhat-best-practices-for-k8s/certsuite
 
 jobs:
   qe-testing:

@@ -8,7 +8,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	nodesutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	nodesutils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 

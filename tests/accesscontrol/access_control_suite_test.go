@@ -11,8 +11,8 @@ import (
 	"runtime"
 	"testing"
 
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/tests"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 )
 
 func TestAccessControl(t *testing.T) {

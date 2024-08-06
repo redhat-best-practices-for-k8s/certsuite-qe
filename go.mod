@@ -1,4 +1,4 @@
-module github.com/test-network-function/cnfcert-tests-verification
+module github.com/redhat-best-practices-for-k8s/certsuite-qe
 
 go 1.22.5
 

@@ -3,14 +3,14 @@ package tests
 import (
 	"context"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

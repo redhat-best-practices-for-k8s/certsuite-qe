@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
 	"github.com/golang/glog"
 )
@@ -17,7 +17,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		GetConfiguration().General.CertsuiteEntryPointBinary))
 	if err != nil {
 		glog.V(5).Info(fmt.Sprintf("binary does not exist: %s. "+
-			"Please run `make build-certsuite-tool` in the cnf-certification-test repo.", err))
+			"Please run `make build-certsuite-tool` in the certsuite repo.", err))
 
 		return fmt.Errorf("binary does not exist: %w", err)
 	}

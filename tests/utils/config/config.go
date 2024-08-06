@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
+	testclient "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 
 	"github.com/golang/glog"
 	"github.com/kelseyhightower/envconfig"

@@ -3,12 +3,12 @@ package tests
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/performance/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/runtimeclass"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/runtimeclass"
 )
 
 var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, func() {

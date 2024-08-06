@@ -6,8 +6,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
 )
 
 func waitUntilOperatorIsReady(csvPrefix, namespace string) error {

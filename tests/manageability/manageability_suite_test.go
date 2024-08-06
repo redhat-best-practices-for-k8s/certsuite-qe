@@ -9,10 +9,10 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/manageability/tests"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/manageability/tests"
 
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 )
 
 func TestManageability(t *testing.T) {

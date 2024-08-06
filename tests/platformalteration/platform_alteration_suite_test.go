@@ -11,14 +11,14 @@ import (
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/tests"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/cluster"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
 
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 )
 
 func TestPlatformAlteration(t *testing.T) {

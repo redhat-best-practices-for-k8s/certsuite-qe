@@ -8,8 +8,8 @@ import (
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	testclient "github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
+	testclient "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
 	"k8s.io/client-go/kubernetes"
 )
 
