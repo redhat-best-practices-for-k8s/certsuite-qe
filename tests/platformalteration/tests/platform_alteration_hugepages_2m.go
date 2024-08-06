@@ -17,13 +17,13 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -51,7 +51,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith2MiHugepages(dep, 4)
 
@@ -60,12 +60,12 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-2m-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages2mOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -75,7 +75,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 
 		By("Define pod with 2Mi hugepages")
 		puta := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 		pod.RedefineWithCPUResources(puta, "500m", "250m")
 		pod.RedefineWith2MiHugepages(puta, 4)
 
@@ -84,12 +84,12 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-2m-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages2mOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -98,7 +98,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith2MiHugepages(dep, 4)
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
@@ -108,12 +108,12 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-2m-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages2mOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -123,7 +123,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
@@ -138,12 +138,12 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-2m-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages2mOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages2mOnlyName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages2mOnlyName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

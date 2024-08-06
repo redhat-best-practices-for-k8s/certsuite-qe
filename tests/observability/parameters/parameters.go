@@ -3,13 +3,13 @@ package parameters
 import "time"
 
 const (
-	TnfTestSuiteName = "observability"
+	CertsuiteTestSuiteName = "observability"
 
-	// TNF test cases names.
-	TnfContainerLoggingTcName     = "observability-container-logging"
-	TnfCrdStatusTcName            = "observability-crd-status"
-	TnfTerminationMsgPolicyTcName = "observability-termination-policy"
-	TnfPodDisruptionBudgetTcName  = "observability-pod-disruption-budget"
+	// Certsuite test case names.
+	CertsuiteContainerLoggingTcName     = "observability-container-logging"
+	CertsuiteCrdStatusTcName            = "observability-crd-status"
+	CertsuiteTerminationMsgPolicyTcName = "observability-termination-policy"
+	CertsuitePodDisruptionBudgetTcName  = "observability-pod-disruption-budget"
 
 	TestNamespace = "observability-ns"
 
@@ -22,7 +22,7 @@ const (
 	TestContainerBaseName   = "qe-observability-container"
 	TestPdbBaseName         = "observability-pdb"
 
-	TestPodLabelKey   = "tnf-qe/observability"
+	TestPodLabelKey   = "certsuite-qe/observability"
 	TestPodLabelValue = "container-logging-tc"
 
 	UnknownKey   = "unknown-key"
@@ -41,8 +41,8 @@ const (
 
 // observability-crd-status helper params.
 const (
-	CrdSuffix1 = "tnf-qe.suffix1.com"
-	CrdSuffix2 = "tnf-qe.suffix2.com"
+	CrdSuffix1 = "certsuite-qe.suffix1.com"
+	CrdSuffix2 = "certsuite-qe.suffix2.com"
 
 	NotConfiguredCrdSuffix = "not-configured-suffix.com"
 
@@ -55,11 +55,11 @@ const (
 )
 
 var (
-	TnfTargetPodLabels = map[string]string{
+	CertsuiteTargetPodLabels = map[string]string{
 		TestPodLabelKey: TestPodLabelValue,
 	}
 
-	TnfUnknownPodLabels = map[string]string{
+	CertsuiteUnknownPodLabels = map[string]string{
 		UnknownKey: UnknownValue,
 	}
 

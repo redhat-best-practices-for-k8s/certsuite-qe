@@ -28,7 +28,7 @@ type Config struct {
 		WorkerNodeLabel           string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
 		TestImage                 string `yaml:"test_image" envconfig:"TEST_IMAGE"`
 		VerificationLogLevel      string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
-		DebugCertsuite            string `envconfig:"DEBUG_TNF"`
+		DebugCertsuite            string `envconfig:"DEBUG_CERTSUITE"`
 		CertsuiteConfigDir        string `yaml:"certsuite_config_dir" envconfig:"CERTSUITE_CONFIG_DIR"`
 		CertsuiteRepoPath         string `envconfig:"CERTSUITE_REPO_PATH"`
 		CertsuiteEntryPointBinary string `yaml:"certsuite_entry_point_binary" envconfig:"CERTSUITE_ENTRY_POINT_BINARY"`
@@ -186,11 +186,11 @@ func readEnv(c *Config) error {
 }
 
 func (c *Config) deployCertsuiteConfigDir(configFileName string) error {
-	return deployTnfDir(configFileName, c.General.CertsuiteConfigDir, "certsuite_config_dir", "CERTSUITE_CONFIG_DIR")
+	return deployCertsuiteDir(configFileName, c.General.CertsuiteConfigDir, "certsuite_config_dir", "CERTSUITE_CONFIG_DIR")
 }
 
 func (c *Config) deployCertsuiteReportDir(configFileName string) error {
-	return deployTnfDir(configFileName, c.General.CertsuiteReportDir, "certsuite_report_dir", "CERTSUITE_REPORT_DIR")
+	return deployCertsuiteDir(configFileName, c.General.CertsuiteReportDir, "certsuite_report_dir", "CERTSUITE_REPORT_DIR")
 }
 
 func checkFileExists(filePath, name string) (string, error) {
@@ -214,7 +214,7 @@ func checkFileExists(filePath, name string) (string, error) {
 	return "", fmt.Errorf("path to %s file not valid: %s , err=%w, exiting", name, fullPath, err)
 }
 
-func deployTnfDir(confFileName string, dirName string, yamlTag string, envVar string) error {
+func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, envVar string) error {
 	_, err := os.Stat(dirName)
 
 	if os.IsNotExist(err) {

@@ -16,12 +16,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -43,7 +43,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineRtPod(tsparams.TestPodName, randomNamespace,
-			tsparams.RtImageName, tsparams.TnfTargetPodLabels)
+			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -53,12 +53,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		Expect(err).To(BeNil())
 
 		By("Start rt-apps-no-exec-probes test")
-		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteRtAppsNoExecProbes,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteRtAppsNoExecProbes,
 			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -66,7 +66,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	It("Rt app pod with exec probes ", func() {
 		By("Define pod")
 		testPod := tshelper.DefineRtPod(tsparams.TestPodName, randomNamespace,
-			tsparams.RtImageName, tsparams.TnfTargetPodLabels)
+			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithLivenessProbe(testPod)
 
@@ -78,12 +78,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		Expect(err).To(BeNil())
 
 		By("Start rt-apps-no-exec-probes test")
-		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteRtAppsNoExecProbes,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteRtAppsNoExecProbes,
 			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -92,7 +92,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")
@@ -108,12 +108,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		Expect(runningPod.Spec.Containers[0].Resources.Requests.Cpu().String()).To(Equal("1"))
 
 		By("Start rt-apps-no-exec-probes test")
-		err = globalhelper.LaunchTests(tsparams.TnfRtAppsNoExecProbes,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteRtAppsNoExecProbes,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfRtAppsNoExecProbes,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteRtAppsNoExecProbes,
 			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

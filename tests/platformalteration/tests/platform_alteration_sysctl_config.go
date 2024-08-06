@@ -22,13 +22,13 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -52,7 +52,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
@@ -68,11 +68,11 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].Name).To(Equal("host"))
 
 		By("Start platform-alteration-sysctl-config test")
-		err = globalhelper.LaunchTests(tsparams.TnfSysctlConfigName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteSysctlConfigName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -82,7 +82,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
@@ -125,11 +125,11 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-sysctl-config test")
-		err = globalhelper.LaunchTests(tsparams.TnfSysctlConfigName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteSysctlConfigName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

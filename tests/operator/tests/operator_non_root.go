@@ -18,18 +18,18 @@ var _ = Describe("Operator pods non-root", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.OperatorNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
-			tsparams.TnfTargetCrdFilters, randomCertsuiteConfigDir)
+			tsparams.CertsuiteTargetCrdFilters, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -97,13 +97,13 @@ var _ = Describe("Operator pods non-root", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfOperatorNonRoot,
+			tsparams.CertsuiteOperatorNonRoot,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfOperatorNonRoot,
+			tsparams.CertsuiteOperatorNonRoot,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

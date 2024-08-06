@@ -15,12 +15,12 @@ var _ = Describe("manageability-containers-image-tag", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.ManageabilityNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -37,19 +37,19 @@ var _ = Describe("manageability-containers-image-tag", func() {
 	It("One pod with valid image tag", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			tsparams.TestImageWithValidTag, tsparams.TnfTargetPodLabels)
+			tsparams.TestImageWithValidTag, tsparams.CertsuiteTargetPodLabels)
 
 		By("Create pod")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start containers-image-tag test")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerImageTag,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerImageTag,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerImageTag,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerImageTag,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -58,18 +58,18 @@ var _ = Describe("manageability-containers-image-tag", func() {
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start containers-image-tag test")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerImageTag,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerImageTag,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerImageTag,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerImageTag,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

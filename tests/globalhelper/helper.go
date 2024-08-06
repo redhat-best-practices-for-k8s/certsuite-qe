@@ -33,7 +33,7 @@ const (
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir string) error {
 	claimReport, err := OpenClaimReport(reportDir)
 	if err != nil {
-		return fmt.Errorf("failed to open tnf claim report, err: %w", err)
+		return fmt.Errorf("failed to open certsuite claim report, err: %w", err)
 	}
 
 	err = IsExpectedStatusParamValid(tcExpectedStatus)
@@ -65,65 +65,65 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir
 	return nil
 }
 
-// DefineTnfConfig creates tnf_config.yml file under tnf config directory.
-func DefineTnfConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
+// DefineCertsuiteConfig creates tnf_config.yml file under certsuite config directory.
+func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
 	certifiedContainerInfo []string, crdFilters []string, configDir string) error {
-	tnfConfigFilePath := path.Join(configDir, globalparameters.DefaultTnfConfigFileName)
+	certsuiteConfigFilePath := path.Join(configDir, globalparameters.DefaultCertsuiteConfigFileName)
 
-	configFile, err := os.OpenFile(tnfConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	configFile, err := os.OpenFile(certsuiteConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		return fmt.Errorf("error opening/creating file %s: %w", tnfConfigFilePath, err)
+		return fmt.Errorf("error opening/creating file %s: %w", certsuiteConfigFilePath, err)
 	}
 
 	defer configFile.Close()
 	configFileEncoder := yaml.NewEncoder(configFile)
-	tnfConfig := globalparameters.TnfConfig{}
+	certsuiteConfig := globalparameters.CertsuiteConfig{}
 
 	// Configure the collector submission details
-	tnfConfig.ExecutedBy = ExecutedBy
-	tnfConfig.CollectorAppPassword = AppPwd
-	tnfConfig.PartnerName = PartnerName
+	certsuiteConfig.ExecutedBy = ExecutedBy
+	certsuiteConfig.CollectorAppPassword = AppPwd
+	certsuiteConfig.PartnerName = PartnerName
 
 	// Check if job ID environment variable is set and append to partner name
 	// Example, this should look like "qeuser_1234"
 	jobID := os.Getenv("JOB_ID")
 	if jobID != "" {
-		tnfConfig.PartnerName = fmt.Sprintf("%s_%s", PartnerName, jobID)
+		certsuiteConfig.PartnerName = fmt.Sprintf("%s_%s", PartnerName, jobID)
 	}
 
-	err = defineTnfNamespaces(&tnfConfig, namespaces)
+	err = defineCertsuiteNamespaces(&certsuiteConfig, namespaces)
 	if err != nil {
-		return fmt.Errorf("failed to create namespaces section in tnf yaml config file: %w", err)
+		return fmt.Errorf("failed to create namespaces section in certsuite yaml config file: %w", err)
 	}
 
-	err = definePodUnderTestLabels(&tnfConfig, targetPodLabels)
+	err = definePodUnderTestLabels(&certsuiteConfig, targetPodLabels)
 	if err != nil {
-		return fmt.Errorf("failed to create target pod labels section in tnf yaml config file: %w", err)
+		return fmt.Errorf("failed to create target pod labels section in certsuite yaml config file: %w", err)
 	}
 
-	err = defineOperatorsUnderTestLabels(&tnfConfig, targetOperatorLabels)
+	err = defineOperatorsUnderTestLabels(&certsuiteConfig, targetOperatorLabels)
 	if err != nil {
-		return fmt.Errorf("failed to create target operator labels section in tnf yaml config file: %w", err)
+		return fmt.Errorf("failed to create target operator labels section in certsuite yaml config file: %w", err)
 	}
 
-	err = defineCertifiedContainersInfo(&tnfConfig, certifiedContainerInfo)
+	err = defineCertifiedContainersInfo(&certsuiteConfig, certifiedContainerInfo)
 	if err != nil {
-		return fmt.Errorf("failed to create certified containers info section in tnf yaml config file: %w", err)
+		return fmt.Errorf("failed to create certified containers info section in certsuite yaml config file: %w", err)
 	}
 
 	// CRD filters is an optional field.
-	err = defineCrdFilters(&tnfConfig, crdFilters)
+	err = defineCrdFilters(&certsuiteConfig, crdFilters)
 	if err != nil {
-		return fmt.Errorf("failed to create crd filters section in tnf yaml config file: %w", err)
+		return fmt.Errorf("failed to create crd filters section in certsuite yaml config file: %w", err)
 	}
 
-	err = configFileEncoder.Encode(tnfConfig)
+	err = configFileEncoder.Encode(certsuiteConfig)
 	if err != nil {
-		return fmt.Errorf("failed to encode tnf yaml config file on %s: %w", tnfConfigFilePath, err)
+		return fmt.Errorf("failed to encode certsuite yaml config file on %s: %w", certsuiteConfigFilePath, err)
 	}
 
 	glog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
-		globalparameters.DefaultTnfConfigFileName, configDir))
+		globalparameters.DefaultCertsuiteConfigFileName, configDir))
 
 	return nil
 }
@@ -149,7 +149,7 @@ func AppendContainersToDeployment(deployment *appsv1.Deployment, containersNum i
 	}
 }
 
-func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certifiedContainerInfo []string) error {
+func defineCertifiedContainersInfo(config *globalparameters.CertsuiteConfig, certifiedContainerInfo []string) error {
 	if len(certifiedContainerInfo) < 1 {
 		// do not add certifiedcontainerinfo to tnf_config at all in this case
 		return nil
@@ -189,7 +189,7 @@ func defineCertifiedContainersInfo(config *globalparameters.TnfConfig, certified
 	return nil
 }
 
-func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string) error {
+func defineCertsuiteNamespaces(config *globalparameters.CertsuiteConfig, namespaces []string) error {
 	if len(namespaces) < 1 {
 		return fmt.Errorf("target namespaces cannot be empty list")
 	}
@@ -207,7 +207,7 @@ func defineTnfNamespaces(config *globalparameters.TnfConfig, namespaces []string
 	return nil
 }
 
-func definePodUnderTestLabels(config *globalparameters.TnfConfig, podsUnderTestLabels []string) error {
+func definePodUnderTestLabels(config *globalparameters.CertsuiteConfig, podsUnderTestLabels []string) error {
 	if len(podsUnderTestLabels) < 1 {
 		return fmt.Errorf("pods under test labels cannot be empty list")
 	}
@@ -228,7 +228,7 @@ func definePodUnderTestLabels(config *globalparameters.TnfConfig, podsUnderTestL
 	return nil
 }
 
-func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operatorsUnderTestLabels []string) error {
+func defineOperatorsUnderTestLabels(config *globalparameters.CertsuiteConfig, operatorsUnderTestLabels []string) error {
 	if config == nil {
 		return fmt.Errorf("config struct cannot be nil")
 	}
@@ -240,13 +240,13 @@ func defineOperatorsUnderTestLabels(config *globalparameters.TnfConfig, operator
 	return nil
 }
 
-func defineCrdFilters(config *globalparameters.TnfConfig, crdSuffixes []string) error {
+func defineCrdFilters(config *globalparameters.CertsuiteConfig, crdSuffixes []string) error {
 	if config == nil {
 		return fmt.Errorf("config struct cannot be nil")
 	}
 
 	for _, crdSuffix := range crdSuffixes {
-		glog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to tnf configuration file", crdSuffix))
+		glog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to certsuite configuration file", crdSuffix))
 
 		config.TargetCrdFilters = append(config.TargetCrdFilters, globalparameters.TargetCrdFilter{
 			NameSuffix: crdSuffix,

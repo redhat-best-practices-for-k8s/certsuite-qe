@@ -16,12 +16,12 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -49,13 +49,13 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -75,13 +75,13 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -101,13 +101,13 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -121,13 +121,13 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfNetworkPolicyDenyAllTcName,
+			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -165,8 +165,8 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 				randomSecondaryNamespace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
 			Expect(err).ToNot(HaveOccurred())
 
-			By("Define TNF config file")
-			err = globalhelper.DefineTnfConfig(
+			By("Define certsuite config file")
+			err = globalhelper.DefineCertsuiteConfig(
 				[]string{randomNamespace, randomSecondaryNamespace},
 				[]string{tsparams.TestPodLabel},
 				[]string{},
@@ -176,13 +176,13 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 			By("Start tests")
 			err = globalhelper.LaunchTests(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
+				tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
+				tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 				globalparameters.TestCasePassed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -219,8 +219,8 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 				randomSecondaryNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
 			Expect(err).ToNot(HaveOccurred())
 
-			By("Define TNF config file")
-			err = globalhelper.DefineTnfConfig(
+			By("Define certsuite config file")
+			err = globalhelper.DefineCertsuiteConfig(
 				[]string{randomNamespace, randomSecondaryNamespace},
 				[]string{tsparams.TestPodLabel},
 				[]string{},
@@ -230,13 +230,13 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 
 			By("Start tests")
 			err = globalhelper.LaunchTests(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
+				tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 			Expect(err).ToNot(HaveOccurred())
 
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfNetworkPolicyDenyAllTcName,
+				tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		})

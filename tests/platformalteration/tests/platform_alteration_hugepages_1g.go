@@ -17,13 +17,13 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -50,7 +50,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
 
@@ -59,12 +59,12 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages1gOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -72,7 +72,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define pod with 1Gi hugepages")
 		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels)
+			tsparams.CertsuiteTargetPodLabels)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 		pod.RedefineWith1GiHugepages(put, 1)
 
@@ -81,12 +81,12 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages1gOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -94,7 +94,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
 		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
@@ -103,12 +103,12 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages1gOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 	})
@@ -117,7 +117,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
@@ -131,12 +131,12 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages1gOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages1gOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -144,7 +144,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
@@ -158,12 +158,12 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start platform-alteration-hugepages-1g-only test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePages1gOnlyName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages1gOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePages1gOnlyName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages1gOnlyName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

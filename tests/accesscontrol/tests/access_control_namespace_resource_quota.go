@@ -18,7 +18,7 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.TestAccessControlNameSpace)
@@ -28,14 +28,14 @@ var _ = Describe("Access-control namespace-resource-quota,", func() {
 		err := globalhelper.CreateNamespace(randomNamespace2)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Define tnf config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 	})
 
 	AfterEach(func() {

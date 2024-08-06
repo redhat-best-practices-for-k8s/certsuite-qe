@@ -25,23 +25,23 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		}
 
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.TestAccessControlNameSpace)
 
-		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
-			[]string{tsparams.TnfTargetCrdFilters}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+			[]string{tsparams.CertsuiteTargetCrdFilters}, randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		// We have to pre-install the cr-scale-operator resources prior to running these tests.
 		By("Check if cr-scale-operator is installed")
-		exists, err := globalhelper.NamespaceExists(tsparams.TnfTargetOperatorNamespace)
+		exists, err := globalhelper.NamespaceExists(tsparams.CertsuiteTargetOperatorNamespace)
 		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scale-operator is installed")
 		if !exists {
 			// Skip the test if cr-scaling-operator is not installed
@@ -56,14 +56,14 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 
 	It("Custom resource is deployed, proper role defined", func() {
 		By("Create a custom resource")
-		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
-			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
+		_, err := crdutils.CreateCustomResourceScale(tsparams.CertsuiteCustomResourceName, randomNamespace,
+			tsparams.CertsuiteTargetOperatorLabels, tsparams.CertsuiteTargetOperatorLabelsMap)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create a role for the custom resource")
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
-		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.TnfCustomResourceAPIGroupName})
-		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
+		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.CertsuiteCustomResourceAPIGroupName})
+		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.CertsuiteCustomResourceResourceName})
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -74,25 +74,25 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		})
 
 		By("Start lifecycle-crd-scaling test")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdRoles, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("Custom resource is deployed, one role defined with multiple api groups [negative]", func() {
 		By("Create a scale custom resource")
-		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
-			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
+		_, err := crdutils.CreateCustomResourceScale(tsparams.CertsuiteCustomResourceName, randomNamespace,
+			tsparams.CertsuiteTargetOperatorLabels, tsparams.CertsuiteTargetOperatorLabelsMap)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create a role for the custom resource")
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
-		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.TnfCustomResourceAPIGroupName, "rbac.authorization.k8s.io"})
-		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
+		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.CertsuiteCustomResourceAPIGroupName, "rbac.authorization.k8s.io"})
+		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.CertsuiteCustomResourceResourceName})
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -103,25 +103,25 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		})
 
 		By("Start lifecycle-crd-scaling test")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdRoles, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("Custom resource is deployed, one role with multiple resources defined [negative]", func() {
 		By("Create a scale custom resource")
-		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
-			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
+		_, err := crdutils.CreateCustomResourceScale(tsparams.CertsuiteCustomResourceName, randomNamespace,
+			tsparams.CertsuiteTargetOperatorLabels, tsparams.CertsuiteTargetOperatorLabelsMap)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create a role for the custom resource")
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
-		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.TnfCustomResourceAPIGroupName})
-		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName, "pods"})
+		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{tsparams.CertsuiteCustomResourceAPIGroupName})
+		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.CertsuiteCustomResourceResourceName, "pods"})
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -132,25 +132,25 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		})
 
 		By("Start lifecycle-crd-scaling test")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdRoles, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	It("Custom resource is deployed, with improper role [skip]", func() {
 		By("Create a scale custom resource")
-		_, err := crdutils.CreateCustomResourceScale(tsparams.TnfCustomResourceName, randomNamespace,
-			tsparams.TnfTargetOperatorLabels, tsparams.TnfTargetOperatorLabelsMap)
+		_, err := crdutils.CreateCustomResourceScale(tsparams.CertsuiteCustomResourceName, randomNamespace,
+			tsparams.CertsuiteTargetOperatorLabels, tsparams.CertsuiteTargetOperatorLabelsMap)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create a role for the custom resource")
 		testRole := globalhelper.DefineRole("memcached-role", randomNamespace)
 		globalhelper.RedefineRoleWithAPIGroups(testRole, []string{"bad.example.com"})
-		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.TnfCustomResourceResourceName})
+		globalhelper.RedefineRoleWithResources(testRole, []string{tsparams.CertsuiteCustomResourceResourceName})
 		err = globalhelper.CreateRole(testRole)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -161,12 +161,12 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 		})
 
 		By("Start lifecycle-crd-scaling test")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdRoles,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdRoles,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdRoles, globalparameters.TestCaseSkipped, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdRoles, globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

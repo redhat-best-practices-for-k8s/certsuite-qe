@@ -29,7 +29,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			Skip("Skipping operator certification tests on kind cluster")
 		}
 
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.TestCertificationNameSpace)

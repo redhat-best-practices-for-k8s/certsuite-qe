@@ -60,15 +60,15 @@ func preConfigureAffiliatedCertificationEnvironment(namespace, configDir string)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operatorgroup")
 	}
 
-	By("Define config file " + globalparameters.DefaultTnfConfigFileName)
+	By("Define config file " + globalparameters.DefaultCertsuiteConfigFileName)
 
-	err = globalhelper.DefineTnfConfig(
+	err = globalhelper.DefineCertsuiteConfig(
 		[]string{namespace},
 		[]string{tsparams.TestPodLabel},
 		[]string{},
 		[]string{},
 		[]string{}, configDir)
-	Expect(err).ToNot(HaveOccurred(), "Error defining tnf config file")
+	Expect(err).ToNot(HaveOccurred(), "Error defining certsuite config file")
 }
 
 func waitUntilOperatorIsReady(csvPrefix, namespace string) error {

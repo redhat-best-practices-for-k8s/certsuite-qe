@@ -20,13 +20,13 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.PlatformAlterationNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -56,12 +56,12 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 
 		// cluster should be set with kernel hugepages = MC hugepages configuration by performance profile.
 		By("Start platform-alteration-hugepages-config test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePagesConfigName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePagesConfigName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfHugePagesConfigName,
+			tsparams.CertsuiteHugePagesConfigName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -76,7 +76,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
-			tsparams.TnfTargetPodLabels, tsparams.TestDaemonSetName)
+			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
@@ -109,11 +109,11 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "failed to update and verify hugepages file: %s, %v ", hugePagesPaths[0], err)
 
 		By("Start platform-alteration-hugepages-config test")
-		err = globalhelper.LaunchTests(tsparams.TnfHugePagesConfigName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePagesConfigName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfHugePagesConfigName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePagesConfigName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Fix hugepages config")

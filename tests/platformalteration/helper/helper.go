@@ -123,7 +123,7 @@ func AppendIstioContainerToPod(pod *corev1.Pod, image string) {
 // Creates deployment with one pod with one non-UBI based container.
 func DefineDeploymentWithNonUBIContainer(namespace string) *appsv1.Deployment {
 	dep := deployment.DefineDeployment(tsparams.TestDeploymentName, namespace,
-		tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
+		tsparams.NotRedHatRelease, tsparams.CertsuiteTargetPodLabels)
 
 	// Workaround as this non-ubi test image needs /bin/sh (busybox) instead of /bin/bash.
 	deployment.RedefineWithContainerSpecs(dep, []corev1.Container{
@@ -140,7 +140,7 @@ func DefineDeploymentWithNonUBIContainer(namespace string) *appsv1.Deployment {
 // Creates statefulset with one pod with one non-UBI based container.
 func DefineStatefulSetWithNonUBIContainer(namespace string) *appsv1.StatefulSet {
 	sts := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName, namespace,
-		tsparams.NotRedHatRelease, tsparams.TnfTargetPodLabels)
+		tsparams.NotRedHatRelease, tsparams.CertsuiteTargetPodLabels)
 
 	// Workaround as this non-ubi test image needs /bin/sh (busybox) instead of /bin/bash.
 	statefulset.RedefineWithContainerSpecs(sts, []corev1.Container{

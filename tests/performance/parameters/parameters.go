@@ -10,31 +10,31 @@ const (
 )
 
 var (
-	testPodLabelPrefixName = "test-network-function.com/performance"
-	testPodLabelValue      = "testing"
-	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
-	TestPodName            = "performance-pod"
-	TnfTargetPodLabels     = map[string]string{
+	testPodLabelPrefixName   = "test-network-function.com/performance"
+	testPodLabelValue        = "testing"
+	TestPodLabel             = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	TestPodName              = "performance-pod"
+	CertsuiteTargetPodLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
 )
 
 const (
-	TnfTestSuiteName     = "performance"
-	PerformanceNamespace = "performance-ns"
+	CertsuiteTestSuiteName = "performance"
+	PerformanceNamespace   = "performance-ns"
 
-	RtImageName = "quay.io/testnetworkfunction/debug-partner:latest"
+	RtImageName = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
 
-	// TNF test cases names.
-	TnfExclusiveCPUPool                   = "performance-exclusive-cpu-pool"
-	TnfSharedCPUPoolSchedulingPolicy      = "performance-shared-cpu-pool-non-rt-scheduling-policy"
-	TnfRtIsolatedCPUPoolSchedulingPolicy  = "performance-isolated-cpu-pool-rt-scheduling-policy"
-	TnfRtExclusiveCPUPoolSchedulingPolicy = "performance-exclusive-cpu-pool-rt-scheduling-policy"
-	TnfRtAppsNoExecProbes                 = "performance-rt-apps-no-exec-probes"
+	// Certsuite test case names.
+	CertsuiteExclusiveCPUPool                   = "performance-exclusive-cpu-pool"
+	CertsuiteSharedCPUPoolSchedulingPolicy      = "performance-shared-cpu-pool-non-rt-scheduling-policy"
+	CertsuiteRtIsolatedCPUPoolSchedulingPolicy  = "performance-isolated-cpu-pool-rt-scheduling-policy"
+	CertsuiteRtExclusiveCPUPoolSchedulingPolicy = "performance-exclusive-cpu-pool-rt-scheduling-policy"
+	CertsuiteRtAppsNoExecProbes                 = "performance-rt-apps-no-exec-probes"
 
-	PrivilegedRoleName = "privileged-role"
-	TnfRunTimeClass    = "performance-rtc"
+	PrivilegedRoleName    = "privileged-role"
+	CertsuiteRunTimeClass = "performance-rtc"
 
 	DisableStr = "disable"
 )

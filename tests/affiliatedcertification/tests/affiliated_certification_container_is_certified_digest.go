@@ -19,19 +19,19 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
 				tsparams.TestCertificationNameSpace)
 
-		By("Define tnf config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "error defining tnf config file")
+		Expect(err).ToNot(HaveOccurred(), "error defining certsuite config file")
 
 		By("Check if the test image is certified prior to deployment")
 		// Using the 'oct' repo, we should do a quick assertion to see if the image is available

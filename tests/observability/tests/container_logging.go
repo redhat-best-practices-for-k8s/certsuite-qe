@@ -11,20 +11,20 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
-var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
+var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
-			tshelper.GetTnfTargetPodLabelsSlice(),
+			tshelper.GetCertsuiteTargetPodLabelsSlice(),
 			[]string{},
 			[]string{},
 			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomCertsuiteConfigDir)
@@ -48,13 +48,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -69,13 +70,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -90,13 +92,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -114,13 +117,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -148,13 +152,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -179,13 +184,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -198,13 +204,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -217,13 +224,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -238,13 +246,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -259,13 +268,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -289,13 +299,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -308,13 +319,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -339,13 +351,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -364,13 +377,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -390,19 +404,20 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 51768
-	It("One deployment with one pod and one container without TNF target labels [skip]", func() {
-		By("Create deployment without TNF target labels in the cluster")
+	It("One deployment with one pod and one container without Certsuite target labels [skip]", func() {
+		By("Create deployment without Certsuite target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(
 			tsparams.TestDeploymentBaseName, randomNamespace)
 
@@ -410,13 +425,14 @@ var _ = Describe(tsparams.TnfContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfContainerLoggingTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfContainerLoggingTcName,
+		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfContainerLoggingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteContainerLoggingTcName,
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

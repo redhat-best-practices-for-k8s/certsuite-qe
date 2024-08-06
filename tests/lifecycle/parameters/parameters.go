@@ -23,45 +23,45 @@ var (
 	AffinityRequiredPodLabels = map[string]string{
 		"AffinityRequired": "true",
 	}
-	TnfTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
-	TnfTargetOperatorLabelsMap = map[string]string{
+	CertsuiteTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
+	CertsuiteTargetOperatorLabelsMap = map[string]string{
 		"cnf/test": "cr-scale-operator",
 	}
-	TnfTargetCrdFilters        = "memcacheds.cache.example.com"
-	TnfTargetOperatorNamespace = "cr-scale-operator-system"
-	TnfCustomResourceName      = "memcached-sample"
+	CertsuiteTargetCrdFilters        = "memcacheds.cache.example.com"
+	CertsuiteTargetOperatorNamespace = "cr-scale-operator-system"
+	CertsuiteCustomResourceName      = "memcached-sample"
 
 	TestLocalStorageClassName = "local-storage"
 )
 
 const (
-	TestDeploymentName  = "lifecycle-dpa"
-	TestDaemonSetName   = "lifecycle-dsa"
-	TestStatefulSetName = "lifecycle-sfa"
-	TestPodName         = "lifecycle-pod"
-	TestReplicaSetName  = "lifecycle-rsa"
-	TestPVName          = "lifecycle-pv"
-	TestPVCName         = "lifecycle-pvc"
-	TestVolumeName      = "lifecycle-storage"
-	TnfRunTimeClass     = "lifecycle-rtc"
+	TestDeploymentName    = "lifecycle-dpa"
+	TestDaemonSetName     = "lifecycle-dsa"
+	TestStatefulSetName   = "lifecycle-sfa"
+	TestPodName           = "lifecycle-pod"
+	TestReplicaSetName    = "lifecycle-rsa"
+	TestPVName            = "lifecycle-pv"
+	TestPVCName           = "lifecycle-pvc"
+	TestVolumeName        = "lifecycle-storage"
+	CertsuiteRunTimeClass = "lifecycle-rtc"
 
 	// Test Case names.
-	TnfCrdScaling                          = "lifecycle-crd-scaling"
-	TnfShutdownTcName                      = "lifecycle-container-prestop"
-	TnfDeploymentScalingTcName             = "lifecycle-deployment-scaling"
-	TnfPodOwnerTypeTcName                  = "lifecycle-pod-owner-type"
-	TnfPodRecreationTcName                 = "lifecycle-pod-recreation"
-	TnfPodHighAvailabilityTcName           = "lifecycle-pod-high-availability"
-	TnfPodSchedulingTcName                 = "lifecycle-pod-scheduling"
-	TnfLivenessTcName                      = "lifecycle-liveness-probe"
-	TnfReadinessTcName                     = "lifecycle-readiness-probe"
-	TnfStatefulSetScalingTcName            = "lifecycle-statefulset-scaling"
-	CertsuiteImagePullPolicyTcName         = "lifecycle-image-pull-policy"
-	TnfPersistentVolumeReclaimPolicyTcName = "lifecycle-persistent-volume-reclaim-policy"
-	TnfCPUIsolationTcName                  = "lifecycle-cpu-isolation"
-	TnfStartUpProbeTcName                  = "lifecycle-startup-probe"
-	TnfAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
-	TnfContainerStartUpTcName              = "lifecycle-container-poststart"
-	TnfPodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
-	TnfStorageProvisioner                  = "lifecycle-storage-provisioner"
+	CertsuiteCrdScaling                          = "lifecycle-crd-scaling"
+	CertsuiteShutdownTcName                      = "lifecycle-container-prestop"
+	CertsuiteDeploymentScalingTcName             = "lifecycle-deployment-scaling"
+	CertsuitePodOwnerTypeTcName                  = "lifecycle-pod-owner-type"
+	CertsuitePodRecreationTcName                 = "lifecycle-pod-recreation"
+	CertsuitePodHighAvailabilityTcName           = "lifecycle-pod-high-availability"
+	CertsuitePodSchedulingTcName                 = "lifecycle-pod-scheduling"
+	CertsuiteLivenessTcName                      = "lifecycle-liveness-probe"
+	CertsuiteReadinessTcName                     = "lifecycle-readiness-probe"
+	CertsuiteStatefulSetScalingTcName            = "lifecycle-statefulset-scaling"
+	CertsuiteImagePullPolicyTcName               = "lifecycle-image-pull-policy"
+	CertsuitePersistentVolumeReclaimPolicyTcName = "lifecycle-persistent-volume-reclaim-policy"
+	CertsuiteCPUIsolationTcName                  = "lifecycle-cpu-isolation"
+	CertsuiteStartUpProbeTcName                  = "lifecycle-startup-probe"
+	CertsuiteAffinityRequiredPodsTcName          = "lifecycle-affinity-required-pods"
+	CertsuiteContainerStartUpTcName              = "lifecycle-container-poststart"
+	CertsuitePodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
+	CertsuiteStorageProvisioner                  = "lifecycle-storage-provisioner"
 )

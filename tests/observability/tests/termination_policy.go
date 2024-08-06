@@ -11,20 +11,20 @@ import (
 	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
 )
 
-var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
+var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
-			tshelper.GetTnfTargetPodLabelsSlice(),
+			tshelper.GetCertsuiteTargetPodLabelsSlice(),
 			[]string{},
 			[]string{},
 			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomCertsuiteConfigDir)
@@ -54,13 +54,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
 			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -84,13 +84,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
 			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -118,13 +118,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			Expect(container.TerminationMessagePolicy).To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 		}
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -163,13 +163,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(runningStatefulSet.Spec.Template.Spec.Containers[0].TerminationMessagePolicy).
 			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -186,13 +186,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -219,13 +219,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Containers[1].TerminationMessagePolicy).
 			To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -244,13 +244,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -283,13 +283,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -316,21 +316,21 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// Skip #1.
-	It("One deployment with one pod and one container without TNF target labels [skip]", func() {
+	It("One deployment with one pod and one container without Certsuite target labels [skip]", func() {
 
-		By("Define deployment without TNF target labels in the cluster")
+		By("Define deployment without Certsuite target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(tsparams.TestDeploymentBaseName, randomNamespace)
 
 		By("Create deployment")
@@ -338,13 +338,13 @@ var _ = Describe(tsparams.TnfTerminationMsgPolicyTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Start TNF " + tsparams.TnfTerminationMsgPolicyTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfTerminationMsgPolicyTcName,
+		By("Start Certsuite " + tsparams.CertsuiteTerminationMsgPolicyTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteTerminationMsgPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfTerminationMsgPolicyTcName, globalparameters.TestCaseSkipped,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteTerminationMsgPolicyTcName, globalparameters.TestCaseSkipped,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

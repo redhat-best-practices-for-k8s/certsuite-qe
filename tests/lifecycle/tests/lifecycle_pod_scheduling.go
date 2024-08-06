@@ -26,15 +26,15 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 	}
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -56,17 +56,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseSkipped, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCasePassed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCasePassed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}
 	})
@@ -85,17 +87,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseSkipped, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}
 	})
@@ -113,17 +117,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseSkipped, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}
 	})
@@ -150,17 +156,19 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseSkipped, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseSkipped, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodSchedulingTcName, globalparameters.TestCaseFailed, randomReportDir)
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodSchedulingTcName,
+				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}
 	})
@@ -186,21 +194,21 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-pod-scheduling test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodSchedulingTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfPodSchedulingTcName,
+				tsparams.CertsuitePodSchedulingTcName,
 				globalparameters.TestCaseSkipped,
 				randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfPodSchedulingTcName,
+				tsparams.CertsuitePodSchedulingTcName,
 				globalparameters.TestCaseFailed,
 				randomReportDir)
 			Expect(err).ToNot(HaveOccurred())

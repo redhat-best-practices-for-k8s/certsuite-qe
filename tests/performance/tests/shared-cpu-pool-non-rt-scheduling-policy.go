@@ -16,12 +16,12 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -43,20 +43,20 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfSharedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfSharedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -65,7 +65,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TnfTargetPodLabels)
+			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")
@@ -75,13 +75,13 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfSharedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).NotTo(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfSharedCPUPoolSchedulingPolicy,
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
 			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

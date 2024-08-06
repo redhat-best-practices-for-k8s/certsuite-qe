@@ -23,15 +23,15 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 	BeforeEach(func() {
 		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -82,12 +82,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvc.Name))
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -123,12 +123,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -165,12 +165,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -214,12 +214,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvc.Name))
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -256,12 +256,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -340,12 +340,12 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName).To(Equal(pvcb.Name))
 
 		By("Start lifecycle-persistent-volume-reclaim-policy test")
-		err = globalhelper.LaunchTests(tsparams.TnfPersistentVolumeReclaimPolicyTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

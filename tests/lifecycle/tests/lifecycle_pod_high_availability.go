@@ -25,15 +25,15 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		}
 
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -69,12 +69,13 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodHighAvailabilityTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -118,12 +119,13 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodHighAvailabilityTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -150,12 +152,13 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodHighAvailabilityTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -193,12 +196,13 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName, globalparameters.TestCaseFailed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodHighAvailabilityTcName,
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -226,20 +230,20 @@ var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
 		Expect(runningDeployment.Spec.Template.Spec.Affinity.PodAntiAffinity).ToNot(BeNil())
 
 		By("Start lifecycle pod-high-availability test")
-		err = globalhelper.LaunchTests(tsparams.TnfPodHighAvailabilityTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuitePodHighAvailabilityTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		if globalhelper.GetNumberOfNodes(globalhelper.GetAPIClient().K8sClient.CoreV1()) == 1 {
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
-				tsparams.TnfPodHighAvailabilityTcName,
+				tsparams.CertsuitePodHighAvailabilityTcName,
 				globalparameters.TestCaseSkipped,
 				randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		} else {
 			By("Verify test case status in Claim report")
-			err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfPodHighAvailabilityTcName,
+			err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodHighAvailabilityTcName,
 				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		}

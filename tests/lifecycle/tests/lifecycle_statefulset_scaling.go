@@ -31,15 +31,15 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		}
 
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -67,12 +67,13 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("start lifecycle-statefulset-scaling test")
-		err = globalhelper.LaunchTests(tsparams.TnfStatefulSetScalingTcName,
+		err = globalhelper.LaunchTests(tsparams.CertsuiteStatefulSetScalingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfStatefulSetScalingTcName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteStatefulSetScalingTcName,
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })

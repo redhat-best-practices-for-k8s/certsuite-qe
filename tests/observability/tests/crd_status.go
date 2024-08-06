@@ -22,20 +22,20 @@ const (
 	CreateCRDInClusterStr = "Create CRD in the cluster with suffix "
 )
 
-var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
+var _ = Describe(tsparams.CertsuiteCrdStatusTcName, Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
-			tshelper.GetTnfTargetPodLabelsSlice(),
+			tshelper.GetCertsuiteTargetPodLabelsSlice(),
 			[]string{},
 			[]string{},
 			[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, randomCertsuiteConfigDir)
@@ -66,15 +66,15 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		// Save CRD to be removed after the TC has finished.
 		crdNames = append(crdNames, crd1.Name)
 
-		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
+		By("Start Certsuite " + tsparams.CertsuiteCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdStatusTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -97,15 +97,15 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 		crdNames = append(crdNames, crd2.Name)
 
-		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
+		By("Start Certsuite " + tsparams.CertsuiteCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCasePassed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdStatusTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -121,15 +121,15 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		// Save CRD to be removed after the TC has finished.
 		crdNames = append(crdNames, crd1.Name)
 
-		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
+		By("Start Certsuite " + tsparams.CertsuiteCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdStatusTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -152,15 +152,15 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 		crdNames = append(crdNames, crd2.Name)
 
-		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
+		By("Start Certsuite " + tsparams.CertsuiteCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdStatusTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -183,15 +183,15 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		crdNames = append(crdNames, crd1.Name)
 		crdNames = append(crdNames, crd2.Name)
 
-		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
+		By("Start Certsuite " + tsparams.CertsuiteCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseFailed,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdStatusTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -208,15 +208,15 @@ var _ = Describe(tsparams.TnfCrdStatusTcName, Serial, func() {
 		// Save CRD to be removed after the TC has finished.
 		crdNames = append(crdNames, crd1.Name)
 
-		By("Start TNF " + tsparams.TnfCrdStatusTcName + " test case")
-		err = globalhelper.LaunchTests(tsparams.TnfCrdStatusTcName,
+		By("Start Certsuite " + tsparams.CertsuiteCrdStatusTcName + " test case")
+		err = globalhelper.LaunchTests(tsparams.CertsuiteCrdStatusTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
 			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.TnfCrdStatusTcName, globalparameters.TestCaseSkipped,
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCrdStatusTcName, globalparameters.TestCaseSkipped,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

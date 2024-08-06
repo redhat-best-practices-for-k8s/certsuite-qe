@@ -34,10 +34,10 @@ var _ = SynchronizedBeforeSuite(func() {
 	err := globalhelper.CreateNamespace(tsparams.TestNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
-	By("Define TNF config file")
-	err = globalhelper.DefineTnfConfig(
+	By("Define certsuite config file")
+	err = globalhelper.DefineCertsuiteConfig(
 		[]string{tsparams.TestNamespace},
-		tshelper.GetTnfTargetPodLabelsSlice(),
+		tshelper.GetCertsuiteTargetPodLabelsSlice(),
 		[]string{},
 		[]string{},
 		[]string{tsparams.CrdSuffix1, tsparams.CrdSuffix2}, globalhelper.GetConfiguration().General.CertsuiteConfigDir)

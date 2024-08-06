@@ -17,15 +17,15 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.LifecycleNamespace)
 
-		By("Define TNF config file")
-		err := globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err := globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.TnfTargetOperatorLabels},
+			[]string{tsparams.CertsuiteTargetOperatorLabels},
 			[]string{},
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
@@ -48,13 +48,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -73,13 +73,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -98,13 +98,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -123,13 +123,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -153,13 +153,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -186,13 +186,13 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfPodTolerationBypassTcName,
+			tsparams.CertsuitePodTolerationBypassTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

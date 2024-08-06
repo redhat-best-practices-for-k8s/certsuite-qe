@@ -26,41 +26,41 @@ const (
 )
 
 var (
-	testPodLabelPrefixName = "test-network-function.com/operator"
-	testPodLabelValue      = "testing"
-	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
-	TnfTargetPodLabels     = map[string]string{
+	testPodLabelPrefixName   = "test-network-function.com/operator"
+	testPodLabelValue        = "testing"
+	TestPodLabel             = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
+	CertsuiteTargetPodLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	TnfTargetOperatorLabels      = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
-	TnfTargetCrdFilters          = []string{"charts.operatorhub.io"}
-	OperatorGroupName            = "operator-test-operator-group"
-	OperatorLabel                = map[string]string{"test-network-function.com/operator": "target"}
-	CertifiedOperatorGroup       = "certified-operators"
-	CommunityOperatorGroup       = "community-operators"
-	OperatorSourceNamespace      = "openshift-marketplace"
-	OperatorPrefixCloudbees      = "cloudbees-ci"
-	OperatorPrefixAnchore        = "anchore-engine"
-	OperatorPrefixQuay           = "quay-operator"
-	OperatorPrefixKiali          = "kiali-operator"
-	OperatorPrefixOpenvino       = "openvino-operator"
-	CertifiedOperatorPrefixNginx = "nginx-ingress-operator"
-	SubscriptionNameOpenvino     = "ovms-operator-subscription"
+	CertsuiteTargetOperatorLabels = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
+	CertsuiteTargetCrdFilters     = []string{"charts.operatorhub.io"}
+	OperatorGroupName             = "operator-test-operator-group"
+	OperatorLabel                 = map[string]string{"test-network-function.com/operator": "target"}
+	CertifiedOperatorGroup        = "certified-operators"
+	CommunityOperatorGroup        = "community-operators"
+	OperatorSourceNamespace       = "openshift-marketplace"
+	OperatorPrefixCloudbees       = "cloudbees-ci"
+	OperatorPrefixAnchore         = "anchore-engine"
+	OperatorPrefixQuay            = "quay-operator"
+	OperatorPrefixKiali           = "kiali-operator"
+	OperatorPrefixOpenvino        = "openvino-operator"
+	CertifiedOperatorPrefixNginx  = "nginx-ingress-operator"
+	SubscriptionNameOpenvino      = "ovms-operator-subscription"
 )
 
 const (
 	OperatorNamespace = "operator-ns"
 
-	// TNF test cases names.
-	TnfOperatorInstallSource             = "operator-install-source"
-	TnfOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
-	TnfOperatorInstallStatus             = "operator-install-status-succeeded"
-	TnfOperatorSemanticVersioning        = "operator-semantic-versioning"
-	TnfOperatorCrdVersioning             = "operator-crd-versioning"
-	TnfOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
-	TnfOperatorNonRoot                   = "operator-run-as-non-root"
-	TnfOperatorReadOnlyFilesystem        = "operator-read-only-file-system"
-	TnfOperatorPodAutomountToken         = "operator-automount-tokens"
-	TnfOperatorPodRunAsUserID            = "operator-run-as-user-id"
+	// Certsuite test case names.
+	CertsuiteOperatorInstallSource             = "operator-install-source"
+	CertsuiteOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
+	CertsuiteOperatorInstallStatus             = "operator-install-status-succeeded"
+	CertsuiteOperatorSemanticVersioning        = "operator-semantic-versioning"
+	CertsuiteOperatorCrdVersioning             = "operator-crd-versioning"
+	CertsuiteOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
+	CertsuiteOperatorNonRoot                   = "operator-run-as-non-root"
+	CertsuiteOperatorReadOnlyFilesystem        = "operator-read-only-file-system"
+	CertsuiteOperatorPodAutomountToken         = "operator-automount-tokens"
+	CertsuiteOperatorPodRunAsUserID            = "operator-run-as-user-id"
 )

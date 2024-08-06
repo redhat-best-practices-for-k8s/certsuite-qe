@@ -23,26 +23,26 @@ var (
 		"app":                  "test",
 	}
 
-	TnfTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
-	TnfTargetOperatorLabelsMap = map[string]string{
+	CertsuiteTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
+	CertsuiteTargetOperatorLabelsMap = map[string]string{
 		"cnf/test": "cr-scale-operator",
 	}
-	TnfTargetCrdFilters        = "memcacheds.cache.example.com"
-	TnfTargetOperatorNamespace = "cr-scale-operator-system"
-	TnfCustomResourceName      = "memcached-sample"
+	CertsuiteTargetCrdFilters        = "memcacheds.cache.example.com"
+	CertsuiteTargetOperatorNamespace = "cr-scale-operator-system"
+	CertsuiteCustomResourceName      = "memcached-sample"
 
-	TnfCustomResourceAPIGroupName = "cache.example.com"
-	TnfCustomResourceResourceName = "memcacheds"
+	CertsuiteCustomResourceAPIGroupName = "cache.example.com"
+	CertsuiteCustomResourceResourceName = "memcacheds"
 
 	SSHDaemonStartContainerCommand = []string{"/usr/sbin/sshd", "-f", "/home/tnf-user/sshd/sshd_config", "-D", "-d"}
 )
 
 const (
-	// TNF Test case names.
-	TnfCrdRoles                                     = "access-control-crd-roles"
-	TnfPodRoleBindings                              = "access-control-pod-role-bindings"
-	TnfPodServiceAccount                            = "access-control-pod-service-account"
-	TnfNoSSHDaemonsAllowed                          = "access-control-ssh-daemons"
+	// Certsuite test case names.
+	CertsuiteCrdRoles                               = "access-control-crd-roles"
+	CertsuitePodRoleBindings                        = "access-control-pod-role-bindings"
+	CertsuitePodServiceAccount                      = "access-control-pod-service-account"
+	CertsuiteNoSSHDaemonsAllowed                    = "access-control-ssh-daemons"
 	TestCaseNameAccessControlNamespace              = "access-control-namespace"
 	TestCaseNameAccessControlPodHostIpc             = "access-control-pod-host-ipc"
 	TestCaseNameAccessControlPodHostPid             = "access-control-pod-host-pid"
@@ -60,15 +60,15 @@ const (
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
 	TestCaseNameAccessControlNonRootUser            = "access-control-security-context-non-root-user-check"
 	TestCaseNameAccessControlClusterRoleBindings    = "access-control-cluster-role-bindings"
-	TnfNodePortTcName                               = "access-control-service-type"
+	CertsuiteNodePortTcName                         = "access-control-service-type"
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
-	TnfSecurityContextTcName                        = "access-control-security-context"
+	CertsuiteSecurityContextTcName                  = "access-control-security-context"
 	TestCaseNameAccessControlOneProcessPerContainer = "access-control-one-process-per-container"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
-	SSHDaemonImageName = "quay.io/testnetworkfunction/debug-partner:latest"
+	SSHDaemonImageName = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
 
 	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "112Mi"

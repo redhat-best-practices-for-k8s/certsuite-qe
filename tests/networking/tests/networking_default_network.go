@@ -24,12 +24,12 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and TNF config directories
+		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.TestNetworkingNameSpace)
 
-		By("Define TNF config file")
-		err = globalhelper.DefineTnfConfig(
+		By("Define certsuite config file")
+		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
@@ -51,13 +51,13 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -79,13 +79,13 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -111,13 +111,13 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -136,13 +136,13 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -176,13 +176,13 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TnfDefaultNetworkTcName,
+			tsparams.CertsuiteDefaultNetworkTcName,
 			expectedState, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
