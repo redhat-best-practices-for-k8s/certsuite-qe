@@ -36,8 +36,8 @@ var (
 	CertsuiteDpdkCPUPinningExecProbe             = "networking-dpdk-cpu-pinning-exec-probe"
 
 	DpdkPodName                   = "dpdk-pod"
-	NetworkingTestSkipLabel       = map[string]string{"test-network-function.com/skip_connectivity_tests": ""}
-	NetworkingTestMultusSkipLabel = map[string]string{"test-network-function.com/skip_multus_connectivity_tests": ""}
+	NetworkingTestSkipLabel       = map[string]string{"redhat-best-practices-for-k8s.com/skip_connectivity_tests": ""}
+	NetworkingTestMultusSkipLabel = map[string]string{"redhat-best-practices-for-k8s.com/skip_multus_connectivity_tests": ""}
 )
 
 type IPOutputInterface struct {

@@ -26,17 +26,17 @@ const (
 )
 
 var (
-	testPodLabelPrefixName   = "test-network-function.com/operator"
+	testPodLabelPrefixName   = "redhat-best-practices-for-k8s.com/operator"
 	testPodLabelValue        = "testing"
 	TestPodLabel             = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 	CertsuiteTargetPodLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	CertsuiteTargetOperatorLabels = fmt.Sprintf("%s: %s", "test-network-function.com/operator", "target")
+	CertsuiteTargetOperatorLabels = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
 	CertsuiteTargetCrdFilters     = []string{"charts.operatorhub.io"}
 	OperatorGroupName             = "operator-test-operator-group"
-	OperatorLabel                 = map[string]string{"test-network-function.com/operator": "target"}
+	OperatorLabel                 = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	CertifiedOperatorGroup        = "certified-operators"
 	CommunityOperatorGroup        = "community-operators"
 	OperatorSourceNamespace       = "openshift-marketplace"

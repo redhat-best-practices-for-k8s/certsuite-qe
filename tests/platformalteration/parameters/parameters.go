@@ -11,7 +11,7 @@ const (
 )
 
 var (
-	testPodLabelPrefixName   = "test-network-function.com/platform-alteration"
+	testPodLabelPrefixName   = "redhat-best-practices-for-k8s.com/platform-alteration"
 	testPodLabelValue        = "testing"
 	TestPodLabel             = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)
 	TestDeploymentName       = "platform-alteration-dpa"
