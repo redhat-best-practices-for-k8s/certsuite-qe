@@ -54,7 +54,7 @@ var (
 	CertifiedOperatorDisplayName              = "Certified Operators"
 	CommunityOperatorGroup                    = "community-operators"
 	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorLabel                             = map[string]string{"test-network-function.com/operator": "target"}
+	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
 	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
 	CertifiedOperatorPrefixNginx              = "nginx-ingress-operator"

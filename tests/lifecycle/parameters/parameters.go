@@ -12,7 +12,7 @@ const (
 
 var (
 	LifecycleNamespace     = "lifecycle-tests"
-	testPodLabelPrefixName = "test-network-function.com/lifecycle"
+	testPodLabelPrefixName = "redhat-best-practices-for-k8s.com/lifecycle"
 	testPodLabelValue      = "testing"
 	PreStopCommand         = []string{"/bin/sh", "-c", "killall -0 tail"}
 	TestPodLabel           = fmt.Sprintf("%s: %s", testPodLabelPrefixName, testPodLabelValue)

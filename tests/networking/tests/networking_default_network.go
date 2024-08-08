@@ -124,7 +124,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 	// 45444
 	It("2 custom pods on Default network networking-icmpv4-connectivity skip when label "+
-		"test-network-function.com/skip_connectivity_tests is set in deployment [skip]", func() {
+		"redhat-best-practices-for-k8s.com/skip_connectivity_tests is set in deployment [skip]", func() {
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -149,7 +149,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 
 	// 45445
 	It("custom daemonset, 4 custom pods on Default network networking-icmpv4-connectivity pass when label "+
-		"test-network-function.com/skip_connectivity_tests is set in deployment only", func() {
+		"redhat-best-practices-for-k8s.com/skip_connectivity_tests is set in deployment only", func() {
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
