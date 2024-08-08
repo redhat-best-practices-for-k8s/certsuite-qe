@@ -5,10 +5,10 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/operator/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
 )
 
 const (

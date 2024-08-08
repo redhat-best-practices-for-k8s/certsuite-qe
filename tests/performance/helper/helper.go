@@ -7,14 +7,14 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 	"github.com/sirupsen/logrus"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/utils/ptr"
 
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/performance/parameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/parameters"
 	corev1 "k8s.io/api/core/v1"
 	nodev1 "k8s.io/api/node/v1"
 	rbacv1 "k8s.io/api/rbac/v1"

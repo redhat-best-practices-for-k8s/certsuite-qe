@@ -10,14 +10,14 @@ import (
 
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/tests"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
 
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/helper"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/helper"
 )
 
 func TestLifecycle(t *testing.T) {

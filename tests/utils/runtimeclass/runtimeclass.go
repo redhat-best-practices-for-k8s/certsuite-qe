@@ -1,7 +1,7 @@
 package runtimeclass
 
 import (
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	nodev1 "k8s.io/api/node/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

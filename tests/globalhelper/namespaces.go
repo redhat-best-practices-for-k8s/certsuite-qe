@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang/glog"
 	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	corev1 "k8s.io/api/core/v1"

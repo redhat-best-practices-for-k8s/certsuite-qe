@@ -11,9 +11,9 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/operator/parameters"
-	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
+	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
 
 func DeployTestOperatorGroup(namespace string) error {

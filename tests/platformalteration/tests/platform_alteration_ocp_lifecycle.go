@@ -3,10 +3,10 @@ package tests
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
 var _ = Describe("platform-alteration-ocp-lifecycle", func() {

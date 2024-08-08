@@ -15,8 +15,8 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/rbac"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/rbac"
 	"gopkg.in/yaml.v3"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"

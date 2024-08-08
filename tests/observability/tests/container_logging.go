@@ -4,11 +4,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/observability/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/parameters"
 )
 
 var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {

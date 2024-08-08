@@ -1,18 +1,18 @@
 <!-- markdownlint-disable line-length no-bare-urls -->
-# cnfcert-tests-verification
+# certsuite-qe
 
-[![Test Incoming Changes](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/pre-main.yml/badge.svg)](https://github.com/test-network-function/cnfcert-tests-verification/actions/workflows/pre-main.yml)
+[![Test Incoming Changes](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/actions/workflows/pre-main.yml/badge.svg)](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/actions/workflows/pre-main.yml)
 [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift)
-[![license](https://img.shields.io/github/license/test-network-function/cnfcert-tests-verification?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/test-network-function/cnf-certification-test-partner/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/redhat-best-practices-for-k8s/certsuite-qe?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/redhat-best-practices-for-k8s/certsuite-partner/blob/master/LICENSE)
 
 ## Objective
 
-The repository contains a set of test cases that run different test scenarios from [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) project and verifies if these scenarios behave correctly under different environment conditions.
+The repository contains a set of test cases that run different test scenarios from [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) project and verifies if these scenarios behave correctly under different environment conditions.
 
-The cnfcert-tests-verification project is based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
+The certsuite-qe project is based on golang+[ginkgo](https://onsi.github.io/ginkgo) framework.
 
-`cnfcert-tests-verification` project triggers the same test scenario from
-[cnf-certification-test](https://github.com/test-network-function/cnf-certification-test)
+`certsuite-qe` project triggers the same test scenario from
+[certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite)
 several times using different pre-configured OCP environment.
 
 Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
@@ -55,7 +55,7 @@ The following environment variables are used to configure the test setup.
 | Env Variable Name | Purpose |
 | ------ | ------ |
 | FEATURES | To select the test scenarios that you are going to test, comma separated
-| CERTSUITE_REPO_PATH | Points to the absolute path to  [cnf-certification-test](https://github.com/test-network-function/cnf-certification-test) on your machine
+| CERTSUITE_REPO_PATH | Points to the absolute path to  [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) on your machine
 | CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/testnetworkfunction/k8s-best-practices-certsuite
 | CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest
 | TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/k8s-best-practices-debug
@@ -81,8 +81,8 @@ export CERTSUITE_CONTAINER_CLIENT=docker
 #### Clone the repo and change directory to the cloned repo
 
 ```sh
-git clone https://github.com/test-network-function/cnfcert-tests-verification.git
-cd cnfcert-tests-verification
+git clone https://github.com/redhat-best-practices-for-k8s/certsuite-qe.git
+cd certsuite-qe
 ```
 
 #### Download and install needed dependencies
@@ -100,14 +100,14 @@ make install
   DOCKER_CONFIG_DIR=$HOME/.docker \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-all
 ```
 
 ```sh
 # Linux user
   KUBECONFIG=$HOME/.kube/config \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-all
 ```
 
@@ -116,7 +116,7 @@ make install
  \
   FORCE_DOWNLOAD_UNSTABLE=true \
   KUBECONFIG=$HOME/.kube/config \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-all
 ```
 
@@ -128,7 +128,7 @@ make install
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-features
 ```
 
@@ -137,7 +137,7 @@ make install
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   DOCKER_CONFIG_DIR=$HOME/.docker \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-features
 ```
 
@@ -154,7 +154,7 @@ This would create a `Debug` folder containing suites folders with Certsuite logs
   KUBECONFIG=$HOME/.kube/config \
   NON_LINUX_ENV= \
   CERTSUITE_LOG_LEVEL=debug \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-features
 ```
 
@@ -164,7 +164,7 @@ This would create a `Debug` folder containing suites folders with Certsuite logs
   FEATURES=platformalteration \
   KUBECONFIG=$HOME/.kube/config \
   CERTSUITE_LOG_LEVEL=debug \
-  CERTSUITE_REPO_PATH=$HOME/path/to/cnf-certification-test \
+  CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
   make test-features
 ```
 
@@ -187,9 +187,9 @@ make test
 
 The QE repo is being used in nightly automated runs in the following files:
 
-* [QE via Kind (Github Hosted)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-hosted.yml)
-* [QE via OCP (Intrusive)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-ocp-intrusive.yaml)
-* [QE via OCP (Non-Intrusive)](https://github.com/test-network-function/cnf-certification-test/blob/main/.github/workflows/qe-ocp.yaml)
+* [QE via Kind (Github Hosted)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-hosted.yml)
+* [QE via OCP (Intrusive)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-ocp-intrusive.yaml)
+* [QE via OCP (Non-Intrusive)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-ocp.yaml)
 
 ## Contribution Guidelines
 
@@ -199,4 +199,4 @@ Fork the repo, create a new branch and create a PR with your changes.
 
 CNFCert Tests Verification is copyright [Red Hat, Inc.](https://www.redhat.com) and available
 under an
-[Apache 2 license](https://github.com/test-network-function/cnfcert-tests-verification/blob/main/LICENSE).
+[Apache 2 license](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/main/LICENSE).

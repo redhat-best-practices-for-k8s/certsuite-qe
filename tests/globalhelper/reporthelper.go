@@ -11,7 +11,7 @@ import (
 
 	"github.com/golang/glog"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	"github.com/test-network-function/test-network-function-claim/pkg/claim"
 )
 

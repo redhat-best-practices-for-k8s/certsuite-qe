@@ -7,20 +7,20 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/cluster"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/cluster"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/replicaset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/statefulset"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 )
 
 // DefineDeployment defines a deployment.

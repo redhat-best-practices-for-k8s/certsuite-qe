@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
-	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
+	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
 
 func preConfigureAffiliatedCertificationEnvironment(namespace, configDir string) {

@@ -4,13 +4,13 @@ import (
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/config"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/networking/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/networking/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
 )
 
 var _ = Describe("Networking custom namespace, custom deployment,", func() {

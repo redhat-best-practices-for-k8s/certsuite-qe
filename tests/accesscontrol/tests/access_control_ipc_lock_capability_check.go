@@ -4,11 +4,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 	corev1 "k8s.io/api/core/v1"
 )
 

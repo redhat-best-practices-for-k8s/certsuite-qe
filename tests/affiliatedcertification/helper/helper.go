@@ -9,8 +9,8 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	utils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/operator"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
 
 // AddLabelToInstalledCSV adds given label to existing csv object.

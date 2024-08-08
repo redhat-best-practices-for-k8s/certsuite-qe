@@ -5,14 +5,14 @@ import (
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolume"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/persistentvolumeclaim"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/replicaset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/persistentvolume"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/persistentvolumeclaim"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/replicaset"
 )
 
 var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {

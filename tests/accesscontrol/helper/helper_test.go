@@ -5,9 +5,9 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/stretchr/testify/assert"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/accesscontrol/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

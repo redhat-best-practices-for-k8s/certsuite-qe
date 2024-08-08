@@ -15,11 +15,11 @@ import (
 	"runtime"
 	"testing"
 
-	_ "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/tests"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
+	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/tests"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/affiliatedcertification/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 )
 
 func TestAffiliatedCertification(t *testing.T) {

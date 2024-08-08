@@ -3,12 +3,12 @@ package tests
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	tshelper "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/helper"
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
 var _ = Describe("platform-alteration-is-redhat-release", func() {

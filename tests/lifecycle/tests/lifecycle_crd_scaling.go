@@ -7,13 +7,13 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalparameters"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
 
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/lifecycle/parameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 
-	crdutils "github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
+	crdutils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
 )
 
 var _ = Describe("lifecycle-crd-scaling", Serial, func() {

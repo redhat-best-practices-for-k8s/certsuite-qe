@@ -9,19 +9,19 @@ import (
 	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/crd"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/daemonset"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/pod"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/statefulset"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/observability/parameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/parameters"
 )
 
 // For some reason, there's a function that expects labels' key/values separated

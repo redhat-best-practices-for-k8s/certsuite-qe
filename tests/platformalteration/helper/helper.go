@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	tsparams "github.com/test-network-function/cnfcert-tests-verification/tests/platformalteration/parameters"
+	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 
-	"github.com/test-network-function/cnfcert-tests-verification/tests/globalhelper"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/client"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/deployment"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/nodes"
-	"github.com/test-network-function/cnfcert-tests-verification/tests/utils/statefulset"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/statefulset"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
