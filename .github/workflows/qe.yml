@@ -23,7 +23,7 @@ jobs:
       SHELL: /bin/bash
       KUBECONFIG: '/home/runner/.kube/config'
       PFLT_DOCKERCONFIG: '/home/runner/.docker/config'
-      TEST_CERTSUITE_IMAGE_NAME: quay.io/testnetworkfunction/k8s-best-practices-certsuite
+      TEST_CERTSUITE_IMAGE_NAME: quay.io/redhat-best-practices-for-k8s/certsuite
       TEST_CERTSUITE_IMAGE_TAG: unstable
       DOCKER_CONFIG_DIR: '/home/runner/.docker/'
       SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
