@@ -48,17 +48,17 @@ jobs:
         with:
           ref: ${{ github.sha }}
 
-      - name: Check out `cnf-certification-test-partner`
+      - name: Check out `certsuite-sample-workload`
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
-          repository: test-network-function/cnf-certification-test-partner
-          path: cnf-certification-test-partner
+          repository: redhat-best-practices-for-k8s/certsuite-sample-workload
+          path: certsuite-sample-workload
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@9e8a61fce18b15281e831f1bba0e14c71d1e1f46 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: cnfcert-tests-verification/cnf-certification-test-partner cnfcert-tests-verification/cnf-certification-test
+          extra-dirs: certsuite-qe/certsuite-sample-workload certsuite-qe/certsuite
 
       - name: Install dependencies
         run: |
@@ -74,7 +74,7 @@ jobs:
       # Create a Kind cluster for testing.
       - name: Bootstrap the Kind and OC/Kubectl binaries for the `local-test-infra`
         run: make bootstrap-cluster
-        working-directory: cnf-certification-test-partner
+        working-directory: certsuite-sample-workload
 
       # Restart docker using /mnt/docker-storage (sdb) instead of /var/lib/docker (sda).
       # This step needs to be done right after the partner repo's bootstrap scripts, as they
@@ -92,25 +92,25 @@ jobs:
 
       - name: Create `local-test-infra` OpenShift resources
         run: make rebuild-cluster
-        working-directory: cnf-certification-test-partner
+        working-directory: certsuite-sample-workload
 
       - name: Install partner resources
         run: python3 -m venv .venv; source .venv/bin/activate; pip install --upgrade pip; pip install jinjanator; cp .venv/bin/jinjanate .venv/bin/j2; make install-for-qe
-        working-directory: cnf-certification-test-partner
+        working-directory: certsuite-sample-workload
 
       - name: Show pods
         run: oc get pods -A
 
       - name: Wait for all pods to be ready
         run: ./scripts/wait-for-all-pods-running.sh
-        working-directory: cnf-certification-test-partner
+        working-directory: certsuite-sample-workload
         timeout-minutes: 10
 
-      - name: Clone the cnf-certification-test repository
+      - name: Clone the certsuite repository
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: ${{ env.TEST_REPO }}
-          path: cnf-certification-test
+          path: certsuite
           ref: main
 
       - name: Extract dependent Pull Requests
@@ -123,19 +123,19 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test CERTSUITE_IMAGE=${{env.TEST_CERTSUITE_IMAGE_NAME}} CERTSUITE_IMAGE_TAG=${{env.TEST_CERTSUITE_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
+          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite CERTSUITE_IMAGE=${{env.TEST_CERTSUITE_IMAGE_NAME}} CERTSUITE_IMAGE_TAG=${{env.TEST_CERTSUITE_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
 
       # Only run against the binary during a scheduled run
       - name: Build the binary
         run: make build-certsuite-tool
-        working-directory: cnf-certification-test
+        working-directory: certsuite
 
       - name: Run the tests (against binary)
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/cnf-certification-test USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
+          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
 
   check-all-dependencies-are-merged:
     runs-on: ubuntu-22.04

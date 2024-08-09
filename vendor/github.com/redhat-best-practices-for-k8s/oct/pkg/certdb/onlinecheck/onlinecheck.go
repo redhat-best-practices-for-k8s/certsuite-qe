@@ -23,9 +23,9 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config"
+	"github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck"
 	log "github.com/sirupsen/logrus"
-	"github.com/test-network-function/oct/pkg/certdb/config"
-	"github.com/test-network-function/oct/pkg/certdb/offlinecheck"
 	yaml "gopkg.in/yaml.v3"
 	"helm.sh/helm/v3/pkg/release"
 )

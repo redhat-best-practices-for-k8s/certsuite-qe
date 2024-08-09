@@ -21,8 +21,8 @@ import (
 	"io"
 	"os"
 
+	"github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config"
 	"github.com/sirupsen/logrus"
-	"github.com/test-network-function/oct/pkg/certdb/config"
 )
 
 var (
