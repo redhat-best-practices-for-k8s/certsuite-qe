@@ -13,7 +13,7 @@ if ! command -v docker &>/dev/null; then
 fi
 
 # Set the image name and tag
-image_name=quay.io/testnetworkfunction/k8s-best-practices-certsuite
+image_name=quay.io/redhat-best-practices-for-k8s/certsuite
 image_tag=unstable
 
 # Delete the image if it exists

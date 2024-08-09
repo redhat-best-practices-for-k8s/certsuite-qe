@@ -56,7 +56,7 @@ The following environment variables are used to configure the test setup.
 | ------ | ------ |
 | FEATURES | To select the test scenarios that you are going to test, comma separated
 | CERTSUITE_REPO_PATH | Points to the absolute path to  [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) on your machine
-| CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/testnetworkfunction/k8s-best-practices-certsuite
+| CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/redhat-best-practices-for-k8s/certsuite
 | CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest
 | TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/k8s-best-practices-debug
 | DEBUG_CERTSUITE | Generate `Debug` folder that will contain Certsuite suites folders with Certsuite logs for each test.
