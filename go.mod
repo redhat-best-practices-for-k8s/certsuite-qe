@@ -11,11 +11,11 @@ require (
 	github.com/openshift/client-go v0.0.0-20240510131258-f646d5f29250
 	github.com/operator-framework/api v0.26.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
+	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.45
+	github.com/redhat-best-practices-for-k8s/oct v0.0.18
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
-	github.com/test-network-function/oct v0.0.17
-	github.com/test-network-function/test-network-function-claim v1.0.44
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.30.3
 	k8s.io/apiextensions-apiserver v0.30.3

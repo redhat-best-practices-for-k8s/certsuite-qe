@@ -10,7 +10,7 @@ import (
 
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 
-	"github.com/test-network-function/oct/pkg/certdb/onlinecheck"
+	"github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/onlinecheck"
 )
 
 var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, func() {

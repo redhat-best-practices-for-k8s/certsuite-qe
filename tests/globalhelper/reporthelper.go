@@ -11,8 +11,8 @@ import (
 
 	"github.com/golang/glog"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
-	"github.com/test-network-function/test-network-function-claim/pkg/claim"
 )
 
 // OpenClaimReport opens claim.json file and returns struct.
