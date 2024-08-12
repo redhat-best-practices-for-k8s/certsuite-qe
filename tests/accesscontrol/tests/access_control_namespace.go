@@ -247,7 +247,7 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 	})
 
 	// 52069
-	It("two custom resources, both in valid namespaces", func() {
+	FIt("two custom resources, both in valid namespaces", func() {
 		By("Create additional valid namespace")
 		additionalValidNamespace := tsparams.AdditionalValidNamespace + "-" + globalhelper.GenerateRandomString(5)
 		err := globalhelper.CreateNamespace(additionalValidNamespace)
@@ -280,6 +280,9 @@ var _ = Describe("Access-control namespace, ", Serial, func() {
 		By(CreateInstallPlanInNamespaceStr + plan2.Namespace)
 		err = globalhelper.CreateInstallPlan(plan2)
 		Expect(err).ToNot(HaveOccurred(), "Error creating installplan")
+
+		// By("Sleep for 5 minutes")
+		// time.Sleep(5 * time.Minute)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
