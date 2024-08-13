@@ -1,9 +1,9 @@
 <!-- markdownlint-disable line-length no-bare-urls -->
-# certsuite-qe
+# CertSuite QE
 
 [![Test Incoming Changes](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/actions/workflows/pre-main.yml/badge.svg)](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/actions/workflows/pre-main.yml)
 [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift)
-[![license](https://img.shields.io/github/license/redhat-best-practices-for-k8s/certsuite-qe?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/redhat-best-practices-for-k8s/certsuite-partner/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/redhat-best-practices-for-k8s/certsuite-qe?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/master/LICENSE)
 
 ## Objective
 
@@ -197,6 +197,6 @@ Fork the repo, create a new branch and create a PR with your changes.
 
 ## License
 
-CNFCert Tests Verification is copyright [Red Hat, Inc.](https://www.redhat.com) and available
+CertSuite QE is copyright [Red Hat, Inc.](https://www.redhat.com) and available
 under an
 [Apache 2 license](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/main/LICENSE).
