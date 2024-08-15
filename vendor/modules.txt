@@ -185,7 +185,7 @@ github.com/pmezard/go-difflib/difflib
 # github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.45
 ## explicit; go 1.22.5
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
-# github.com/redhat-best-practices-for-k8s/oct v0.0.18
+# github.com/redhat-best-practices-for-k8s/oct v0.0.19
 ## explicit; go 1.22.5
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck
