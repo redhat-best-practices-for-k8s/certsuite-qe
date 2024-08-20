@@ -168,7 +168,7 @@ func defineCertifiedContainersInfo(config *globalparameters.CertsuiteConfig, cer
 		}
 
 		if len(repositoryRegistryTagDigest) != 4 {
-			return fmt.Errorf(fmt.Sprintf("certified container info %s is invalid", certifiedContainerFields))
+			return fmt.Errorf("certified container info %s is invalid", certifiedContainerFields)
 		}
 
 		repo := strings.TrimSpace(repositoryRegistryTagDigest[0])
@@ -219,7 +219,7 @@ func definePodUnderTestLabels(config *globalparameters.CertsuiteConfig, podsUnde
 	for _, podsUnderTestLabel := range podsUnderTestLabels {
 		prefixNameValue := strings.Split(podsUnderTestLabel, ":")
 		if len(prefixNameValue) != 2 {
-			return fmt.Errorf(fmt.Sprintf("podUnderTest label %s is invalid", podsUnderTestLabel))
+			return fmt.Errorf("podUnderTest label %s is invalid", podsUnderTestLabel)
 		}
 
 		config.PodsUnderTestLabels = append(config.PodsUnderTestLabels, prefixNameValue[0]+":"+prefixNameValue[1])
