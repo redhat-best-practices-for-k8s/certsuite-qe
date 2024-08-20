@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REQUIRED_GO_VERSION=1.22.5
+REQUIRED_GO_VERSION=1.22.6
 INSTALLED_GO_VERSION="$(
 	go version | {
 		read -r _ _ v _
