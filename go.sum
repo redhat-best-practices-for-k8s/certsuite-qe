@@ -94,8 +94,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.45 h1:lvsPZBl4owH80mX2fU879iIz0vYVbjj37CPnMifz5jw=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.45/go.mod h1:ymD8Lckn+C1k/QFalRv5srVro6w1GdcwtyRoSE4XWKM=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46 h1:FIMxVB4qGIDIuvQ/oKgbMZoKqC2j6H9vorSGjcL441c=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46/go.mod h1:zl22noTFxcP05POwr1aMNa13j4M1Fitq8TsxLrw/mJE=
 github.com/redhat-best-practices-for-k8s/oct v0.0.19 h1:4oy6ebgSFZs6OkNz+wvBbf9JWcDo34JOENpKDQjL+Hc=
 github.com/redhat-best-practices-for-k8s/oct v0.0.19/go.mod h1:ucn2BTjdhHWZ7/c0tLmrxCvRedtV8FpjffsD8L233ro=
 github.com/rogpeppe/go-internal v1.12.0 h1:exVL4IDcn6na9z1rAb56Vxr+CgyK3nn3O+epU5NdKM8=
