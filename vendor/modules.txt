@@ -185,8 +185,8 @@ github.com/pmezard/go-difflib/difflib
 # github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46
 ## explicit; go 1.22.6
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
-# github.com/redhat-best-practices-for-k8s/oct v0.0.19
-## explicit; go 1.22.5
+# github.com/redhat-best-practices-for-k8s/oct v0.0.20
+## explicit; go 1.22.6
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/onlinecheck
@@ -310,7 +310,7 @@ gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# helm.sh/helm/v3 v3.15.3
+# helm.sh/helm/v3 v3.15.4
 ## explicit; go 1.22.0
 helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/release
