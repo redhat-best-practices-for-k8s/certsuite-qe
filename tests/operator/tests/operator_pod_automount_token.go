@@ -2,6 +2,7 @@ package operator
 
 import (
 	"fmt"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -42,7 +43,7 @@ var _ = Describe("Operator pods automount token", func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("Operator pods should not have automount token", func() {
+	FIt("Operator pods should not have automount token", func() {
 		// Deploy an operator that does not have automount token
 		By("Deploy operator group")
 		err := tshelper.DeployTestOperatorGroup(randomNamespace)
@@ -90,6 +91,9 @@ var _ = Describe("Operator pods automount token", func() {
 		} else {
 			Expect(controllerPod.Spec.AutomountServiceAccountToken).To(BeNil())
 		}
+
+		By("Sleep for 5 minuteS")
+		time.Sleep(5 * time.Minute)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
