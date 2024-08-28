@@ -6,42 +6,33 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	egiDeployment "github.com/openshift-kni/eco-goinfra/pkg/deployment"
 	appsv1 "k8s.io/api/apps/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	typedappsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 
 	. "github.com/onsi/gomega"
 )
 
 // IsDeploymentReady checks if a deployment is ready.
-func IsDeploymentReady(client typedappsv1.AppsV1Interface, namespace, deploymentName string) (bool, error) {
-	testDeployment, err := client.Deployments(namespace).Get(
-		context.TODO(),
-		deploymentName,
-		metav1.GetOptions{},
-	)
+func IsDeploymentReady(client *egiClients.Settings, namespace, deploymentName string) (bool, error) {
+	dep, err := egiDeployment.Pull(client, deploymentName, namespace)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to get deployment %q (ns %s): %w", deploymentName, namespace, err)
 	}
 
-	// Ensure the number of ready replicas matches the desired number of replicas.
-	if testDeployment.Status.AvailableReplicas == *testDeployment.Spec.Replicas &&
-		testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
-		return true, nil
-	}
-
-	return false, nil
+	return dep.IsReady(5 * time.Second), nil
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
 func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment,
 	timeout time.Duration) error {
-	return createAndWaitUntilDeploymentIsReady(GetAPIClient().K8sClient.AppsV1(), deployment, timeout)
+	return createAndWaitUntilDeploymentIsReady(egiClients.New(""), deployment, timeout)
 }
 
 // createAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
-func createAndWaitUntilDeploymentIsReady(client typedappsv1.AppsV1Interface, deployment *appsv1.Deployment,
+func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment *appsv1.Deployment,
 	timeout time.Duration) error {
 	runningDeployment, err := client.Deployments(deployment.Namespace).Create(
 		context.TODO(),
@@ -73,10 +64,10 @@ func createAndWaitUntilDeploymentIsReady(client typedappsv1.AppsV1Interface, dep
 
 // GetRunningDeployment returns a running deployment.
 func GetRunningDeployment(namespace, deploymentName string) (*appsv1.Deployment, error) {
-	return getRunningDeployment(GetAPIClient().K8sClient.AppsV1(), namespace, deploymentName)
+	return getRunningDeployment(egiClients.New(""), namespace, deploymentName)
 }
 
-func getRunningDeployment(client typedappsv1.AppsV1Interface, namespace, deploymentName string) (*appsv1.Deployment, error) {
+func getRunningDeployment(client *egiClients.Settings, namespace, deploymentName string) (*appsv1.Deployment, error) {
 	runningDeployment, err := client.Deployments(namespace).Get(
 		context.TODO(),
 		deploymentName,
@@ -90,10 +81,10 @@ func getRunningDeployment(client typedappsv1.AppsV1Interface, namespace, deploym
 }
 
 func DeleteDeployment(name, namespace string) error {
-	return deleteDeployment(GetAPIClient().K8sClient.AppsV1(), name, namespace)
+	return deleteDeployment(egiClients.New(""), name, namespace)
 }
 
-func deleteDeployment(client typedappsv1.AppsV1Interface, name, namespace string) error {
+func deleteDeployment(client *egiClients.Settings, name, namespace string) error {
 	err := client.Deployments(namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
 
 	if k8serrors.IsNotFound(err) {
