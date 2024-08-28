@@ -42,8 +42,11 @@ var _ = Describe("Operator pods automount token", func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("Operator pods should not have automount token", func() {
+	It("Operator pods should not have automount token [negative]", func() {
 		// Deploy an operator that does not have automount token
+		// Note: The service account that gets deployed as part of the nginx operator
+		// contains a service account that leaves the SA default/nil and that defaults to true.
+		// The SA should contain a automountServiceAccountToken field that is set explicitly to false.
 		By("Deploy operator group")
 		err := tshelper.DeployTestOperatorGroup(randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
@@ -100,7 +103,7 @@ var _ = Describe("Operator pods automount token", func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteOperatorPodAutomountToken,
-			globalparameters.TestCasePassed, randomReportDir)
+			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
