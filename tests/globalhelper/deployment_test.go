@@ -4,11 +4,11 @@ import (
 	"errors"
 	"testing"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestIsDeploymentReady(t *testing.T) {
@@ -21,6 +21,7 @@ func TestIsDeploymentReady(t *testing.T) {
 			Status: appsv1.DeploymentStatus{
 				AvailableReplicas: availableReplicas,
 				ReadyReplicas:     readyReplicas,
+				Replicas:          desiredReplicas,
 			},
 			Spec: appsv1.DeploymentSpec{
 				Replicas: &desiredReplicas,
@@ -69,8 +70,10 @@ func TestIsDeploymentReady(t *testing.T) {
 				testCase.desiredReplicas, testCase.readyReplicas))
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		deployReady, err := IsDeploymentReady(client.AppsV1(), "test-namespace", "test-deployment")
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		deployReady, err := IsDeploymentReady(fakeClient, "test-namespace", "test-deployment")
 		assert.Equal(t, testCase.expectReady, deployReady)
 
 		if testCase.expectedError != nil {
@@ -124,9 +127,12 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 
 		testDeployment := generateDeployment(testCase.availableReplicas, testCase.desiredReplicas, testCase.readyReplicas)
 		runtimeObjects = append(runtimeObjects, testDeployment)
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
-		err := createAndWaitUntilDeploymentIsReady(client.AppsV1(),
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+
+		err := createAndWaitUntilDeploymentIsReady(fakeClient,
 			testDeployment, 5)
 		assert.Equal(t, testCase.expectedError, err)
 	}
@@ -146,15 +152,18 @@ func TestGetRunningDeployment(t *testing.T) {
 
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, generateDeployment())
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
-	testDeployment, err := getRunningDeployment(client.AppsV1(), "test-namespace", "test-deployment")
+	fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+		K8sMockObjects: runtimeObjects,
+	})
+
+	testDeployment, err := getRunningDeployment(fakeClient, "test-namespace", "test-deployment")
 	assert.Nil(t, err)
 	assert.Equal(t, "test-deployment", testDeployment.Name)
 	assert.Equal(t, "test-namespace", testDeployment.Namespace)
 
 	// Test deployment not found
-	testDeployment, err = getRunningDeployment(client.AppsV1(), "test-namespace", "test-deployment2")
+	testDeployment, err = getRunningDeployment(fakeClient, "test-namespace", "test-deployment2")
 	assert.NotNil(t, err)
 	assert.Nil(t, testDeployment)
 }
@@ -173,12 +182,15 @@ func TestDeleteDeployment(t *testing.T) {
 
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, generateDeployment())
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
-	err := deleteDeployment(client.AppsV1(), "test-namespace", "test-deployment")
+	fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+		K8sMockObjects: runtimeObjects,
+	})
+
+	err := deleteDeployment(fakeClient, "test-namespace", "test-deployment")
 	assert.Nil(t, err)
 
 	// Test deployment not found
-	err = deleteDeployment(client.AppsV1(), "test-namespace", "test-deployment2")
+	err = deleteDeployment(fakeClient, "test-namespace", "test-deployment2")
 	assert.Nil(t, err)
 }
