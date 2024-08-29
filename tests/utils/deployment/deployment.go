@@ -21,6 +21,7 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      deploymentName,
 			Namespace: namespace,
+			Labels:    label,
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas:        ptr.To[int32](1),

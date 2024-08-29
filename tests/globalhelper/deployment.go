@@ -9,6 +9,7 @@ import (
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiDeployment "github.com/openshift-kni/eco-goinfra/pkg/deployment"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -68,16 +69,12 @@ func GetRunningDeployment(namespace, deploymentName string) (*appsv1.Deployment,
 }
 
 func getRunningDeployment(client *egiClients.Settings, namespace, deploymentName string) (*appsv1.Deployment, error) {
-	runningDeployment, err := client.Deployments(namespace).Get(
-		context.TODO(),
-		deploymentName,
-		metav1.GetOptions{},
-	)
+	dep, err := egiDeployment.Pull(client, deploymentName, namespace)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get deployment %q (ns %s): %w", deploymentName, namespace, err)
 	}
 
-	return runningDeployment, nil
+	return dep.Object, nil
 }
 
 func DeleteDeployment(name, namespace string) error {
@@ -85,13 +82,5 @@ func DeleteDeployment(name, namespace string) error {
 }
 
 func deleteDeployment(client *egiClients.Settings, name, namespace string) error {
-	err := client.Deployments(namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
-
-	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("deployment %s is not found", name))
-
-		return nil
-	}
-
-	return err
+	return egiDeployment.NewBuilder(client, name, namespace, map[string]string{"test-app": "test"}, &corev1.Container{}).Delete()
 }
