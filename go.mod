@@ -12,7 +12,7 @@ require (
 	github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87
 	github.com/operator-framework/api v0.27.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
-	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46
+	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47
 	github.com/redhat-best-practices-for-k8s/oct v0.0.20
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
