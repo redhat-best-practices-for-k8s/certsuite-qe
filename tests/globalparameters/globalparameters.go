@@ -82,7 +82,7 @@ type (
 
 var (
 	DefaultClaimFileName             = "claim.json"
-	DefaultCertsuiteConfigFileName   = "tnf_config.yml"
+	DefaultCertsuiteConfigFileName   = "certsuite_config.yml"
 	DefaultJunitReportName           = "cnf-certification-tests_junit.xml"
 	PartnerNamespaceEnvVarName       = "CERTSUITE_PARTNER_NAMESPACE"
 	TestCasePassed                   = "passed"

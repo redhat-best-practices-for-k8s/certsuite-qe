@@ -97,7 +97,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"run",
 		"--kubeconfig", "/usr/certsuite/kubeconfig/config",
 		"--preflight-dockerconfig", "/usr/certsuite/dockerconfig/config",
-		"--config-file", "/usr/certsuite/config/tnf_config.yml",
+		"--config-file", "/usr/certsuite/config/certsuite_config.yml",
 		"--output-dir", "/usr/certsuite/results",
 		"--omit-artifacts-zip-file", "true",
 		"--enable-data-collection", "true",

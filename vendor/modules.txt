@@ -273,7 +273,7 @@ github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46
+# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47
 ## explicit; go 1.22.6
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
 # github.com/redhat-best-practices-for-k8s/oct v0.0.20
