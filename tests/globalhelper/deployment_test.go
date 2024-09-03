@@ -7,6 +7,7 @@ import (
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -174,9 +175,16 @@ func TestDeleteDeployment(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "test-deployment",
 				Namespace: "test-namespace",
+				Labels:    map[string]string{"app": "test-app"},
 			},
 			Status: appsv1.DeploymentStatus{},
-			Spec:   appsv1.DeploymentSpec{},
+			Spec: appsv1.DeploymentSpec{
+				Template: v1.PodTemplateSpec{
+					ObjectMeta: metav1.ObjectMeta{
+						Labels: map[string]string{"app": "test-app"},
+					},
+				},
+			},
 		}
 	}
 
