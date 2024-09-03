@@ -4,12 +4,12 @@ import (
 	"errors"
 	"testing"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
@@ -59,10 +59,13 @@ func TestCreateAndWaitUntilDaemonSetIsReady(t *testing.T) {
 		var runtimeObjects []runtime.Object
 		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.numAvailable,
 			testCase.numScheduled, testCase.numUnavailable, testCase.numReady))
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
 
 		t.Run(testCase.name, func(t *testing.T) {
-			err := createAndWaitUntilDaemonSetIsReady(client.AppsV1(), client.CoreV1(),
+			err := createAndWaitUntilDaemonSetIsReady(fakeClient,
 				generateDaemonset(testCase.numAvailable, testCase.numScheduled, testCase.numUnavailable, testCase.numReady), 5)
 			if (err != nil) != testCase.wantErr {
 				t.Errorf("CreateAndWaitUntilDaemonSetIsReady() error = %v, wantErr %v", err, testCase.wantErr)
@@ -132,10 +135,12 @@ func TestIsDaemonsetReady(t *testing.T) {
 			},
 		})
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
 
 		t.Run(testCase.name, func(t *testing.T) {
-			got, err := isDaemonSetReady(client.AppsV1(), client.CoreV1(), "default", "test-daemonset")
+			got, err := isDaemonSetReady(fakeClient, "default", "test-daemonset")
 			if (err != nil) != testCase.wantErr {
 				t.Errorf("isDaemonsetReady() error = %v, wantErr %v", err, testCase.wantErr)
 
@@ -187,9 +192,11 @@ func TestGetDaemonSetPullPolicy(t *testing.T) {
 
 		testDaemonset := generateDaemonset(testCase.pullPolicy)
 		runtimeObjects = append(runtimeObjects, testDaemonset)
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
 
-		pullPolicy, err := getDaemonSetPullPolicy(testDaemonset, client.AppsV1())
+		pullPolicy, err := getDaemonSetPullPolicy(testDaemonset, fakeClient)
 		assert.Equal(t, testCase.pullPolicy, pullPolicy)
 		assert.Nil(t, err)
 	}
@@ -228,8 +235,10 @@ func TestGetRunningDaemonset(t *testing.T) {
 			runtimeObjects = append(runtimeObjects, testDaemonset)
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		daemonset, err := getRunningDaemonset(generateDaemonset(), client.AppsV1())
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		daemonset, err := getRunningDaemonset(generateDaemonset(), fakeClient)
 
 		if testCase.expectedError != nil {
 			assert.NotNil(t, err)
