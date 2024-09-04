@@ -277,8 +277,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46 h1:FIMxVB4qGIDIuvQ/oKgbMZoKqC2j6H9vorSGjcL441c=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.46/go.mod h1:zl22noTFxcP05POwr1aMNa13j4M1Fitq8TsxLrw/mJE=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47 h1:xAOVi+7YXBJNBsZeezAWWCHx84IU6AWIw53BT9tATas=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47/go.mod h1:zl22noTFxcP05POwr1aMNa13j4M1Fitq8TsxLrw/mJE=
 github.com/redhat-best-practices-for-k8s/oct v0.0.20 h1:u2HhR6ilkHYVf1TaHaFstMz5AxnalmhvQ5gcKwO6058=
 github.com/redhat-best-practices-for-k8s/oct v0.0.20/go.mod h1:BMcFp+p6SMrtjmkrl+eedhlaHZp1O7ZGuvs2TWhNrJI=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=

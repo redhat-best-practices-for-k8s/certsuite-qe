@@ -65,7 +65,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir
 	return nil
 }
 
-// DefineCertsuiteConfig creates tnf_config.yml file under certsuite config directory.
+// DefineCertsuiteConfig creates certsuite_config.yml file under certsuite config directory.
 func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, targetOperatorLabels []string,
 	certifiedContainerInfo []string, crdFilters []string, configDir string) error {
 	certsuiteConfigFilePath := path.Join(configDir, globalparameters.DefaultCertsuiteConfigFileName)
@@ -151,7 +151,7 @@ func AppendContainersToDeployment(deployment *appsv1.Deployment, containersNum i
 
 func defineCertifiedContainersInfo(config *globalparameters.CertsuiteConfig, certifiedContainerInfo []string) error {
 	if len(certifiedContainerInfo) < 1 {
-		// do not add certifiedcontainerinfo to tnf_config at all in this case
+		// do not add certifiedcontainerinfo to certsuite_config at all in this case
 		return nil
 	}
 
