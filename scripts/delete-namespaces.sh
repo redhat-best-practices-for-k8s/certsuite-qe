@@ -9,7 +9,7 @@ if ! command -v oc &>/dev/null; then
 	exit 0
 fi
 
-NAMESPACE_STRINGS_TO_GREP=(accesscontrol ac-test ac-rq-test my-ns affiliated lifecycle-tests manageability networking net-tests observability operator-ns performance platform-alteration cnfsuite)
+NAMESPACE_STRINGS_TO_GREP=(accesscontrol ac-test ac-rq-test my-ns affiliated lifecycle-tests manageability networking net-tests observability operator-ns performance platform-alteration certsuite)
 
 for NS in "${NAMESPACE_STRINGS_TO_GREP[@]}"; do
 	for NAMESPACE in $(oc get namespaces | grep "$NS" | awk '{print $1}'); do
