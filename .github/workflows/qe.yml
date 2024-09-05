@@ -35,10 +35,10 @@ jobs:
           touch ${PFLT_DOCKERCONFIG}
           echo '{ "auths": {} }' >> ${PFLT_DOCKERCONFIG}
 
-      - name: Set up Go 1.22
+      - name: Set up Go 1.23
         uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
         with:
-          go-version: 1.22.6
+          go-version: 1.23.1
 
       - name: Disable default go problem matcher
         run: echo "::remove-matcher owner=go::"
