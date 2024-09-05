@@ -1,7 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0rYXWg0=
-github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
+github.com/Masterminds/semver/v3 v3.3.0 h1:B8LGeaivUe71a5qox1ICM/JLl0NqZSW5CHyL+hmvYS0=
+github.com/Masterminds/semver/v3 v3.3.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
@@ -279,8 +279,8 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47 h1:xAOVi+7YXBJNBsZeezAWWCHx84IU6AWIw53BT9tATas=
 github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47/go.mod h1:zl22noTFxcP05POwr1aMNa13j4M1Fitq8TsxLrw/mJE=
-github.com/redhat-best-practices-for-k8s/oct v0.0.20 h1:u2HhR6ilkHYVf1TaHaFstMz5AxnalmhvQ5gcKwO6058=
-github.com/redhat-best-practices-for-k8s/oct v0.0.20/go.mod h1:BMcFp+p6SMrtjmkrl+eedhlaHZp1O7ZGuvs2TWhNrJI=
+github.com/redhat-best-practices-for-k8s/oct v0.0.21 h1:6moB8+gZniNDWcp9xQnpqmJy9BvIN0WoOgDDnwaZTLA=
+github.com/redhat-best-practices-for-k8s/oct v0.0.21/go.mod h1:mGE+j97ZriFACrlSBhbJDR3qTLAEom4hcf0WkPcLsIE=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.2.2/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=

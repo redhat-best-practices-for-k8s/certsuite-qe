@@ -13,7 +13,7 @@ require (
 	github.com/operator-framework/api v0.27.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47
-	github.com/redhat-best-practices-for-k8s/oct v0.0.20
+	github.com/redhat-best-practices-for-k8s/oct v0.0.21
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
@@ -29,7 +29,7 @@ require (
 require github.com/evanphx/json-patch/v5 v5.9.0 // indirect
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.1 // indirect
+	github.com/Masterminds/semver/v3 v3.3.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/containernetworking/cni v1.2.1-0.20240513144334-1e7858f9879a // indirect
