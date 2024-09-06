@@ -36,7 +36,6 @@ var _ = Describe("Access-control pod-service-account,", func() {
 	})
 
 	It("one pod with valid service account", func() {
-
 		By("Create service account")
 		err := globalhelper.CreateServiceAccount(
 			tsparams.TestServiceAccount, randomNamespace)
@@ -64,10 +63,8 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("one pod with empty service account", func() {
-
+	It("one pod with empty service account [negative]", func() {
 		By("Define pod with empty service account")
-
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
@@ -88,10 +85,8 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("one pod with default service account", func() {
-
+	It("one pod with default service account [negative]", func() {
 		By("Define pod with empty service account")
-
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
 
