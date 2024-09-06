@@ -12,8 +12,8 @@ func DefineOperatorGroup(groupName string, namespace string, targetNamespace []s
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      groupName,
 			Namespace: namespace},
-		Spec: olmv1.OperatorGroupSpec{
-			TargetNamespaces: targetNamespace},
+		// Spec: olmv1.OperatorGroupSpec{
+		// 	TargetNamespaces: targetNamespace},
 	}
 }
 

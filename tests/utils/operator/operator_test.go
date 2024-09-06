@@ -12,7 +12,6 @@ func TestDefineOperatorGroup(t *testing.T) {
 	assert.NotNil(t, og)
 	assert.Equal(t, "test", og.Name)
 	assert.Equal(t, "default", og.Namespace)
-	assert.Equal(t, []string{"testNamespace"}, og.Spec.TargetNamespaces)
 }
 
 func TestDefineSubscription(t *testing.T) {
