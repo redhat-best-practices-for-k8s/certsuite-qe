@@ -38,70 +38,80 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		// Install 3 separate operators for testing
-
 		By("Deploy operator group")
 		err = tshelper.DeployTestOperatorGroup(randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
-
-		By("Deploy openvino operator for testing")
-		err = tshelper.DeployOperatorSubscription(
-			"ovms-operator",
-			"alpha",
-			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixOpenvino)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
-			" is not ready")
-
-		By("Deploy cloudbees-ci operator for testing")
-		err = tshelper.DeployOperatorSubscription(
-			"cloudbees-ci",
-			"alpha",
-			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixCloudbees)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
-			" is not ready")
-
-		By("Deploy anchore-engine operator for testing")
-		err = tshelper.DeployOperatorSubscription(
-			"anchore-engine",
-			"alpha",
-			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixAnchore)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixAnchore,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixAnchore+
-			" is not ready")
 	})
 
 	AfterEach(func() {
 		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+	})
+
+	It("deploy cluster-wide cluster-logging operator with subscription in another namespace", func() {
+		const (
+			clusterLoggingOperatorName  = "cluster-logging"
+			clusterLoggingTestNamespace = "fake-openshift-logging"
+			openshiftLoggingNamespace   = "openshift-logging"
+			subscriptionChannel         = "stable-5.9"
+		)
+
+		By("Create openshift-logging namespace")
+		err := globalhelper.CreateNamespace(openshiftLoggingNamespace)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Create fake operator group for cluster-logging operator")
+		err = tshelper.DeployTestOperatorGroup(openshiftLoggingNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
+
+		DeferCleanup(func() {
+			By("Delete fake namespace for cluster-logging operator")
+			err := globalhelper.DeleteNamespaceAndWait(openshiftLoggingNamespace, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		By("Query the packagemanifest for the " + clusterLoggingOperatorName)
+		version, err := globalhelper.QueryPackageManifestForVersion(clusterLoggingOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		By("Deploy cluster-logging operator for testing")
+		err = tshelper.DeployOperatorSubscription(
+			clusterLoggingOperatorName,
+			subscriptionChannel,
+			openshiftLoggingNamespace,
+			tsparams.RedhatOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			clusterLoggingOperatorName+".v"+version,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+clusterLoggingOperatorName)
+
+		By("Wait until operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady(clusterLoggingOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+clusterLoggingOperatorName+" is not ready")
+
+		By("Label operators")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				clusterLoggingOperatorName,
+				randomNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			ErrorLabelingOperatorStr+clusterLoggingOperatorName)
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.CertsuiteOperatorInstallSource,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			randomReportDir,
+			randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.CertsuiteOperatorInstallSource,
+			globalparameters.TestCasePassed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	// 66142

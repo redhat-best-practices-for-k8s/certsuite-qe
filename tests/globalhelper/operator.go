@@ -98,6 +98,49 @@ func ApproveInstallPlan(namespace string, plan *v1alpha1.InstallPlan) error {
 	return updateInstallPlan(namespace, plan)
 }
 
+func DeployRHOperatorSource(ocpVersion string) error {
+	// if the ocpVersion is empty, we will use have to look up the version
+	ocpVersionToUse := ocpVersion
+
+	if ocpVersion == "" {
+		o, err := GetClusterVersion()
+		if err != nil {
+			return fmt.Errorf("unable to get OCP version: %w", err)
+		}
+
+		ocpVersionToUse = o[:4]
+	}
+
+	err := GetAPIClient().Create(context.TODO(),
+		&v1alpha1.CatalogSource{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "redhat-operators",
+				Namespace: "openshift-marketplace",
+			},
+			Spec: v1alpha1.CatalogSourceSpec{
+				SourceType:  "grpc",
+				Image:       "registry.redhat.io/redhat/redhat-operator-index:v" + ocpVersionToUse,
+				DisplayName: "redhat-operators",
+				Publisher:   "Redhat",
+				Secrets:     []string{"redhat-registry-secret", "redhat-connect-registry-secret"},
+				UpdateStrategy: &v1alpha1.UpdateStrategy{
+					RegistryPoll: &v1alpha1.RegistryPoll{
+						Interval: &metav1.Duration{
+							Duration: 30 * time.Minute}},
+				},
+			},
+		},
+	)
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("can not deploy catalog source %w", err)
+	}
+
+	return nil
+}
+
 func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	// if the ocpVersion is empty, we will use have to look up the version
 	ocpVersionToUse := ocpVersion

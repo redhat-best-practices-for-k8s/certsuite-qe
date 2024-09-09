@@ -38,6 +38,7 @@ var (
 	OperatorGroupName             = "operator-test-operator-group"
 	OperatorLabel                 = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	CertifiedOperatorGroup        = "certified-operators"
+	RedhatOperatorGroup           = "redhat-operators"
 	CommunityOperatorGroup        = "community-operators"
 	OperatorSourceNamespace       = "openshift-marketplace"
 	OperatorPrefixCloudbees       = "cloudbees-ci"
