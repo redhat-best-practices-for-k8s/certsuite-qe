@@ -33,7 +33,7 @@ var _ = Describe("Operator pods automount token", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace)
+		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 	})
 
@@ -48,7 +48,7 @@ var _ = Describe("Operator pods automount token", func() {
 		// contains a service account that leaves the SA default/nil and that defaults to true.
 		// The SA should contain a automountServiceAccountToken field that is set explicitly to false.
 		By("Deploy operator group")
-		err := tshelper.DeployTestOperatorGroup(randomNamespace)
+		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)

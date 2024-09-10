@@ -39,7 +39,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		// Install 3 separate operators for testing
 		By("Deploy operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace)
+		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 	})
 
@@ -61,7 +61,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create fake operator group for cluster-logging operator")
-		err = tshelper.DeployTestOperatorGroup(openshiftLoggingNamespace)
+		err = tshelper.DeployTestOperatorGroup(openshiftLoggingNamespace, true)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		DeferCleanup(func() {
@@ -116,6 +116,25 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66142
 	It("one operator installed with OLM", func() {
+		By("Deploy cloudbees-ci operator for testing")
+		err := tshelper.DeployOperatorSubscription(
+			"cloudbees-ci",
+			"alpha",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixCloudbees)
+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
+			" is not ready")
+
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -126,7 +145,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteOperatorInstallSource,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
@@ -142,6 +161,24 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66143
 	It("one operator not installed with OLM [negative]", func() {
+		By("Deploy openvino operator for testing")
+		err := tshelper.DeployOperatorSubscription(
+			"ovms-operator",
+			"alpha",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixOpenvino)
+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
+			" is not ready")
+
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -152,7 +189,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
 
 		By("Delete operator's subscription")
-		err := globalhelper.DeleteSubscription(randomNamespace,
+		err = globalhelper.DeleteSubscription(randomNamespace,
 			tsparams.SubscriptionNameOpenvino)
 		Expect(err).ToNot(HaveOccurred())
 
@@ -173,6 +210,38 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66144
 	It("two operators, both installed with OLM", func() {
+		By("Deploy cloudbees-ci operator for testing")
+		err := tshelper.DeployOperatorSubscription(
+			"cloudbees-ci",
+			"alpha",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixCloudbees)
+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
+			" is not ready")
+
+		By("Deploy anchore-engine operator for testing")
+		err = tshelper.DeployOperatorSubscription(
+			"anchore-engine",
+			"alpha",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixAnchore)
+
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -191,7 +260,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixAnchore)
 
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteOperatorInstallSource,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
@@ -207,6 +276,37 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66145
 	It("two operators, one not installed with OLM [negative]", func() {
+		By("Deploy openvino operator for testing")
+		err := tshelper.DeployOperatorSubscription(
+			"ovms-operator",
+			"alpha",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixOpenvino)
+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
+			" is not ready")
+
+		By("Deploy anchore-engine operator for testing")
+		err = tshelper.DeployOperatorSubscription(
+			"anchore-engine",
+			"alpha",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.OperatorPrefixAnchore)
+
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -225,7 +325,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
 
 		By("Delete operator's subscription")
-		err := globalhelper.DeleteSubscription(randomNamespace,
+		err = globalhelper.DeleteSubscription(randomNamespace,
 			tsparams.SubscriptionNameOpenvino)
 		Expect(err).ToNot(HaveOccurred())
 

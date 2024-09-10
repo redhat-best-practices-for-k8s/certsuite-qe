@@ -41,7 +41,7 @@ var _ = Describe("Operator pods have runAs userid", func() {
 	It("Operator pods should have runAs userid", func() {
 		// Deploy an operator that has runAs userid
 		By("Deploy operator group")
-		err := tshelper.DeployTestOperatorGroup(randomNamespace)
+		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
