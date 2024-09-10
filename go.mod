@@ -13,7 +13,7 @@ require (
 	github.com/operator-framework/api v0.27.0
 	github.com/operator-framework/operator-lifecycle-manager v0.22.0
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.47
-	github.com/redhat-best-practices-for-k8s/oct v0.0.21
+	github.com/redhat-best-practices-for-k8s/oct v0.0.22
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
