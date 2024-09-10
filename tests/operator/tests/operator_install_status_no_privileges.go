@@ -32,7 +32,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace)
+		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		// cloudbees operator has clusterPermissions but no resourceNames

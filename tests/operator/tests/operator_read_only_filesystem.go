@@ -33,7 +33,7 @@ var _ = Describe("Operator pods read only filesystem", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace)
+		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 	})
 
@@ -51,7 +51,7 @@ var _ = Describe("Operator pods read only filesystem", func() {
 	It("Operator pods should not have read-only filesystem [negative]", func() {
 		// Deploy an operator that has read-only filesystem
 		By("Deploy operator group")
-		err := tshelper.DeployTestOperatorGroup(randomNamespace)
+		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)

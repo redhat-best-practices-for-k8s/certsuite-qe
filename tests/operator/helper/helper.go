@@ -16,13 +16,18 @@ import (
 	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
 
-func DeployTestOperatorGroup(namespace string) error {
+func DeployTestOperatorGroup(namespace string, clusterWide bool) error {
 	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
 		namespace) != nil {
+		targetNamespaces := []string{namespace}
+		if clusterWide {
+			targetNamespaces = []string{}
+		}
+
 		return globalhelper.DeployOperatorGroup(namespace,
 			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
 				namespace,
-				[]string{namespace}),
+				targetNamespaces),
 		)
 	}
 
