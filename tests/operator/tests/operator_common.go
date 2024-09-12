@@ -18,10 +18,7 @@ func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
 	Eventually(func() bool {
 		csv, err = tshelper.GetCsvByPrefix(csvPrefix, namespace)
 		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
-			return csv.Status.Phase != "InstallReady" &&
-				csv.Status.Phase != "Deleting" &&
-				csv.Status.Phase != "Replacing" &&
-				csv.Status.Phase != "Unknown"
+			return csv.Status.Phase == v1alpha1.CSVPhaseSucceeded
 		}
 
 		if err != nil {

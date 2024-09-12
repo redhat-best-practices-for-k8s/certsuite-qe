@@ -1,6 +1,8 @@
 package operator
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -116,33 +118,37 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66142
 	It("one operator installed with OLM", func() {
-		By("Deploy cloudbees-ci operator for testing")
-		err := tshelper.DeployOperatorSubscription(
-			"cloudbees-ci",
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
+		// nginx-ingress-operator: in certified-operators group and version is certified
+		err = tshelper.DeployOperatorSubscription(
+			tsparams.CertifiedOperatorPrefixNginx,
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			"",
+			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
 			v1alpha1.ApprovalAutomatic,
 		)
-
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixCloudbees)
+			tsparams.CertifiedOperatorPrefixNginx)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
 			" is not ready")
 
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixCloudbees,
+				tsparams.CertifiedOperatorPrefixNginx,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -210,28 +216,41 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66144
 	It("two operators, both installed with OLM", func() {
-		By("Deploy cloudbees-ci operator for testing")
-		err := tshelper.DeployOperatorSubscription(
-			"cloudbees-ci",
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
+		// nginx-ingress-operator: in certified-operators group and version is certified
+		err = tshelper.DeployOperatorSubscription(
+			tsparams.CertifiedOperatorPrefixNginx,
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
-			"",
+			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
 			v1alpha1.ApprovalAutomatic,
 		)
-
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixCloudbees)
+			tsparams.CertifiedOperatorPrefixNginx)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
 			" is not ready")
+
+		By("Label operator")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				tsparams.CertifiedOperatorPrefixNginx,
+				randomNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
 
 		By("Deploy anchore-engine operator for testing")
 		err = tshelper.DeployOperatorSubscription(
-			"anchore-engine",
+			tsparams.OperatorPrefixAnchore,
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -245,11 +264,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixCloudbees,
+				tsparams.OperatorPrefixAnchore,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixAnchore)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -296,7 +315,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Deploy anchore-engine operator for testing")
 		err = tshelper.DeployOperatorSubscription(
-			"anchore-engine",
+			tsparams.OperatorPrefixAnchore,
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,

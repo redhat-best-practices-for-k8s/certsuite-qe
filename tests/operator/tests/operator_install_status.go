@@ -144,7 +144,7 @@ var _ = Describe("Operator install-source,", func() {
 		// for operator readiness.
 		nodeSelector := map[string]string{"target": "none"}
 		err := tshelper.DeployOperatorSubscriptionWithNodeSelector(
-			"anchore-engine",
+			tsparams.OperatorPrefixAnchore,
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
