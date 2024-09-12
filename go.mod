@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/golang/glog v1.2.2
-	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.1
+	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
