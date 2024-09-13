@@ -4,12 +4,12 @@ import (
 	"context"
 	"testing"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	rbacv1 "k8s.io/api/rbac/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestDeleteClusterRole(t *testing.T) {
@@ -37,10 +37,12 @@ func TestDeleteClusterRole(t *testing.T) {
 			runtimeObjects = append(runtimeObjects, testCR)
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, deleteClusterRole(client.RbacV1(), testCR.Name))
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		assert.Nil(t, deleteClusterRole(fakeClient, testCR.Name))
 
-		_, err := client.RbacV1().ClusterRoles().Get(context.TODO(), testCR.Name, metav1.GetOptions{})
+		_, err := fakeClient.RbacV1Interface.ClusterRoles().Get(context.TODO(), testCR.Name, metav1.GetOptions{})
 		assert.NotNil(t, err)
 		assert.True(t, k8serrors.IsNotFound(err))
 	}
