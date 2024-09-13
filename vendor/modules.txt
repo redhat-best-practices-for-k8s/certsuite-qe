@@ -279,7 +279,7 @@ github.com/pmezard/go-difflib/difflib
 # github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.48
 ## explicit; go 1.23.1
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
-# github.com/redhat-best-practices-for-k8s/oct v0.0.22
+# github.com/redhat-best-practices-for-k8s/oct v0.0.23
 ## explicit; go 1.23.1
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck
@@ -431,7 +431,7 @@ gorm.io/gorm/clause
 gorm.io/gorm/logger
 gorm.io/gorm/schema
 gorm.io/gorm/utils
-# helm.sh/helm/v3 v3.15.4
+# helm.sh/helm/v3 v3.16.1
 ## explicit; go 1.22.0
 helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/release
