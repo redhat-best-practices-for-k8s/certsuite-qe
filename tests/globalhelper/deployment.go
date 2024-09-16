@@ -82,5 +82,5 @@ func DeleteDeployment(name, namespace string) error {
 }
 
 func deleteDeployment(client *egiClients.Settings, name, namespace string) error {
-	return egiDeployment.NewBuilder(client, name, namespace, map[string]string{"test-app": "test"}, &corev1.Container{}).Delete()
+	return egiDeployment.NewBuilder(client, name, namespace, map[string]string{"test-app": "test"}, corev1.Container{}).Delete()
 }

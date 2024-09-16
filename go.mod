@@ -8,7 +8,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
-	github.com/openshift-kni/eco-goinfra v0.0.0-00010101000000-000000000000
+	github.com/openshift-kni/eco-goinfra v0.0.0-20240913191710-1067cae3dd1e
 	github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87
 	github.com/operator-framework/api v0.27.0
 	github.com/operator-framework/operator-lifecycle-manager v0.28.0
@@ -106,7 +106,7 @@ require (
 
 replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
-	github.com/openshift-kni/eco-goinfra => github.com/openshift-kni/eco-goinfra v0.0.0-20240827150327-fe103730d840
+	github.com/openshift-kni/eco-goinfra => github.com/openshift-kni/eco-goinfra v0.0.0-20240913191710-1067cae3dd1e
 	github.com/openshift/api => github.com/openshift/api v0.0.0-20240823112050-2b42490270d8
 	k8s.io/client-go => k8s.io/client-go v0.31.0
 )

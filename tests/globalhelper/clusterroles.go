@@ -1,32 +1,18 @@
 package globalhelper
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/golang/glog"
-	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	typedrbacv1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	egiRbac "github.com/openshift-kni/eco-goinfra/pkg/rbac"
+	rbacv1 "k8s.io/api/rbac/v1"
 )
 
 func DeleteClusterRole(name string) error {
-	return deleteClusterRole(GetAPIClient().K8sClient.RbacV1(), name)
+	return deleteClusterRole(egiClients.New(""), name)
 }
 
-func deleteClusterRole(client typedrbacv1.RbacV1Interface, name string) error {
-	err := client.ClusterRoles().Delete(
-		context.TODO(),
-		name,
-		metav1.DeleteOptions{},
-	)
-	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("cluster-role %s is not found", name))
-
-		return nil
-	} else if err != nil {
-		return fmt.Errorf("failed to delete cluster role %q: %w", name, err)
-	}
-
-	return nil
+func deleteClusterRole(client *egiClients.Settings, name string) error {
+	return egiRbac.NewClusterRoleBuilder(client, name, rbacv1.PolicyRule{
+		Verbs:     []string{"get"},
+		APIGroups: []string{""},
+	}).Delete()
 }
