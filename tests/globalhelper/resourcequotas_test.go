@@ -3,12 +3,12 @@ package globalhelper
 import (
 	"testing"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/resourcequota"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestCreateResourceQuota(t *testing.T) {
@@ -41,9 +41,11 @@ func TestCreateResourceQuota(t *testing.T) {
 		}
 
 		// Add the runtime objects to the fake clientset
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
 
-		err := createResourceQuota(client, testCase.testResourceQuota)
+		err := createResourceQuota(fakeClient, testCase.testResourceQuota)
 		assert.Nil(t, err)
 	}
 }

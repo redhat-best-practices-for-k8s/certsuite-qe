@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -12,7 +13,6 @@ import (
 	policyv1 "k8s.io/api/policy/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func generateNamespace(name string) *corev1.Namespace {
@@ -44,8 +44,10 @@ func TestDeleteNamespaceAndWait(t *testing.T) {
 			runtimeObjects = append(runtimeObjects, generateNamespace(testCase.name))
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := deleteNamespaceAndWait(client.CoreV1(), testCase.name, 10*time.Second)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := deleteNamespaceAndWait(fakeClient, testCase.name, 10*time.Second)
 		assert.NoError(t, err)
 	}
 }
@@ -71,8 +73,10 @@ func TestCreateNamespace(t *testing.T) {
 			runtimeObjects = append(runtimeObjects, generateNamespace(testCase.name))
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := createNamespace(testCase.name, client.CoreV1())
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := createNamespace(testCase.name, fakeClient)
 		assert.NoError(t, err)
 	}
 }
@@ -98,8 +102,10 @@ func TestNamespaceExists(t *testing.T) {
 			runtimeObjects = append(runtimeObjects, generateNamespace(testCase.name))
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		exists, err := namespaceExists(testCase.name, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		exists, err := namespaceExists(testCase.name, fakeClient)
 		assert.NoError(t, err)
 		assert.Equal(t, testCase.alreadyExists, exists)
 	}
@@ -139,13 +145,15 @@ func TestCleanPods(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generatePod(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanPods(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanPods(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no pods left
-			pods, err := client.CoreV1().Pods(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			pods, err := fakeClient.K8sClient.CoreV1().Pods(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(pods.Items))
 		}
@@ -186,13 +194,15 @@ func TestCleanDeployments(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generateDeployment(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanDeployments(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanDeployments(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no deployments left
-			deployments, err := client.AppsV1().Deployments(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			deployments, err := fakeClient.K8sClient.AppsV1().Deployments(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(deployments.Items))
 		}
@@ -233,13 +243,15 @@ func TestCleanDaemonsets(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generateDaemonset(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanDaemonSets(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanDaemonSets(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no daemonsets left
-			daemonsets, err := client.AppsV1().DaemonSets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			daemonsets, err := fakeClient.K8sClient.AppsV1().DaemonSets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(daemonsets.Items))
 		}
@@ -280,13 +292,15 @@ func TestCleanReplicaSets(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generateReplicaSet(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanReplicaSets(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanReplicaSets(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no replicasets left
-			replicasets, err := client.AppsV1().ReplicaSets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			replicasets, err := fakeClient.K8sClient.AppsV1().ReplicaSets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(replicasets.Items))
 		}
@@ -327,19 +341,21 @@ func TestCleanServices(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generateService(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
 
 		// get list of services
-		services, err := client.CoreV1().Services(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+		services, err := fakeClient.K8sClient.CoreV1().Services(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 		assert.NoError(t, err)
 		assert.Equal(t, 1, len(services.Items))
 
-		err = cleanServices(testCase.namespace, client)
+		err = cleanServices(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no services left
-			services, err := client.CoreV1().Services(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			services, err := fakeClient.K8sClient.CoreV1().Services(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(services.Items))
 		}
@@ -380,13 +396,15 @@ func TestCleanPVCs(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generatePVC(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanPVCs(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanPVCs(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no pvcs left
-			pvcs, err := client.CoreV1().PersistentVolumeClaims(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			pvcs, err := fakeClient.K8sClient.CoreV1().PersistentVolumeClaims(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(pvcs.Items))
 		}
@@ -427,13 +445,16 @@ func TestCleanPodDisruptionBudget(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generatePodDisruptionBudget(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanPodDisruptionBudget(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanPodDisruptionBudget(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no pod disruption budgets left
-			pdbs, err := client.PolicyV1beta1().PodDisruptionBudgets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			pdbs, err := fakeClient.K8sClient.PolicyV1beta1().
+				PodDisruptionBudgets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(pdbs.Items))
 		}
@@ -474,13 +495,15 @@ func TestCleanResourceQuotas(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generateResourceQuota(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanResourceQuotas(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanResourceQuotas(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no resource quotas left
-			resourceQuotas, err := client.CoreV1().ResourceQuotas(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			resourceQuotas, err := fakeClient.K8sClient.CoreV1().ResourceQuotas(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(resourceQuotas.Items))
 		}
@@ -521,13 +544,16 @@ func TestCleanNetworkPolicies(t *testing.T) {
 		}
 		runtimeObjects = append(runtimeObjects, generateNetworkPolicy(testCase.name, testCase.namespace))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		err := cleanNetworkPolicies(testCase.namespace, client)
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		err := cleanNetworkPolicies(testCase.namespace, fakeClient)
 		assert.NoError(t, err)
 
 		if testCase.namespaceExists {
 			// check if namespace has no network policies left
-			networkPolicies, err := client.NetworkingV1().NetworkPolicies(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			networkPolicies, err := fakeClient.K8sClient.
+				NetworkingV1().NetworkPolicies(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(networkPolicies.Items))
 		}
