@@ -54,12 +54,6 @@ jobs:
           repository: redhat-best-practices-for-k8s/certsuite-sample-workload
           path: certsuite-sample-workload
 
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@9e8a61fce18b15281e831f1bba0e14c71d1e1f46 # main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: certsuite-qe/certsuite-sample-workload certsuite-qe/certsuite
-
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -117,6 +111,7 @@ jobs:
         uses: depends-on/depends-on-action@9e8a61fce18b15281e831f1bba0e14c71d1e1f46 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          extra-dirs: certsuite-qe/certsuite-sample-workload certsuite-qe/certsuite
 
       - name: Run the tests (against image)
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
