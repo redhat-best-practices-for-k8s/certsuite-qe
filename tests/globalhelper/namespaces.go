@@ -10,9 +10,12 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	egiDaemonSet "github.com/openshift-kni/eco-goinfra/pkg/daemonset"
 	egiDeployment "github.com/openshift-kni/eco-goinfra/pkg/deployment"
 	egiNamespaces "github.com/openshift-kni/eco-goinfra/pkg/namespace"
 	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
+	egiReplicaSet "github.com/openshift-kni/eco-goinfra/pkg/replicaset"
+	egiServices "github.com/openshift-kni/eco-goinfra/pkg/service"
 	egiStatefulSet "github.com/openshift-kni/eco-goinfra/pkg/statefulset"
 	egiStorage "github.com/openshift-kni/eco-goinfra/pkg/storage"
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
@@ -79,87 +82,6 @@ func namespaceExists(namespace string, client *egiClients.Settings) (bool, error
 	return builder.Exists(), nil
 }
 
-// CleanPods deletes all pods in namespace.
-func cleanPods(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	egiPodBuilders, err := egiPod.List(client, namespace, metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	// Loop through the builders and delete the pods
-	for _, podBuilder := range egiPodBuilders {
-		_, err = podBuilder.Delete()
-		if err != nil {
-			return fmt.Errorf("failed to delete pod %w", err)
-		}
-	}
-
-	return nil
-}
-
-func cleanDeployments(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	egiDeploymentBuilders, err := egiDeployment.List(client, namespace, metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	// Loop through the builders and delete the deployments
-	for _, deploymentBuilder := range egiDeploymentBuilders {
-		err = deploymentBuilder.Delete()
-		if err != nil {
-			return fmt.Errorf("failed to delete deployment %w", err)
-		}
-	}
-
-	return nil
-}
-
-// CleanDaemonSets deletes all daemonsets in namespace.
-func cleanDaemonSets(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	daemoneSets, err := client.K8sClient.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, ds := range daemoneSets.Items {
-		err = client.K8sClient.AppsV1().DaemonSets(namespace).Delete(context.TODO(), ds.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		})
-		if err != nil && !k8serrors.IsNotFound(err) {
-			return fmt.Errorf("failed to delete daemonset %w", err)
-		}
-	}
-
-	return nil
-}
-
 func cleanNetworkAttachmentDefinition(namespace string, client *egiClients.Settings, rtc runtimeclient.Client) error {
 	nsExist, err := namespaceExists(namespace, client)
 	if err != nil {
@@ -185,87 +107,6 @@ func cleanNetworkAttachmentDefinition(namespace string, client *egiClients.Setti
 					return err
 				}
 			}
-		}
-	}
-
-	return nil
-}
-
-func cleanReplicaSets(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	replicaSets, err := client.K8sClient.AppsV1().ReplicaSets(namespace).List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, rs := range replicaSets.Items {
-		err = client.K8sClient.AppsV1().ReplicaSets(namespace).Delete(context.TODO(), rs.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		})
-		if err != nil && !k8serrors.IsNotFound(err) {
-			return fmt.Errorf("failed to delete replicaSet %w", err)
-		}
-	}
-
-	return nil
-}
-
-func cleanStatefulSets(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	statefulSets, err := client.K8sClient.AppsV1().StatefulSets(namespace).List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, ss := range statefulSets.Items {
-		err = client.K8sClient.AppsV1().StatefulSets(namespace).Delete(context.TODO(), ss.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		})
-		if err != nil && !k8serrors.IsNotFound(err) {
-			return fmt.Errorf("failed to delete statefulSet %w", err)
-		}
-	}
-
-	return nil
-}
-
-func cleanServices(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	serviceList, err := client.K8sClient.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, s := range serviceList.Items {
-		err = client.K8sClient.CoreV1().Services(namespace).Delete(context.TODO(), s.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		})
-		if err != nil && !k8serrors.IsNotFound(err) {
-			return fmt.Errorf("failed to delete service %w", err)
 		}
 	}
 
@@ -463,37 +304,19 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 
 	err = builder.CleanObjects(5*time.Second,
 		egiDeployment.GetGVR(),
-		// egiDaemonSet.GetGVR(),
-		// egiPods.GetGVR(),
-		// egiReplicaSet.GetGVR(),
+		egiDaemonSet.GetGVR(),
+		egiPod.GetGVR(),
+		egiReplicaSet.GetGVR(),
 		egiStatefulSet.GetGVR(),
+		// egiNetworkPolicy.GetGVR(),
+		egiServices.GetGVR(),
 	)
 
 	if err != nil {
 		return err
 	}
 
-	err = cleanPods(namespace, egiClient)
-	if err != nil {
-		return err
-	}
-
-	err = cleanReplicaSets(namespace, egiClient)
-	if err != nil {
-		return err
-	}
-
-	err = cleanStatefulSets(namespace, egiClient)
-	if err != nil {
-		return err
-	}
-
 	err = cleanNetworkAttachmentDefinition(namespace, egiClient, clientSet.Client)
-	if err != nil {
-		return err
-	}
-
-	err = cleanServices(namespace, egiClient)
 	if err != nil {
 		return err
 	}
