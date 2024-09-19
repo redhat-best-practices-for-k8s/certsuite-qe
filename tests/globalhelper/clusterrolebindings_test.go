@@ -3,11 +3,11 @@ package globalhelper
 import (
 	"testing"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestCreateClusterRoleBinding(t *testing.T) {
@@ -27,14 +27,32 @@ func TestCreateClusterRoleBinding(t *testing.T) {
 				ObjectMeta: metav1.ObjectMeta{
 					Name: "testCRB",
 				},
+				Subjects: []rbacv1.Subject{
+					{
+						Kind:      "User",
+						Name:      "testUser",
+						Namespace: "testNamespace",
+						APIGroup:  "testAPIGroup",
+					},
+				},
 			})
 		}
 
 		// Create a fake clientset
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, createClusterRoleBinding(client.RbacV1(), &rbacv1.ClusterRoleBinding{
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		assert.Nil(t, createClusterRoleBinding(fakeClient, &rbacv1.ClusterRoleBinding{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "testCRB",
+			},
+			Subjects: []rbacv1.Subject{
+				{
+					Kind:      "User",
+					Name:      "testUser",
+					Namespace: "testNamespace",
+					APIGroup:  "testAPIGroup",
+				},
 			},
 		}))
 	}
@@ -55,6 +73,14 @@ func TestDeleteClusterRoleBinding(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "testCRB",
 			},
+			Subjects: []rbacv1.Subject{
+				{
+					Kind:      "User",
+					Name:      "testUser",
+					Namespace: "testNamespace",
+					APIGroup:  "testAPIGroup",
+				},
+			},
 		}
 
 		if testCase.crbAlreadyExists {
@@ -63,8 +89,10 @@ func TestDeleteClusterRoleBinding(t *testing.T) {
 		}
 
 		// Create a fake clientset
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, deleteClusterRoleBinding(client.RbacV1(), testCRB))
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		assert.Nil(t, deleteClusterRoleBinding(fakeClient, testCRB))
 	}
 }
 
@@ -83,6 +111,14 @@ func TestDeleteClusterRoleBindingByName(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "testCRB",
 			},
+			Subjects: []rbacv1.Subject{
+				{
+					Kind:      "User",
+					Name:      "testUser",
+					Namespace: "testNamespace",
+					APIGroup:  "testAPIGroup",
+				},
+			},
 		}
 
 		if testCase.crbAlreadyExists {
@@ -91,7 +127,9 @@ func TestDeleteClusterRoleBindingByName(t *testing.T) {
 		}
 
 		// Create a fake clientset
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
-		assert.Nil(t, deleteClusterRoleBindingByName(client.RbacV1(), testCRB.Name))
+		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+			K8sMockObjects: runtimeObjects,
+		})
+		assert.Nil(t, deleteClusterRoleBindingByName(fakeClient, testCRB.Name))
 	}
 }
