@@ -1,65 +1,52 @@
 package globalhelper
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/golang/glog"
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	egiRbac "github.com/openshift-kni/eco-goinfra/pkg/rbac"
 	rbacv1 "k8s.io/api/rbac/v1"
-	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	typedrbacv1 "k8s.io/client-go/kubernetes/typed/rbac/v1"
 )
 
 // CreateClusterRoleBinding creates a cluster role binding.
 func CreateClusterRoleBinding(clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
-	return createClusterRoleBinding(GetAPIClient().K8sClient.RbacV1(), clusterRoleBinding)
+	return createClusterRoleBinding(egiClients.New(""), clusterRoleBinding)
 }
 
-func createClusterRoleBinding(client typedrbacv1.RbacV1Interface, clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
-	_, err := client.ClusterRoleBindings().Create(context.TODO(), clusterRoleBinding, metav1.CreateOptions{})
-	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("cluster role binding %s already exists", clusterRoleBinding.Name))
-	} else if err != nil {
-		return fmt.Errorf("failed to create cluster role binding: %w", err)
-	}
+func createClusterRoleBinding(client *egiClients.Settings, clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
+	_, err := egiRbac.NewClusterRoleBindingBuilder(client,
+		clusterRoleBinding.Name, clusterRoleBinding.RoleRef.Name, rbacv1.Subject{
+			Kind:      clusterRoleBinding.Subjects[0].Kind,
+			Name:      clusterRoleBinding.Subjects[0].Name,
+			Namespace: clusterRoleBinding.Subjects[0].Namespace,
+			APIGroup:  clusterRoleBinding.Subjects[0].APIGroup,
+		}).Create()
 
-	return nil
+	return err
 }
 
 // DeleteClusterRoleBinding deletes a cluster role binding.
 func DeleteClusterRoleBinding(clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
-	return deleteClusterRoleBinding(GetAPIClient().K8sClient.RbacV1(), clusterRoleBinding)
+	return deleteClusterRoleBinding(egiClients.New(""), clusterRoleBinding)
 }
 
-func deleteClusterRoleBinding(client typedrbacv1.RbacV1Interface, clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
-	// Exit if the cluster role binding does not exist
-	_, err := client.ClusterRoleBindings().Get(context.TODO(), clusterRoleBinding.Name, metav1.GetOptions{})
-	if k8serrors.IsNotFound(err) {
-		return nil
-	}
-
-	if err := client.ClusterRoleBindings().Delete(context.TODO(), clusterRoleBinding.Name, metav1.DeleteOptions{}); err != nil {
-		return fmt.Errorf("failed to delete cluster role binding: %w", err)
-	}
-
-	return nil
+func deleteClusterRoleBinding(client *egiClients.Settings, clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
+	return egiRbac.NewClusterRoleBindingBuilder(client,
+		clusterRoleBinding.Name, clusterRoleBinding.RoleRef.Name, rbacv1.Subject{
+			Kind:      clusterRoleBinding.Subjects[0].Kind,
+			Name:      clusterRoleBinding.Subjects[0].Name,
+			Namespace: clusterRoleBinding.Subjects[0].Namespace,
+			APIGroup:  clusterRoleBinding.Subjects[0].APIGroup,
+		}).Delete()
 }
 
 func DeleteClusterRoleBindingByName(name string) error {
-	return deleteClusterRoleBindingByName(GetAPIClient().K8sClient.RbacV1(), name)
+	return deleteClusterRoleBindingByName(egiClients.New(""), name)
 }
 
-func deleteClusterRoleBindingByName(client typedrbacv1.RbacV1Interface, name string) error {
-	// Exit if the cluster role binding does not exist
-	_, err := client.ClusterRoleBindings().Get(context.TODO(), name, metav1.GetOptions{})
-	if k8serrors.IsNotFound(err) {
-		return nil
-	}
-
-	if err := client.ClusterRoleBindings().Delete(context.TODO(), name, metav1.DeleteOptions{}); err != nil {
-		return fmt.Errorf("failed to delete cluster role binding: %w", err)
-	}
-
-	return nil
+func deleteClusterRoleBindingByName(client *egiClients.Settings, name string) error {
+	return egiRbac.NewClusterRoleBindingBuilder(client, name, "notempty", rbacv1.Subject{
+		Kind:      "User",
+		Name:      "notempty",
+		Namespace: "notempty",
+		APIGroup:  "notempty",
+	}).Delete()
 }
