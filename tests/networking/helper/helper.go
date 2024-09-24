@@ -248,7 +248,7 @@ func DefineAndCreateNetworkPolicy(name, ns string, policyTypes []string, labels 
 	types := networkpolicy.DefinePolicyTypes(policyTypes)
 	policy := networkpolicy.DefineDenyAllNetworkPolicy(name, ns, types, labels)
 
-	return globalhelper.CreateAndWaitUntilNetworkPolicyIsReady(policy, tsparams.WaitingTime)
+	return globalhelper.CreateNetworkPolicy(policy, tsparams.WaitingTime)
 }
 
 func findListIntersections(listA, listB []string) []string {
