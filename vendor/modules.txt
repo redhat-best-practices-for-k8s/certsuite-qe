@@ -188,6 +188,10 @@ github.com/josharian/intern
 # github.com/json-iterator/go v1.1.12
 ## explicit; go 1.12
 github.com/json-iterator/go
+# github.com/k8snetworkplumbingwg/multi-networkpolicy v0.0.0-20240528155521-f76867e779b8
+## explicit; go 1.13
+github.com/k8snetworkplumbingwg/multi-networkpolicy/pkg/apis/k8s.cni.cncf.io
+github.com/k8snetworkplumbingwg/multi-networkpolicy/pkg/apis/k8s.cni.cncf.io/v1beta1
 # github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.3
 ## explicit; go 1.21
 github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io
@@ -276,6 +280,7 @@ github.com/openshift-kni/eco-goinfra/pkg/daemonset
 github.com/openshift-kni/eco-goinfra/pkg/deployment
 github.com/openshift-kni/eco-goinfra/pkg/msg
 github.com/openshift-kni/eco-goinfra/pkg/namespace
+github.com/openshift-kni/eco-goinfra/pkg/networkpolicy
 github.com/openshift-kni/eco-goinfra/pkg/pod
 github.com/openshift-kni/eco-goinfra/pkg/rbac
 github.com/openshift-kni/eco-goinfra/pkg/replicaset
