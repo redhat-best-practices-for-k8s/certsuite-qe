@@ -406,8 +406,8 @@ github.com/onsi/gomega v1.33.0/go.mod h1:+925n5YtiFsLzzafLUHzVMBpvvRAzrydIBiSIxj
 github.com/onsi/gomega v1.33.1/go.mod h1:U4R44UsT+9eLIaYRB2a5qajjtQYn0hauxvRm16AVYg0=
 github.com/onsi/gomega v1.34.2 h1:pNCwDkzrsv7MS9kpaQvVb1aVLahQXyJ/Tv5oAZMI3i8=
 github.com/onsi/gomega v1.34.2/go.mod h1:v1xfxRgk0KIsG+QOdm7p8UosrOzPYRo60fd3B/1Dukc=
-github.com/openshift-kni/eco-goinfra v0.0.0-20240924153415-499674241c62 h1:aqJiR2DPHHEGkvxZVfRceMxke6Gq5oap1vB3STRur6E=
-github.com/openshift-kni/eco-goinfra v0.0.0-20240924153415-499674241c62/go.mod h1:yWno/75XOopIj/GlMgvm+dye+cwbaMQBVek1XNGl+SI=
+github.com/openshift-kni/eco-goinfra v0.0.0-20240925123158-d27bef1a25a6 h1:P/4sAT/52g7ngBcgpeGmI6KdpaKM0+4XXYORjopi6Jw=
+github.com/openshift-kni/eco-goinfra v0.0.0-20240925123158-d27bef1a25a6/go.mod h1:yWno/75XOopIj/GlMgvm+dye+cwbaMQBVek1XNGl+SI=
 github.com/openshift/api v0.0.0-20240823112050-2b42490270d8 h1:1Dgn1a5HWbNZK2zYEZXnjM/4KAe3xWekQrl0sYPNWpA=
 github.com/openshift/api v0.0.0-20240823112050-2b42490270d8/go.mod h1:OOh6Qopf21pSzqNVCB5gomomBXb8o5sGKZxG2KNpaXM=
 github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87 h1:JtLhaGpSEconE+1IKmIgCOof/Len5ceG6H1pk43yv5U=
