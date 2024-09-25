@@ -13,6 +13,7 @@ import (
 	egiDaemonSet "github.com/openshift-kni/eco-goinfra/pkg/daemonset"
 	egiDeployment "github.com/openshift-kni/eco-goinfra/pkg/deployment"
 	egiNamespaces "github.com/openshift-kni/eco-goinfra/pkg/namespace"
+	egiNetworkPolicy "github.com/openshift-kni/eco-goinfra/pkg/networkpolicy"
 	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
 	egiReplicaSet "github.com/openshift-kni/eco-goinfra/pkg/replicaset"
 	egiServices "github.com/openshift-kni/eco-goinfra/pkg/service"
@@ -257,33 +258,6 @@ func cleanResourceQuotas(namespace string, client *egiClients.Settings) error {
 	return nil
 }
 
-func cleanNetworkPolicies(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	nps, err := client.K8sClient.NetworkingV1().NetworkPolicies(namespace).List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, np := range nps.Items {
-		err = client.K8sClient.NetworkingV1().NetworkPolicies(namespace).Delete(context.TODO(), np.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		})
-		if err != nil && !k8serrors.IsNotFound(err) {
-			return fmt.Errorf("failed to delete network policy %w", err)
-		}
-	}
-
-	return nil
-}
-
 func CleanNamespace(namespace string) error {
 	return cleanNamespace(namespace, GetAPIClient(), egiClients.New(""))
 }
@@ -308,7 +282,7 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 		egiPod.GetGVR(),
 		egiReplicaSet.GetGVR(),
 		egiStatefulSet.GetGVR(),
-		// egiNetworkPolicy.GetGVR(),
+		egiNetworkPolicy.GetGVR(),
 		egiServices.GetGVR(),
 	)
 
@@ -342,11 +316,6 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 	}
 
 	err = cleanResourceQuotas(namespace, egiClient)
-	if err != nil {
-		return err
-	}
-
-	err = cleanNetworkPolicies(namespace, egiClient)
 	if err != nil {
 		return err
 	}

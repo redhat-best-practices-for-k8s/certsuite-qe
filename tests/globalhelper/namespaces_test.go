@@ -8,7 +8,6 @@ import (
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
-	networkingv1 "k8s.io/api/networking/v1"
 	policyv1 "k8s.io/api/policy/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -254,56 +253,6 @@ func TestCleanResourceQuotas(t *testing.T) {
 			resourceQuotas, err := fakeClient.K8sClient.CoreV1().ResourceQuotas(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(resourceQuotas.Items))
-		}
-	}
-}
-
-func TestCleanNetworkPolicies(t *testing.T) {
-	generateNetworkPolicy := func(name, namespace string) *networkingv1.NetworkPolicy {
-		return &networkingv1.NetworkPolicy{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      name,
-				Namespace: namespace,
-			},
-		}
-	}
-
-	testCases := []struct {
-		name            string
-		namespace       string
-		namespaceExists bool
-	}{
-		{
-			name:            "test-networkpolicy",
-			namespace:       "test-namespace",
-			namespaceExists: true,
-		},
-		{
-			name:            "test-networkpolicy",
-			namespace:       "test-namespace",
-			namespaceExists: false,
-		},
-	}
-
-	for _, testCase := range testCases {
-		var runtimeObjects []runtime.Object
-		if testCase.namespaceExists {
-			runtimeObjects = append(runtimeObjects, generateNamespace(testCase.namespace))
-		}
-		runtimeObjects = append(runtimeObjects, generateNetworkPolicy(testCase.name, testCase.namespace))
-
-		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
-			K8sMockObjects: runtimeObjects,
-		})
-		err := cleanNetworkPolicies(testCase.namespace, fakeClient)
-		assert.NoError(t, err)
-
-		if testCase.namespaceExists {
-			// check if namespace has no network policies left
-			networkPolicies, err := fakeClient.K8sClient.
-				NetworkingV1().NetworkPolicies(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
-			assert.NoError(t, err)
-			assert.Equal(t, 0, len(networkPolicies.Items))
 		}
 	}
 }
