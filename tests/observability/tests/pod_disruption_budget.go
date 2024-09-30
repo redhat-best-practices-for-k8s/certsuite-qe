@@ -394,6 +394,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	//nolint:lll
 	It("One deployment with two labels, one matches the label in the PDB's matchLabels but no label matches the matchExpressions [negative]", func() {
 		By("Define deployment with an extra label")
 		extraPodLabels := maps.Clone(tsparams.CertsuiteTargetPodLabels)
