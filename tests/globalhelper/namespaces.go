@@ -284,6 +284,7 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 		egiStatefulSet.GetGVR(),
 		egiNetworkPolicy.GetGVR(),
 		egiServices.GetGVR(),
+		egiStorage.GetPersistentVolumeClaimGVR(),
 	)
 
 	if err != nil {
@@ -301,11 +302,6 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 	}
 
 	err = cleanCSVs(namespace, egiClient, clientSet.OperatorsV1alpha1Interface)
-	if err != nil {
-		return err
-	}
-
-	err = cleanPVCs(namespace, egiClient)
 	if err != nil {
 		return err
 	}
