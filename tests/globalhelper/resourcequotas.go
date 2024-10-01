@@ -25,13 +25,13 @@ func createResourceQuota(client *egiClients.Settings, quota *corev1.ResourceQuot
 		return nil
 	}
 
-	_, err1 := client.K8sClient.CoreV1().ResourceQuotas(quota.Namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
+	_, err = client.ResourceQuotas(quota.Namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
 
-	if k8serrors.IsAlreadyExists(err1) {
+	if k8serrors.IsAlreadyExists(err) {
 		glog.V(5).Info(fmt.Sprintf("resource quota %s already exists", quota.Name))
 
 		return nil
 	}
 
-	return err1
+	return err
 }
