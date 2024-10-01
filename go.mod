@@ -8,12 +8,12 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
-	github.com/openshift-kni/eco-goinfra v0.0.0-20240924153415-499674241c62
+	github.com/openshift-kni/eco-goinfra v0.0.0-20240930160146-a8911b712772
 	github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87
 	github.com/operator-framework/api v0.27.0
 	github.com/operator-framework/operator-lifecycle-manager v0.28.0
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.49
-	github.com/redhat-best-practices-for-k8s/oct v0.0.23
+	github.com/redhat-best-practices-for-k8s/oct v0.0.24
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
@@ -76,6 +76,7 @@ require (
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/k8snetworkplumbingwg/multi-networkpolicy v0.0.0-20240528155521-f76867e779b8 // indirect
 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20221122204822-d1a8c34382f1 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -126,7 +127,6 @@ require (
 
 replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
-	github.com/openshift-kni/eco-goinfra => github.com/openshift-kni/eco-goinfra v0.0.0-20240924153415-499674241c62
 	github.com/openshift/api => github.com/openshift/api v0.0.0-20240823112050-2b42490270d8
 	k8s.io/client-go => k8s.io/client-go v0.31.0
 )
