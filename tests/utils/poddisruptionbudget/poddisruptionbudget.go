@@ -37,3 +37,20 @@ func DefinePodDisruptionBudgetMaxUnAvailable(name string, namespace string, maxU
 		},
 	}
 }
+
+func DefinePDBMinAvailableWithMatchLabelsAndExpressions(name string, namespace string, minAvailable intstr.IntOrString,
+	label map[string]string, expressions []metav1.LabelSelectorRequirement) *policyv1.PodDisruptionBudget {
+	return &policyv1.PodDisruptionBudget{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: namespace,
+		},
+		Spec: policyv1.PodDisruptionBudgetSpec{
+			MinAvailable: &minAvailable,
+			Selector: &metav1.LabelSelector{
+				MatchLabels:      label,
+				MatchExpressions: expressions,
+			},
+		},
+	}
+}

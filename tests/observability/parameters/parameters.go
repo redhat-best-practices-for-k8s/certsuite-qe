@@ -25,6 +25,9 @@ const (
 	TestPodLabelKey   = "certsuite-qe/observability"
 	TestPodLabelValue = "container-logging-tc"
 
+	TestPodExtraLabelKey   = "extra-key"
+	TestPodExtraLabelValue = "extra-value"
+
 	UnknownKey   = "unknown-key"
 	UnknownValue = "unknown-value"
 )
