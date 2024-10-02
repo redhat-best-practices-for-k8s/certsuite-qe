@@ -16,6 +16,7 @@ import (
 	egiNetworkPolicy "github.com/openshift-kni/eco-goinfra/pkg/networkpolicy"
 	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
 	egiReplicaSet "github.com/openshift-kni/eco-goinfra/pkg/replicaset"
+	egiResourceQuotas "github.com/openshift-kni/eco-goinfra/pkg/resourcequotas"
 	egiServices "github.com/openshift-kni/eco-goinfra/pkg/service"
 	egiStatefulSet "github.com/openshift-kni/eco-goinfra/pkg/statefulset"
 	egiStorage "github.com/openshift-kni/eco-goinfra/pkg/storage"
@@ -231,33 +232,6 @@ func cleanPodDisruptionBudget(namespace string, client *egiClients.Settings) err
 	return nil
 }
 
-func cleanResourceQuotas(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	rqs, err := client.K8sClient.CoreV1().ResourceQuotas(namespace).List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, rq := range rqs.Items {
-		err = client.K8sClient.CoreV1().ResourceQuotas(namespace).Delete(context.TODO(), rq.Name, metav1.DeleteOptions{
-			GracePeriodSeconds: ptr.To[int64](0),
-		})
-		if err != nil && !k8serrors.IsNotFound(err) {
-			return fmt.Errorf("failed to delete resource quota %w", err)
-		}
-	}
-
-	return nil
-}
-
 func CleanNamespace(namespace string) error {
 	return cleanNamespace(namespace, GetAPIClient(), egiClients.New(""))
 }
@@ -285,6 +259,7 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 		egiNetworkPolicy.GetGVR(),
 		egiServices.GetGVR(),
 		egiStorage.GetPersistentVolumeClaimGVR(),
+		egiResourceQuotas.GetGVR(),
 	)
 
 	if err != nil {
@@ -307,11 +282,6 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 	}
 
 	err = cleanPodDisruptionBudget(namespace, egiClient)
-	if err != nil {
-		return err
-	}
-
-	err = cleanResourceQuotas(namespace, egiClient)
 	if err != nil {
 		return err
 	}
