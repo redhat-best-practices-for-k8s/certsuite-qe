@@ -3,6 +3,7 @@ package globalhelper
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
@@ -36,22 +37,12 @@ func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) e
 	}
 
 	for _, validCatalogSource := range validCatalogSources {
-		if !contains(foundCatalogSources, validCatalogSource) {
+		if !slices.Contains(foundCatalogSources, validCatalogSource) {
 			return fmt.Errorf("catalog source %s not found", validCatalogSource)
 		}
 	}
 
 	return nil
-}
-
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-
-	return false
 }
 
 //nolint:unparam
