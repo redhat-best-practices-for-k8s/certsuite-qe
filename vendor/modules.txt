@@ -276,6 +276,7 @@ github.com/onsi/gomega/types
 # github.com/openshift-kni/eco-goinfra v0.0.0-20241001213052-1158534c07f9
 ## explicit; go 1.22
 github.com/openshift-kni/eco-goinfra/pkg/clients
+github.com/openshift-kni/eco-goinfra/pkg/clusterversion
 github.com/openshift-kni/eco-goinfra/pkg/daemonset
 github.com/openshift-kni/eco-goinfra/pkg/deployment
 github.com/openshift-kni/eco-goinfra/pkg/msg

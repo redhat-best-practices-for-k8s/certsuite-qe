@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"slices"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	egiClusterVersion "github.com/openshift-kni/eco-goinfra/pkg/clusterversion"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -22,7 +24,9 @@ func ValidateCatalogSources() error {
 func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
 	validCatalogSources := []string{"certified-operators", "community-operators"}
 
-	catalogSources, err := opclient.CatalogSources(CatalogSourceNamespace).List(context.Background(), metav1.ListOptions{})
+	catalogSources, err := opclient.CatalogSources(
+		CatalogSourceNamespace).List(context.Background(),
+		metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
@@ -102,12 +106,13 @@ func CreateCommunityOperatorsCatalogSource() error {
 }
 
 func GetClusterVersion() (string, error) {
-	clusterVersion, err := GetAPIClient().ClusterVersionInterface.
-		Get(context.Background(), "version", metav1.GetOptions{})
+	client := egiClients.New("")
+
+	builder, err := egiClusterVersion.Pull(client)
 
 	if err != nil {
 		return "", err
 	}
 
-	return clusterVersion.Status.Desired.Version, nil
+	return builder.Object.Status.Desired.Version, nil
 }
