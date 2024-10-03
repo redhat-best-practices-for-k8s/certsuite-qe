@@ -45,8 +45,7 @@ type ClientSet struct {
 	nodev1.NodeV1Interface
 	policyv1.PolicyV1Interface
 	policyv1beta1.PolicyV1beta1Interface
-	DynamicClient           dynamic.Interface
-	ClusterVersionInterface ocpclientconfigv1.ClusterVersionInterface
+	DynamicClient dynamic.Interface
 }
 
 // New returns a *ClientBuilder with the given kubeconfig.
@@ -76,7 +75,6 @@ func New(kubeconfig string) *ClientSet {
 	clientSet := &ClientSet{}
 	clientSet.CoreV1Interface = corev1client.NewForConfigOrDie(config)
 	clientSet.OcpClientInterface = ocpclientconfigv1.NewForConfigOrDie(config)
-	clientSet.ClusterVersionInterface = ocpclientconfigv1.NewForConfigOrDie(config).ClusterVersions()
 	clientSet.AppsV1Interface = appsv1client.NewForConfigOrDie(config)
 	clientSet.RbacV1Interface = rbacv1client.NewForConfigOrDie(config)
 	clientSet.DiscoveryInterface = discovery.NewDiscoveryClientForConfigOrDie(config)
