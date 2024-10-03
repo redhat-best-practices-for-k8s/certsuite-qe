@@ -3,11 +3,11 @@ package globalhelper
 import (
 	"testing"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	k8sfake "k8s.io/client-go/kubernetes/fake"
 )
 
 func TestGetRunningStatefulSet(t *testing.T) {
@@ -25,8 +25,10 @@ func TestGetRunningStatefulSet(t *testing.T) {
 
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, generateStatefulSet("testStatefulSet", "testNamespace"))
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
-	statefulSet, err := getRunningStatefulSet(client.AppsV1(), "testNamespace", "testStatefulSet")
+	fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
+		K8sMockObjects: runtimeObjects,
+	})
+	statefulSet, err := getRunningStatefulSet(fakeClient, "testNamespace", "testStatefulSet")
 	assert.Nil(t, err)
 	assert.Equal(t, "testStatefulSet", statefulSet.Name)
 	assert.Equal(t, "testNamespace", statefulSet.Namespace)
