@@ -109,7 +109,7 @@ func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterSe
 func DeployOperatorSubscription(operatorPackage, channel, namespace, group,
 	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval) error {
 	operatorSubscription := utils.DefineSubscription(
-		operatorPackage+"-subscription",
+		operatorPackage+"-subscription"+globalhelper.GenerateRandomString(5),
 		namespace,
 		channel,
 		operatorPackage,

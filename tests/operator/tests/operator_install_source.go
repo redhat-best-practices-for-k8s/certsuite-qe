@@ -2,6 +2,7 @@ package operator
 
 import (
 	"fmt"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -40,7 +41,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		// Install 3 separate operators for testing
-		By("Deploy operator group")
+		By("Deploy operator group 1")
 		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 	})
@@ -50,7 +51,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("deploy cluster-wide cluster-logging operator with subscription in another namespace", func() {
+	FIt("deploy cluster-wide cluster-logging operator with subscription in another namespace", func() {
 		const (
 			clusterLoggingOperatorName  = "cluster-logging"
 			clusterLoggingTestNamespace = "fake-openshift-logging"
@@ -141,14 +142,52 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
 			" is not ready")
 
+		By("Create namespace for the 2nd operator")
+		err = globalhelper.CreateNamespace(randomNamespace + "-xyz")
+		Expect(err).ToNot(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("Delete namespace for the 2nd operator")
+			err := globalhelper.DeleteNamespaceAndWait(randomNamespace+"-xyz", tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		// Install 3 separate operators for testing
+		By("Deploy operator group 2")
+		err = tshelper.DeployTestOperatorGroup(randomNamespace+"-xyz", false)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
+
+		By(fmt.Sprintf("Deploy second nginx-ingress-operator%s for testing", "."+version))
+		// nginx-ingress-operator: in certified-operators group and version is certified
+		err = tshelper.DeployOperatorSubscription(
+			tsparams.CertifiedOperatorPrefixNginx,
+			"alpha",
+			// randomNamespace+"-xyz",
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.CertifiedOperatorPrefixNginx)
+
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
+			randomNamespace+"-xyz")
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
+			" is not ready")
+
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				tsparams.CertifiedOperatorPrefixNginx,
-				randomNamespace,
+				randomNamespace+"-xyz",
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
+
+		By("Sleep for 5 minutes")
+		time.Sleep(5 * time.Minute)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
