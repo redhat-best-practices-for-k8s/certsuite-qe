@@ -39,15 +39,22 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			randomCertsuiteConfigDir,
 		)
 
+		By("Query the packagemanifest for the default channel")
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
+			tsparams.CertifiedOperatorPrefixNginx,
+			randomNamespace,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
 		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
-		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
 
 		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
-			"alpha",
+			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,

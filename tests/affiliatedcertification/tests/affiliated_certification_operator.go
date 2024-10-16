@@ -51,15 +51,24 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
 			" is not ready")
 
-		By("Query the packagemanifest for the cockroachdb-certified operator")
-		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", randomNamespace)
+		By("Query the packagemanifest for the cockroachdb-certified operator default channel")
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
+			"cockroachdb-certified",
+			randomNamespace,
+		)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+
+		By("Query the packagemanifest for the cockroachdb-certified operator")
+		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", randomNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
+		Expect(version).ToNot(Equal("not found"), "Version not found")
 
 		By(fmt.Sprintf("Deploy cockroachdb-certified operator %s for testing", "v"+version))
 		// cockroachdb-certified operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			"cockroachdb-certified",
-			"stable",
+			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
@@ -74,16 +83,24 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version+
 			" is not ready")
 
+		By("Query the packagemanifest for nginx-ingress-operator default channel")
+		channel, err = globalhelper.QueryPackageManifestForDefaultChannel(
+			tsparams.CertifiedOperatorPrefixNginx,
+			randomNamespace,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+tsparams.CertifiedOperatorPrefixNginx)
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+
 		By("Query the packagemanifest for the nginx-ingress-operator")
 		version, err = globalhelper.QueryPackageManifestForVersion(
-			tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+			tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+tsparams.CertifiedOperatorPrefixNginx)
 
 		By(fmt.Sprintf("Deploy nginx-ingress-operator.v%s for testing", version))
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
-			"alpha",
+			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
