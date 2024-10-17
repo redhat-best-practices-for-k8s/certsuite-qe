@@ -55,7 +55,6 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			clusterLoggingOperatorName  = "cluster-logging"
 			clusterLoggingTestNamespace = "fake-openshift-logging"
 			openshiftLoggingNamespace   = "openshift-logging"
-			subscriptionChannel         = "stable-5.9"
 		)
 
 		By("Create openshift-logging namespace")
@@ -72,14 +71,22 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		By("Query the packagemanifest for the " + clusterLoggingOperatorName)
-		version, err := globalhelper.QueryPackageManifestForVersion(clusterLoggingOperatorName, randomNamespace)
+		By("Query the packagemanifest for defaultChannel for " + clusterLoggingOperatorName)
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(clusterLoggingOperatorName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		fmt.Printf("CHANNEL FOUND: %s\n", channel)
+
+		By("Query the packagemanifest for the " + clusterLoggingOperatorName)
+		version, err := globalhelper.QueryPackageManifestForVersion(clusterLoggingOperatorName, randomNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		fmt.Printf("VERSION FOUND: %s\n", version)
 
 		By("Deploy cluster-logging operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			clusterLoggingOperatorName,
-			subscriptionChannel,
+			channel,
 			openshiftLoggingNamespace,
 			tsparams.RedhatOperatorGroup,
 			tsparams.OperatorSourceNamespace,
@@ -118,15 +125,21 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66142
 	It("one operator installed with OLM", func() {
-		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
-		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx + " default channel")
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		Expect(version).ToNot(Equal("not found"), "Version not found")
 
 		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
-			"alpha",
+			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
@@ -216,15 +229,21 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66144
 	It("two operators, both installed with OLM", func() {
-		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
-		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx + " default channel")
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		Expect(version).ToNot(Equal("not found"), "Version not found")
 
 		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
-			"alpha",
+			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
 			tsparams.OperatorSourceNamespace,
