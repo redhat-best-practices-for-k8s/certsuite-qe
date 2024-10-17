@@ -370,7 +370,7 @@ github.com/red-hat-storage/odf-operator/api/v1alpha1
 # github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.50
 ## explicit; go 1.23.2
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
-# github.com/redhat-best-practices-for-k8s/oct v0.0.25
+# github.com/redhat-best-practices-for-k8s/oct v0.0.26
 ## explicit; go 1.23.2
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck
@@ -530,7 +530,7 @@ gorm.io/gorm/clause
 gorm.io/gorm/logger
 gorm.io/gorm/schema
 gorm.io/gorm/utils
-# helm.sh/helm/v3 v3.16.1
+# helm.sh/helm/v3 v3.16.2
 ## explicit; go 1.22.0
 helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/release
