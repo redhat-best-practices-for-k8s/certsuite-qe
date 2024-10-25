@@ -29,7 +29,7 @@ jobs:
           ignore_paths: vendor
       - uses: mfinelli/setup-shfmt@031e887e39d899d773a7e9b6dd6472c2c23ff50d # v3.0.1
       - run: shfmt -d scripts/*.sh
-      - uses: crate-ci/typos@4ba8712927a99a5b2011bf10148ba2fb3a518a59 # master
+      - uses: crate-ci/typos@0d9e0c2c1bd7f770f6eb90f87780848ca02fc12c # master
       - uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
         with:
           file_or_dir: .github/workflows/*.yml config/*.yaml
