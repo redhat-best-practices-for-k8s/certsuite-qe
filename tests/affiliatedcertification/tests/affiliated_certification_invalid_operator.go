@@ -54,6 +54,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
+			tsparams.CertifiedOperatorPrefixNginx,
 			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -91,6 +92,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		By("Deploy sriov-fec operator with uncertified version")
 		err = tshelper.DeployOperatorSubscription(
+			tsparams.UncertifiedOperatorPrefixSriov,
 			tsparams.UncertifiedOperatorPrefixSriov,
 			"stable",
 			randomNamespace,

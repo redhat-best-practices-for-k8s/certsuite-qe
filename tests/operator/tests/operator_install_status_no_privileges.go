@@ -39,6 +39,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		By("Deploy cloudbees-ci operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"cloudbees-ci",
+			"cloudbees-ci",
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -58,6 +59,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		By("Deploy quay operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"project-quay",
+			"project-quay",
 			"stable-3.11",
 			randomNamespace,
 			tsparams.CommunityOperatorGroup,
@@ -76,6 +78,7 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		// kiali operator has resourceNames under its rules
 		By("Deploy kiali operator for testing")
 		err = tshelper.DeployOperatorSubscription(
+			"kiali",
 			"kiali",
 			"alpha",
 			randomNamespace,

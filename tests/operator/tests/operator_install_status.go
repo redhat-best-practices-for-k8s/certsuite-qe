@@ -38,6 +38,7 @@ var _ = Describe("Operator install-source,", func() {
 		By("Deploy cloudbees-ci operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"cloudbees-ci",
+			"cloudbees-ci",
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -89,6 +90,7 @@ var _ = Describe("Operator install-source,", func() {
 		// The OpenVINO operator fails quickly due to the fact that it does not support the install mode type
 		// that it is used (OwnNamespace).
 		err := tshelper.DeployOperatorSubscription(
+			"ovms-operator",
 			"ovms-operator",
 			"alpha",
 			randomNamespace,

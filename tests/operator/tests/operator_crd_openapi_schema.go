@@ -38,6 +38,7 @@ var _ = Describe("Operator crd-openapi-schema", func() {
 		By("Deploy openvino operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"ovms-operator",
+			"ovms-operator",
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,

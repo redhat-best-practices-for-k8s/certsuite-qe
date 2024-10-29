@@ -73,18 +73,19 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Query the packagemanifest for defaultChannel for " + clusterLoggingOperatorName)
 		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(clusterLoggingOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+clusterLoggingOperatorName)
 
 		fmt.Printf("CHANNEL FOUND: %s\n", channel)
 
 		By("Query the packagemanifest for the " + clusterLoggingOperatorName)
 		version, err := globalhelper.QueryPackageManifestForVersion(clusterLoggingOperatorName, randomNamespace, channel)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+clusterLoggingOperatorName)
 
 		fmt.Printf("VERSION FOUND: %s\n", version)
 
 		By("Deploy cluster-logging operator for testing")
 		err = tshelper.DeployOperatorSubscription(
+			clusterLoggingOperatorName,
 			clusterLoggingOperatorName,
 			channel,
 			openshiftLoggingNamespace,
@@ -139,6 +140,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
+			tsparams.CertifiedOperatorPrefixNginx,
 			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -182,6 +184,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	It("one operator not installed with OLM [negative]", func() {
 		By("Deploy openvino operator for testing")
 		err := tshelper.DeployOperatorSubscription(
+			"ovms-operator",
 			"ovms-operator",
 			"alpha",
 			randomNamespace,
@@ -243,6 +246,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			tsparams.CertifiedOperatorPrefixNginx,
+			tsparams.CertifiedOperatorPrefixNginx,
 			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -269,6 +273,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Deploy anchore-engine operator for testing")
 		err = tshelper.DeployOperatorSubscription(
+			tsparams.OperatorPrefixAnchore,
 			tsparams.OperatorPrefixAnchore,
 			"alpha",
 			randomNamespace,
@@ -317,6 +322,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Deploy openvino operator for testing")
 		err := tshelper.DeployOperatorSubscription(
 			"ovms-operator",
+			"ovms-operator",
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -334,6 +340,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Deploy anchore-engine operator for testing")
 		err = tshelper.DeployOperatorSubscription(
+			tsparams.OperatorPrefixAnchore,
 			tsparams.OperatorPrefixAnchore,
 			"alpha",
 			randomNamespace,
