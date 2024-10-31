@@ -184,6 +184,40 @@ func DeployRHCertifiedOperatorSource(ocpVersion string) error {
 	return nil
 }
 
+func DeleteCustomOperatorSource() error {
+	return DeleteCatalogSource("custom-catalog", "openshift-marketplace", "Custom Index")
+}
+
+func DeployCustomOperatorSource() error {
+	err := GetAPIClient().Create(context.TODO(),
+		&v1alpha1.CatalogSource{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "custom-catalog",
+				Namespace: "openshift-marketplace",
+			},
+			Spec: v1alpha1.CatalogSourceSpec{
+				SourceType:  "grpc",
+				Image:       "quay.io/deliedit/test:catalog-index-test",
+				DisplayName: "Custom Index",
+				Publisher:   "CertsuiteTeam",
+				UpdateStrategy: &v1alpha1.UpdateStrategy{
+					RegistryPoll: &v1alpha1.RegistryPoll{
+						Interval: &metav1.Duration{
+							Duration: 30 * time.Minute}},
+				},
+			},
+		},
+	)
+
+	if k8serrors.IsAlreadyExists(err) {
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("can not deploy catalog source %w", err)
+	}
+
+	return nil
+}
+
 func DisableCatalogSource(name string) error {
 	return setCatalogSource(true, name)
 }
