@@ -61,7 +61,6 @@ const (
 	CertsuiteOperatorCrdVersioning             = "operator-crd-versioning"
 	CertsuiteOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
 	CertsuiteOperatorNonRoot                   = "operator-run-as-non-root"
-	CertsuiteOperatorReadOnlyFilesystem        = "operator-read-only-file-system"
 	CertsuiteOperatorPodAutomountToken         = "operator-automount-tokens"
 	CertsuiteOperatorPodRunAsUserID            = "operator-run-as-user-id"
 )
