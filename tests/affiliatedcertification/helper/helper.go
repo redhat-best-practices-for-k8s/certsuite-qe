@@ -99,10 +99,10 @@ func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterSe
 	return &neededCSV, nil
 }
 
-func DeployOperatorSubscription(operatorPackage, channel, namespace, group,
+func DeployOperatorSubscription(subscriptionName, operatorPackage, channel, namespace, group,
 	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval) error {
 	operatorSubscription := utils.DefineSubscription(
-		operatorPackage+"-subscription",
+		subscriptionName+"-subscription",
 		namespace,
 		channel,
 		operatorPackage,

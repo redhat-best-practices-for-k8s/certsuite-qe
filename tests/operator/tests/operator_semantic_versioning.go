@@ -39,6 +39,7 @@ var _ = Describe("Operator semantic-versioning,", func() {
 		By("Deploy openvino operator for testing")
 		err = tshelper.DeployOperatorSubscription(
 			"ovms-operator",
+			"ovms-operator",
 			"alpha",
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,

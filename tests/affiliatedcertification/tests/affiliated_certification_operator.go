@@ -36,6 +36,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		// cockroachdb: not in certified-operators group in catalog, for negative test cases
 		err := tshelper.DeployOperatorSubscription(
 			"cockroachdb",
+			"cockroachdb",
 			"stable-v6.x",
 			randomNamespace,
 			tsparams.CommunityOperatorGroup,
@@ -68,6 +69,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		// cockroachdb-certified operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
 			"cockroachdb-certified",
+			"cockroachdb-certified",
 			channel,
 			randomNamespace,
 			tsparams.CertifiedOperatorGroup,
@@ -99,6 +101,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		By(fmt.Sprintf("Deploy nginx-ingress-operator.v%s for testing", version))
 		// nginx-ingress-operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
+			tsparams.CertifiedOperatorPrefixNginx,
 			tsparams.CertifiedOperatorPrefixNginx,
 			channel,
 			randomNamespace,
