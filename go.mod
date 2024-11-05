@@ -3,7 +3,7 @@ module github.com/redhat-best-practices-for-k8s/certsuite-qe
 go 1.23.2
 
 require (
-	github.com/golang/glog v1.2.2
+	github.com/golang/glog v1.2.3
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.21.0
