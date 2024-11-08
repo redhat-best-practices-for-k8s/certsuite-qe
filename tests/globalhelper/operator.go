@@ -188,7 +188,7 @@ func DeleteCustomOperatorSource() error {
 	return DeleteCatalogSource("custom-catalog", "openshift-marketplace", "Custom Index")
 }
 
-func DeployCustomOperatorSource() error {
+func DeployCustomOperatorSource(image string) error {
 	err := GetAPIClient().Create(context.TODO(),
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
@@ -197,7 +197,7 @@ func DeployCustomOperatorSource() error {
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
-				Image:       "quay.io/deliedit/test:catalog-index-test",
+				Image:       image,
 				DisplayName: "Custom Index",
 				Publisher:   "CertsuiteTeam",
 				UpdateStrategy: &v1alpha1.UpdateStrategy{
