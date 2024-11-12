@@ -210,8 +210,8 @@ func (validator OnlineValidator) IsContainerCertified(registry, repository, tag,
 
 // IsOperatorCertified get operator bundle by csv name from the certified-operators org
 // If present then returns `true` if channel and ocp version match.
-func (validator OnlineValidator) IsOperatorCertified(csvName, ocpVersion, channel string) bool {
-	log.Tracef("Searching csv %s (channel %s) for ocp %q", csvName, channel, ocpVersion)
+func (validator OnlineValidator) IsOperatorCertified(csvName, ocpVersion string) bool {
+	log.Tracef("Searching csv %s for ocp %q", csvName, ocpVersion)
 	_, operatorVersion := offlinecheck.ExtractNameVersionFromName(csvName)
 	var responseData []byte
 	var err error
@@ -232,7 +232,7 @@ func (validator OnlineValidator) IsOperatorCertified(csvName, ocpVersion, channe
 		}
 		for _, operator := range operatorEntries.Data {
 			_, opVersion := offlinecheck.ExtractNameVersionFromName(operator.CsvName)
-			if (opVersion == operatorVersion) && (operator.OcpVersion == ocpVersion || ocpVersion == "") && operator.Channel == channel {
+			if (opVersion == operatorVersion) && (operator.OcpVersion == ocpVersion || ocpVersion == "") {
 				return true
 			}
 		}
