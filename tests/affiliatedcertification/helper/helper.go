@@ -10,7 +10,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
 	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
+
+	"github.com/golang/glog"
 )
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
@@ -115,6 +118,29 @@ func DeployOperatorSubscription(subscriptionName, operatorPackage, channel, name
 
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
+	}
+
+	return nil
+}
+
+func DeleteIstioCRDs() error {
+	crdList, err := crd.GetAllCustomResoureDefinitions()
+	if err != nil {
+		return fmt.Errorf("failed to list cluster CRDs: %w", err)
+	}
+
+	for i := range crdList {
+		crdName := crdList[i].Name
+		if !strings.Contains(crdName, "istio.io") {
+			continue
+		}
+
+		glog.Infof("Deleting istio CRD %s", crdName)
+
+		err = crd.DeleteCustomResourceDefinition(crdName)
+		if err != nil {
+			return fmt.Errorf("failed to delete istio CRD %s: %w", crdName, err)
+		}
 	}
 
 	return nil

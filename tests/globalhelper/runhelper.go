@@ -1,6 +1,7 @@
 package globalhelper
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -120,8 +121,9 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
+	var outfile *os.File
 	if debugCertsuite {
-		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
+		outfile = GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
 
@@ -136,13 +138,18 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 	err = cmd.Run()
 	if err != nil {
-		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s",
+		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s",
 			testCaseName, err, cmd.String())
+		if debugCertsuite {
+			errStr += ", outFile=" + outfile.Name()
+		}
+
+		return errors.New(errStr)
 	}
 
 	CopyClaimFileToTcFolder(testCaseName, tcNameForReport, reportDir)
 
-	return err
+	return nil
 }
 
 // LaunchTests stats tests based on given parameters.

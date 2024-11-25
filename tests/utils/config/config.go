@@ -65,38 +65,37 @@ func NewConfig() (*Config, error) {
 	}
 
 	err = readFile(&conf, confFile)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
 	conf.General.ReportDirAbsPath = filepath.Join(baseDir, conf.General.ReportDirAbsPath)
 
 	err = readEnv(&conf)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read env vars: %w", err)
 	}
 
 	err = conf.deployCertsuiteConfigDir(confFile)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to deploy certsuite config dir: %w", err)
 	}
 
 	err = conf.deployCertsuiteReportDir(confFile)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to deploy certsuite report dir: %w", err)
 	}
 
 	err = conf.makeDockerConfig()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create docker config: %w", err)
 	}
 
-	conf.General.CertsuiteRepoPath, err = conf.defineCertsuiteRepoPath()
-
-	if err != nil {
-		glog.Fatal(err)
+	if conf.General.UseBinary == "true" {
+		conf.General.CertsuiteRepoPath, err = conf.defineCertsuiteRepoPath()
+		if err != nil {
+			glog.Fatalf("Failed to define certsuite repo path: %w", err)
+		}
 	}
 
 	return &conf, nil
@@ -170,7 +169,7 @@ func readFile(cfg *Config, cfgFile string) error {
 
 	err = decoder.Decode(&cfg)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to decode config file: %w", err)
 	}
 
 	return nil
@@ -216,44 +215,49 @@ func checkFileExists(filePath, name string) (string, error) {
 
 func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, envVar string) error {
 	_, err := os.Stat(dirName)
-
-	if os.IsNotExist(err) {
-		glog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
-
-		return os.MkdirAll(dirName, 0777)
+	if err == nil {
+		// Directory exists: no need to recreate.
+		return nil
 	}
 
-	if err != nil {
+	if !os.IsNotExist(err) {
 		return fmt.Errorf(
 			"error in verifying the %s directory. Check if either %s is present in %s or "+
 				"%s env var is set", dirName, yamlTag, envVar, confFileName)
 	}
 
-	return err
+	glog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
+
+	err = os.MkdirAll(dirName, 0777)
+	if err != nil {
+		return fmt.Errorf("failed to create dir %v: %w", dirName, err)
+	}
+
+	return nil
 }
 
 func (c *Config) makeDockerConfig() error {
 	var configFile *os.File
 
 	err := os.MkdirAll(c.General.DockerConfigDir, 0777)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create dir %v: %w", c.General.DockerConfigDir, err)
 	}
 
 	err = os.Chdir(c.General.DockerConfigDir)
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to change dir to %v: %w", c.General.DockerConfigDir, err)
 	}
 
 	configFile, err = os.Create("config")
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create docker config file: %w", err)
 	}
 
 	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
+	if err != nil {
+		return fmt.Errorf("failed to write docker config content: %w", err)
+	}
 
-	return err
+	return nil
 }

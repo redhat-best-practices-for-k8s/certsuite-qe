@@ -203,6 +203,6 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
 
 	err = CopyFiles(srcClaim, dstClaim)
 	if err != nil {
-		glog.Fatalf("failed to copy %s to %s", srcClaim, dstClaim)
+		glog.Errorf("failed to copy %s to %s", srcClaim, dstClaim)
 	}
 }
