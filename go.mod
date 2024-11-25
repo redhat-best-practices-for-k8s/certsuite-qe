@@ -1,6 +1,6 @@
 module github.com/redhat-best-practices-for-k8s/certsuite-qe
 
-go 1.23.2
+go 1.23.3
 
 require (
 	github.com/golang/glog v1.2.3
