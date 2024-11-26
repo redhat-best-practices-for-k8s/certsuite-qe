@@ -2,4 +2,4 @@
 WRONLY = "WRONLY"
 
 [files]
-extend-exclude = ["vendor", "go.mod"]
+extend-exclude = ["vendor", "go.mod", "go.sum"]
