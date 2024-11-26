@@ -124,7 +124,7 @@ func DeployOperatorSubscription(subscriptionName, operatorPackage, channel, name
 }
 
 func DeleteIstioCRDs() error {
-	crdList, err := crd.GetAllCustomResoureDefinitions()
+	crdList, err := crd.GetAllCustomResourceDefinitions()
 	if err != nil {
 		return fmt.Errorf("failed to list cluster CRDs: %w", err)
 	}

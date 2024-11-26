@@ -132,7 +132,7 @@ func CreateCustomResourceScale(name, namespace, operatorLabels string, operatorL
 	return "success", nil
 }
 
-func GetAllCustomResoureDefinitions() ([]apiextv1.CustomResourceDefinition, error) {
+func GetAllCustomResourceDefinitions() ([]apiextv1.CustomResourceDefinition, error) {
 	crdList, err := globalhelper.GetAPIClient().CustomResourceDefinitions().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to list CRDs: %w", err)
