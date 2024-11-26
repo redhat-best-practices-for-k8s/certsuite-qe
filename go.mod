@@ -7,19 +7,19 @@ require (
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.22.0
-	github.com/onsi/gomega v1.35.1
+	github.com/onsi/gomega v1.36.0
 	github.com/openshift-kni/eco-goinfra v0.0.0-20241018134359-af115ee37127
 	github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87
 	github.com/operator-framework/api v0.27.0
 	github.com/operator-framework/operator-lifecycle-manager v0.30.0
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.50
-	github.com/redhat-best-practices-for-k8s/oct v0.0.27
+	github.com/redhat-best-practices-for-k8s/oct v0.0.28
 	github.com/sirupsen/logrus v1.9.3
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.31.2
-	k8s.io/apiextensions-apiserver v0.31.2
+	k8s.io/api v0.31.3
+	k8s.io/apiextensions-apiserver v0.31.3
 	k8s.io/apimachinery v0.31.3
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/utils v0.0.0-20240902221715-702e33fdd3c3
@@ -29,7 +29,7 @@ require (
 require github.com/evanphx/json-patch/v5 v5.9.0 // indirect
 
 require (
-	github.com/Masterminds/semver/v3 v3.3.0 // indirect
+	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
@@ -116,7 +116,7 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/gorm v1.24.5 // indirect
-	helm.sh/helm/v3 v3.16.2 // indirect
+	helm.sh/helm/v3 v3.16.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240903163716-9e1beecbcb38 // indirect
 	sigs.k8s.io/container-object-storage-interface-api v0.1.0 // indirect
