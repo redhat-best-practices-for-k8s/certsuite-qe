@@ -131,3 +131,21 @@ func CreateCustomResourceScale(name, namespace, operatorLabels string, operatorL
 
 	return "success", nil
 }
+
+func GetAllCustomResourceDefinitions() ([]apiextv1.CustomResourceDefinition, error) {
+	crdList, err := globalhelper.GetAPIClient().CustomResourceDefinitions().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to list CRDs: %w", err)
+	}
+
+	return crdList.Items, nil
+}
+
+func DeleteCustomResourceDefinition(name string) error {
+	err := globalhelper.GetAPIClient().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
+	if err != nil && !k8serrors.IsNotFound(err) {
+		return err
+	}
+
+	return nil
+}

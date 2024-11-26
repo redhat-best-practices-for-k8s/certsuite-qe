@@ -5,6 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -113,17 +114,17 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		By("Check if helm is installed")
 		cmd := exec.Command("/bin/bash", "-c",
 			"helm version")
-		err := cmd.Run()
+		out, err := cmd.CombinedOutput()
 		if err != nil {
-			Skip("helm does not exist please install it to run the test.")
+			Skip("helm does not exist please install it to run the test. Output: " + string(out))
 		}
 
 		By("Check that helm version is v3")
 		cmd = exec.Command("/bin/bash", "-c",
 			"helm version --short | grep v3")
-		err = cmd.Run()
+		out, err = cmd.CombinedOutput()
 		if err != nil {
-			Fail("Helm version is not v3")
+			Fail("Helm version is not v3. Output: " + string(out))
 		}
 
 		By("Delete istio-system namespace")
@@ -138,22 +139,15 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 		cmd = exec.Command("/bin/bash", "-c",
 			"helm repo add istio https://istio-release.storage.googleapis.com/charts --force-update "+
 				"&& helm repo update")
-		err = cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error adding istio charts repo")
-
-		By("Install istio-base helm chart")
-		cmd = exec.Command("/bin/bash", "-c",
-			"helm install istio-base istio/base --set defaultRevision=default -n "+randomNamespace+
-				" --set hub=gcr.io/istio-release")
-		err = cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing istio-base helm chart")
+		out, err = cmd.CombinedOutput()
+		Expect(err).ToNot(HaveOccurred(), "Error adding istio charts repo. Output: %s", string(out))
 
 		DeferCleanup(func() {
 			By("Remove istio-base helm chart")
 			cmd = exec.Command("/bin/bash", "-c", // uninstall the chart
 				"helm uninstall istio-base --ignore-not-found -n "+randomNamespace)
-			err = cmd.Run()
-			Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm chart")
+			out, err := cmd.CombinedOutput()
+			Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm chart. Output: %s", string(out))
 
 			By("Delete istio-system namespace")
 			err = globalhelper.DeleteNamespaceAndWait("istio-system", tsparams.Timeout)
@@ -162,7 +156,20 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial, f
 			By("Remove validating webhook configuration")
 			err = globalhelper.DeleteValidatingWebhookConfiguration("istiod-default-validator")
 			Expect(err).ToNot(HaveOccurred(), "Error deleting validating webhook configuration")
+
+			// BugFix: see https://github.com/istio/istio/issues/43204 , which suggests removing CRDs:
+			// https://istio.io/latest/docs/setup/install/helm/#optional-deleting-crds-installed-by-istio
+			By("Delete istio CRDs")
+			err = tshelper.DeleteIstioCRDs()
+			Expect(err).ToNot(HaveOccurred(), "Error deleting istio CRDs.")
 		})
+
+		By("Install istio-base helm chart")
+		cmd = exec.Command("/bin/bash", "-c",
+			"helm install istio-base istio/base --set defaultRevision=default -n "+randomNamespace+
+				" --set hub=gcr.io/istio-release")
+		out, err = cmd.CombinedOutput()
+		Expect(err).ToNot(HaveOccurred(), "Error installing istio-base helm chart. Output: %s", string(out))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
