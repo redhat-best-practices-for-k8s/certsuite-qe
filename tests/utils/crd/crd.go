@@ -143,7 +143,7 @@ func GetAllCustomResourceDefinitions() ([]apiextv1.CustomResourceDefinition, err
 
 func DeleteCustomResourceDefinition(name string) error {
 	err := globalhelper.GetAPIClient().CustomResourceDefinitions().Delete(context.TODO(), name, metav1.DeleteOptions{})
-	if err != nil {
+	if err != nil && !k8serrors.IsNotFound(err) {
 		return err
 	}
 
