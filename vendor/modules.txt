@@ -368,8 +368,8 @@ github.com/pmezard/go-difflib/difflib
 # github.com/red-hat-storage/odf-operator v0.0.0-20240717091720-abe8dbc878d3
 ## explicit; go 1.22.0
 github.com/red-hat-storage/odf-operator/api/v1alpha1
-# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.50
-## explicit; go 1.23.2
+# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.51
+## explicit; go 1.23.3
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
 # github.com/redhat-best-practices-for-k8s/oct v0.0.28
 ## explicit; go 1.23.2
