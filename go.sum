@@ -440,8 +440,8 @@ github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndr
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/red-hat-storage/odf-operator v0.0.0-20240717091720-abe8dbc878d3 h1:XgzSOC4//4Ip5HjSkSM7rL2W7B+tNMxXEhv+HUO0bPE=
 github.com/red-hat-storage/odf-operator v0.0.0-20240717091720-abe8dbc878d3/go.mod h1:uesbNa14YX5DkZKmB1c9NiAdQnxGkGT5TGtlM1Cqg7s=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.50 h1:I5h0QManS/gIqu+ontECO7wl7YRNynITdu2ox55aHmQ=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.50/go.mod h1:MEPl9mYANLNgdd7KKpW6rRXmUK1pXtbWmG2eVaKmBKM=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.51 h1:ZcEEA0+7YHcRzrEf/LnhxHVerPHaW0f33J6PTZer2fA=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.51/go.mod h1:qIlDWD1vOMo/aZx5i+I0FrKUAp3iXV7waFBVET0q6Yo=
 github.com/redhat-best-practices-for-k8s/oct v0.0.28 h1:jsVQ8zNY4HP0a+N5LpW445Y3phklZ4PGtlU1pZQ0Wic=
 github.com/redhat-best-practices-for-k8s/oct v0.0.28/go.mod h1:TnyopIPwdsaI7gikOi7WmT9/lgzd1Lp6DZaN6nMJhBA=
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
