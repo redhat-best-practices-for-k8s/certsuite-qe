@@ -111,7 +111,7 @@ jobs:
         uses: depends-on/depends-on-action@3f0a220b74074edace48e46f7bacc29e5ef555c2 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: certsuite-qe/certsuite-sample-workload certsuite-qe/certsuite
+          extra-dirs: certsuite-sample-workload certsuite
 
       - name: Run the tests (against image)
         uses: nick-fields/retry@7152eba30c6575329ac0576536151aca5a72780e # v3.0.0
