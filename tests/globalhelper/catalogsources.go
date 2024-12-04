@@ -76,6 +76,8 @@ func createCatalogSourceWithClient(opclient v1alpha1typed.OperatorsV1alpha1Inter
 }
 
 func CreateCommunityOperatorsCatalogSource() error {
+	communityOperatorIndex412 := "registry.redhat.io/redhat/community-operator-index:v4.12"
+	communityOperatorIndex413 := "registry.redhat.io/redhat/community-operator-index:v4.13"
 	communityOperatorIndex414 := "registry.redhat.io/redhat/community-operator-index:v4.14"
 	communityOperatorIndex415 := "registry.redhat.io/redhat/community-operator-index:v4.15"
 	communityOperatorIndex416 := "registry.redhat.io/redhat/community-operator-index:v4.16"
@@ -92,6 +94,10 @@ func CreateCommunityOperatorsCatalogSource() error {
 
 	// Note: Update this when new OCP versions are released and new community operator indexes are available
 	switch majorMinor {
+	case "4.12":
+		return createCatalogSource("community-operators", communityOperatorIndex412)
+	case "4.13":
+		return createCatalogSource("community-operators", communityOperatorIndex413)
 	case "4.14":
 		return createCatalogSource("community-operators", communityOperatorIndex414)
 	case "4.15":
