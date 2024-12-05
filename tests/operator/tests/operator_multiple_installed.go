@@ -142,7 +142,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
 
 		By("Create custom-operator catalog source")
-		err := globalhelper.DeployCustomOperatorSource()
+		err := globalhelper.DeployCustomOperatorSource("quay.io/deliedit/test:catalog-index-test")
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {

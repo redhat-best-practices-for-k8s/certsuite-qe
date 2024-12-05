@@ -64,4 +64,5 @@ const (
 	CertsuiteOperatorPodAutomountToken         = "operator-automount-tokens"
 	CertsuiteOperatorPodRunAsUserID            = "operator-run-as-user-id"
 	CertsuiteOperatorMultipleInstalled         = "operator-multiple-same-operators"
+	CertsuiteOperatorBundleCount               = "operator-catalogsource-bundle-count"
 )
