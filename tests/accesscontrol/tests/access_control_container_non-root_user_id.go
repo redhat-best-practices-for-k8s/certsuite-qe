@@ -39,6 +39,14 @@ var _ = Describe("Access-control non-root user,", func() {
 
 	// 56427
 	It("one deployment, one pod, does not have securityContext RunAsUser 0", func() {
+		if globalhelper.IsKindCluster() {
+			// This test case deploys a pod without any securityContext fields in both pod and container level. In OCP,
+			// the most restrictive SecurityContextConstraint resource will be selected, making those fields to be automatically
+			// set with the appropriate values. In kind clusters, there's no SCC so both fields will be kept as nil, which makes
+			// this test case to fail.
+			Skip("This test case is not supported in non-OCP clusters.")
+		}
+
 		By("Define deployment with securityContext RunAsUser not specified")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -98,6 +106,14 @@ var _ = Describe("Access-control non-root user,", func() {
 
 	// 56429
 	It("two deployments, one pod each, does not have securityContext RunAsUser 0", func() {
+		if globalhelper.IsKindCluster() {
+			// This test case deploys a pod without any securityContext fields in both pod and container level. In OCP,
+			// the most restrictive SecurityContextConstraint resource will be selected, making those fields to be automatically
+			// set with the appropriate values. In kind clusters, there's no SCC so both fields will be kept as nil, which makes
+			// this test case to fail.
+			Skip("This test case is not supported in non-OCP clusters.")
+		}
+
 		By("Define deployments with securityContext RunAsUser not specified or not 0")
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment1", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
