@@ -371,8 +371,8 @@ github.com/red-hat-storage/odf-operator/api/v1alpha1
 # github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.51
 ## explicit; go 1.23.3
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
-# github.com/redhat-best-practices-for-k8s/oct v0.0.28
-## explicit; go 1.23.2
+# github.com/redhat-best-practices-for-k8s/oct v0.0.29
+## explicit; go 1.23.4
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/config
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck
 github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/onlinecheck
