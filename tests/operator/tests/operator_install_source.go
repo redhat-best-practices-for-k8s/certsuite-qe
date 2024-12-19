@@ -50,12 +50,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("deploy cluster-wide cluster-logging operator with subscription in another namespace", func() {
+	It("deploy cluster-wide cluster-logging operator", func() {
 		const (
-			clusterLoggingOperatorName  = "cluster-logging"
-			clusterLoggingTestNamespace = "fake-openshift-logging"
-			openshiftLoggingNamespace   = "openshift-logging"
+			clusterLoggingOperatorName = "cluster-logging"
 		)
+		openshiftLoggingNamespace := randomNamespace
 
 		By("Create openshift-logging namespace")
 		err := globalhelper.CreateNamespace(openshiftLoggingNamespace)
@@ -64,12 +63,6 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Create fake operator group for cluster-logging operator")
 		err = tshelper.DeployTestOperatorGroup(openshiftLoggingNamespace, true)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
-
-		DeferCleanup(func() {
-			By("Delete fake namespace for cluster-logging operator")
-			err := globalhelper.DeleteNamespaceAndWait(openshiftLoggingNamespace, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
-		})
 
 		By("Query the packagemanifest for defaultChannel for " + clusterLoggingOperatorName)
 		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(clusterLoggingOperatorName, randomNamespace)
