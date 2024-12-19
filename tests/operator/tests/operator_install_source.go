@@ -50,10 +50,9 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("deploy cluster-wide cluster-logging operator with subscription in another namespace", func() {
+	It("deploy cluster-wide cluster-logging operator", func() {
 		const (
-			clusterLoggingOperatorName  = "cluster-logging"
-			clusterLoggingTestNamespace = "fake-openshift-logging"
+			clusterLoggingOperatorName = "cluster-logging"
 		)
 		openshiftLoggingNamespace := randomNamespace
 
