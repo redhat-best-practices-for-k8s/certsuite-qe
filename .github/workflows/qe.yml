@@ -108,7 +108,7 @@ jobs:
           ref: main
 
       - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@747e9a585cf378ac4b07153ea362c9a3e3802e61 # main
+        uses: depends-on/depends-on-action@77e67971a155b35424508ada365790c47286fd0f # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           extra-dirs: certsuite-sample-workload certsuite
@@ -137,7 +137,7 @@ jobs:
     steps:
 
       - name: Extract dependent PR
-        uses: depends-on/depends-on-action@747e9a585cf378ac4b07153ea362c9a3e3802e61 # main
+        uses: depends-on/depends-on-action@77e67971a155b35424508ada365790c47286fd0f # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           check-unmerged-pr: true
