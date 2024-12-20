@@ -62,13 +62,13 @@ var _ = Describe("Access-control non-root user,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -93,13 +93,13 @@ var _ = Describe("Access-control non-root user,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -142,13 +142,13 @@ var _ = Describe("Access-control non-root user,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
@@ -186,13 +186,13 @@ var _ = Describe("Access-control non-root user,", func() {
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseNameAccessControlNonRootUserID,
+			tsparams.TestCaseNameAccessControlNonRootUser,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})

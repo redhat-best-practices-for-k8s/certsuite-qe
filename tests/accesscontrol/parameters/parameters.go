@@ -58,7 +58,7 @@ const (
 	TestCaseNameAccessControlBpfCapability          = "access-control-bpf-capability-check"
 	TestCaseNameAccessControlContainerHostPort      = "access-control-container-host-port"
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
-	TestCaseNameAccessControlNonRootUserID          = "access-control-security-context-non-root-user-id-check"
+	TestCaseNameAccessControlNonRootUser            = "access-control-security-context-run-as-non-root-user-check"
 	TestCaseNameAccessControlClusterRoleBindings    = "access-control-cluster-role-bindings"
 	CertsuiteNodePortTcName                         = "access-control-service-type"
 	TestCaseNameAccessControlPrivilegeEscalation    = "access-control-security-context-privilege-escalation"
