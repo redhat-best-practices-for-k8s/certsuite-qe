@@ -7,7 +7,7 @@ require (
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.22.1
-	github.com/onsi/gomega v1.36.1
+	github.com/onsi/gomega v1.36.2
 	github.com/openshift-kni/eco-goinfra v0.0.0-20241018134359-af115ee37127
 	github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87
 	github.com/operator-framework/api v0.27.0
@@ -102,14 +102,14 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.7.0 // indirect
 	golang.org/x/tools v0.28.0 // indirect
-	google.golang.org/protobuf v1.35.1 // indirect
+	google.golang.org/protobuf v1.36.1 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/k8snetworkplumbingwg/multus-cni.v4 v4.0.2 // indirect
