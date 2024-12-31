@@ -6,7 +6,7 @@ require (
 	github.com/golang/glog v1.2.3
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.5
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/onsi/ginkgo/v2 v2.22.1
+	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
 	github.com/openshift-kni/eco-goinfra v0.0.0-20241018134359-af115ee37127
 	github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87
