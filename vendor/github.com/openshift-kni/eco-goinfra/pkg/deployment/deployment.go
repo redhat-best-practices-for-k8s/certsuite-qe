@@ -43,7 +43,7 @@ func NewBuilder(
 			"name: %s, namespace: %s, labels: %s, containerSpec %v",
 		name, nsname, labels, containerSpec)
 
-	builder := Builder{
+	builder := &Builder{
 		apiClient: apiClient.AppsV1Interface,
 		Definition: &appsv1.Deployment{
 			Spec: appsv1.DeploymentSpec{
@@ -70,7 +70,7 @@ func NewBuilder(
 
 		builder.errorMsg = "deployment 'name' cannot be empty"
 
-		return &builder
+		return builder
 	}
 
 	if nsname == "" {
@@ -78,7 +78,7 @@ func NewBuilder(
 
 		builder.errorMsg = "deployment 'namespace' cannot be empty"
 
-		return &builder
+		return builder
 	}
 
 	if len(labels) == 0 {
@@ -86,10 +86,10 @@ func NewBuilder(
 
 		builder.errorMsg = "deployment 'labels' cannot be empty"
 
-		return &builder
+		return builder
 	}
 
-	return &builder
+	return builder
 }
 
 // Pull loads an existing deployment into Builder struct.
@@ -103,7 +103,7 @@ func Pull(apiClient *clients.Settings, name, nsname string) (*Builder, error) {
 
 	glog.V(100).Infof("Pulling existing deployment name: %s under namespace: %s", name, nsname)
 
-	builder := Builder{
+	builder := &Builder{
 		apiClient: apiClient.AppsV1Interface,
 		Definition: &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
@@ -131,7 +131,7 @@ func Pull(apiClient *clients.Settings, name, nsname string) (*Builder, error) {
 
 	builder.Definition = builder.Object
 
-	return &builder, nil
+	return builder, nil
 }
 
 // WithNodeSelector applies a nodeSelector to the deployment definition.
@@ -357,6 +357,42 @@ func (builder *Builder) WithSchedulerName(schedulerName string) *Builder {
 		schedulerName, builder.Definition.Name, builder.Definition.Namespace)
 
 	builder.Definition.Spec.Template.Spec.SchedulerName = schedulerName
+
+	return builder
+}
+
+// WithAffinity applies Affinity to the deployment definition.
+func (builder *Builder) WithAffinity(affinity *corev1.Affinity) *Builder {
+	if valid, _ := builder.validate(); !valid {
+		return builder
+	}
+
+	if affinity == nil {
+		glog.V(100).Infof("The Affinity parameter is empty")
+
+		builder.errorMsg = "affinity parameter is empty"
+
+		return builder
+	}
+
+	glog.V(100).Infof("Adding affinity to deployment %s in namespace %s",
+		builder.Definition.Name, builder.Definition.Namespace)
+
+	builder.Definition.Spec.Template.Spec.Affinity = affinity
+
+	return builder
+}
+
+// WithHostNetwork applies a hostnetwork state to the deployment definition.
+func (builder *Builder) WithHostNetwork(enableHostnetwork bool) *Builder {
+	if valid, _ := builder.validate(); !valid {
+		return builder
+	}
+
+	glog.V(100).Infof("Setting hostnetwork %v to deployment %s in namespace %s",
+		enableHostnetwork, builder.Definition.Name, builder.Definition.Namespace)
+
+	builder.Definition.Spec.Template.Spec.HostNetwork = enableHostnetwork
 
 	return builder
 }
