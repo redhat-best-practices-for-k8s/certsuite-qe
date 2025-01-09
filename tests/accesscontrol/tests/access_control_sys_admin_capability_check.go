@@ -66,6 +66,40 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	It("one deployment, one pod, one container, drop sys admin capability", func() {
+		By("Define deployment with cap sys admin dropped")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment", randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+
+		deployment.RedefineWithContainersSecurityContextCaps(dep, nil, []string{"SYS_ADMIN"})
+
+		By("Create deployment")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all running pods are dropping the SYS_ADMIN cap")
+		runningPods, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Failed getting list of pods in namespace "+randomNamespace)
+
+		Expect(len(runningPods.Items)).To(Equal(1), "Invalid number of pods in namspace "+randomNamespace)
+
+		pod := &runningPods.Items[0]
+		By("Ensure pod " + pod.Name + " has dropped SYS_ADMIN cap")
+		Expect(pod.Spec.Containers[0].SecurityContext.Capabilities.Drop).To(Equal([]corev1.Capability{"SYS_ADMIN"}))
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.TestCaseNameAccessControlSysAdminCapability,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TestCaseNameAccessControlSysAdminCapability,
+			globalparameters.TestCasePassed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 	// 63836
 	It("one deployment, one pod, one container, does have sys admin capability [negative]", func() {
 		By("Define deployment with sys admin")
@@ -125,6 +159,51 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		runningDeployment, err = globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.TestCaseNameAccessControlSysAdminCapability,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.TestCaseNameAccessControlSysAdminCapability,
+			globalparameters.TestCasePassed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	It("two deployments, one pod each, one container each, both drop SYS_ADMIN capability", func() {
+		By("Define deployments without sys admin")
+		dep, err := tshelper.DefineDeployment(1, 1, "acdeployment1", randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+
+		deployment.RedefineWithContainersSecurityContextCaps(dep, nil, []string{"SYS_ADMIN"})
+
+		By("Create deployment 1")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		dep2, err := tshelper.DefineDeployment(1, 1, "acdeployment2", randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+
+		deployment.RedefineWithContainersSecurityContextCaps(dep2, nil, []string{"SYS_ADMIN"})
+
+		By("Create deployment 2")
+		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Ensure all running pods are dropping the SYS_ADMIN cap")
+		runningPods, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Failed getting list of pods in namespace "+randomNamespace)
+
+		Expect(len(runningPods.Items)).To(Equal(2), "Invalid number of pods in namspace "+randomNamespace)
+
+		for i := range runningPods.Items {
+			pod := runningPods.Items[i]
+			By("Ensure pod " + pod.Name + " has dropped SYS_ADMIN cap")
+			Expect(pod.Spec.Containers[0].SecurityContext.Capabilities.Drop).To(Equal([]corev1.Capability{"SYS_ADMIN"}))
+		}
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

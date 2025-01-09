@@ -623,6 +623,62 @@ func TestRedefineWithContainersSecurityContextSysAdmin(t *testing.T) {
 	assert.Equal(t, securityContext.Capabilities, deployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities)
 }
 
+func TestRedefineWithContainersSecurityContextCaps(t *testing.T) {
+	testCases := []struct {
+		name         string
+		add          []string
+		drop         []string
+		expectedCaps corev1.Capabilities
+	}{
+		{
+			name: "add sys_admin and net_raw",
+			add:  []string{"SYS_ADMIN", "NET_RAW"},
+			drop: nil,
+			expectedCaps: corev1.Capabilities{
+				Add: []corev1.Capability{"SYS_ADMIN", "NET_RAW"},
+			},
+		},
+		{
+			name: "drop sys_admin",
+			add:  nil,
+			drop: []string{"SYS_ADMIN"},
+			expectedCaps: corev1.Capabilities{
+				Drop: []corev1.Capability{"SYS_ADMIN"},
+			},
+		},
+		{
+			name: "add net_raw drop sys_admin",
+			add:  []string{"NET_RAW"},
+			drop: []string{"SYS_ADMIN"},
+			expectedCaps: corev1.Capabilities{
+				Add:  []corev1.Capability{"NET_RAW"},
+				Drop: []corev1.Capability{"SYS_ADMIN"},
+			},
+		},
+		{
+			name: "add net_raw drop all",
+			add:  []string{"NET_RAW"},
+			drop: []string{"ALL"},
+			expectedCaps: corev1.Capabilities{
+				Add:  []corev1.Capability{"NET_RAW"},
+				Drop: []corev1.Capability{"ALL"},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+			assert.NotNil(t, deployment)
+
+			RedefineWithContainersSecurityContextCaps(deployment, testCase.add, testCase.drop)
+
+			// Assert the container's securityContext's capabilities were set correctly
+			assert.Equal(t, &testCase.expectedCaps, deployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities)
+		})
+	}
+}
+
 func TestRedefineWithContainersSecurityContextBpf(t *testing.T) {
 	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
 	securityContext := corev1.SecurityContext{

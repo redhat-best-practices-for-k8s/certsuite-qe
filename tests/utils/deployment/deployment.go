@@ -475,6 +475,29 @@ func RedefineWithContainersSecurityContextSysAdmin(deployment *appsv1.Deployment
 	}
 }
 
+func RedefineWithContainersSecurityContextCaps(deployment *appsv1.Deployment, add, drop []string) {
+	var addedCaps, droppedCaps []corev1.Capability
+
+	for _, cap := range add {
+		addedCaps = append(addedCaps, corev1.Capability(cap))
+	}
+
+	for _, cap := range drop {
+		droppedCaps = append(droppedCaps, corev1.Capability(cap))
+	}
+
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
+			Capabilities: &corev1.Capabilities{
+				Add:  addedCaps,
+				Drop: droppedCaps,
+			},
+		}
+	}
+}
+
 func RedefineWithContainersSecurityContextBpf(deployment *appsv1.Deployment) {
 	for index := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
