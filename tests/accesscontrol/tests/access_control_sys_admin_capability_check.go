@@ -81,7 +81,7 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		runningPods, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Failed getting list of pods in namespace "+randomNamespace)
 
-		Expect(len(runningPods.Items)).To(Equal(1), "Invalid number of pods in namspace "+randomNamespace)
+		Expect(len(runningPods.Items)).To(Equal(1), "Invalid number of pods in namespace "+randomNamespace)
 
 		pod := &runningPods.Items[0]
 		By("Ensure pod " + pod.Name + " has dropped SYS_ADMIN cap")
@@ -197,7 +197,7 @@ var _ = Describe("Access-control sys-admin-capability-check,", func() {
 		runningPods, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Failed getting list of pods in namespace "+randomNamespace)
 
-		Expect(len(runningPods.Items)).To(Equal(2), "Invalid number of pods in namspace "+randomNamespace)
+		Expect(len(runningPods.Items)).To(Equal(2), "Invalid number of pods in namespace "+randomNamespace)
 
 		for i := range runningPods.Items {
 			pod := runningPods.Items[i]
