@@ -38,7 +38,7 @@ func NewBuilder(apiClient *clients.Settings, name string) *Builder {
 	glog.V(100).Infof(
 		"Initializing new namespace structure with the following param: %s", name)
 
-	builder := Builder{
+	builder := &Builder{
 		apiClient: apiClient,
 		Definition: &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
@@ -51,9 +51,11 @@ func NewBuilder(apiClient *clients.Settings, name string) *Builder {
 		glog.V(100).Infof("The name of the namespace is empty")
 
 		builder.errorMsg = "namespace 'name' cannot be empty"
+
+		return builder
 	}
 
-	return &builder
+	return builder
 }
 
 // WithLabel redefines namespace definition with the given label.
@@ -146,13 +148,18 @@ func (builder *Builder) Create() (*Builder, error) {
 
 	glog.V(100).Infof("Creating namespace %s", builder.Definition.Name)
 
-	var err error
-	if !builder.Exists() {
-		builder.Object, err = builder.apiClient.Namespaces().Create(
-			context.TODO(), builder.Definition, metav1.CreateOptions{})
+	if builder.Exists() {
+		return builder, nil
 	}
 
-	return builder, err
+	err := builder.apiClient.Create(context.TODO(), builder.Definition)
+	if err != nil {
+		return builder, err
+	}
+
+	builder.Object = builder.Definition
+
+	return builder, nil
 }
 
 // Update renovates the existing namespace object with the namespace definition in builder.
@@ -179,6 +186,10 @@ func (builder *Builder) Delete() error {
 	glog.V(100).Infof("Deleting namespace %s", builder.Definition.Name)
 
 	if !builder.Exists() {
+		glog.V(100).Infof("Namespace %s does not exist", builder.Definition.Name)
+
+		builder.Object = nil
+
 		return nil
 	}
 
@@ -190,7 +201,7 @@ func (builder *Builder) Delete() error {
 
 	builder.Object = nil
 
-	return err
+	return nil
 }
 
 // DeleteAndWait deletes a namespace and waits until it is removed from the cluster.
@@ -210,6 +221,10 @@ func (builder *Builder) DeleteAndWait(timeout time.Duration) error {
 			_, err := builder.apiClient.Namespaces().Get(context.TODO(), builder.Definition.Name, metav1.GetOptions{})
 			if k8serrors.IsNotFound(err) {
 				return true, nil
+			}
+
+			if err != nil {
+				glog.V(100).Infof("Failed to get namespace %s: %v", builder.Definition.Name, err)
 			}
 
 			return false, nil
@@ -235,7 +250,7 @@ func (builder *Builder) Exists() bool {
 func Pull(apiClient *clients.Settings, nsname string) (*Builder, error) {
 	glog.V(100).Infof("Pulling existing namespace: %s from cluster", nsname)
 
-	builder := Builder{
+	builder := &Builder{
 		apiClient: apiClient,
 		Definition: &corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
@@ -245,7 +260,9 @@ func Pull(apiClient *clients.Settings, nsname string) (*Builder, error) {
 	}
 
 	if nsname == "" {
-		builder.errorMsg = "'namespace' cannot be empty"
+		glog.V(100).Infof("Namespace name is empty")
+
+		return nil, fmt.Errorf("namespace name cannot be empty")
 	}
 
 	if !builder.Exists() {
@@ -254,7 +271,7 @@ func Pull(apiClient *clients.Settings, nsname string) (*Builder, error) {
 
 	builder.Definition = builder.Object
 
-	return &builder, nil
+	return builder, nil
 }
 
 // CleanObjects removes given objects from the namespace.
@@ -362,13 +379,13 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.Definition == nil {
 		glog.V(100).Infof("The %s is undefined", resourceCRD)
 
-		builder.errorMsg = msg.UndefinedCrdObjectErrString(resourceCRD)
+		return false, fmt.Errorf(msg.UndefinedCrdObjectErrString(resourceCRD))
 	}
 
 	if builder.apiClient == nil {
 		glog.V(100).Infof("The %s builder apiclient is nil", resourceCRD)
 
-		builder.errorMsg = fmt.Sprintf("%s builder cannot have nil apiClient", resourceCRD)
+		return false, fmt.Errorf("%s builder cannot have nil apiClient", resourceCRD)
 	}
 
 	if builder.errorMsg != "" {
