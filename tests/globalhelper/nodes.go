@@ -97,9 +97,7 @@ func GetNumberOfNodes(client corev1Typed.CoreV1Interface) int {
 }
 
 func getNumberOfNodes(client corev1Typed.CoreV1Interface) int {
-	nodes, err := client.Nodes().List(context.TODO(), metav1.ListOptions{
-		LabelSelector: "node-role.kubernetes.io/worker-cnf",
-	})
+	nodes, err := client.Nodes().List(context.TODO(), metav1.ListOptions{})
 
 	if err != nil {
 		return 0

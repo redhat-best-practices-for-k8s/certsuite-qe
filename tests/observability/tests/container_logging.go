@@ -119,7 +119,9 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			randomReportDir,
+			randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")

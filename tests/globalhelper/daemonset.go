@@ -56,8 +56,13 @@ func isDaemonSetReady(client *egiClients.Settings, namespace string, name string
 
 	// Get number of nodes and compare with the number of scheduled pods
 	numNodes := GetNumberOfNodes(client.CoreV1Interface)
+
 	if daemonset.Object.Status.DesiredNumberScheduled == int32(numNodes) &&
-		daemonset.Object.Status.NumberReady == daemonset.Object.Status.DesiredNumberScheduled {
+		daemonset.Object.Status.NumberReady == daemonset.Object.Status.DesiredNumberScheduled &&
+		daemonset.Object.Status.NumberAvailable == daemonset.Object.Status.DesiredNumberScheduled &&
+		daemonset.Object.Status.CurrentNumberScheduled == daemonset.Object.Status.DesiredNumberScheduled &&
+		daemonset.Object.Status.NumberUnavailable == 0 &&
+		daemonset.Object.Status.NumberReady > 0 {
 		return true, nil
 	}
 

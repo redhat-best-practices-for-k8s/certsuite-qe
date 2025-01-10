@@ -88,6 +88,7 @@ func TestIsDaemonsetReady(t *testing.T) {
 				DesiredNumberScheduled: int32(numScheduled),
 				NumberUnavailable:      int32(numUnavailable),
 				NumberReady:            int32(numReady),
+				CurrentNumberScheduled: int32(numScheduled),
 			},
 		}
 	}
@@ -128,10 +129,8 @@ func TestIsDaemonsetReady(t *testing.T) {
 			testCase.numScheduled, testCase.numUnavailable, testCase.numReady))
 		runtimeObjects = append(runtimeObjects, &corev1.Node{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: "test-node",
-				Labels: map[string]string{
-					"node-role.kubernetes.io/worker-cnf": "",
-				},
+				Name:   "test-node",
+				Labels: map[string]string{},
 			},
 		})
 
