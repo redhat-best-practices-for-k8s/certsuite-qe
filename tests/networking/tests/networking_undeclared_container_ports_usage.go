@@ -95,7 +95,7 @@ var _ = Describe("Networking undeclared-container-ports-usage,", func() {
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteUndeclaredContainerPortsUsageTcName,
-			globalparameters.TestCaseSkipped, randomReportDir)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
