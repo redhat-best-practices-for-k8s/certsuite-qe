@@ -109,11 +109,6 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	// print the command
 	glog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
 
-	// fmt.Printf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " "))
-
-	// fmt.Println("Sleeping for 5 minutes")
-	// time.Sleep(5 * time.Minute)
-
 	cmd := exec.Command(containerEngine, certsuiteCmdArgs...)
 
 	debugCertsuite, err := GetConfiguration().DebugCertsuite()

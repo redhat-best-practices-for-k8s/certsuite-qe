@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -45,6 +47,9 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool-rt-scheduling-policy test")
@@ -67,6 +72,9 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Change to rt scheduling policy")
@@ -94,6 +102,9 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Change to rt scheduling policy")
@@ -120,6 +131,9 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool-rt-scheduling-policy test")

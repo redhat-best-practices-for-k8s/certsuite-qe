@@ -1,6 +1,8 @@
 package operator
 
 import (
+	"time"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -69,6 +71,9 @@ var _ = Describe("Operator crd-versioning,", func() {
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
+
+		By("Wait for 10 minutes")
+		time.Sleep(10 * time.Minute)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

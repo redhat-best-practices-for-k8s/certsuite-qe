@@ -2,6 +2,7 @@ package operator
 
 import (
 	"fmt"
+	"runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -140,6 +141,11 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// We want to create a custom catalog source for this test.
 		// This means we will have access to a "new" and "old" channel for the nginx-ingress-operator.
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
+
+		// Skip if the host is not x86 based
+		if runtime.GOARCH != "amd64" {
+			Skip("This test is only supported on x86 based hosts")
+		}
 
 		By("Create custom-operator catalog source")
 		err := globalhelper.DeployCustomOperatorSource("quay.io/deliedit/test:catalog-index-test")

@@ -71,6 +71,9 @@ var _ = Describe("Operator semantic-versioning,", func() {
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
+		// By("Wait for 10 minutes")
+		// time.Sleep(10 * time.Minute)
+
 		By("Start test")
 		err := globalhelper.LaunchTests(
 			tsparams.CertsuiteOperatorSemanticVersioning,

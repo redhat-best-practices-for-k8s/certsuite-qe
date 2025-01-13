@@ -75,6 +75,45 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
 
+	// Pod isn't running, we need to wait for it to be scheduled
+	// Loop through pod conditions to check if pod is schedulable
+	// If it is not schedulable, we return an error
+	podUnschedulable := false
+
+	Eventually(func() bool {
+		runningPod, err := GetAPIClient().Pods(pod.Namespace).Get(
+			context.TODO(), pod.Name, metav1.GetOptions{})
+
+		if err != nil {
+			glog.V(5).Info(fmt.Sprintf(
+				"Pod %s is not running, retry in %d seconds", createdPod.Name, retryInterval))
+
+			return false
+		}
+
+		// If it is running, we can break the loop
+		if runningPod.Status.Phase == corev1.PodRunning {
+			return true
+		}
+
+		// print the conditions
+		fmt.Printf("Pod %s conditions: %v\n", runningPod.Name, runningPod.Status.Conditions)
+
+		for _, condition := range runningPod.Status.Conditions {
+			if condition.Type == corev1.PodScheduled && condition.Status == corev1.ConditionFalse && condition.Reason == "Unschedulable" {
+				podUnschedulable = true
+
+				break
+			}
+		}
+
+		return podUnschedulable
+	}, timeout, retryInterval*time.Second).Should(Equal(true), "Pod is not running")
+
+	if podUnschedulable {
+		return fmt.Errorf("pod %s is not schedulable", createdPod.Name)
+	}
+
 	Eventually(func() bool {
 		status, err := isPodReady(createdPod.Namespace, createdPod.Name)
 		if err != nil {

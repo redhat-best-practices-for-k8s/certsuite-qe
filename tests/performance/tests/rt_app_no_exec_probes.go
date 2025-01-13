@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -46,6 +48,9 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		command := "chrt -f -p 50 1" // To change the scheduling policy of the container start process to FIFO scheduling
@@ -71,6 +76,9 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 		pod.RedefineWithLivenessProbe(testPod)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		command := "chrt -f -p 50 1" // To change the scheduling policy of the container start process to FIFO scheduling
@@ -89,7 +97,6 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	})
 
 	It("One non-Rt exclusive pod with no exec probes", func() {
-
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
@@ -99,6 +106,9 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 
 		By("Create and wait until pod is ready")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod has modified resources")

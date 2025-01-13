@@ -1,6 +1,8 @@
 package accesscontrol
 
 import (
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -45,6 +47,9 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 
 		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have hostPath set")
@@ -77,6 +82,9 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 
 		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostPath set")

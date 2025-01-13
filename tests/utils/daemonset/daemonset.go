@@ -16,7 +16,7 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 			Name:      name,
 			Namespace: namespace},
 		Spec: appsv1.DaemonSetSpec{
-			MinReadySeconds: 5,
+			MinReadySeconds: 3,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,
 			},
@@ -43,7 +43,7 @@ func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string
 			Name:      name,
 			Namespace: namespace},
 		Spec: appsv1.DaemonSetSpec{
-			MinReadySeconds: 5,
+			MinReadySeconds: 3,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: labels,
 			},
