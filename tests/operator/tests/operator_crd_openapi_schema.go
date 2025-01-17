@@ -1,6 +1,8 @@
 package operator
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -34,25 +36,6 @@ var _ = Describe("Operator crd-openapi-schema", func() {
 		By("Deploy operator group")
 		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
-
-		By("Deploy openvino operator for testing")
-		err = tshelper.DeployOperatorSubscription(
-			"ovms-operator",
-			"ovms-operator",
-			"alpha",
-			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixOpenvino)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixOpenvino,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixOpenvino+
-			" is not ready")
 	})
 
 	AfterEach(func() {
@@ -60,18 +43,49 @@ var _ = Describe("Operator crd-openapi-schema", func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	FIt("operator crd is defined with openapi schema", func() {
+	It("operator crd is defined with openapi schema", func() {
+		By("Query the packagemanifest for the default channel")
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
+			tsparams.CertifiedOperatorPrefixNginx,
+			randomNamespace,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
+		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+
+		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
+		// nginx-ingress-operator: in certified-operators group and version is certified
+		err = tshelper.DeployOperatorSubscription(
+			tsparams.CertifiedOperatorPrefixNginx,
+			tsparams.CertifiedOperatorPrefixNginx,
+			channel,
+			randomNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			tsparams.CertifiedOperatorPrefixNginx)
+
+		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
+			" is not ready")
+
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixOpenvino,
+				tsparams.CertifiedOperatorPrefixNginx,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixOpenvino)
+			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
 
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteOperatorCrdOpenAPISchema,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
