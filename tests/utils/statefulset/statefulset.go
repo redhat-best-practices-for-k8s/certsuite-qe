@@ -15,7 +15,7 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 			Name:      statefulSetName,
 			Namespace: namespace},
 		Spec: appsv1.StatefulSetSpec{
-			MinReadySeconds: 5,
+			MinReadySeconds: 3,
 			Replicas:        ptr.To[int32](1),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: label,

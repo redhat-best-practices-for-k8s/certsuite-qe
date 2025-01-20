@@ -2,6 +2,7 @@ package operator
 
 import (
 	"fmt"
+	"runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -40,6 +41,11 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 	})
 
 	It("CatalogSource with less than 1000 bundle images", func() {
+		// Skip if the host is not x86 based
+		if runtime.GOARCH != "amd64" {
+			Skip("This test is only supported on x86 based hosts")
+		}
+
 		By("Create custom-operator catalog source")
 		err := globalhelper.DeployCustomOperatorSource("quay.io/deliedit/test:catalog-index-test")
 		Expect(err).ToNot(HaveOccurred())

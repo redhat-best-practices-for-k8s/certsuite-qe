@@ -33,21 +33,23 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	CertsuiteTargetOperatorLabels = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
-	CertsuiteTargetCrdFilters     = []string{"charts.operatorhub.io"}
-	OperatorGroupName             = "operator-test-operator-group"
-	OperatorLabel                 = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
-	CertifiedOperatorGroup        = "certified-operators"
-	RedhatOperatorGroup           = "redhat-operators"
-	CommunityOperatorGroup        = "community-operators"
-	OperatorSourceNamespace       = "openshift-marketplace"
-	OperatorPrefixCloudbees       = "cloudbees-ci"
-	OperatorPrefixAnchore         = "anchore-engine"
-	OperatorPrefixQuay            = "quay-operator"
-	OperatorPrefixKiali           = "kiali-operator"
-	OperatorPrefixOpenvino        = "openvino-operator"
-	CertifiedOperatorPrefixNginx  = "nginx-ingress-operator"
-	SubscriptionNameOpenvino      = "ovms-operator-subscription"
+	CertsuiteTargetOperatorLabels             = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
+	CertsuiteTargetCrdFilters                 = []string{"nginxingresses.charts.nginx.org"}
+	OperatorGroupName                         = "operator-test-operator-group"
+	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
+	CertifiedOperatorGroup                    = "certified-operators"
+	RedhatOperatorGroup                       = "redhat-operators"
+	CommunityOperatorGroup                    = "community-operators"
+	OperatorSourceNamespace                   = "openshift-marketplace"
+	OperatorPrefixCloudbees                   = "cloudbees-ci"
+	OperatorPrefixAnchore                     = "anchore-engine"
+	OperatorPrefixQuay                        = "quay-operator"
+	OperatorPrefixKiali                       = "kiali-operator"
+	OperatorPrefixOpenvino                    = "openvino-operator"
+	CertifiedOperatorPrefixNginx              = "nginx-ingress-operator"
+	SubscriptionNameOpenvino                  = "ovms-operator-subscription"
+	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
+	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
 )
 
 const (

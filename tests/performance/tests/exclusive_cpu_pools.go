@@ -2,6 +2,7 @@ package tests
 
 import (
 	"runtime"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -56,6 +57,9 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool test")
@@ -70,7 +74,6 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	})
 
 	It("One pod with one exclusive container, and one shared container", func() {
-
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
@@ -78,6 +81,9 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		tshelper.RedefinePodWithSharedContainer(testPod, 0)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool test")
@@ -92,7 +98,6 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	})
 
 	It("One pod with only shared containers", func() {
-
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
 			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
@@ -100,6 +105,9 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		pod.RedefineWithCPUResources(testPod, "0.75", "0.5")
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start exclusive-cpu-pool test")

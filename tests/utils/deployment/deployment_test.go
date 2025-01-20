@@ -38,7 +38,7 @@ func TestDefineDeployment(t *testing.T) {
 
 			// Assert hardcoded default values are in the deployment.
 			assert.Equal(t, int32(1), *deployment.Spec.Replicas)
-			assert.Equal(t, int32(5), deployment.Spec.MinReadySeconds)
+			assert.Equal(t, int32(3), deployment.Spec.MinReadySeconds)
 		})
 	}
 }

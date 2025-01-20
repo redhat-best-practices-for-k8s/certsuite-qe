@@ -48,6 +48,46 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		return fmt.Errorf("failed to create deployment %q (ns %s): %w", deployment.Name, deployment.Namespace, err)
 	}
 
+	// Check if all pods in the deployment are schedulable
+	deploymentUnschedulable := false
+
+	Eventually(func() bool {
+		testDeployment, err := client.Deployments(deployment.Namespace).Get(
+			context.TODO(), deployment.Name, metav1.GetOptions{})
+
+		if err != nil {
+			glog.V(5).Info(fmt.Sprintf(
+				"deployment %s is not running, retry in 5 seconds", testDeployment.Name))
+
+			return false
+		}
+
+		// If it is running, we can break the loop
+		if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
+			glog.V(5).Info(fmt.Sprintf("deployment %s is running", testDeployment.Name))
+			glog.V(5).Info(fmt.Sprintf("deployment %s status: %v", testDeployment.Name, testDeployment.Status))
+
+			return true
+		}
+
+		// print the conditions
+		fmt.Printf("Deployment %s conditions: %v\n", testDeployment.Name, testDeployment.Status.Conditions)
+
+		for _, condition := range testDeployment.Status.Conditions {
+			if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
+				deploymentUnschedulable = true
+
+				break
+			}
+		}
+
+		return deploymentUnschedulable
+	}, timeout, 5*time.Second).Should(Equal(true), "Deployment is not running")
+
+	if deploymentUnschedulable {
+		return fmt.Errorf("deployment %s is not schedulable", runningDeployment.Name)
+	}
+
 	Eventually(func() bool {
 		status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
 		if err != nil {

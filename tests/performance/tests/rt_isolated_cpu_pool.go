@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -61,6 +63,9 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Change to rt scheduling policy")
@@ -101,7 +106,10 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 		Expect(err).To(BeNil())
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, 2*tsparams.WaitingTime)
-		Expect(err).NotTo(HaveOccurred())
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
+		Expect(err).ToNot(HaveOccurred())
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
@@ -122,6 +130,9 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, f
 			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
