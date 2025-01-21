@@ -149,6 +149,20 @@ func AppendContainersToDeployment(deployment *appsv1.Deployment, containersNum i
 	}
 }
 
+// AppendContainersToDeployment appends containers to a deployment.
+func AppendContainersToStatefulSet(sts *appsv1.StatefulSet, containersNum int, image string) {
+	containerList := &sts.Spec.Template.Spec.Containers
+
+	for i := 0; i < containersNum; i++ {
+		*containerList = append(
+			*containerList, corev1.Container{
+				Name:    fmt.Sprintf("container%d", i+1),
+				Image:   image,
+				Command: []string{"/bin/bash", "-c", "sleep INF"},
+			})
+	}
+}
+
 func defineCertifiedContainersInfo(config *globalparameters.CertsuiteConfig, certifiedContainerInfo []string) error {
 	if len(certifiedContainerInfo) < 1 {
 		// do not add certifiedcontainerinfo to certsuite_config at all in this case

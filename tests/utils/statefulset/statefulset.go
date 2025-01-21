@@ -104,3 +104,26 @@ func RedefineWithPostStart(statefulSet *appsv1.StatefulSet) {
 		}
 	}
 }
+
+func RedefineWithContainersSecurityContextCaps(sts *appsv1.StatefulSet, add, drop []string) {
+	var addedCaps, droppedCaps []corev1.Capability
+
+	for _, cap := range add {
+		addedCaps = append(addedCaps, corev1.Capability(cap))
+	}
+
+	for _, cap := range drop {
+		droppedCaps = append(droppedCaps, corev1.Capability(cap))
+	}
+
+	for index := range sts.Spec.Template.Spec.Containers {
+		sts.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			Privileged: ptr.To[bool](true),
+			RunAsUser:  ptr.To[int64](0),
+			Capabilities: &corev1.Capabilities{
+				Add:  addedCaps,
+				Drop: droppedCaps,
+			},
+		}
+	}
+}
