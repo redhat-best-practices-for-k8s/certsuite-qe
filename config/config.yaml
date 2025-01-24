@@ -4,7 +4,7 @@ general:
   cnf_worker_label: node-role.kubernetes.io/worker-cnf
   worker_label: node-role.kubernetes.io/worker
   verification_log_level: 4
-  test_image: quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload
+  test_image: quay.io/redhat-best-practices-for-k8s/certsuite-probe
   certsuite_entry_point_binary: certsuite
   use_binary: false
   certsuite_config_dir: /tmp/certsuite_config
