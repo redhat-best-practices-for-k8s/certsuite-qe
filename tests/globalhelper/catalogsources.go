@@ -57,7 +57,7 @@ func createCatalogSourceWithClient(opclient v1alpha1typed.OperatorsV1alpha1Inter
 	_, err := opclient.CatalogSources(CatalogSourceNamespace).Create(context.Background(), &v1alpha1.CatalogSource{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: "openshift-marketplace",
+			Namespace: CatalogSourceNamespace,
 		},
 		Spec: v1alpha1.CatalogSourceSpec{
 			SourceType:  "grpc",
