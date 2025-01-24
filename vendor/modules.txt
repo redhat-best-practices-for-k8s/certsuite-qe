@@ -279,6 +279,7 @@ github.com/openshift-kni/eco-goinfra/pkg/deployment
 github.com/openshift-kni/eco-goinfra/pkg/msg
 github.com/openshift-kni/eco-goinfra/pkg/namespace
 github.com/openshift-kni/eco-goinfra/pkg/networkpolicy
+github.com/openshift-kni/eco-goinfra/pkg/olm
 github.com/openshift-kni/eco-goinfra/pkg/pod
 github.com/openshift-kni/eco-goinfra/pkg/rbac
 github.com/openshift-kni/eco-goinfra/pkg/replicaset
@@ -300,6 +301,12 @@ github.com/openshift-kni/eco-goinfra/pkg/schemes/ocs/objectbucket.io
 github.com/openshift-kni/eco-goinfra/pkg/schemes/ocs/objectbucket.io/v1alpha1
 github.com/openshift-kni/eco-goinfra/pkg/schemes/ocs/operatorv1
 github.com/openshift-kni/eco-goinfra/pkg/schemes/ocs/provisioner
+github.com/openshift-kni/eco-goinfra/pkg/schemes/olm/operators
+github.com/openshift-kni/eco-goinfra/pkg/schemes/olm/operators/v1
+github.com/openshift-kni/eco-goinfra/pkg/schemes/olm/operators/v1alpha1
+github.com/openshift-kni/eco-goinfra/pkg/schemes/olm/package-server/operators
+github.com/openshift-kni/eco-goinfra/pkg/schemes/olm/package-server/operators/v1
+github.com/openshift-kni/eco-goinfra/pkg/schemes/olm/version
 github.com/openshift-kni/eco-goinfra/pkg/service
 github.com/openshift-kni/eco-goinfra/pkg/statefulset
 github.com/openshift-kni/eco-goinfra/pkg/storage
