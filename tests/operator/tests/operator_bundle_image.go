@@ -40,7 +40,7 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("CatalogSource with less than 1000 bundle images", func() {
+	FIt("CatalogSource with less than 1000 bundle images", func() {
 		// Skip if the host is not x86 based
 		if runtime.GOARCH != "amd64" {
 			Skip("This test is only supported on x86 based hosts")
