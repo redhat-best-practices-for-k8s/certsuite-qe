@@ -98,16 +98,16 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {
-	// logfile := "certsuite.log"
-	// By("Print logs")
-	// myFile, err := os.ReadFile(randomReportDir + "/" + logfile)
-	// if err != nil {
-	// 	glog.Errorf("can not read file %s - %s", logfile, err)
-	// }
-	// fmt.Println(string(myFile))
+	logfile := "certsuite.log"
+	By("Print logs")
+	myFile, err := os.ReadFile(randomReportDir + "/" + logfile)
+	if err != nil {
+		glog.Errorf("can not read file %s - %s", logfile, err)
+	}
+	fmt.Println(string(myFile))
 	By(fmt.Sprintf("Remove reports from report directory: %s", randomReportDir))
 
-	err := RemoveContentsFromReportDir(randomReportDir)
+	err = RemoveContentsFromReportDir(randomReportDir)
 	Expect(err).ToNot(HaveOccurred())
 
 	By(fmt.Sprintf("Remove configs from config directory: %s", randomConfigDir))
