@@ -8,10 +8,10 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
-	github.com/openshift-kni/eco-goinfra v0.0.0-20250123155945-ee9b7ed14e05
+	github.com/openshift-kni/eco-goinfra v0.0.0-20250203180527-82914c9eb004
 	github.com/openshift/client-go v0.0.0-20241107164952-923091dd2b1a
 	github.com/operator-framework/api v0.29.0
-	github.com/operator-framework/operator-lifecycle-manager v0.22.0
+	github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.52
 	github.com/redhat-best-practices-for-k8s/oct v0.0.32
 	github.com/sirupsen/logrus v1.9.3
@@ -124,7 +124,7 @@ require (
 
 replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
-	github.com/openshift/api => github.com/openshift/api v0.0.0-20250123112741-c21a6eb290e4
+	github.com/openshift/api => github.com/openshift/api v0.0.0-20250203170915-4e32bc25f4f9
 	github.com/operator-framework/operator-lifecycle-manager => github.com/operator-framework/operator-lifecycle-manager v0.31.0
 	k8s.io/client-go => k8s.io/client-go v0.32.1
 )
