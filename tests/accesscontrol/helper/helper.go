@@ -188,7 +188,7 @@ func GetWorkersMCPs() (mcpNodes map[string][]string, err error) {
 	// Get the eco-goinfra client.
 	egiClient := globalhelper.GetEcoGoinfraClient()
 	if egiClient == nil {
-		return nil, fmt.Errorf("eco-goinrfa client is not initialized")
+		return nil, fmt.Errorf("eco-goinfra client is not initialized")
 	}
 
 	nodeBuilders, err := egiNodes.List(egiClient, metav1.ListOptions{})
@@ -257,7 +257,7 @@ func GetMachineConfigTargetLabels(mcpName string) (map[string]string, error) {
 	// Get the eco-goinfra client.
 	egiClient := globalhelper.GetEcoGoinfraClient()
 	if egiClient == nil {
-		return nil, fmt.Errorf("eco-goinrfa client is not initialized")
+		return nil, fmt.Errorf("eco-goinfra client is not initialized")
 	}
 
 	// Create a labelSelector from MCP's Spec.MachineConfigSelector
@@ -310,7 +310,7 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	// Get the eco-goinfra client.
 	egiClient := globalhelper.GetEcoGoinfraClient()
 	if egiClient == nil {
-		return fmt.Errorf("eco-goinrfa client is not initialized")
+		return fmt.Errorf("eco-goinfra client is not initialized")
 	}
 
 	// Create custom MachineConfig with kerneltype realtime.
@@ -368,7 +368,7 @@ func RemoveRTKernelMachineConfig(mcpName string, mcName string, timeout time.Dur
 	// Get the eco-goinfra client.
 	egiClient := globalhelper.GetEcoGoinfraClient()
 	if egiClient == nil {
-		return fmt.Errorf("eco-goinrfa client is not initialized")
+		return fmt.Errorf("eco-goinfra client is not initialized")
 	}
 
 	// Delete the MachineConfig
