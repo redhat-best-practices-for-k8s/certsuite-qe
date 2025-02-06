@@ -13,7 +13,7 @@ require (
 	github.com/openshift/machine-config-operator v0.0.1-0.20231024085435-7e1fb719c1ba
 	github.com/operator-framework/api v0.29.0
 	github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000
-	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.52
+	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.53
 	github.com/redhat-best-practices-for-k8s/oct v0.0.33
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
