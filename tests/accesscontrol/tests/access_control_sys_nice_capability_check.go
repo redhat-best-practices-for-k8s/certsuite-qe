@@ -411,7 +411,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlRtSysNiceCapability,
-			globalparameters.TestCasePassed, randomReportDir)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -475,7 +475,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseNameAccessControlRtSysNiceCapability,
-			globalparameters.TestCasePassed, randomReportDir)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
