@@ -6,9 +6,8 @@ import (
 
 	"github.com/golang/glog"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	nodesutils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 

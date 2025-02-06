@@ -23,6 +23,11 @@ var (
 		"app":                  "test",
 	}
 
+	TestStatefulSetLabels = map[string]string{
+		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
+	}
+
 	CertsuiteTargetOperatorLabels    = fmt.Sprintf("%s: %s", "cnf/test", "cr-scale-operator")
 	CertsuiteTargetOperatorLabelsMap = map[string]string{
 		"cnf/test": "cr-scale-operator",
@@ -58,6 +63,7 @@ const (
 	TestCaseNameAccessControlBpfCapability          = "access-control-bpf-capability-check"
 	TestCaseNameAccessControlContainerHostPort      = "access-control-container-host-port"
 	TestCaseNameAccessControlSysAdminCapability     = "access-control-sys-admin-capability-check"
+	TestCaseNameAccessControlRtSysNiceCapability    = "access-control-sys-nice-realtime-capability"
 	TestCaseNameAccessControlNonRootUserID          = "access-control-security-context-non-root-user-id-check"
 	TestCaseNameAccessControlClusterRoleBindings    = "access-control-cluster-role-bindings"
 	CertsuiteNodePortTcName                         = "access-control-service-type"
@@ -80,4 +86,10 @@ const (
 	TestRoleBindingName  = "my-rb"
 	TestRoleName         = "my-r"
 	TestAnotherNamespace = "my-ns"
+
+	McpStartTimeout   = 10 * time.Minute // max time for MachineConfigPool to start the nodes' config updating procedure.
+	NodeRebootTimeout = 15 * time.Minute // max time for MachineConfigPool to reboot each affected node.
+
+	RelatimeKernelMachineConfigName = "999-rtkernel-certsuite-qe"
+	RealtimeWorkerNodeLabelValue    = "certsuite-qe-realtime-kernel"
 )
