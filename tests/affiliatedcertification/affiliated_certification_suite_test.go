@@ -44,8 +44,8 @@ var _ = SynchronizedBeforeSuite(func() {
 			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
 				" && chmod +x get_helm.sh"+
 				" && ./get_helm.sh")
-		err := cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
+		out, err := cmd.CombinedOutput()
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3: "+string(out))
 	}
 
 	By("Preemptively delete tiller-deploy pod if its installed")
