@@ -23,9 +23,9 @@ The tests are run on the OCP cluster with certain requirements that are listed b
 
 |  | Conditions | Mandatory |
 | ------ | ------ | ------ |
-| OCP Cluster | Version: >= 4.12, Node Count >= 3 with 2 cnf-worker nodes | Yes
-| Installed Operators | Performance Addon, Machine-config-operator | Yes
-|  | Machine config pool, PTP operator, SR-IOV operator| No
+| OCP Cluster | Version: >= 4.12, Node Count >= 3 with 2 cnf-worker nodes | Yes |
+| Installed Operators | Performance Addon, Machine-config-operator | Yes |
+|  | Machine config pool, PTP operator, SR-IOV operator| No |
 
 > Bare-minimum requirements consists of a OCP cluster with 3 nodes where 2 are cnf-worker nodes and 1 worker node.
 
@@ -52,19 +52,20 @@ Choose the variant that suits you best:
 ### Environment variables
 
 The following environment variables are used to configure the test setup.
+
 | Env Variable Name | Purpose |
 | ------ | ------ |
-| FEATURES | To select the test scenarios that you are going to test, comma separated
-| CERTSUITE_REPO_PATH | Points to the absolute path to  [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) on your machine
-| CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/redhat-best-practices-for-k8s/certsuite
-| CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest
-| TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/k8s-best-practices-debug
-| DEBUG_CERTSUITE | Generate `Debug` folder that will contain Certsuite suites folders with Certsuite logs for each test.
-| CERTSUITE_LOG_LEVEL | Log level. Default is 4
-| DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`.
-| ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`.
-| FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false`.
-| NON_LINUX_ENV | Allow the test suites to run in a non Linux environment. Default is `false`.
+| FEATURES | To select the test scenarios that you are going to test, comma separated |
+| CERTSUITE_REPO_PATH | Points to the absolute path to  [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) on your machine |
+| CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/redhat-best-practices-for-k8s/certsuite |
+| CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest |
+| TEST_IMAGE | Test image that is going to be used for all test resources such as deployments, daemonsets and so on. Default is quay.io/testnetworkfunction/k8s-best-practices-debug |
+| DEBUG_CERTSUITE | Generate `Debug` folder that will contain Certsuite suites folders with Certsuite logs for each test. |
+| CERTSUITE_LOG_LEVEL | Log level. Default is 4 |
+| DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`. |
+| ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`. |
+| FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false`. |
+| NON_LINUX_ENV | Allow the test suites to run in a non Linux environment. Default is `false`. |
 
 ## Steps to run the tests
 
