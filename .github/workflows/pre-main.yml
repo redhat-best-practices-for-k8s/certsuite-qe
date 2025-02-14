@@ -27,7 +27,7 @@ jobs:
       - uses: ludeeus/action-shellcheck@00b27aa7cb85167568cb48a3838b75f4265f2bca # master
         with:
           ignore_paths: vendor
-      - uses: mfinelli/setup-shfmt@031e887e39d899d773a7e9b6dd6472c2c23ff50d # v3.0.1
+      - uses: mfinelli/setup-shfmt@1a143389339b48c4b48ae3cdc058f3dbe336a701 # v3.0.2
       - run: shfmt -d scripts/*.sh
       - uses: crate-ci/typos@9d890159570d5018df91fedfa40b4730cd4a81b1 # master
       - uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
