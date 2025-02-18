@@ -34,7 +34,7 @@ var (
 		"app":                  "test",
 	}
 	CertsuiteTargetOperatorLabels             = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
-	CertsuiteTargetCrdFilters                 = []string{"nginxingresses.charts.nginx.org"}
+	CertsuiteTargetCrdFilters                 = []string{"nginxingresses.charts.nginx.org"} //  "anchoreengines.charts.anchore.io"
 	OperatorGroupName                         = "operator-test-operator-group"
 	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	CertifiedOperatorGroup                    = "certified-operators"
@@ -50,21 +50,30 @@ var (
 	SubscriptionNameOpenvino                  = "ovms-operator-subscription"
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
 	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
+	SingleOrMultiNamespacedOperatorGroup      = "single-or-multi-og"
+
+	TestDeploymentLabels = map[string]string{
+		testPodLabelPrefixName: testPodLabelValue,
+		"app":                  "test",
+	}
+
+	TestPodName = "operator-test-pod"
 )
 
 const (
 	OperatorNamespace = "operator-ns"
 
 	// Certsuite test case names.
-	CertsuiteOperatorInstallSource             = "operator-install-source"
-	CertsuiteOperatorInstallStatusNoPrivileges = "operator-install-status-no-privileges"
-	CertsuiteOperatorInstallStatus             = "operator-install-status-succeeded"
-	CertsuiteOperatorSemanticVersioning        = "operator-semantic-versioning"
-	CertsuiteOperatorCrdVersioning             = "operator-crd-versioning"
-	CertsuiteOperatorCrdOpenAPISchema          = "operator-crd-openapi-schema"
-	CertsuiteOperatorNonRoot                   = "operator-run-as-non-root"
-	CertsuiteOperatorPodAutomountToken         = "operator-automount-tokens"
-	CertsuiteOperatorPodRunAsUserID            = "operator-run-as-user-id"
-	CertsuiteOperatorMultipleInstalled         = "operator-multiple-same-operators"
-	CertsuiteOperatorBundleCount               = "operator-catalogsource-bundle-count"
+	CertsuiteOperatorInstallSource                                    = "operator-install-source"
+	CertsuiteOperatorInstallStatusNoPrivileges                        = "operator-install-status-no-privileges"
+	CertsuiteOperatorInstallStatus                                    = "operator-install-status-succeeded"
+	CertsuiteOperatorSemanticVersioning                               = "operator-semantic-versioning"
+	CertsuiteOperatorCrdVersioning                                    = "operator-crd-versioning"
+	CertsuiteOperatorCrdOpenAPISchema                                 = "operator-crd-openapi-schema"
+	CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces = "operator-single-or-multi-namespaced-allowed-in-tenant-namespaces"
+	CertsuiteOperatorNonRoot                                          = "operator-run-as-non-root"
+	CertsuiteOperatorPodAutomountToken                                = "operator-automount-tokens"
+	CertsuiteOperatorPodRunAsUserID                                   = "operator-run-as-user-id"
+	CertsuiteOperatorMultipleInstalled                                = "operator-multiple-same-operators"
+	CertsuiteOperatorBundleCount                                      = "operator-catalogsource-bundle-count"
 )
