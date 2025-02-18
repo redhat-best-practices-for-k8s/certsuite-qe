@@ -1,8 +1,6 @@
 run:
-  go: "1.23"
-  timeout: 15m0s
-  skip-dirs-use-default: true
-  fast: false
+  go: "1.24"
+  timeout: 15m
 
 linters-settings:
   revive:
@@ -21,9 +19,6 @@ linters-settings:
   funlen:
     lines: 175
     statements: 85
-  unused:
-    check-exported: true
-    go: "1.23"
   stylecheck:
     dot-import-whitelist:
       - github.com/onsi/gomega
@@ -84,9 +79,6 @@ linters:
     - wastedassign
     - wsl
     - nlreturn
-
-output:
-  formats: colored-line-number
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0

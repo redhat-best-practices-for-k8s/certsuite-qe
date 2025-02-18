@@ -34,7 +34,7 @@ var (
 		"app":                  "test",
 	}
 	CertsuiteTargetOperatorLabels             = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
-	CertsuiteTargetCrdFilters                 = []string{"nginxingresses.charts.nginx.org"} //  "anchoreengines.charts.anchore.io"
+	CertsuiteTargetCrdFilters                 = []string{"nginxingresses.charts.nginx.org"}
 	OperatorGroupName                         = "operator-test-operator-group"
 	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	CertifiedOperatorGroup                    = "certified-operators"

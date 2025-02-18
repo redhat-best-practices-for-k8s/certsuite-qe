@@ -50,7 +50,8 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 	})
 
 	It("operator namespace contains only single/multi namespace operator", func() {
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one", randomNamespace + "-two"})
+		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
+			[]string{randomNamespace + "-one"})
 		installAndLabelOperator(randomNamespace)
 
 		By("Start test")
@@ -95,7 +96,8 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 	It("operator namespace contains single namespaced operator with cluster-wide operator installed in a different namespace", func() {
 		installClusterWideOperator()
 
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one", randomNamespace + "-two"})
+		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
+			[]string{randomNamespace + "-one", randomNamespace + "-two"})
 		installAndLabelOperator(randomNamespace)
 
 		By("Start test")
@@ -135,8 +137,8 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 
 	// negative
 	It("operator namespace contains single namespaced operator with non-operator pods", func() {
-
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one", randomNamespace + "-two"})
+		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
+			[]string{randomNamespace + "-one", randomNamespace + "-two"})
 		installAndLabelOperator(randomNamespace)
 
 		By("Define pod")
@@ -256,30 +258,35 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 func installClusterWideOperator() {
 	const (
 		clusterLoggingOperatorName = "cluster-logging"
+		openshiftLoggingNamespace  = "cluster-logging"
 	)
-	openshiftLoggingNamespace := clusterLoggingOperatorName
 
 	By("Create openshift-logging namespace")
+
 	err := globalhelper.CreateNamespace(openshiftLoggingNamespace)
 	Expect(err).ToNot(HaveOccurred())
 
 	By("Create fake operator group for cluster-logging operator")
+
 	err = tshelper.DeployTestOperatorGroup(openshiftLoggingNamespace, true)
 	Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 	By("Query the packagemanifest for defaultChannel for " + clusterLoggingOperatorName)
+
 	channel, err := globalhelper.QueryPackageManifestForDefaultChannel(clusterLoggingOperatorName, openshiftLoggingNamespace)
 	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+clusterLoggingOperatorName)
 
 	fmt.Printf("CHANNEL FOUND: %s\n", channel)
 
 	By("Query the packagemanifest for the " + clusterLoggingOperatorName)
+
 	version, err := globalhelper.QueryPackageManifestForVersion(clusterLoggingOperatorName, openshiftLoggingNamespace, channel)
 	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+clusterLoggingOperatorName)
 
 	fmt.Printf("VERSION FOUND: %s\n", version)
 
 	By("Deploy cluster-logging operator for testing")
+
 	err = tshelper.DeployOperatorSubscription(
 		clusterLoggingOperatorName,
 		clusterLoggingOperatorName,
@@ -293,6 +300,7 @@ func installClusterWideOperator() {
 	Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+clusterLoggingOperatorName)
 
 	By("Wait until operator is ready")
+
 	err = tshelper.WaitUntilOperatorIsReady(clusterLoggingOperatorName, openshiftLoggingNamespace)
 	Expect(err).ToNot(HaveOccurred(), "Operator "+clusterLoggingOperatorName+" is not ready")
 
@@ -317,6 +325,7 @@ func createTestOperatorGroup(namespace, operatorGroupName string, targetNamespac
 	}
 
 	DeferCleanup(func() {
+
 		for _, targetNamespace := range targetNamespaces {
 			err := globalhelper.DeleteNamespaceAndWait(targetNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+targetNamespace)
