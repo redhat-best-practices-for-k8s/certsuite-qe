@@ -12,6 +12,7 @@ linters-settings:
     line-length: 135
   wsl:
     strict-append: false
+    allow-assign-and-anything: true
   gocognit:
     min-complexity: 36
   gofmt:
