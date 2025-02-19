@@ -159,3 +159,16 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 
 	return nil
 }
+
+func DeployTestOperatorGroupWithTargetNamespace(operatorGroupName, namespace string, targetNamespaces []string) error {
+	if globalhelper.IsOperatorGroupInstalled(operatorGroupName,
+		namespace) != nil {
+		return globalhelper.DeployOperatorGroup(namespace,
+			utils.DefineOperatorGroup(operatorGroupName,
+				namespace,
+				targetNamespaces),
+		)
+	}
+
+	return nil
+}
