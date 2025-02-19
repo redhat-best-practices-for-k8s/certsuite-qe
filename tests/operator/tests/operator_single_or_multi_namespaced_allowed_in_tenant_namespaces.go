@@ -31,7 +31,6 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 		createTestOperatorGroup(randomTargetingNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace})
 
 		DeferCleanup(func() {
-
 			err := globalhelper.DeleteNamespaceAndWait(randomTargetingNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+randomTargetingNamespace)
 		})
@@ -330,15 +329,14 @@ func createTestOperatorGroup(namespace, operatorGroupName string, targetNamespac
 	Expect(err).ToNot(HaveOccurred(), "Error creating namespace "+namespace)
 
 	By("Create target namespaces")
+
 	for _, targetNamespace := range targetNamespaces {
 		err := globalhelper.CreateNamespace(targetNamespace)
-
 		Expect(err).ToNot(HaveOccurred(), "Error creating namespace "+targetNamespace)
 	}
 
 	DeferCleanup(func() {
 		for _, targetNamespace := range targetNamespaces {
-
 			err := globalhelper.DeleteNamespaceAndWait(targetNamespace, tsparams.Timeout)
 			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+targetNamespace)
 		}
@@ -351,7 +349,7 @@ func createTestOperatorGroup(namespace, operatorGroupName string, targetNamespac
 
 func installAndLabelOperator(operatorNamespace string) {
 	By("Query the packagemanifest for the default channel")
-	channel, err := globalhelper.QueryPackageManifestForDefaultChannel( //nolint:wsl
+	channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
 		tsparams.CertifiedOperatorPrefixNginx,
 		operatorNamespace,
 	)

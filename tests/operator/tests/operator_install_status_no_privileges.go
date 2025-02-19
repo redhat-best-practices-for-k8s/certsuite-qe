@@ -74,26 +74,6 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixQuay+
 			" is not ready")
-
-		// kiali operator has resourceNames under its rules
-		By("Deploy kiali operator for testing")
-		err = tshelper.DeployOperatorSubscription(
-			"kiali",
-			"kiali",
-			"alpha",
-			randomNamespace,
-			tsparams.CommunityOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixKiali)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixKiali,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixKiali+
-			" is not ready")
 	})
 
 	AfterEach(func() {
@@ -155,14 +135,13 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 
 	// 66383
 	It("one operator with clusterPermissions and resourceNames [negative]", func() {
-		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixKiali,
+				tsparams.OperatorPrefixCloudbees,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixKiali)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -215,14 +194,13 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 
 	// 66385
 	It("two operators, one with clusterPermissions and resourceNames", func() {
-		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixKiali,
+				tsparams.OperatorPrefixCloudbees,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixKiali)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
