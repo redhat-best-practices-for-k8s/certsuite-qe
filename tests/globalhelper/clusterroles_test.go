@@ -1,7 +1,6 @@
 package globalhelper
 
 import (
-	"context"
 	"testing"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
@@ -42,7 +41,7 @@ func TestDeleteClusterRole(t *testing.T) {
 		})
 		assert.Nil(t, deleteClusterRole(fakeClient, testCR.Name))
 
-		_, err := fakeClient.RbacV1Interface.ClusterRoles().Get(context.TODO(), testCR.Name, metav1.GetOptions{})
+		_, err := fakeClient.RbacV1Interface.ClusterRoles().Get(t.Context(), testCR.Name, metav1.GetOptions{})
 		assert.NotNil(t, err)
 		assert.True(t, k8serrors.IsNotFound(err))
 	}

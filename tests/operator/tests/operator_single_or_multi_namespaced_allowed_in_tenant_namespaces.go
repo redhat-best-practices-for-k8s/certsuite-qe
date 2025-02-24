@@ -14,7 +14,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
-var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", func() {
+var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
@@ -277,9 +277,18 @@ func installClusterWideOperator() {
 		openshiftLoggingNamespace  = "cluster-logging"
 	)
 
+	By("Preemptively delete the namespace if it already exists")
+	err := globalhelper.DeleteNamespaceAndWait(openshiftLoggingNamespace, tsparams.Timeout)
+	Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+openshiftLoggingNamespace)
+
 	By("Create openshift-logging namespace")
-	err := globalhelper.CreateNamespace(openshiftLoggingNamespace)
+	err = globalhelper.CreateNamespace(openshiftLoggingNamespace)
 	Expect(err).ToNot(HaveOccurred())
+
+	DeferCleanup(func() {
+		err := globalhelper.DeleteNamespaceAndWait(openshiftLoggingNamespace, tsparams.Timeout)
+		Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+openshiftLoggingNamespace)
+	})
 
 	By("Create fake operator group for cluster-logging operator")
 	err = tshelper.DeployTestOperatorGroup(openshiftLoggingNamespace, true)

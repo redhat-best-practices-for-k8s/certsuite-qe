@@ -1,7 +1,6 @@
 package nodes
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -47,7 +46,7 @@ func TestEnsureAllNodesAreLabeled(t *testing.T) {
 		client := k8sfake.NewSimpleClientset(runtimeObjects...)
 
 		// Get all of the nodes from the fake client and test their labels
-		nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+		nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(nodes.Items))
 
@@ -99,7 +98,7 @@ func TestAddControlPlaneTaint(t *testing.T) {
 		assert.Nil(t, addControlPlaneTaint(client.CoreV1().Nodes(), testNode))
 
 		// Get all of the nodes from the fake client and test their labels
-		nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+		nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(nodes.Items))
 
@@ -138,7 +137,7 @@ func TestRemoveControlPlaneTaint(t *testing.T) {
 		assert.Nil(t, removeControlPlaneTaint(client.CoreV1().Nodes(), testNode))
 
 		// Get all of the nodes from the fake client and test their labels
-		nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+		nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(nodes.Items))
 
@@ -279,7 +278,7 @@ func TestUnCordon(t *testing.T) {
 	assert.Nil(t, UnCordon(client.CoreV1().Nodes(), testNode.Name))
 
 	// Get all of the nodes from the fake client and test their labels
-	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(nodes.Items))
 
@@ -300,7 +299,7 @@ func TestEnableMasterScheduling(t *testing.T) {
 	assert.Nil(t, EnableMasterScheduling(client.CoreV1().Nodes(), true))
 
 	// Get all of the nodes from the fake client and test their labels
-	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(nodes.Items))
 
@@ -309,7 +308,7 @@ func TestEnableMasterScheduling(t *testing.T) {
 
 	// Disable master scheduling
 	assert.Nil(t, EnableMasterScheduling(client.CoreV1().Nodes(), false))
-	nodes, err = client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodes, err = client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(nodes.Items))
 	assert.NotZero(t, nodes.Items[0].Spec.Taints)
