@@ -1,7 +1,6 @@
 package globalhelper
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -41,7 +40,7 @@ func TestAddControlPlaneTaint(t *testing.T) {
 	assert.Nil(t, err)
 
 	// Check that the taint was added
-	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 	assert.Nil(t, err)
 
 	for _, node := range nodes.Items {
@@ -78,7 +77,7 @@ func TestRemoveControlPlaneTaint(t *testing.T) {
 	assert.Nil(t, err)
 
 	// Check that the taint was added
-	nodes, err := client.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
 	assert.Nil(t, err)
 
 	for _, node := range nodes.Items {

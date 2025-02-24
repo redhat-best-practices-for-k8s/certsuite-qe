@@ -69,7 +69,7 @@ linters:
     - rowserrcheck
     - staticcheck
     - stylecheck
-    - tenv
+    - usetesting
     - thelper
     - tparallel
     - typecheck

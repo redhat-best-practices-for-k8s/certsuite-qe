@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -124,7 +123,7 @@ func TestSetServiceAccountAutomountServiceAccountToken(t *testing.T) {
 
 		// Get the serviceaccount from the fake client and check if the automountServiceAccountToken is set to the test value
 		serviceAccount, err := client.CoreV1().
-			ServiceAccounts(parameters.TestAccessControlNameSpace).Get(context.TODO(), "my-service-account", metav1.GetOptions{})
+			ServiceAccounts(parameters.TestAccessControlNameSpace).Get(t.Context(), "my-service-account", metav1.GetOptions{})
 		assert.Nil(t, err)
 
 		if err == nil {
@@ -188,7 +187,7 @@ func TestDefineAndCreateServiceOnCluster(t *testing.T) {
 		assert.Nil(t, err)
 
 		// Get the service from the fake client and check if it exists
-		_, err = client.CoreV1().Services(parameters.TestAccessControlNameSpace).Get(context.TODO(), "service-name", metav1.GetOptions{})
+		_, err = client.CoreV1().Services(parameters.TestAccessControlNameSpace).Get(t.Context(), "service-name", metav1.GetOptions{})
 		assert.Nil(t, err)
 
 		globalhelper.UnsetTestK8sAPIClient()

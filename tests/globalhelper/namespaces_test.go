@@ -1,7 +1,6 @@
 package globalhelper
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -151,7 +150,7 @@ func TestCleanPVCs(t *testing.T) {
 
 		if testCase.namespaceExists {
 			// check if namespace has no pvcs left
-			pvcs, err := fakeClient.K8sClient.CoreV1().PersistentVolumeClaims(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+			pvcs, err := fakeClient.K8sClient.CoreV1().PersistentVolumeClaims(testCase.namespace).List(t.Context(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(pvcs.Items))
 		}
@@ -201,7 +200,7 @@ func TestCleanPodDisruptionBudget(t *testing.T) {
 		if testCase.namespaceExists {
 			// check if namespace has no pod disruption budgets left
 			pdbs, err := fakeClient.K8sClient.PolicyV1beta1().
-				PodDisruptionBudgets(testCase.namespace).List(context.TODO(), metav1.ListOptions{})
+				PodDisruptionBudgets(testCase.namespace).List(t.Context(), metav1.ListOptions{})
 			assert.NoError(t, err)
 			assert.Equal(t, 0, len(pdbs.Items))
 		}
