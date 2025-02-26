@@ -43,6 +43,7 @@ const (
 	CertsuiteOCPLifecycleName       = "platform-alteration-ocp-lifecycle"
 	CertsuiteOCPNodeOsName          = "platform-alteration-ocp-node-os-lifecycle"
 	CertsuiteServiceMeshUsageName   = "platform-alteration-service-mesh-usage"
+	CertsuiteClusterOperatorHealth  = "platform-alteration-cluster-operator-health"
 
 	Getenforce    = `chroot /host getenforce`
 	Enforcing     = "Enforcing"
