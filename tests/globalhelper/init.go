@@ -105,8 +105,7 @@ func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, rando
 	// 	glog.Errorf("can not read file %s - %s", logfile, err)
 	// }
 	// fmt.Println(string(myFile))
-	By(fmt.Sprintf("Remove reports from report directory: %s", randomReportDir))
-
+	// By(fmt.Sprintf("Remove reports from report directory: %s", randomReportDir))
 	err := RemoveContentsFromReportDir(randomReportDir)
 	Expect(err).ToNot(HaveOccurred())
 
