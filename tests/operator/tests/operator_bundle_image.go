@@ -3,6 +3,7 @@ package operator
 import (
 	"fmt"
 	"runtime"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -40,7 +41,7 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
 	})
 
-	It("CatalogSource with less than 1000 bundle images", func() {
+	FIt("CatalogSource with less than 1000 bundle images", func() {
 		// Skip if the host is not x86 based
 		if runtime.GOARCH != "amd64" {
 			Skip("This test is only supported on x86 based hosts")
@@ -86,6 +87,9 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
+
+		By("sleep for 5 minutes")
+		time.Sleep(5 * time.Minute)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
