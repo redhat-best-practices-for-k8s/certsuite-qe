@@ -2,7 +2,6 @@ package operator
 
 import (
 	"fmt"
-	"runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -142,13 +141,8 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// This means we will have access to a "new" and "old" channel for the nginx-ingress-operator.
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
 
-		// Skip if the host is not x86 based
-		if runtime.GOARCH != "amd64" {
-			Skip("This test is only supported on x86 based hosts")
-		}
-
 		By("Create custom-operator catalog source")
-		err := globalhelper.DeployCustomOperatorSource("quay.io/deliedit/test:catalog-index-test")
+		err := globalhelper.DeployCustomOperatorSource("quay.io/redhat-best-practices-for-k8s/qe-custom-catalog")
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
@@ -181,7 +175,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			randomNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v2.4.0",
+			tsparams.CertifiedOperatorPrefixNginx+".v3.0.1",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
@@ -195,7 +189,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			secondNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v2.3.2",
+			tsparams.CertifiedOperatorPrefixNginx+".v3.0.0",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
