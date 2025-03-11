@@ -2,7 +2,6 @@ package operator
 
 import (
 	"fmt"
-	"runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -41,13 +40,8 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 	})
 
 	It("CatalogSource with less than 1000 bundle images", func() {
-		// Skip if the host is not x86 based
-		if runtime.GOARCH != "amd64" {
-			Skip("This test is only supported on x86 based hosts")
-		}
-
 		By("Create custom-operator catalog source")
-		err := globalhelper.DeployCustomOperatorSource("quay.io/deliedit/test:catalog-index-test")
+		err := globalhelper.DeployCustomOperatorSource("quay.io/redhat-best-practices-for-k8s/qe-custom-catalog")
 		Expect(err).ToNot(HaveOccurred())
 
 		DeferCleanup(func() {
@@ -67,7 +61,7 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 			randomNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v2.4.0",
+			tsparams.CertifiedOperatorPrefixNginx+".v3.0.1",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
