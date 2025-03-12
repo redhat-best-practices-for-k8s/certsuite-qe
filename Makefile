@@ -17,9 +17,6 @@ lint:
 	@echo "Running go lint"
 	scripts/golangci-lint.sh
 
-update-go:
-	scripts/install-latest-go.sh
-
 deps-update:
 	go mod tidy && \
 	go mod vendor
@@ -30,7 +27,7 @@ gofmt:
 	@echo "Running gofmt"
 	gofmt -s -l `find . -path ./vendor -prune -o -type f -name '*.go' -print`
 
-test-all: update-go install-ginkgo download-unstable
+test-all: install-ginkgo download-unstable
 	./scripts/run-tests.sh all
 
 test-features: install-ginkgo download-unstable
