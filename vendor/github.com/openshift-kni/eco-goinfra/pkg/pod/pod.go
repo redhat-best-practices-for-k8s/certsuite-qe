@@ -306,53 +306,24 @@ func (builder *Builder) WaitUntilRunning(timeout time.Duration) error {
 	return builder.WaitUntilInStatus(corev1.PodRunning, timeout)
 }
 
-// WaitUntilHealthy waits for the duration of the defined timeout or until the pod is healthy.
-// A healthy pod is in running phase and optionally in ready condition.
-//
-// timeout is the duration to wait for the pod to be healthy
-// includeSucceeded when true, implies that pod in succeeded phase is running.
-// skipReadinessCheck when false, checks that the podCondition is ready.
-// ignoreRestartPolicyNever when true, Ignores failed pods with restart policy set to never.
-func (builder *Builder) WaitUntilHealthy(timeout time.Duration, includeSucceeded, skipReadinessCheck,
-	ignoreRestartPolicyNever bool) error {
-	statusesChecked := []corev1.PodPhase{corev1.PodRunning}
-
-	// Ignore failed pod with restart policy never. This could happen in image pruner or installer pods that
-	// will never restart. For those pods, instead of restarting the same pod, a new pod will be created
-	// to complete the task.
-	if ignoreRestartPolicyNever &&
-		builder.Object.Status.Phase == corev1.PodFailed &&
-		builder.Object.Spec.RestartPolicy == corev1.RestartPolicyNever {
-		glog.V(100).Infof("Ignore failed pod with restart policy never. Message: %s",
-			builder.Object.Status.Message)
-
-		return nil
+// IsHealthy returns true if and only if the pod has succeeded or is running and ready. All other cases, such as when
+// the pod does not exist or the builder is invalid, will return false.
+func (builder *Builder) IsHealthy() bool {
+	if valid, _ := builder.validate(); !valid {
+		return false
 	}
 
-	if includeSucceeded {
-		statusesChecked = append(statusesChecked, corev1.PodSucceeded)
+	glog.V(100).Infof("Checking if pod %s in namespace %s is healthy",
+		builder.Definition.Name, builder.Definition.Namespace)
+
+	if !builder.Exists() {
+		glog.V(100).Infof("Cannot check if pod %s in namespace %s is healthy because it does not exist",
+			builder.Definition.Name, builder.Definition.Namespace)
+
+		return false
 	}
 
-	podPhase, err := builder.WaitUntilInOneOfStatuses(statusesChecked, timeout)
-
-	if err != nil {
-		glog.V(100).Infof("pod condition is not in %v. Message: %s", statusesChecked, builder.Object.Status.Message)
-
-		return err
-	}
-
-	if skipReadinessCheck || *podPhase == corev1.PodSucceeded {
-		return nil
-	}
-
-	err = builder.WaitUntilCondition(corev1.PodReady, timeout)
-	if err != nil {
-		glog.V(100).Infof("pod condition is not Ready. Message: %s", builder.Object.Status.Message)
-
-		return err
-	}
-
-	return nil
+	return builder.isObjectHealthy()
 }
 
 // WaitUntilInStatus waits for the duration of the defined timeout or until the pod gets to a specific status.
@@ -364,34 +335,10 @@ func (builder *Builder) WaitUntilInStatus(status corev1.PodPhase, timeout time.D
 	glog.V(100).Infof("Waiting for the defined period until pod %s in namespace %s has status %v",
 		builder.Definition.Name, builder.Definition.Namespace, status)
 
-	_, err := builder.WaitUntilInOneOfStatuses([]corev1.PodPhase{status}, timeout)
-
-	return err
-}
-
-// WaitUntilInOneOfStatuses waits for the duration of the defined timeout or until the pod gets to any specific status
-// in a list of statues.
-func (builder *Builder) WaitUntilInOneOfStatuses(statuses []corev1.PodPhase,
-	timeout time.Duration) (*corev1.PodPhase, error) {
-	if valid, err := builder.validate(); !valid {
-		return nil, err
-	}
-
-	glog.V(100).Infof("Waiting for the defined period until pod %s in namespace %s has status %v",
-		builder.Definition.Name, builder.Definition.Namespace, statuses)
-
-	var foundPhase corev1.PodPhase
-
-	return &foundPhase, wait.PollUntilContextTimeout(
-		context.TODO(), time.Second, timeout, true, func(ctx context.Context) (bool, error) {
-			updatePod, err := builder.apiClient.Pods(builder.Definition.Namespace).Get(
-				context.TODO(), builder.Definition.Name, metav1.GetOptions{})
-			if k8serrors.IsNotFound(err) {
-				glog.V(100).Infof("Pod %s in namespace %s does not exist", builder.Definition.Name, builder.Definition.Namespace)
-
-				return false, err
-			}
-
+	return wait.PollUntilContextTimeout(context.TODO(),
+		time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+			updatePod, err := builder.apiClient.Pods(builder.Definition.Namespace).
+				Get(context.TODO(), builder.Definition.Name, metav1.GetOptions{})
 			if err != nil {
 				glog.V(100).Infof("Failed to get pod %s in namespace %s: %v",
 					builder.Definition.Name, builder.Definition.Namespace, err)
@@ -399,15 +346,7 @@ func (builder *Builder) WaitUntilInOneOfStatuses(statuses []corev1.PodPhase,
 				return false, nil
 			}
 
-			for _, phase := range statuses {
-				if updatePod.Status.Phase == phase {
-					foundPhase = phase
-
-					return true, nil
-				}
-			}
-
-			return false, nil
+			return updatePod.Status.Phase == status, nil
 		})
 }
 
@@ -1309,6 +1248,32 @@ func (builder *Builder) isMountAlreadyInUseInPod(newMount corev1.VolumeMount) {
 	}
 }
 
+// isObjectHealthy returns true if and only if the pod has succeeded or is running and ready. It only verifies builder
+// and builder.Object are not nil but otherwise relies on the caller to ensure the builder is valid.
+//
+// Unlike IsHealthy, this method does not check the pod exists first, saving a request to the apiClient.
+func (builder *Builder) isObjectHealthy() bool {
+	if builder == nil || builder.Object == nil {
+		return false
+	}
+
+	if builder.Object.Status.Phase == corev1.PodSucceeded {
+		return true
+	}
+
+	if builder.Object.Status.Phase != corev1.PodRunning {
+		return false
+	}
+
+	for _, condition := range builder.Object.Status.Conditions {
+		if condition.Type == corev1.PodReady && condition.Status == corev1.ConditionTrue {
+			return true
+		}
+	}
+
+	return false
+}
+
 func isMountInUse(containerMounts []corev1.VolumeMount, newMount corev1.VolumeMount) bool {
 	for _, containerMount := range containerMounts {
 		if containerMount.Name == newMount.Name && containerMount.MountPath == newMount.MountPath {
@@ -1333,7 +1298,7 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.Definition == nil {
 		glog.V(100).Infof("The %s is undefined", resourceCRD)
 
-		return false, fmt.Errorf(msg.UndefinedCrdObjectErrString(resourceCRD))
+		return false, fmt.Errorf("%s", msg.UndefinedCrdObjectErrString(resourceCRD))
 	}
 
 	if builder.apiClient == nil {
@@ -1345,7 +1310,7 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.errorMsg != "" {
 		glog.V(100).Infof("The %s builder has error message: %s", resourceCRD, builder.errorMsg)
 
-		return false, fmt.Errorf(builder.errorMsg)
+		return false, fmt.Errorf("%s", builder.errorMsg)
 	}
 
 	return true, nil

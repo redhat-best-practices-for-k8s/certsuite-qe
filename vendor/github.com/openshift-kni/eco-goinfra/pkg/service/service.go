@@ -410,14 +410,6 @@ func DefineServicePort(port, targetPort int32, protocol corev1.Protocol) (*corev
 	}, nil
 }
 
-// GetServiceGVR returns service's GroupVersionResource which could be used for Clean function.
-// Deprecated: This function is being name-changed to GetGVR in the future and will be deprecated.
-func GetServiceGVR() schema.GroupVersionResource {
-	return schema.GroupVersionResource{
-		Group: "", Version: "v1", Resource: "services",
-	}
-}
-
 // GetGVR returns service's GroupVersionResource which could be used for Clean function.
 func GetGVR() schema.GroupVersionResource {
 	return schema.GroupVersionResource{Group: "", Version: "v1", Resource: "services"}
@@ -446,7 +438,7 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.Definition == nil {
 		glog.V(100).Infof("The %s is undefined", resourceCRD)
 
-		return false, fmt.Errorf(msg.UndefinedCrdObjectErrString(resourceCRD))
+		return false, fmt.Errorf("%s", msg.UndefinedCrdObjectErrString(resourceCRD))
 	}
 
 	if builder.apiClient == nil {
@@ -458,7 +450,7 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.errorMsg != "" {
 		glog.V(100).Infof("The %s builder has error message: %s", resourceCRD, builder.errorMsg)
 
-		return false, fmt.Errorf(builder.errorMsg)
+		return false, fmt.Errorf("%s", builder.errorMsg)
 	}
 
 	return true, nil

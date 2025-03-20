@@ -310,7 +310,7 @@ func (builder *Builder) CleanObjects(cleanTimeout time.Duration, objects ...sche
 				objList, err := builder.apiClient.Resource(resource).Namespace(builder.Definition.Name).List(
 					context.TODO(), metav1.ListOptions{})
 
-				if err != nil || len(objList.Items) > 1 {
+				if err != nil || len(objList.Items) > 0 {
 					// avoid timeout due to default automatically created openshift
 					// configmaps: kube-root-ca.crt openshift-service-ca.crt
 					if resource.Resource == "configmaps" {
@@ -376,7 +376,7 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.Definition == nil {
 		glog.V(100).Infof("The %s is undefined", resourceCRD)
 
-		return false, fmt.Errorf(msg.UndefinedCrdObjectErrString(resourceCRD))
+		return false, fmt.Errorf("%s", msg.UndefinedCrdObjectErrString(resourceCRD))
 	}
 
 	if builder.apiClient == nil {
@@ -388,7 +388,7 @@ func (builder *Builder) validate() (bool, error) {
 	if builder.errorMsg != "" {
 		glog.V(100).Infof("The %s builder has error message: %s", resourceCRD, builder.errorMsg)
 
-		return false, fmt.Errorf(builder.errorMsg)
+		return false, fmt.Errorf("%s", builder.errorMsg)
 	}
 
 	return true, nil

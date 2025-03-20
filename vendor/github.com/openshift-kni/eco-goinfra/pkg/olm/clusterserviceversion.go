@@ -22,7 +22,7 @@ type ClusterServiceVersionBuilder struct {
 	// Created ClusterServiceVersionBuilder object on the cluster.
 	Object *oplmV1alpha1.ClusterServiceVersion
 	// api client to interact with the cluster.
-	apiClient *clients.Settings
+	apiClient runtimeClient.Client
 	// errorMsg is processed before ClusterServiceVersionBuilder object is created.
 	errorMsg string
 }
@@ -147,6 +147,32 @@ func (builder *ClusterServiceVersionBuilder) Delete() error {
 	return nil
 }
 
+// Update checks wether a clusterserviceversion exists and updates it.
+func (builder *ClusterServiceVersionBuilder) Update() (*ClusterServiceVersionBuilder, error) {
+	if valid, err := builder.validate(); !valid {
+		return nil, err
+	}
+
+	glog.V(100).Infof("Updating ClusterServiceVersion %s", builder.Definition.Name)
+
+	if !builder.Exists() {
+		glog.V(100).Infof("ClusterServiceVersion %s does not exist", builder.Definition.Name)
+
+		return nil, fmt.Errorf("cannot update non-existent ClusterServiceVersion")
+	}
+
+	builder.Definition.ResourceVersion = builder.Object.ResourceVersion
+
+	err := builder.apiClient.Update(context.TODO(), builder.Definition)
+	if err != nil {
+		return nil, err
+	}
+
+	builder.Object = builder.Definition
+
+	return builder, nil
+}
+
 // GetAlmExamples extracts and returns the alm-examples block from the clusterserviceversion.
 func (builder *ClusterServiceVersionBuilder) GetAlmExamples() (string, error) {
 	if valid, err := builder.validate(); !valid {
@@ -220,7 +246,7 @@ func (builder *ClusterServiceVersionBuilder) validate() (bool, error) {
 	if builder.Definition == nil {
 		glog.V(100).Infof("The %s is undefined", resourceCRD)
 
-		return false, fmt.Errorf(msg.UndefinedCrdObjectErrString(resourceCRD))
+		return false, fmt.Errorf("%s", msg.UndefinedCrdObjectErrString(resourceCRD))
 	}
 
 	if builder.apiClient == nil {
@@ -232,7 +258,7 @@ func (builder *ClusterServiceVersionBuilder) validate() (bool, error) {
 	if builder.errorMsg != "" {
 		glog.V(100).Infof("The %s builder has error message: %s", resourceCRD, builder.errorMsg)
 
-		return false, fmt.Errorf(builder.errorMsg)
+		return false, fmt.Errorf("%s", builder.errorMsg)
 	}
 
 	return true, nil
