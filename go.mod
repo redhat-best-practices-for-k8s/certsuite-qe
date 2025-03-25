@@ -4,10 +4,10 @@ go 1.24.1
 
 require (
 	github.com/golang/glog v1.2.4
-	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.5
+	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.6
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/onsi/ginkgo/v2 v2.23.0
-	github.com/onsi/gomega v1.36.2
+	github.com/onsi/ginkgo/v2 v2.23.3
+	github.com/onsi/gomega v1.36.3
 	github.com/openshift-kni/eco-goinfra v0.0.0-20250320191755-667a76dcc2d0
 	github.com/openshift/client-go v0.0.0-20241107164952-923091dd2b1a
 	github.com/openshift/machine-config-operator v0.0.1-0.20231024085435-7e1fb719c1ba
@@ -24,7 +24,7 @@ require (
 	k8s.io/apimachinery v0.32.3
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
-	sigs.k8s.io/controller-runtime v0.20.3
+	sigs.k8s.io/controller-runtime v0.20.4
 )
 
 require github.com/evanphx/json-patch/v5 v5.9.11 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.6.9 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
