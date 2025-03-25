@@ -1,32 +1,6 @@
+version: "2"
 run:
   go: "1.24"
-  timeout: 15m
-
-linters-settings:
-  revive:
-    rules:
-      - name: indent-error-flow
-      - name: var-naming
-      - name: increment-decrement
-  lll:
-    line-length: 135
-  wsl:
-    strict-append: false
-    allow-assign-and-anything: true
-  gocognit:
-    min-complexity: 36
-  gofmt:
-    simplify: true
-  funlen:
-    lines: 175
-    statements: 85
-  stylecheck:
-    dot-import-whitelist:
-      - github.com/onsi/gomega
-      - github.com/onsi/ginkgo/v2
-    # https://staticcheck.io/docs/options#checks
-    checks: [ "all", "-ST1001"]
-
 linters:
   enable:
     - asciicheck
@@ -34,7 +8,6 @@ linters:
     - bodyclose
     - contextcheck
     - durationcheck
-    - errcheck
     - errname
     - errorlint
     - exhaustive
@@ -45,22 +18,17 @@ linters:
     - gocritic
     - gocyclo
     - godot
-    # - godox
-    - gofmt
     - goheader
-    - goimports
     - gomodguard
     - goprintffuncname
-    - gosimple
-    - govet
     - importas
-    - ineffassign
     - ireturn
     - lll
     - makezero
     - misspell
     - nakedret
     - nilnil
+    - nlreturn
     - noctx
     - nolintlint
     - predeclared
@@ -68,23 +36,64 @@ linters:
     - revive
     - rowserrcheck
     - staticcheck
-    - stylecheck
-    - usetesting
     - thelper
     - tparallel
-    - typecheck
     - unconvert
     - unparam
-    - unused
+    - usetesting
     - varnamelen
     - wastedassign
     - wsl
-    - nlreturn
+  settings:
+    funlen:
+      lines: 175
+      statements: 85
+    gocognit:
+      min-complexity: 36
+    lll:
+      line-length: 135
+    revive:
+      rules:
+        - name: indent-error-flow
+        - name: var-naming
+        - name: increment-decrement
+    staticcheck:
+      checks:
+        - -ST1001
+        - all
+      dot-import-whitelist:
+        - github.com/onsi/gomega
+        - github.com/onsi/ginkgo/v2
+    wsl:
+      strict-append: false
+      allow-assign-and-anything: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - test/tools.go
+      - third_party$
+      - builtin$
+      - examples$
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
   new: false
-  include:
-    - EXC0002 # disable excluding of issues about comments from golint
-  exclude-files:
-    - test/tools.go
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+  exclusions:
+    generated: lax
+    paths:
+      - test/tools.go
+      - third_party$
+      - builtin$
+      - examples$

@@ -11,9 +11,9 @@ import (
 
 func TestDefinePod(t *testing.T) {
 	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
-	assert.Equal(t, testPod.ObjectMeta.Name, "test-pod")
-	assert.Equal(t, testPod.ObjectMeta.Namespace, "test-namespace")
-	assert.Equal(t, testPod.ObjectMeta.Labels["app"], "nginx")
+	assert.Equal(t, testPod.Name, "test-pod")
+	assert.Equal(t, testPod.Namespace, "test-namespace")
+	assert.Equal(t, testPod.Labels["app"], "nginx")
 	assert.Equal(t, testPod.Spec.Containers[0].Image, "nginx")
 	assert.Equal(t, ptr.To[int64](0), testPod.Spec.TerminationGracePeriodSeconds)
 	assert.Equal(t, ptr.To[int64](1000), testPod.Spec.SecurityContext.RunAsUser)

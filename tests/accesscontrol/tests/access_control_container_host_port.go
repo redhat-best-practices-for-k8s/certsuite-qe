@@ -150,9 +150,10 @@ var _ = Describe("Access-control container-host-port,", func() {
 		Expect(err).ToNot(HaveOccurred())
 		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
 			for _, port := range container.Ports {
-				if port.ContainerPort == 22222 {
+				switch port.ContainerPort {
+				case 22222:
 					Expect(port.HostPort).To(Equal(int32(22223)))
-				} else if port.ContainerPort == 22221 {
+				case 22221:
 					Expect(port.HostPort).To(BeZero())
 				}
 			}

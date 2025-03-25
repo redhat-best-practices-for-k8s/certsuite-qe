@@ -309,7 +309,7 @@ func TestRedefineWithPVC(t *testing.T) {
 	// Assert that the deployment has volumes set.
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Volumes))
 	assert.Equal(t, "test-volume", deployment.Spec.Template.Spec.Volumes[0].Name)
-	assert.Equal(t, "test-pvc", deployment.Spec.Template.Spec.Volumes[0].VolumeSource.PersistentVolumeClaim.ClaimName)
+	assert.Equal(t, "test-pvc", deployment.Spec.Template.Spec.Volumes[0].PersistentVolumeClaim.ClaimName)
 }
 
 func TestRedefineWithHostPath(t *testing.T) {
@@ -324,7 +324,7 @@ func TestRedefineWithHostPath(t *testing.T) {
 	// Assert that the deployment has volumes set.
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Volumes))
 	assert.Equal(t, "test-volume", deployment.Spec.Template.Spec.Volumes[0].Name)
-	assert.Equal(t, "test-path", deployment.Spec.Template.Spec.Volumes[0].VolumeSource.HostPath.Path)
+	assert.Equal(t, "test-path", deployment.Spec.Template.Spec.Volumes[0].HostPath.Path)
 }
 
 func TestRedefineWithCPUResources(t *testing.T) {
