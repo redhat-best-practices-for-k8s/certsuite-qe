@@ -14,7 +14,7 @@ func TestDefineStatefulSet(t *testing.T) {
 	assert.Equal(t, "testNamespace", testStatefulSet.Namespace)
 	assert.Equal(t, int32(1), *testStatefulSet.Spec.Replicas)
 	assert.Equal(t, "test", testStatefulSet.Spec.Selector.MatchLabels["app"])
-	assert.Equal(t, "test", testStatefulSet.Spec.Template.ObjectMeta.Labels["app"])
+	assert.Equal(t, "test", testStatefulSet.Spec.Template.Labels["app"])
 	assert.Equal(t, "testImage", testStatefulSet.Spec.Template.Spec.Containers[0].Image)
 	assert.Equal(t, int64(0), *testStatefulSet.Spec.Template.Spec.TerminationGracePeriodSeconds)
 	assert.Equal(t, int32(3), testStatefulSet.Spec.MinReadySeconds)

@@ -13,7 +13,7 @@ func TestDefineDaemonSet(t *testing.T) {
 	assert.Equal(t, "nginx", ds.Name)
 	assert.Equal(t, "default", ds.Namespace)
 	assert.Equal(t, int32(3), ds.Spec.MinReadySeconds)
-	assert.Equal(t, "testpod-", ds.Spec.Template.ObjectMeta.Name)
+	assert.Equal(t, "testpod-", ds.Spec.Template.Name)
 }
 
 func TestDefineDaemonSetWithContainerSpecs(t *testing.T) {
@@ -37,7 +37,7 @@ func TestRedefineDaemonSetWithNodeSelector(t *testing.T) {
 func TestRedefineDaemonSetWithLabel(t *testing.T) {
 	ds := DefineDaemonSet("default", "nginx", map[string]string{"app": "nginx"}, "nginx")
 	RedefineDaemonSetWithLabel(ds, map[string]string{"app": "nginx"})
-	assert.Equal(t, "nginx", ds.Spec.Template.ObjectMeta.Labels["app"])
+	assert.Equal(t, "nginx", ds.Spec.Template.Labels["app"])
 }
 
 func TestRedefineWithPrivilegeAndHostNetwork(t *testing.T) {

@@ -13,7 +13,7 @@ func TestDefinePersistentVolume(t *testing.T) {
 	assert.Equal(t, "testPV", testPV.Name)
 	assert.Equal(t, "testPVC", testPV.Spec.ClaimRef.Name)
 	assert.Equal(t, "testNamespace", testPV.Spec.ClaimRef.Namespace)
-	assert.Equal(t, "/tmp", testPV.Spec.PersistentVolumeSource.Local.Path)
+	assert.Equal(t, "/tmp", testPV.Spec.Local.Path)
 	assert.Equal(t, "10Gi", testPV.Spec.Capacity.Storage().String())
 }
 

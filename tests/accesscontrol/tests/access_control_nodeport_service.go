@@ -211,9 +211,10 @@ var _ = Describe("Access control custom namespace, custom deployment,", func() {
 		services, err := globalhelper.GetServicesFromNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 		for _, service := range services {
-			if service.Name == "testservicefirst" {
+			switch service.Name {
+			case "testservicefirst":
 				Expect(service.Spec.Type).To(Equal(corev1.ServiceTypeNodePort))
-			} else if service.Name == "testservicesecond" {
+			case "testservicesecond":
 				Expect(service.Spec.Type).ToNot(Equal(corev1.ServiceTypeNodePort))
 			}
 		}

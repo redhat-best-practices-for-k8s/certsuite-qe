@@ -60,7 +60,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 
 		defer outfile.Close()
 
-		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
+		_, err = fmt.Fprintf(outfile, "Running test: %s\n", tcNameForReport)
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
@@ -122,7 +122,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 		defer outfile.Close()
 
-		_, err = outfile.WriteString(fmt.Sprintf("Running test: %s\n", tcNameForReport))
+		_, err = fmt.Fprintf(outfile, "Running test: %s\n", tcNameForReport)
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
