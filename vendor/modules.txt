@@ -650,7 +650,7 @@ gorm.io/gorm/clause
 gorm.io/gorm/logger
 gorm.io/gorm/schema
 gorm.io/gorm/utils
-# helm.sh/helm/v3 v3.17.2
+# helm.sh/helm/v3 v3.17.3
 ## explicit; go 1.23.0
 helm.sh/helm/v3/pkg/chart
 helm.sh/helm/v3/pkg/release
