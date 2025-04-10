@@ -142,7 +142,7 @@ require (
 	gopkg.in/k8snetworkplumbingwg/multus-cni.v4 v4.1.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gorm.io/gorm v1.25.12 // indirect
-	helm.sh/helm/v3 v3.17.2 // indirect
+	helm.sh/helm/v3 v3.17.3 // indirect
 	k8s.io/cli-runtime v0.32.2 // indirect
 	k8s.io/component-base v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
