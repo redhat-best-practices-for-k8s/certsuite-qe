@@ -9,7 +9,7 @@ name: Test Incoming Changes
 
 jobs:
   lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       SHELL: /bin/bash
     steps:
@@ -51,7 +51,7 @@ jobs:
           args: --timeout 10m0s
 
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       SHELL: /bin/bash
     steps:
@@ -68,7 +68,7 @@ jobs:
         run: ginkgo build -r ./tests
 
   unittest:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       SHELL: /bin/bash
     
