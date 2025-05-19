@@ -13,15 +13,15 @@ require (
 	github.com/openshift/machine-config-operator v0.0.1-0.20231024085435-7e1fb719c1ba
 	github.com/operator-framework/api v0.31.0
 	github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000
-	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.56
-	github.com/redhat-best-practices-for-k8s/oct v0.0.38
+	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.57
+	github.com/redhat-best-practices-for-k8s/oct v0.0.39
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.33.0
-	k8s.io/apiextensions-apiserver v0.33.0
-	k8s.io/apimachinery v0.33.0
+	k8s.io/api v0.33.1
+	k8s.io/apiextensions-apiserver v0.33.1
+	k8s.io/apimachinery v0.33.1
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
 	sigs.k8s.io/controller-runtime v0.20.4
@@ -142,7 +142,7 @@ require (
 	gorm.io/gorm v1.25.12 // indirect
 	helm.sh/helm/v3 v3.17.3 // indirect
 	k8s.io/cli-runtime v0.32.2 // indirect
-	k8s.io/component-base v0.33.0 // indirect
+	k8s.io/component-base v0.33.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/kubectl v0.32.2 // indirect
