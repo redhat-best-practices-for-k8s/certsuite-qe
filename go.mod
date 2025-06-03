@@ -14,7 +14,7 @@ require (
 	github.com/operator-framework/api v0.31.0
 	github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.57
-	github.com/redhat-best-practices-for-k8s/oct v0.0.40
+	github.com/redhat-best-practices-for-k8s/oct v0.0.41
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
@@ -140,7 +140,7 @@ require (
 	gopkg.in/k8snetworkplumbingwg/multus-cni.v4 v4.1.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gorm.io/gorm v1.25.12 // indirect
-	helm.sh/helm/v3 v3.18.0 // indirect
+	helm.sh/helm/v3 v3.18.2 // indirect
 	k8s.io/cli-runtime v0.33.0 // indirect
 	k8s.io/component-base v0.33.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
