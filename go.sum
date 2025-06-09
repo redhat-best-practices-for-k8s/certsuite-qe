@@ -411,8 +411,8 @@ github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df h1:vV
 github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df/go.mod h1:Qgmgk+Wa61zuvR9mRQEOjD6tcUezT7aU5GXaBup6eXM=
 github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.57 h1:ezRc+opK5NXg2hSEzBeHf5cSz6tHYMfwgJSm9EPr4XU=
 github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.57/go.mod h1:C56NGjtBv6XMyAHYqs6RpaYxTAsjisV2RWcJZbTeHqc=
-github.com/redhat-best-practices-for-k8s/oct v0.0.41 h1:S8GH1LRfjupo6VQGeoKhHC8t9cM8eOvP2g8GiRnk/0k=
-github.com/redhat-best-practices-for-k8s/oct v0.0.41/go.mod h1:SDtm/KJLozqej81FIEcqYYQasRc28+9hjkaCQ0xXjio=
+github.com/redhat-best-practices-for-k8s/oct v0.0.42 h1:4ZZR+p7hCLjG6NrmKAEyaPiqZ4lmilyvinBHWdQ28jc=
+github.com/redhat-best-practices-for-k8s/oct v0.0.42/go.mod h1:H2xtSLem4jSSKxh29yfbuJ6kUJXbcRZmIFJtfa/UALc=
 github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
 github.com/rogpeppe/go-internal v1.12.0/go.mod h1:E+RYuTGaKKdloAfM02xzb0FW3Paa99yedzYV+kq4uf4=
 github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
