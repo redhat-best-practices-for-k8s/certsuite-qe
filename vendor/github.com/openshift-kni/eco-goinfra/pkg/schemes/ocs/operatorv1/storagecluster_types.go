@@ -93,11 +93,13 @@ type StorageClusterSpec struct {
 
 	// AllowRemoteStorageConsumers Indicates that the OCS cluster should deploy the needed
 	// components to enable connections from remote consumers.
+	// +kubebuilder:deprecatedversion:warning="AllowRemoteStorageConsumers field has been deprecated and will be ignored within the reconcile."
+	// +kubebuilder:validation:XValidation:rule="oldSelf == self",message="allowRemoteStorageConsumers is immutable"
 	AllowRemoteStorageConsumers bool `json:"allowRemoteStorageConsumers,omitempty"`
 
 	// ProviderAPIServerServiceType Indicates the ServiceType for OCS Provider API Server Service.
-	// The supported values are NodePort or LoadBalancer. The default ServiceType is NodePort if the value is empty.
-	// This will only be used when AllowRemoteStorageConsumers is set to true
+	// The default ServiceType is derived from hostNetwork field.
+	// +kubebuilder:validation:Enum=ClusterIP;NodePort;LoadBalancer
 	ProviderAPIServerServiceType corev1.ServiceType `json:"providerAPIServerServiceType,omitempty"`
 
 	// EnableCephTools toggles on whether or not the ceph tools pod
@@ -115,9 +117,6 @@ type StorageClusterSpec struct {
 	// provisioned by the storagecluster controller to be used in
 	// storageDeviceSets section of the CR.
 	BackingStorageClasses []BackingStorageClass `json:"backingStorageClasses,omitempty"`
-	// DefaultStorageProfile is the default storage profile to use for
-	// the storagerequest as StorageProfile is optional.
-	DefaultStorageProfile string `json:"defaultStorageProfile,omitempty"`
 }
 
 // CSIDriverSpec defines the CSI driver settings for the StorageCluster.
@@ -209,6 +208,9 @@ type ManageCephCluster struct {
 
 	// CephClusterHealthCheckSpec represent the healthcheck for Ceph daemons
 	HealthCheck *rookCephv1.CephClusterHealthCheckSpec `json:"healthCheck,omitempty"`
+
+	// Ceph Config options
+	CephConfig map[string]map[string]string `json:"cephConfig,omitempty"`
 }
 
 // ManageCephConfig defines how to reconcile the Ceph configuration
@@ -225,9 +227,11 @@ type ManageCephDashboard struct {
 
 // ManageCephBlockPools defines how to reconcile CephBlockPools
 type ManageCephBlockPools struct {
-	ReconcileStrategy    string `json:"reconcileStrategy,omitempty"`
-	DisableStorageClass  bool   `json:"disableStorageClass,omitempty"`
-	DisableSnapshotClass bool   `json:"disableSnapshotClass,omitempty"`
+	ReconcileStrategy string `json:"reconcileStrategy,omitempty"`
+	// +kubebuilder:deprecatedversion:warning="This field has been deprecated and will be removed in future.
+	DisableStorageClass bool `json:"disableStorageClass,omitempty"`
+	// +kubebuilder:deprecatedversion:warning="This field has been deprecated and will be removed in future.
+	DisableSnapshotClass bool `json:"disableSnapshotClass,omitempty"`
 	// if set to true, the storageClass created for cephBlockPools will be annotated as the default for the whole cluster
 	DefaultStorageClass bool `json:"defaultStorageClass,omitempty"`
 	// StorageClassName specifies the name of the storage class created for ceph block pools
@@ -239,6 +243,8 @@ type ManageCephBlockPools struct {
 	// +kubebuilder:validation:MaxLength=253
 	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
 	VirtualizationStorageClassName string `json:"virtualizationStorageClassName,omitempty"`
+	// if set to true, the virtualization storageClass will be annotated as the default for kubevirt workloads
+	DefaultVirtualizationStorageClass bool `json:"defaultVirtualizationStorageClass,omitempty"`
 	// PoolSpec specifies the pool specification for the default cephBlockPool
 	PoolSpec *rookCephv1.PoolSpec `json:"poolSpec,omitempty"`
 }
@@ -266,10 +272,12 @@ type ManageCephNonResilientPools struct {
 
 // ManageCephFilesystems defines how to reconcile CephFilesystems
 type ManageCephFilesystems struct {
-	ReconcileStrategy     string `json:"reconcileStrategy,omitempty"`
-	DisableStorageClass   bool   `json:"disableStorageClass,omitempty"`
-	ActiveMetadataServers int    `json:"activeMetadataServers,omitempty"`
-	DisableSnapshotClass  bool   `json:"disableSnapshotClass,omitempty"`
+	ReconcileStrategy string `json:"reconcileStrategy,omitempty"`
+	// +kubebuilder:deprecatedversion:warning="This field has been deprecated and will be removed in future.
+	DisableStorageClass   bool `json:"disableStorageClass,omitempty"`
+	ActiveMetadataServers int  `json:"activeMetadataServers,omitempty"`
+	// +kubebuilder:deprecatedversion:warning="This field has been deprecated and will be removed in future.
+	DisableSnapshotClass bool `json:"disableSnapshotClass,omitempty"`
 	// StorageClassName specifies the name of the storage class created for cephfs
 	// +kubebuilder:validation:MaxLength=253
 	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
@@ -284,11 +292,12 @@ type ManageCephFilesystems struct {
 
 // ManageCephObjectStores defines how to reconcile CephObjectStores
 type ManageCephObjectStores struct {
-	ReconcileStrategy   string `json:"reconcileStrategy,omitempty"`
-	DisableStorageClass bool   `json:"disableStorageClass,omitempty"`
-	GatewayInstances    int    `json:"gatewayInstances,omitempty"`
-	DisableRoute        bool   `json:"disableRoute,omitempty"`
-	HostNetwork         *bool  `json:"hostNetwork,omitempty"`
+	ReconcileStrategy string `json:"reconcileStrategy,omitempty"`
+	// +kubebuilder:deprecatedversion:warning="This field has been deprecated and will be removed in future.
+	DisableStorageClass bool  `json:"disableStorageClass,omitempty"`
+	GatewayInstances    int   `json:"gatewayInstances,omitempty"`
+	DisableRoute        bool  `json:"disableRoute,omitempty"`
+	HostNetwork         *bool `json:"hostNetwork,omitempty"`
 	// StorageClassName specifies the name of the storage class created for ceph obc's
 	// +kubebuilder:validation:MaxLength=253
 	// +kubebuilder:validation:Pattern=^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
@@ -443,6 +452,11 @@ type MultiCloudGatewaySpec struct {
 	// +nullable
 	// +optional
 	DisableLoadBalancerService bool `json:"disableLoadBalancerService,omitempty"`
+
+	// DisableRoutes (optional) disables the reconciliation of openshift route resources in the cluster
+	// +nullable
+	// +optional
+	DisableRoutes bool `json:"disableRoutes,omitempty"`
 
 	// Allows Noobaa to connect to an external Postgres server
 	// +optional
