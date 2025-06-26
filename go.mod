@@ -44,7 +44,6 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/emicklei/go-restful/v3 v3.12.2 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
-	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.8.0 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
@@ -159,6 +158,6 @@ require (
 replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 	github.com/openshift/api => github.com/openshift/api v0.0.0-20250527072845-f5e205b58365
-	github.com/operator-framework/operator-lifecycle-manager => github.com/operator-framework/operator-lifecycle-manager v0.31.0
+	github.com/operator-framework/operator-lifecycle-manager => github.com/operator-framework/operator-lifecycle-manager v0.32.0
 	k8s.io/client-go => k8s.io/client-go v0.33.1
 )
