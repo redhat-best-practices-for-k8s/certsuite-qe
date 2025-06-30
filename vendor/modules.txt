@@ -59,8 +59,6 @@ github.com/evanphx/json-patch/v5/internal/json
 # github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f
 ## explicit; go 1.15
 github.com/exponent-io/jsonpath
-# github.com/fsnotify/fsnotify v1.9.0
-## explicit; go 1.17
 # github.com/fxamacker/cbor/v2 v2.8.0
 ## explicit; go 1.20
 github.com/fxamacker/cbor/v2
@@ -408,8 +406,8 @@ github.com/operator-framework/api/pkg/operators/v1
 github.com/operator-framework/api/pkg/operators/v1alpha1
 github.com/operator-framework/api/pkg/operators/v1alpha2
 github.com/operator-framework/api/pkg/operators/v2
-# github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000 => github.com/operator-framework/operator-lifecycle-manager v0.31.0
-## explicit; go 1.23.0
+# github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000 => github.com/operator-framework/operator-lifecycle-manager v0.32.0
+## explicit; go 1.23.6
 github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/scheme
 github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1
 # github.com/peterbourgon/diskv v2.0.1+incompatible
@@ -1184,5 +1182,5 @@ sigs.k8s.io/yaml/goyaml.v2
 sigs.k8s.io/yaml/goyaml.v3
 # github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 # github.com/openshift/api => github.com/openshift/api v0.0.0-20250527072845-f5e205b58365
-# github.com/operator-framework/operator-lifecycle-manager => github.com/operator-framework/operator-lifecycle-manager v0.31.0
+# github.com/operator-framework/operator-lifecycle-manager => github.com/operator-framework/operator-lifecycle-manager v0.32.0
 # k8s.io/client-go => k8s.io/client-go v0.33.1
