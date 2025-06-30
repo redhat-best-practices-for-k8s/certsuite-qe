@@ -55,7 +55,6 @@ linters:
     revive:
       rules:
         - name: indent-error-flow
-        - name: var-naming
         - name: increment-decrement
     staticcheck:
       checks:

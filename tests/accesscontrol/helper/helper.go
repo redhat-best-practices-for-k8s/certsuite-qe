@@ -20,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	machineconfigv1 "github.com/openshift/api/machineconfiguration/v1"
 	mcv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 
 	"github.com/golang/glog"
@@ -340,7 +341,8 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	// Wait for MCP to start updating: condition Updating=True
 	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
 
-	err = mcpBuilder.WaitToBeInCondition(mcv1.MachineConfigPoolUpdating, corev1.ConditionTrue, tsparams.McpStartTimeout)
+	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
+		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, tsparams.McpStartTimeout)
 	if err != nil {
 		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=True: %w", err)
 	}
@@ -348,13 +350,14 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	// Wait for MCP to finish the update using the dynamic timeout as deadline.
 	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
 
-	err = mcpBuilder.WaitToBeInCondition(mcv1.MachineConfigPoolUpdating, corev1.ConditionFalse, timeout)
+	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
+		mcv1.MachineConfigPoolUpdating), corev1.ConditionFalse, timeout)
 	if err != nil {
 		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=False: %w", err)
 	}
 
 	// Make sure everything went ok
-	if mcpBuilder.IsInCondition(mcv1.MachineConfigPoolDegraded) {
+	if mcpBuilder.IsInCondition(machineconfigv1.MachineConfigPoolConditionType(mcv1.MachineConfigPoolDegraded)) {
 		return fmt.Errorf("machineconfigpool appears as Degraded after machineconfig was applied")
 	}
 
@@ -386,7 +389,8 @@ func RemoveRTKernelMachineConfig(mcpName string, mcName string, timeout time.Dur
 	// Wait for MCP to start updating: condition Updating=True
 	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
 
-	err = mcpBuilder.WaitToBeInCondition(mcv1.MachineConfigPoolUpdating, corev1.ConditionTrue, tsparams.McpStartTimeout)
+	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
+		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, tsparams.McpStartTimeout)
 	if err != nil {
 		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=True: %w", err)
 	}
@@ -394,13 +398,14 @@ func RemoveRTKernelMachineConfig(mcpName string, mcName string, timeout time.Dur
 	// Wait for MCP to finish the update using the dynamic timeout as deadline.
 	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
 
-	err = mcpBuilder.WaitToBeInCondition(mcv1.MachineConfigPoolUpdating, corev1.ConditionFalse, timeout)
+	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
+		mcv1.MachineConfigPoolUpdating), corev1.ConditionFalse, timeout)
 	if err != nil {
 		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=False: %w", err)
 	}
 
 	// Make sure everything went ok
-	if mcpBuilder.IsInCondition(mcv1.MachineConfigPoolDegraded) {
+	if mcpBuilder.IsInCondition(machineconfigv1.MachineConfigPoolConditionType(mcv1.MachineConfigPoolDegraded)) {
 		return fmt.Errorf("machineconfigpool appears as Degraded after machineconfig was applied")
 	}
 
