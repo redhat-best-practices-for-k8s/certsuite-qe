@@ -32,6 +32,13 @@ func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment,
 	return createAndWaitUntilDeploymentIsReady(egiClients.New(""), deployment, timeout)
 }
 
+// CreateDeploymentFast creates a deployment without waiting for it to be ready.
+// This is useful for tests that only need to check deployment specifications
+// rather than running pods.
+func CreateDeploymentFast(deployment *appsv1.Deployment) error {
+	return createDeploymentFast(egiClients.New(""), deployment)
+}
+
 // createAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
 func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment *appsv1.Deployment,
 	timeout time.Duration) error {
@@ -100,6 +107,24 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		return status
 	}, timeout, retryInterval*time.Second).Should(Equal(true), "Deployment is not ready")
 
+	return nil
+}
+
+// createDeploymentFast creates a deployment without waiting for readiness.
+func createDeploymentFast(client *egiClients.Settings, deployment *appsv1.Deployment) error {
+	_, err := client.Deployments(deployment.Namespace).Create(
+		context.TODO(),
+		deployment,
+		metav1.CreateOptions{})
+
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Info(fmt.Sprintf("deployment %s already exists", deployment.Name))
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("failed to create deployment %q (ns %s): %w", deployment.Name, deployment.Namespace, err)
+	}
+
+	glog.V(5).Info(fmt.Sprintf("deployment %s created successfully (fast mode - no wait)", deployment.Name))
 	return nil
 }
 

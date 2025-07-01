@@ -47,7 +47,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has requests and limits set")
@@ -80,7 +80,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has no limits set")
@@ -109,7 +109,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no limits or requests set")
@@ -143,7 +143,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has CPU limits not set")
@@ -175,7 +175,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has memory limits not set")
@@ -207,7 +207,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment1 has requests and limits set")
@@ -225,7 +225,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment2 has requests and limits set")
@@ -259,7 +259,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment1 has memory limits set")
@@ -275,7 +275,7 @@ var _ = Describe("Access-control requests-and-limits,", func() {
 			tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment2 has memory limits not set")

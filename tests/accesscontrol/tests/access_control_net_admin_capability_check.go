@@ -45,7 +45,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have NET_ADMIN capability")
@@ -75,7 +75,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		deployment.RedefineWithContainersSecurityContextNetAdmin(dep)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has NET_ADMIN capability")
@@ -104,7 +104,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment1 does not have NET_ADMIN capability")
@@ -117,7 +117,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment2 does not have NET_ADMIN capability")
@@ -147,7 +147,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		deployment.RedefineWithContainersSecurityContextNetAdmin(dep)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has NET_ADMIN capability")
@@ -161,7 +161,7 @@ var _ = Describe("Access-control net-admin-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentFast(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have NET_ADMIN capability")
