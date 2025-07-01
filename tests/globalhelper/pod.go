@@ -86,7 +86,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"Pod %s is not running, retry in %d seconds", createdPod.Name, retryInterval))
+				"Pod %s is not running, retry in 1 second", createdPod.Name))
 
 			return false
 		}
@@ -108,7 +108,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		}
 
 		return podUnschedulable
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "Pod is not running")
+	}, timeout, 1*time.Second).Should(Equal(true), "Pod is not running")
 
 	if podUnschedulable {
 		return fmt.Errorf("pod %s is not schedulable", createdPod.Name)
@@ -119,13 +119,13 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		if err != nil {
 
 			glog.V(5).Info(fmt.Sprintf(
-				"Pod %s is not ready, retry in %d seconds", createdPod.Name, retryInterval))
+				"Pod %s is not ready, retry in 1 second", createdPod.Name))
 
 			return false
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "Pod is not ready")
+	}, timeout, 1*time.Second).Should(Equal(true), "Pod is not ready")
 
 	return nil
 }

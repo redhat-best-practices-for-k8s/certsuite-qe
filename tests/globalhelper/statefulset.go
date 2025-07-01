@@ -36,13 +36,13 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 		status, err := isStatefulSetReady(client, statefulSet.Namespace, statefulSet.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"statefulSet %s is not ready, retry in %d seconds", statefulSet.Name, retryInterval))
+				"statefulSet %s is not ready, retry in 1 second", statefulSet.Name))
 
 			return false
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "statefulSet is not ready")
+	}, timeout, 1*time.Second).Should(Equal(true), "statefulSet is not ready")
 
 	return nil
 }
@@ -54,7 +54,7 @@ func isStatefulSetReady(client *egiClients.Settings, namespace, statefulSetName 
 		return false, fmt.Errorf("failed to get statefulSet %q (ns %s): %w", statefulSetName, namespace, err)
 	}
 
-	return testStatefulSet.IsReady(5 * time.Second), nil
+	return testStatefulSet.IsReady(1 * time.Second), nil
 }
 
 func GetRunningStatefulSet(namespace, statefulSetName string) (*appsv1.StatefulSet, error) {

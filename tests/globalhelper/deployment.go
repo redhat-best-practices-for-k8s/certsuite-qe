@@ -23,7 +23,7 @@ func IsDeploymentReady(client *egiClients.Settings, namespace, deploymentName st
 		return false, fmt.Errorf("failed to get deployment %q (ns %s): %w", deploymentName, namespace, err)
 	}
 
-	return dep.IsReady(5 * time.Second), nil
+	return dep.IsReady(1 * time.Second), nil
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
@@ -57,7 +57,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not running, retry in 5 seconds", testDeployment.Name))
+				"deployment %s is not running, retry in 1 second", testDeployment.Name))
 
 			return false
 		}
@@ -82,7 +82,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		}
 
 		return deploymentUnschedulable
-	}, timeout, 5*time.Second).Should(Equal(true), "Deployment is not running")
+	}, timeout, 1*time.Second).Should(Equal(true), "Deployment is not running")
 
 	if deploymentUnschedulable {
 		return fmt.Errorf("deployment %s is not schedulable", runningDeployment.Name)
@@ -92,13 +92,13 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not ready, retry in 5 seconds", runningDeployment.Name))
+				"deployment %s is not ready, retry in 1 second", runningDeployment.Name))
 
 			return false
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "Deployment is not ready")
+	}, timeout, 1*time.Second).Should(Equal(true), "Deployment is not ready")
 
 	return nil
 }

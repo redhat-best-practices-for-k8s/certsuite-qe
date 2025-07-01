@@ -26,13 +26,13 @@ func CreateAndWaitUntilReplicaSetIsReady(replicaSet *appsv1.ReplicaSet, timeout 
 		status, err := isReplicaSetReady(runningReplica.Namespace, runningReplica.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"replicaSet %s is not ready, retry in %d seconds", runningReplica.Name, retryInterval))
+				"replicaSet %s is not ready, retry in 1 second", runningReplica.Name))
 
 			return false
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "replicaSet is not ready")
+	}, timeout, 1*time.Second).Should(Equal(true), "replicaSet is not ready")
 
 	return nil
 }
