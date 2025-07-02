@@ -53,6 +53,9 @@ var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
 
 	// 47398
 	It("One deployment, one pod, one container, scale in and out", func() {
+		if globalhelper.IsCRCCluster() {
+			Skip("Deployment scaling test is not supported on CRC clusters")
+		}
 
 		By("Define Deployment")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
