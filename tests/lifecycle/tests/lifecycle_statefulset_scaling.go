@@ -60,6 +60,10 @@ var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
 
 	// 45439
 	It("One statefulSet, one pod", func() {
+		if globalhelper.IsCRCCluster() {
+			Skip("StatefulSet scaling test is not supported on CRC clusters")
+		}
+
 		By("Define statefulSet")
 		statefulset := tshelper.DefineStatefulSet(tsparams.TestStatefulSetName, randomNamespace)
 

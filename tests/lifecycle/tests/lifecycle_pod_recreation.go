@@ -61,6 +61,10 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	// 47405
 	It("One deployment with PodAntiAffinity, replicas are less than schedulable nodes", func() {
+		if globalhelper.IsCRCCluster() {
+			Skip("PodAntiAffinity test is not supported on CRC clusters")
+		}
+
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
@@ -148,6 +152,10 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 
 	// 47407
 	It("One deployment with PodAntiAffinity, replicas are equal to schedulable nodes [negative]", func() {
+		if globalhelper.IsCRCCluster() {
+			Skip("PodAntiAffinity test is not supported on CRC clusters")
+		}
+
 		schedulableNodes, err := nodes.GetNumOfReadyNodesInCluster(globalhelper.GetAPIClient().Nodes())
 		Expect(err).ToNot(HaveOccurred())
 
