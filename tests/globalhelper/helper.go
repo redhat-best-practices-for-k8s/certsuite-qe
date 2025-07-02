@@ -365,3 +365,48 @@ func IsKindCluster() bool {
 
 	return cmd.Run() == nil
 }
+
+// Returns true if the cluster is a CRC (Code Ready Containers) cluster, otherwise false.
+// CRC clusters are typically single-node OpenShift clusters used for development.
+func IsCRCCluster() bool {
+	// Method 1: Check for CRC-specific domain patterns
+	cmd := exec.Command("oc", "cluster-info")
+	output, err := cmd.Output()
+	if err == nil {
+		outputStr := string(output)
+		if strings.Contains(outputStr, ".crc.testing") ||
+			strings.Contains(outputStr, "apps-crc.testing") ||
+			strings.Contains(outputStr, "api.crc.testing") {
+			return true
+		}
+	}
+
+	// Method 2: Check if it's a single-node cluster with CRC-like node names
+	nodes, err := GetAPIClient().Nodes().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false
+	}
+
+	// CRC typically has exactly one node
+	if len(nodes.Items) == 1 {
+		nodeName := nodes.Items[0].Name
+		// CRC nodes often have names starting with "crc-" followed by random characters
+		if strings.HasPrefix(nodeName, "crc-") && strings.HasSuffix(nodeName, "-master-0") {
+			return true
+		}
+	}
+
+	// Method 3: Check for CRC-specific labels or annotations
+	for _, node := range nodes.Items {
+		if labels := node.Labels; labels != nil {
+			// CRC clusters often have specific labels
+			if labels["node-role.kubernetes.io/master"] == "" && labels["node-role.kubernetes.io/control-plane"] == "" {
+				if len(nodes.Items) == 1 { // Single node with master role suggests CRC
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
