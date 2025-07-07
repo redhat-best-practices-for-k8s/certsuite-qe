@@ -34,20 +34,16 @@ var (
 		"app":                  "test",
 	}
 	CertsuiteTargetOperatorLabels             = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
-	CertsuiteTargetCrdFilters                 = []string{"nginxingresses.charts.nginx.org"}
+	CertsuiteTargetCrdFilters                 = []string{"grafanadashboards.grafana.integreatly.org"}
 	OperatorGroupName                         = "operator-test-operator-group"
 	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	CertifiedOperatorGroup                    = "certified-operators"
 	RedhatOperatorGroup                       = "redhat-operators"
 	CommunityOperatorGroup                    = "community-operators"
 	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorPrefixCloudbees                   = "cloudbees-ci"
-	OperatorPrefixAnchore                     = "anchore-engine"
-	OperatorPrefixQuay                        = "quay-operator"
+	OperatorPrefixLightweight                 = "jaeger-operator"
 	OperatorPrefixKiali                       = "kiali-operator"
-	OperatorPrefixOpenvino                    = "openvino-operator"
-	CertifiedOperatorPrefixNginx              = "nginx-ingress-operator"
-	SubscriptionNameOpenvino                  = "ovms-operator-subscription"
+	CertifiedOperatorPrefix                   = "grafana-operator"
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
 	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
 	SingleOrMultiNamespacedOperatorGroup      = "single-or-multi-og"

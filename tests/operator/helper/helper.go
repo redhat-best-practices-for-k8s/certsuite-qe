@@ -148,6 +148,17 @@ func DeployOperatorSubscriptionWithNodeSelector(operatorPackage, channel, namesp
 	return nil
 }
 
+// IsCSVNotSucceeded checks if CSV installation status is not Succeeded.
+func IsCSVNotSucceeded(csvPrefix, namespace string) (bool, error) {
+	csv, err := GetCsvByPrefix(csvPrefix, namespace)
+	if err != nil {
+		return false, err
+	}
+
+	// Return true if CSV is NOT in Succeeded phase
+	return csv.Status.Phase != v1alpha1.CSVPhaseSucceeded, nil
+}
+
 func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 	_, err := globalhelper.GetAPIClient().ClusterServiceVersions(namespace).Update(
 		context.TODO(), csv, metav1.UpdateOptions{},

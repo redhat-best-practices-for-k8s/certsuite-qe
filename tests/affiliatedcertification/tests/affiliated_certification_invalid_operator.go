@@ -23,6 +23,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
+	var grafanaOperatorName string
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
@@ -39,35 +40,41 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 			randomCertsuiteConfigDir,
 		)
 
-		By("Query the packagemanifest for the default channel")
-		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
-			tsparams.CertifiedOperatorPrefixNginx,
-			randomNamespace,
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		By("Query the packagemanifest for Grafana operator package name and catalog source")
+		var catalogSource string
+		var err error
+		grafanaOperatorName, catalogSource, err = globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			"grafana", randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Grafana operator")
+		Expect(grafanaOperatorName).ToNot(Equal("not found"), "Grafana operator package not found")
+		Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
 
-		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx)
-		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
+		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
+			grafanaOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+grafanaOperatorName)
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+		Expect(version).ToNot(Equal("not found"), "Version not found")
+		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By(fmt.Sprintf("Deploy nginx-ingress-operator%s for testing", "."+version))
-		// nginx-ingress-operator: in certified-operators group and version is certified
+		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
+		// grafana-operator: in community-operators group
 		err = tshelper.DeployOperatorSubscription(
-			tsparams.CertifiedOperatorPrefixNginx,
-			tsparams.CertifiedOperatorPrefixNginx,
+			grafanaOperatorName,
+			grafanaOperatorName,
 			channel,
 			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
+			catalogSource,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
+			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixNginx)
+			grafanaOperatorName)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx,
+		err = waitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+".v"+version+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 
 		// sriov-fec.v1.1.0 operator : in certified-operators group, version is not certified
@@ -179,11 +186,11 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixNginx,
+				grafanaOperatorName,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
+			ErrorLabelingOperatorStr+grafanaOperatorName)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(

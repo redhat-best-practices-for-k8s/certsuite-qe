@@ -1,6 +1,8 @@
 package operator
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -11,10 +13,12 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
 )
 
-var _ = Describe("Operator install-status-no-privileges,", func() {
+var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
+	var operatorName string
+	var catalogSource string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -35,44 +39,72 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		// cloudbees operator has clusterPermissions but no resourceNames
-		By("Deploy cloudbees-ci operator for testing")
+		// grafana operator has clusterPermissions but no resourceNames
+		By("Query the packagemanifest for grafana operator package name and catalog source")
+		operatorName, catalogSource, err = globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource("grafana", randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for grafana operator")
+		Expect(operatorName).ToNot(Equal("not found"), "Grafana operator package not found")
+		Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
+
+		By("Query the packagemanifest for available channel, version and CSV for " + operatorName)
+		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+operatorName)
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+		Expect(version).ToNot(Equal("not found"), "Version not found")
+		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+
+		By("Deploy grafana operator for testing")
 		err = tshelper.DeployOperatorSubscription(
-			"cloudbees-ci",
-			"cloudbees-ci",
-			"alpha",
+			operatorName,
+			operatorName,
+			channel,
 			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
+			catalogSource,
 			tsparams.OperatorSourceNamespace,
-			"",
+			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixCloudbees)
+			operatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixCloudbees,
+		err = tshelper.WaitUntilOperatorIsReady(operatorName,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixCloudbees+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 
-		// quay operator has no clusterPermissions
-		By("Deploy quay operator for testing")
+		// jaeger operator has no clusterPermissions
+		By("Query the packagemanifest for jaeger operator package name and catalog source")
+		jaegerOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			"jaeger", randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for jaeger operator")
+		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
+		Expect(catalogSource2).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
+
+		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
+		channel2, version2, csvName2, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
+			jaegerOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+jaegerOperatorName)
+		Expect(channel2).ToNot(Equal("not found"), "Channel not found")
+		Expect(version2).ToNot(Equal("not found"), "Version not found")
+		Expect(csvName2).ToNot(Equal("not found"), "CSV name not found")
+
+		By(fmt.Sprintf("Deploy jaeger operator (channel %s, version %s) for testing", channel2, version2))
 		err = tshelper.DeployOperatorSubscription(
-			"project-quay",
-			"project-quay",
-			"stable-3.11",
+			jaegerOperatorName,
+			jaegerOperatorName,
+			channel2,
 			randomNamespace,
-			tsparams.CommunityOperatorGroup,
+			catalogSource2,
 			tsparams.OperatorSourceNamespace,
-			"",
+			csvName2,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.OperatorPrefixQuay)
+			jaegerOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixQuay,
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixQuay+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName2+
 			" is not ready")
 	})
 
@@ -86,11 +118,11 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixQuay,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixQuay)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -112,11 +144,11 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixCloudbees,
+				operatorName,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+operatorName)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -137,11 +169,11 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 	It("one operator with clusterPermissions and resourceNames [negative]", func() {
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixCloudbees,
+				operatorName,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+operatorName)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -163,19 +195,19 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixQuay,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixQuay)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixCloudbees,
+				operatorName,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+operatorName)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -196,19 +228,19 @@ var _ = Describe("Operator install-status-no-privileges,", func() {
 	It("two operators, one with clusterPermissions and resourceNames", func() {
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixCloudbees,
+				operatorName,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixCloudbees)
+			ErrorLabelingOperatorStr+operatorName)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixQuay,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixQuay)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
