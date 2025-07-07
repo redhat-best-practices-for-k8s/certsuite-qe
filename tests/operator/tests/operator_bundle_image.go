@@ -30,7 +30,7 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
-			tsparams.CertsuiteTargetCrdFilters, randomCertsuiteConfigDir)
+			[]string{"nginxingresses.charts.nginx.org"}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -56,30 +56,30 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 		By(fmt.Sprintf("Deploy first operator (nginx-ingress-operator) for testing - channel %s", "new"))
 		err = tshelper.DeployOperatorSubscription(
 			"operator1",
-			tsparams.CertifiedOperatorPrefixNginx,
+			"nginx-ingress-operator",
 			"new",
 			randomNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v3.0.1",
+			"nginx-ingress-operator.v3.0.1",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixNginx)
+			"nginx-ingress-operator")
 
 		By("Wait until operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
+		err = tshelper.WaitUntilOperatorIsReady("nginx-ingress-operator", randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+"nginx-ingress-operator"+
 			" is not ready")
 
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixNginx,
+				"nginx-ingress-operator",
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixNginx)
+			ErrorLabelingOperatorStr+"nginx-ingress-operator")
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

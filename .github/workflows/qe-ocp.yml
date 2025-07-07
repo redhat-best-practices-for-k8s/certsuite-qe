@@ -2,8 +2,8 @@
 name: QE OCP Testing (Ubuntu-hosted)
 
 on:
-  # pull_request:
-  #   branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
   # Schedule a daily cron at midnight UTC
   schedule:
@@ -16,6 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
+        # suite: [operator]
     env:
       SHELL: /bin/bash
       KUBECONFIG: '/home/runner/.kube/config'

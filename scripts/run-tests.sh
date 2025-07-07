@@ -49,7 +49,7 @@ function run_tests {
 		fi
 		echo "Running tests in the following folders: ${all_default_suites}"
 		# shellcheck disable=SC2086
-		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --require-suite -r $all_default_suites
+		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --show-node-events --require-suite -r $all_default_suites
 		;;
 	features)
 		if [ -z "$FEATURES" ]; then
@@ -74,7 +74,7 @@ function run_tests {
 		fi
 
 		# shellcheck disable=SC2086
-		ginkgo -v ${PFLAG} ${FFLAG} --keep-going ${GINKGO_SEED_FLAG} --output-interceptor-mode=none --timeout=24h --require-suite $command
+		ginkgo -v ${PFLAG} ${FFLAG} --keep-going ${GINKGO_SEED_FLAG} --output-interceptor-mode=none --timeout=24h --show-node-events --require-suite $command
 		;;
 	*)
 		echo "Unknown case"
