@@ -139,12 +139,12 @@ require (
 	gopkg.in/k8snetworkplumbingwg/multus-cni.v4 v4.1.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gorm.io/gorm v1.25.12 // indirect
-	helm.sh/helm/v3 v3.18.3 // indirect
-	k8s.io/cli-runtime v0.33.1 // indirect
+	helm.sh/helm/v3 v3.18.4 // indirect
+	k8s.io/cli-runtime v0.33.2 // indirect
 	k8s.io/component-base v0.33.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250610211856-8b98d1ed966a // indirect
-	k8s.io/kubectl v0.33.1 // indirect
+	k8s.io/kubectl v0.33.2 // indirect
 	k8s.io/kubelet v0.31.5 // indirect
 	sigs.k8s.io/container-object-storage-interface-api v0.1.0 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
