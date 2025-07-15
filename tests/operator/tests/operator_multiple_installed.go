@@ -29,7 +29,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 
 		By("Define certsuite config file")
 		err := globalhelper.DefineCertsuiteConfig(
-			[]string{randomNamespace, secondNamespace},
+			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
 			[]string{},
 			[]string{},
@@ -63,56 +63,61 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		err = tshelper.DeployTestOperatorGroup(secondNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx + " default channel")
-		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
+		By("Query the packagemanifest for Jaeger operator package name and catalog source")
+		jaegerOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			"jaeger", randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Jaeger operator")
+		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
+		Expect(catalogSource).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
 
-		By("Query the packagemanifest for the " + tsparams.CertifiedOperatorPrefixNginx + " version")
-		version, err := globalhelper.QueryPackageManifestForVersion(tsparams.CertifiedOperatorPrefixNginx, randomNamespace, channel)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for nginx-ingress-operator")
+		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
+		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
+			jaegerOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+jaegerOperatorName)
+		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
+		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
 		// Note: The key to this setup is that the subscriptions can be named separately/uniquely.
 		// This is because the operator/csv name is the same, but the subscription name is different.
 		// The subscription name cannot be the same, as it is a unique identifier in the namespace.
 
-		By(fmt.Sprintf("Deploy first operator (nginx-ingress-operator) version %s for testing", version))
+		By(fmt.Sprintf("Deploy first operator (jaeger-operator) version %s for testing", version))
 		err = tshelper.DeployOperatorSubscription(
 			"operator1",
-			tsparams.CertifiedOperatorPrefixNginx,
+			jaegerOperatorName,
 			channel,
 			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
+			catalogSource,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
+			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixNginx)
+			jaegerOperatorName)
 
-		By(fmt.Sprintf("Deploy second operator (nginx-ingress-operator) version %s for testing", version))
+		By(fmt.Sprintf("Deploy second operator (jaeger-operator) version %s for testing", version))
 		err = tshelper.DeployOperatorSubscription(
 			"operator2",
-			tsparams.CertifiedOperatorPrefixNginx,
+			jaegerOperatorName,
 			channel,
 			secondNamespace,
-			tsparams.CertifiedOperatorGroup,
+			catalogSource,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v"+version,
+			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixNginx)
+			jaegerOperatorName)
 
-		By("Wait until the first operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
+		By("Wait until the first Jaeger operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady(jaegerOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+jaegerOperatorName+
 			" is not ready")
 
-		By("Wait until the second operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx, secondNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
+		By("Wait until the second Jaeger operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady(jaegerOperatorName, secondNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+jaegerOperatorName+
 			" is not ready")
 
 		// Note: No need to label these operators as we are testing all operators in the cluster.
@@ -135,10 +140,10 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 
 	It("Deploy the same operator (different versions) different namespaces [negative]", func() {
 		// This is a negative test case to verify that the same operator cannot be deployed
-		// in different namespaces with different versions.  This is an invalid use case.
+		// in different namespaces with different versions. This is an invalid use case.
 
 		// We want to create a custom catalog source for this test.
-		// This means we will have access to a "new" and "old" channel for the nginx-ingress-operator.
+		// This means we will have access to a "new" and "old" channel for the cloud-native-postgresql.
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
 
 		By("Create custom-operator catalog source")
@@ -167,46 +172,43 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		err = tshelper.DeployTestOperatorGroup(secondNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		By(fmt.Sprintf("Deploy first operator (nginx-ingress-operator) for testing - channel %s", "new"))
+		By(fmt.Sprintf("Deploy first operator (cloud-native-postgresql) for testing - channel %s", "new"))
 		err = tshelper.DeployOperatorSubscription(
 			"operator1",
-			tsparams.CertifiedOperatorPrefixNginx,
+			"cloud-native-postgresql",
 			"new",
 			randomNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v3.0.1",
+			"cloud-native-postgresql.v1.26.0",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixNginx)
+			"cloud-native-postgresql")
 
-		By(fmt.Sprintf("Deploy second operator (nginx-ingress-operator) for testing - channel %s", "new"))
+		By(fmt.Sprintf("Deploy second operator (cloud-native-postgresql) for testing - channel %s", "old"))
 		err = tshelper.DeployOperatorSubscription(
 			"operator2",
-			tsparams.CertifiedOperatorPrefixNginx,
+			"cloud-native-postgresql",
 			"old",
 			secondNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixNginx+".v3.0.0",
+			"cloud-native-postgresql.v1.24.4",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixNginx)
+			"cloud-native-postgresql")
 
-		By("Wait until the first operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
+		By("Wait until the first postgresql operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql", randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+"cloud-native-postgresql"+
 			" is not ready")
 
-		By("Wait until the second operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixNginx, secondNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixNginx+
+		By("Wait until the second postgresql operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql", secondNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+"cloud-native-postgresql"+
 			" is not ready")
-
-		// Note: No need to label these operators as we are testing all operators in the cluster.
-		// At this point, two subscriptions, two installplans, and two CSVs should be present in the cluster.
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

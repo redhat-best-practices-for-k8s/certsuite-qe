@@ -57,7 +57,7 @@ var (
 	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
 	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
-	CertifiedOperatorPrefixNginx              = "nginx-ingress-operator"
+	CertifiedOperatorPrefix                   = "grafana-operator"
 	UncertifiedOperatorPrefixSriov            = "sriov-fec"
 	UncertifiedOperatorFullSriov              = "sriov-fec.v1.2.1"
 )
