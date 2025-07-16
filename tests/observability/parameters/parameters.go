@@ -10,6 +10,7 @@ const (
 	CertsuiteCrdStatusTcName            = "observability-crd-status"
 	CertsuiteTerminationMsgPolicyTcName = "observability-termination-policy"
 	CertsuitePodDisruptionBudgetTcName  = "observability-pod-disruption-budget"
+	CertsuitePodCountTcName             = "observability-pod-count"
 
 	TestNamespace = "observability-ns"
 
