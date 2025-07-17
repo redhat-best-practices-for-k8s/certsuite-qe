@@ -40,17 +40,10 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Query the packagemanifest for grafana operator package name and catalog source")
-		operatorName, catalogSource, err = globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource("grafana", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for grafana operator")
-		Expect(operatorName).ToNot(Equal("not found"), "Grafana operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
+		operatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + operatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+operatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(operatorName, randomNamespace)
 
 		By("Deploy grafana operator for testing")
 		err = tshelper.DeployOperatorSubscription(

@@ -88,20 +88,11 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
 		var catalogSource string
-		grafanaOperatorName, catalogSource, err = globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"grafana", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Grafana operator")
-		Expect(grafanaOperatorName).ToNot(Equal("not found"), "Grafana operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
+		grafanaOperatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
 		var csvName string
-		channel, version, csvName, err = globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			grafanaOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+grafanaOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+		channel, version, csvName = globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 		// grafana-operator: in community-operators group
