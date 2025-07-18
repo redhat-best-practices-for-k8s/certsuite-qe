@@ -183,3 +183,39 @@ func DeployTestOperatorGroupWithTargetNamespace(operatorGroupName, namespace str
 
 	return nil
 }
+
+// HasClusterPermissions checks if the CSV for the given operator has cluster permissions defined.
+// Returns true if cluster permissions exist, false otherwise.
+func HasClusterPermissions(csvPrefix, namespace string) (bool, error) {
+	csv, err := GetCsvByPrefix(csvPrefix, namespace)
+	if err != nil {
+		return false, err
+	}
+
+	// Check if the CSV has cluster permissions defined
+	clusterPermissions := csv.Spec.InstallStrategy.StrategySpec.ClusterPermissions
+	return len(clusterPermissions) > 0, nil
+}
+
+// LogClusterPermissions logs the cluster permissions for the given operator for debugging purposes.
+func LogClusterPermissions(csvPrefix, namespace string) error {
+	csv, err := GetCsvByPrefix(csvPrefix, namespace)
+	if err != nil {
+		return err
+	}
+
+	clusterPermissions := csv.Spec.InstallStrategy.StrategySpec.ClusterPermissions
+	fmt.Printf("CSV %s has %d cluster permissions defined:\n", csv.Name, len(clusterPermissions))
+
+	for i, permission := range clusterPermissions {
+		fmt.Printf("  ClusterPermission %d:\n", i+1)
+		fmt.Printf("    ServiceAccountName: %s\n", permission.ServiceAccountName)
+		fmt.Printf("    Rules: %d rules defined\n", len(permission.Rules))
+		for j, rule := range permission.Rules {
+			fmt.Printf("      Rule %d: Verbs=%v, Resources=%v, APIGroups=%v\n",
+				j+1, rule.Verbs, rule.Resources, rule.APIGroups)
+		}
+	}
+
+	return nil
+}

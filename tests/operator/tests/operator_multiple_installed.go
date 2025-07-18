@@ -64,11 +64,15 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Query the packagemanifest for Jaeger operator package name and catalog source")
-		jaegerOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"jaeger", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Jaeger operator")
-		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
+		// Enforce that jaeger operator comes specifically from redhat-operators to avoid flapping
+		requiredCatalogSource := "redhat-operators"
+		jaegerOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorFromSpecificCatalogSource(
+			"jaeger", randomNamespace, requiredCatalogSource)
+		Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("Error: jaeger operator must be available from %s catalog source. %v", requiredCatalogSource, err))
+		Expect(jaegerOperatorName).ToNot(Equal(""), "Jaeger operator package name should not be empty")
+		Expect(catalogSource).To(Equal(requiredCatalogSource), fmt.Sprintf("Jaeger operator must come from %s catalog source", requiredCatalogSource))
+
+		fmt.Printf("✓ Selected jaeger operator for multiple install test: package='%s', catalogSource='%s'\n", jaegerOperatorName, catalogSource)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
@@ -111,13 +115,13 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			jaegerOperatorName)
 
 		By("Wait until the first Jaeger operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(jaegerOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+jaegerOperatorName+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixLightweight+
 			" is not ready")
 
 		By("Wait until the second Jaeger operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(jaegerOperatorName, secondNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+jaegerOperatorName+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, secondNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPrefixLightweight+
 			" is not ready")
 
 		// Note: No need to label these operators as we are testing all operators in the cluster.

@@ -66,21 +66,21 @@ func GetConfiguration() *config.Config {
 	return conf
 }
 
-func GenerateDirectories(randomStr string) (reportDir, configDir string) {
+func GenerateDirectories(randomStr string) (reportDir, configDir string, err error) {
 	reportDir = GetConfiguration().General.CertsuiteReportDir + "/" + randomStr
 	configDir = GetConfiguration().General.CertsuiteConfigDir + "/" + randomStr
 
-	err := os.MkdirAll(reportDir, os.ModePerm)
+	err = os.MkdirAll(reportDir, os.ModePerm)
 	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+		return "", "", fmt.Errorf("could not create report directory %s: %w", reportDir, err)
 	}
 
 	err = os.MkdirAll(configDir, os.ModePerm)
 	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+		return "", "", fmt.Errorf("could not create config directory %s: %w", configDir, err)
 	}
 
-	return reportDir, configDir
+	return reportDir, configDir, nil
 }
 
 func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespace, randomReportDir, randomConfigDir string) {
@@ -92,7 +92,8 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 
 	By("Generate directories")
 
-	randomReportDir, randomConfigDir = GenerateDirectories(randomNamespace)
+	randomReportDir, randomConfigDir, err = GenerateDirectories(randomNamespace)
+	Expect(err).ToNot(HaveOccurred())
 
 	return randomNamespace, randomReportDir, randomConfigDir
 }

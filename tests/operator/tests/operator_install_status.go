@@ -186,11 +186,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	It("two operators, one does not reports Succeeded as its installation status (delayed failure) [negative]", Serial, func() {
 		By("Query the packagemanifest for Jaeger operator package name and catalog source")
-		jaegerOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"jaeger", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Jaeger operator")
-		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
-		Expect(catalogSource2).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
+		// Enforce that jaeger operator comes specifically from redhat-operators to avoid flapping
+		requiredCatalogSource := "redhat-operators"
+		jaegerOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorFromSpecificCatalogSource(
+			"jaeger", randomNamespace, requiredCatalogSource)
+		Expect(err).ToNot(HaveOccurred(), fmt.Sprintf("Error: jaeger operator must be available from %s catalog source. %v", requiredCatalogSource, err))
+		Expect(jaegerOperatorName).ToNot(Equal(""), "Jaeger operator package name should not be empty")
+		Expect(catalogSource2).To(Equal(requiredCatalogSource), fmt.Sprintf("Jaeger operator must come from %s catalog source", requiredCatalogSource))
+
+		fmt.Printf("✓ Selected jaeger operator for delayed failure test: package='%s', catalogSource='%s'\n", jaegerOperatorName, catalogSource2)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
@@ -222,13 +226,14 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		By("Verify that Jaeger operator CSV is not in Succeeded phase")
 		Eventually(func() bool {
-			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(jaegerOperatorName, randomNamespace)
+			// Use the CSV prefix, not the package name, to find the CSV
+			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(tsparams.OperatorPrefixLightweight, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", jaegerOperatorName, err)
+				fmt.Printf("Error checking CSV status for %s: %v\n", tsparams.OperatorPrefixLightweight, err)
 
 				return false
 			}
-			fmt.Printf("Jaeger operator %s CSV status is not Succeeded: %t\n", jaegerOperatorName, isNotSucceeded)
+			fmt.Printf("Jaeger operator %s CSV status is not Succeeded: %t\n", tsparams.OperatorPrefixLightweight, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
@@ -245,11 +250,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				jaegerOperatorName,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+jaegerOperatorName)
+			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

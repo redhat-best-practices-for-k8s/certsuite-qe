@@ -2,6 +2,7 @@ package globalhelper
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -107,6 +108,118 @@ func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorN
 	return "not found", "not found", nil
 }
 
+// QueryPackageManifestForOperatorNameAndCatalogSourceWithPreference searches for packages containing the specified search string
+// and returns the package name and catalog source, giving preference to specified catalog sources.
+// This avoids non-deterministic behavior when multiple packages match the search string.
+func QueryPackageManifestForOperatorNameAndCatalogSourceWithPreference(searchString, operatorNamespace string, preferredCatalogSources []string) (string, string, error) {
+	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+
+	if err != nil {
+		return "", "", err
+	}
+
+	// First, collect all matches
+	var matches []struct {
+		packageName   string
+		catalogSource string
+		priority      int // lower number = higher priority
+	}
+
+	for _, item := range pkgManifest {
+		if strings.Contains(item.Object.GetName(), searchString) {
+			packageName := item.Object.GetName()
+			catalogSource := item.Object.Status.CatalogSource
+
+			// Assign priority based on preferred catalog sources
+			priority := 1000 // default low priority
+			for i, preferred := range preferredCatalogSources {
+				if catalogSource == preferred {
+					priority = i // higher preference = lower number
+					break
+				}
+			}
+
+			matches = append(matches, struct {
+				packageName   string
+				catalogSource string
+				priority      int
+			}{packageName, catalogSource, priority})
+
+			fmt.Printf("Found package: %s in catalog source: %s (priority: %d) matching search string: %s\n",
+				packageName, catalogSource, priority, searchString)
+		}
+	}
+
+	if len(matches) == 0 {
+		return "not found", "not found", nil
+	}
+
+	// Sort by priority (lowest number first), then by package name for deterministic behavior
+	sort.Slice(matches, func(i, j int) bool {
+		if matches[i].priority != matches[j].priority {
+			return matches[i].priority < matches[j].priority
+		}
+		return matches[i].packageName < matches[j].packageName
+	})
+
+	selectedMatch := matches[0]
+	fmt.Printf("Selected package: %s from catalog source: %s (priority: %d)\n",
+		selectedMatch.packageName, selectedMatch.catalogSource, selectedMatch.priority)
+
+	if len(matches) > 1 {
+		fmt.Printf("Note: Found %d matches, selected based on catalog source preference\n", len(matches))
+	}
+
+	return selectedMatch.packageName, selectedMatch.catalogSource, nil
+}
+
+// DiagnosePackageManifestMatches lists all packages that match a search string along with their catalog sources.
+// This is useful for debugging when multiple packages exist and understanding catalog source availability.
+func DiagnosePackageManifestMatches(searchString, operatorNamespace string) error {
+	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+
+	if err != nil {
+		return fmt.Errorf("error listing package manifests: %w", err)
+	}
+
+	fmt.Printf("\n=== Package Manifest Diagnosis for search string: %s ===\n", searchString)
+
+	var matches []struct {
+		packageName   string
+		catalogSource string
+	}
+
+	for _, item := range pkgManifest {
+		if strings.Contains(item.Object.GetName(), searchString) {
+			packageName := item.Object.GetName()
+			catalogSource := item.Object.Status.CatalogSource
+			matches = append(matches, struct {
+				packageName   string
+				catalogSource string
+			}{packageName, catalogSource})
+		}
+	}
+
+	if len(matches) == 0 {
+		fmt.Printf("No packages found matching '%s'\n", searchString)
+		return nil
+	}
+
+	fmt.Printf("Found %d packages matching '%s':\n", len(matches), searchString)
+	for i, match := range matches {
+		fmt.Printf("  %d. Package: %-20s | Catalog Source: %s\n", i+1, match.packageName, match.catalogSource)
+	}
+
+	if len(matches) > 1 {
+		fmt.Printf("\nWarning: Multiple packages found. This could cause non-deterministic behavior.\n")
+		fmt.Printf("Consider using QueryPackageManifestForOperatorNameAndCatalogSourceWithPreference() with explicit preferences.\n")
+	}
+
+	fmt.Printf("=== End Diagnosis ===\n\n")
+
+	return nil
+}
+
 // QueryPackageManifestForAvailableChannelAndVersion searches for an operator and returns the first available channel
 // that has versions, along with a version from that channel. This is more robust than requiring a specific channel.
 func QueryPackageManifestForAvailableChannelAndVersion(operatorName, operatorNamespace string) (string, string, error) {
@@ -210,4 +323,73 @@ func CheckOperatorChannelAndVersionOrFail(operatorName, operatorNamespace string
 	fmt.Printf("Operator %s has available channel %s, version %s, CSV %s\n", operatorName, channel, version, csvName)
 
 	return channel, version, csvName
+}
+
+// QueryPackageManifestForOperatorFromSpecificCatalogSource searches for an operator package from a specific catalog source only.
+// This ensures deterministic behavior and fails clearly if the operator is not available from the expected catalog source.
+func QueryPackageManifestForOperatorFromSpecificCatalogSource(searchString, operatorNamespace, requiredCatalogSource string) (string, string, error) {
+	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+
+	if err != nil {
+		return "", "", err
+	}
+
+	var matches []struct {
+		packageName   string
+		catalogSource string
+	}
+
+	// Collect all matches for diagnostics
+	for _, item := range pkgManifest {
+		if strings.Contains(item.Object.GetName(), searchString) {
+			packageName := item.Object.GetName()
+			catalogSource := item.Object.Status.CatalogSource
+			matches = append(matches, struct {
+				packageName   string
+				catalogSource string
+			}{packageName, catalogSource})
+		}
+	}
+
+	// Show all available matches for debugging
+	if len(matches) > 0 {
+		fmt.Printf("Found %d package(s) matching '%s':\n", len(matches), searchString)
+		for i, match := range matches {
+			marker := ""
+			if match.catalogSource == requiredCatalogSource {
+				marker = " ← TARGET"
+			}
+			fmt.Printf("  %d. Package: %-20s | Catalog Source: %s%s\n", i+1, match.packageName, match.catalogSource, marker)
+		}
+	}
+
+	// Look for a match from the required catalog source
+	for _, match := range matches {
+		if match.catalogSource == requiredCatalogSource {
+			fmt.Printf("✓ Found required package: %s from catalog source: %s\n", match.packageName, match.catalogSource)
+			return match.packageName, match.catalogSource, nil
+		}
+	}
+
+	// If we get here, the required catalog source doesn't have the operator
+	if len(matches) == 0 {
+		return "", "", fmt.Errorf("no packages found matching '%s' in any catalog source", searchString)
+	}
+
+	availableCatalogs := make([]string, 0, len(matches))
+	for _, match := range matches {
+		found := false
+		for _, existing := range availableCatalogs {
+			if existing == match.catalogSource {
+				found = true
+				break
+			}
+		}
+		if !found {
+			availableCatalogs = append(availableCatalogs, match.catalogSource)
+		}
+	}
+
+	return "", "", fmt.Errorf("operator '%s' not found in required catalog source '%s'. Available in: %v",
+		searchString, requiredCatalogSource, availableCatalogs)
 }
