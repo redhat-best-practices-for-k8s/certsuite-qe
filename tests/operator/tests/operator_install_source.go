@@ -120,23 +120,14 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	// 66142
 	It("one operator installed with OLM", func() {
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		grafanaOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"grafana", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Grafana operator")
-		Expect(grafanaOperatorName).ToNot(Equal("not found"), "Grafana operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
+		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			grafanaOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+grafanaOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 		// grafana-operator: in community-operators group
-		err = tshelper.DeployOperatorSubscription(
+		err := tshelper.DeployOperatorSubscription(
 			grafanaOperatorName,
 			grafanaOperatorName,
 			channel,
@@ -181,24 +172,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	// 66143
 	It("one operator not installed with OLM [negative]", func() {
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"cloud-native-postgresql", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
+		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
 
 		// PostgreSQL operator can be deployed in the same namespace (OwnNamespace install mode)
 		By("Deploy postgresql operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
+		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for postgresql operator")
 
 		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
 
 		By("Deploy postgresql operator for testing")
 		err = tshelper.DeployOperatorSubscription(
@@ -260,23 +242,128 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	// 66144
 	It("two operators, both installed with OLM", func() {
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		grafanaOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"grafana", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Grafana operator")
-		Expect(grafanaOperatorName).ToNot(Equal("not found"), "Grafana operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
+		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			grafanaOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+grafanaOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 		// grafana-operator: in community-operators group
+		err := tshelper.DeployOperatorSubscription(
+			grafanaOperatorName,
+			grafanaOperatorName,
+			channel,
+			randomNamespace,
+			catalogSource,
+			tsparams.OperatorSourceNamespace,
+			csvName,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			grafanaOperatorName)
+
+		err = waitUntilOperatorIsReady(grafanaOperatorName,
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
+			" is not ready")
+
+		By("Label operator")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				grafanaOperatorName,
+				randomNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			ErrorLabelingOperatorStr+grafanaOperatorName)
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.CertsuiteOperatorInstallSource,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			randomReportDir,
+			randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.CertsuiteOperatorInstallSource,
+			globalparameters.TestCasePassed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Query the packagemanifest for PostgreSQL operator package name and catalog source")
+		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
+
+		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
+		channel, version, csvName = globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
+
+		By(fmt.Sprintf("Deploy PostgreSQL operator (channel %s, version %s) for testing", channel, version))
 		err = tshelper.DeployOperatorSubscription(
+			postgresOperatorName,
+			postgresOperatorName,
+			channel,
+			randomNamespace,
+			catalogSource,
+			tsparams.OperatorSourceNamespace,
+			csvName,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+			postgresOperatorName)
+
+		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql",
+			randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
+			" is not ready")
+
+		By("Label operator")
+		Eventually(func() error {
+			return tshelper.AddLabelToInstalledCSV(
+				"cloud-native-postgresql",
+				randomNamespace,
+				tsparams.OperatorLabel)
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+			ErrorLabelingOperatorStr+postgresOperatorName)
+
+		By("Delete operator's subscription")
+		err = globalhelper.DeleteSubscription(randomNamespace,
+			postgresOperatorName+"-subscription")
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Update certsuite config to include postgresql operator")
+		err = globalhelper.DefineCertsuiteConfig(
+			[]string{randomNamespace},
+			[]string{tsparams.TestPodLabel},
+			[]string{},
+			[]string{},
+			[]string{"nginxingresses.charts.nginx.org"}, randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start test")
+		err = globalhelper.LaunchTests(
+			tsparams.CertsuiteOperatorInstallSource,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			randomReportDir,
+			randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(
+			tsparams.CertsuiteOperatorInstallSource,
+			globalparameters.TestCaseFailed, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+	})
+
+	// 66144
+	It("two operators, both installed with OLM", func() {
+		By("Query the packagemanifest for Grafana operator package name and catalog source")
+		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
+
+		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
+		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
+
+		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
+		// grafana-operator: in community-operators group
+		err := tshelper.DeployOperatorSubscription(
 			grafanaOperatorName,
 			grafanaOperatorName,
 			channel,
@@ -304,19 +391,10 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			ErrorLabelingOperatorStr+grafanaOperatorName)
 
 		By("Query the packagemanifest for postgresql operator package name and catalog source for second operator")
-		postgresOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"cloud-native-postgresql", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
-		Expect(catalogSource2).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
+		postgresOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName + " for second operator")
-		channel2, version2, csvName2, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresOperatorName)
-		Expect(channel2).ToNot(Equal("not found"), "Channel not found")
-		Expect(version2).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName2).ToNot(Equal("not found"), "CSV name not found")
+		channel2, version2, csvName2 := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy postgresql operator (channel %s, version %s) for testing", channel2, version2))
 		err = tshelper.DeployOperatorSubscription(
@@ -337,15 +415,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName2+
 			" is not ready")
 
-		By("Label operators")
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				grafanaOperatorName,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+grafanaOperatorName)
-
+		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				"cloud-native-postgresql",
@@ -372,24 +442,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	// 66145
 	It("two operators, one not installed with OLM [negative]", func() {
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"cloud-native-postgresql", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
+		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
 
 		// PostgreSQL operator can be deployed in the same namespace (OwnNamespace install mode)
 		By("Deploy postgresql operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
+		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for postgresql operator")
 
 		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
 
 		By("Deploy postgresql operator for testing")
 		err = tshelper.DeployOperatorSubscription(

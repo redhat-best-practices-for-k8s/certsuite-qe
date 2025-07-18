@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	. "github.com/onsi/ginkgo/v2"
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiOLM "github.com/openshift-kni/eco-goinfra/pkg/olm"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -172,4 +173,41 @@ func QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operator
 	}
 
 	return "not found", "not found", "not found", nil
+}
+
+// CheckOperatorExistsOrFail checks if an operator exists in cluster packagemanifests.
+// If not found, it logs the issue and fails the test using Ginkgo's Fail().
+// If the operator exists, it returns the package name and catalog source for further use.
+func CheckOperatorExistsOrFail(searchString, operatorNamespace string) (string, string) {
+	operatorName, catalogSource, err := QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorNamespace)
+	if err != nil {
+		Fail(fmt.Sprintf("Error querying package manifest for %s operator: %s", searchString, err.Error()))
+	}
+
+	if operatorName == "not found" || catalogSource == "not found" {
+		Fail(fmt.Sprintf("Operator %s not found in cluster packagemanifests. This indicates a problem with catalog sources.", searchString))
+	}
+
+	fmt.Printf("Operator %s found as package %s in catalog source %s\n", searchString, operatorName, catalogSource)
+
+	return operatorName, catalogSource
+}
+
+// CheckOperatorChannelAndVersionOrFail checks if an operator has available channel and version.
+// If not found, it logs the issue and fails the test using Ginkgo's Fail().
+// If found, it returns the channel, version, and CSV name for further use.
+func CheckOperatorChannelAndVersionOrFail(operatorName, operatorNamespace string) (string, string, string) {
+	channel, version, csvName, err := QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operatorNamespace)
+	if err != nil {
+		Fail(fmt.Sprintf("Error querying package manifest for %s operator channel and version: %s", operatorName, err.Error()))
+	}
+
+	if channel == "not found" || version == "not found" || csvName == "not found" {
+		Fail(fmt.Sprintf("Operator %s channel, version, or CSV not found in packagemanifests. "+
+			"This indicates a problem with catalog sources.", operatorName))
+	}
+
+	fmt.Printf("Operator %s has available channel %s, version %s, CSV %s\n", operatorName, channel, version, csvName)
+
+	return channel, version, csvName
 }

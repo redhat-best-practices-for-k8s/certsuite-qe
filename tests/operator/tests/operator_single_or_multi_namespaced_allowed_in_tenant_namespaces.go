@@ -390,22 +390,13 @@ func createTestOperatorGroup(namespace, operatorGroupName string, targetNamespac
 
 func installAndLabelOperator(operatorNamespace string) {
 	By("Query the packagemanifest for Grafana operator package name and catalog source")
-	grafanaOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-		"grafana", operatorNamespace)
-	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Grafana operator")
-	Expect(grafanaOperatorName).ToNot(Equal("not found"), "Grafana operator package not found")
-	Expect(catalogSource).ToNot(Equal("not found"), "Grafana operator catalog source not found")
+	grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", operatorNamespace)
 
 	By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-	channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-		grafanaOperatorName, operatorNamespace)
-	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+grafanaOperatorName)
-	Expect(channel).ToNot(Equal("not found"), "Channel not found")
-	Expect(version).ToNot(Equal("not found"), "Version not found")
-	Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+	channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, operatorNamespace)
 
 	By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
-	err = tshelper.DeployOperatorSubscription(
+	err := tshelper.DeployOperatorSubscription(
 		grafanaOperatorName,
 		grafanaOperatorName,
 		channel,
