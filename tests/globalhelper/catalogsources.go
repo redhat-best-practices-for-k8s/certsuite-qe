@@ -25,7 +25,7 @@ func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) e
 	validCatalogSources := []string{"certified-operators", "community-operators"}
 
 	catalogSources, err := opclient.CatalogSources(
-		CatalogSourceNamespace).List(context.Background(),
+		CatalogSourceNamespace).List(context.TODO(),
 		metav1.ListOptions{})
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func createCatalogSource(name, url string) error {
 }
 
 func createCatalogSourceWithClient(opclient v1alpha1typed.OperatorsV1alpha1Interface, name, url string) error {
-	_, err := opclient.CatalogSources(CatalogSourceNamespace).Create(context.Background(), &v1alpha1.CatalogSource{
+	_, err := opclient.CatalogSources(CatalogSourceNamespace).Create(context.TODO(), &v1alpha1.CatalogSource{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: CatalogSourceNamespace,

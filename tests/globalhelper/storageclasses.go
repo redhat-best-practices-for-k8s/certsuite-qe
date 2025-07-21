@@ -31,7 +31,7 @@ func createStorageClass(client storagev1typed.StorageV1Interface, storageClassNa
 		}
 	}
 
-	_, err := client.StorageClasses().Create(context.Background(),
+	_, err := client.StorageClasses().Create(context.TODO(),
 		&storageClassTemplate, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
@@ -48,7 +48,7 @@ func DeleteStorageClass(storageClassName string) error {
 }
 
 func deleteStorageClass(client storagev1typed.StorageV1Interface, storageClassName string) error {
-	err := client.StorageClasses().Delete(context.Background(),
+	err := client.StorageClasses().Delete(context.TODO(),
 		storageClassName, metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
 
 	if k8serrors.IsNotFound(err) {
