@@ -1,6 +1,7 @@
 package globalhelper
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -44,7 +45,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--sanitize-claim", "true",
 	}
 
-	cmd := exec.Command(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
+	cmd := exec.CommandContext(context.TODO(), fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
 		GetConfiguration().General.CertsuiteEntryPointBinary))
 	cmd.Args = append(cmd.Args, testArgs...)
 
@@ -109,7 +110,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	// print the command
 	glog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
 
-	cmd := exec.Command(containerEngine, certsuiteCmdArgs...)
+	cmd := exec.CommandContext(context.TODO(), containerEngine, certsuiteCmdArgs...)
 
 	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {

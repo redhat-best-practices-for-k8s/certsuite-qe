@@ -111,7 +111,7 @@ func IsClusterOvercommitted() (bool, error) {
 }
 
 func isClusterOvercommitted(client corev1Typed.NodeInterface) (bool, error) {
-	nodes, err := client.List(context.Background(), metav1.ListOptions{})
+	nodes, err := client.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return false, err
 	}

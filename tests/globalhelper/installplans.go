@@ -14,7 +14,7 @@ func CreateInstallPlan(plan *v1alpha1.InstallPlan) error {
 }
 
 func createInstallPlan(plan *v1alpha1.InstallPlan, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
-	_, err := opclient.InstallPlans(plan.Namespace).Create(context.Background(), plan, metav1.CreateOptions{})
+	_, err := opclient.InstallPlans(plan.Namespace).Create(context.TODO(), plan, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		return nil
 	}
