@@ -36,7 +36,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Deploy operator group")
-		err = tshelper.DeployTestOperatorGroup(randomNamespace, true)
+		err = tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Query the packagemanifest for grafana operator package name and catalog source")
