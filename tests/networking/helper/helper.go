@@ -343,7 +343,7 @@ func defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName string, labels
 	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.GetConfiguration().General.CnfNodeLabel: ""})
 
 	if labels != nil {
-		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
+		daemonset.RedefineWithLabel(testDaemonset, labels)
 	}
 
 	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, tsparams.WaitingTime)

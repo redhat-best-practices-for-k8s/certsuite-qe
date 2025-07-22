@@ -39,6 +39,9 @@ type Config struct {
 		DisableIntrusiveTests     string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
 		ContainerEngine           string `default:"docker" yaml:"container_engine" envconfig:"CONTAINER_ENGINE"`
 		UseBinary                 string `default:"false" yaml:"use_binary" envconfig:"USE_BINARY"`
+		// EnableInfraTolerations enables tolerations for infrastructure taints
+		// (disk-pressure, memory-pressure, etc.) to improve test reliability in CI environments
+		EnableInfraTolerations string `default:"true" yaml:"enable_infrastructure_tolerations" envconfig:"ENABLE_INFRASTRUCTURE_TOLERATIONS"`
 	} `yaml:"general"`
 }
 

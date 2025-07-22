@@ -105,6 +105,71 @@ func TestRedefineWithPodAntiAffinity(t *testing.T) {
 		PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution[0].TopologyKey)
 }
 
+func TestRedefineWithInfrastructureTolerations(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+	RedefineWithInfrastructureTolerations(testPod)
+
+	// Check that tolerations were added
+	assert.Greater(t, len(testPod.Spec.Tolerations), 0)
+
+	// Check for specific tolerations
+	var hasDiskPressure, hasMemoryPressure bool
+
+	for _, toleration := range testPod.Spec.Tolerations {
+		if toleration.Key == "node.kubernetes.io/disk-pressure" {
+			hasDiskPressure = true
+
+			assert.Equal(t, corev1.TolerationOpExists, toleration.Operator)
+			assert.Equal(t, corev1.TaintEffectNoSchedule, toleration.Effect)
+		}
+
+		if toleration.Key == "node.kubernetes.io/memory-pressure" {
+			hasMemoryPressure = true
+
+			assert.Equal(t, corev1.TolerationOpExists, toleration.Operator)
+			assert.Equal(t, corev1.TaintEffectNoSchedule, toleration.Effect)
+		}
+	}
+
+	assert.True(t, hasDiskPressure, "Should have disk pressure toleration")
+	assert.True(t, hasMemoryPressure, "Should have memory pressure toleration")
+}
+
+func TestRedefineWithCustomTolerations(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+	customTolerations := []corev1.Toleration{
+		{
+			Key:      "custom-taint",
+			Operator: corev1.TolerationOpEqual,
+			Value:    "custom-value",
+			Effect:   corev1.TaintEffectNoExecute,
+		},
+	}
+
+	RedefineWithCustomTolerations(testPod, customTolerations)
+
+	assert.Equal(t, 1, len(testPod.Spec.Tolerations))
+	assert.Equal(t, "custom-taint", testPod.Spec.Tolerations[0].Key)
+	assert.Equal(t, "custom-value", testPod.Spec.Tolerations[0].Value)
+}
+
+func TestRedefineWithInfrastructureTolerationsIfEnabled(t *testing.T) {
+	// Test with default (should be enabled since default is now true)
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+	RedefineWithInfrastructureTolerationsIfEnabled(testPod)
+
+	// Should have tolerations since default is true
+	assert.Greater(t, len(testPod.Spec.Tolerations), 0, "Should have tolerations with default configuration")
+
+	// Test disabled case
+	t.Setenv("ENABLE_INFRASTRUCTURE_TOLERATIONS", "false")
+	testPod2 := DefinePod("test-pod-2", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+	RedefineWithInfrastructureTolerationsIfEnabled(testPod2)
+
+	// Should NOT have tolerations when explicitly disabled
+	assert.Equal(t, 0, len(testPod2.Spec.Tolerations), "Should not have tolerations when disabled")
+}
+
 func TestRedefineWith2MiHugepages(t *testing.T) {
 	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
 	testPod.Spec.Containers[0].Resources.Requests = make(map[corev1.ResourceName]resource.Quantity)
