@@ -14,9 +14,7 @@ import (
 )
 
 const (
-	ErrorDeployOperatorStr   = "Error deploying operator "
-	ErrorLabelingOperatorStr = "Error labeling operator "
-	ErrorRemovingLabelStr    = "Error removing label from operator "
+	ErrorRemovingLabelStr = "Error removing label from operator "
 )
 
 var _ = Describe("Operator install-source,", Serial, func() {

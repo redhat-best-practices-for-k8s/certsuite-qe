@@ -1,16 +1,25 @@
 package operator
 
 import (
+	"context"
 	"fmt"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 
+	"github.com/golang/glog"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+const (
+	ErrorDeployOperatorStr   = "Error deploying operator "
+	ErrorLabelingOperatorStr = "Error labeling operator "
 )
 
 var _ = Describe("Operator install-source,", Serial, func() {
@@ -204,7 +213,28 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		// The jaeger operator fails to deploy, which creates a delayed failure scenario
 		// This allows testing of the CNF Certification Suite timeout mechanism
 		// for operator readiness.
-		nodeSelector := map[string]string{"target": "none"}
+		//
+		// NOTE: In OCP 4.16 and below, nodeSelector constraints may be enforced differently.
+		// We use multiple restrictive constraints to ensure the operator installation fails.
+		// Use a more restrictive nodeSelector that is guaranteed to fail
+		nodeSelector := map[string]string{
+			"kubernetes.io/arch":                     "nonexistent-arch-x999",
+			"node.kubernetes.io/unreachable":         "true",
+			"node.kubernetes.io/network-unavailable": "true",
+			"test.certsuite.fail/operator":           "guaranteed-fail",
+		}
+
+		// For OCP 4.16 and below, use additional constraints to ensure failure
+		ocpVersion, versionErr := globalhelper.GetClusterVersion()
+		if versionErr == nil {
+			glog.V(5).Infof("Detected OCP version: %s", ocpVersion)
+			// Add even more restrictive constraints for older versions
+			nodeSelector["kubernetes.io/os"] = "nonexistent-os-fail"
+			nodeSelector["kubernetes.io/hostname"] = "never-exists-hostname-fail"
+			nodeSelector["topology.kubernetes.io/zone"] = "fail-zone-nonexistent"
+		}
+
+		glog.V(5).Infof("Deploying Jaeger operator with nodeSelector constraints: %v", nodeSelector)
 		err = tshelper.DeployOperatorSubscriptionWithNodeSelector(
 			jaegerOperatorName,
 			channel,
@@ -221,14 +251,58 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		// Do not wait until the operator is ready. This time the CNF Certification suite must handle the situation.
 
 		By("Verify that Jaeger operator CSV is not in Succeeded phase")
+		glog.V(5).Infof("Starting verification that Jaeger operator %s CSV is not in Succeeded phase", jaegerOperatorName)
+
+		// Debug: Check if there are any nodes that might match our constraints
+		nodes, nodeErr := globalhelper.GetAPIClient().Nodes().List(context.TODO(), metav1.ListOptions{})
+		if nodeErr == nil {
+			glog.V(5).Infof("Found %d nodes in cluster", len(nodes.Items))
+			for _, node := range nodes.Items {
+				glog.V(5).Infof("Node %s has labels: %v", node.Name, node.Labels)
+				// Check if any node could potentially match our constraints
+				for key, value := range nodeSelector {
+					if nodeValue, exists := node.Labels[key]; exists && nodeValue == value {
+						glog.V(5).Infof("WARNING: Node %s matches constraint %s=%s", node.Name, key, value)
+					}
+				}
+			}
+		}
+
 		Eventually(func() bool {
 			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(jaegerOperatorName, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", jaegerOperatorName, err)
+				glog.V(5).Infof("Error checking CSV status for %s: %v", jaegerOperatorName, err)
 
 				return false
 			}
-			fmt.Printf("Jaeger operator %s CSV status is not Succeeded: %t\n", jaegerOperatorName, isNotSucceeded)
+
+			// Get detailed CSV status for debugging
+			csv, csvErr := tshelper.GetCsvByPrefix(jaegerOperatorName, randomNamespace)
+			if csvErr == nil {
+				glog.V(5).Infof("Jaeger operator %s CSV current phase: %s", jaegerOperatorName, csv.Status.Phase)
+				glog.V(5).Infof("Jaeger operator %s CSV conditions: %v", jaegerOperatorName, csv.Status.Conditions)
+				if csv.Status.Message != "" {
+					glog.V(5).Infof("Jaeger operator %s CSV message: %s", jaegerOperatorName, csv.Status.Message)
+				}
+
+				// Check deployment status for more insights
+				if csv.Status.Phase == "Succeeded" {
+					glog.V(5).Infof("WARNING: CSV succeeded despite nodeSelector constraints!")
+					// Log deployment details
+					deployments, depErr := globalhelper.GetAPIClient().AppsV1Interface.
+						Deployments(randomNamespace).List(context.TODO(), metav1.ListOptions{})
+					if depErr == nil {
+						for _, dep := range deployments.Items {
+							if strings.Contains(dep.Name, "jaeger") {
+								glog.V(5).Infof("Jaeger deployment %s status: %+v", dep.Name, dep.Status)
+								glog.V(5).Infof("Jaeger deployment %s nodeSelector: %v", dep.Name, dep.Spec.Template.Spec.NodeSelector)
+							}
+						}
+					}
+				}
+			}
+
+			glog.V(5).Infof("Jaeger operator %s CSV status is not Succeeded: %t", jaegerOperatorName, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
