@@ -102,7 +102,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("r
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
-			globalhelper.BeforeEachSetupWithRandomNamespace(
+			globalhelper.BeforeEachSetupWithRandomPrivilegedNamespace(
 				tsparams.TestAccessControlNameSpace)
 
 		By("Define certsuite config file")
@@ -347,7 +347,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
-			globalhelper.BeforeEachSetupWithRandomNamespace(
+			globalhelper.BeforeEachSetupWithRandomPrivilegedNamespace(
 				tsparams.TestAccessControlNameSpace)
 
 		By("Define certsuite config file")

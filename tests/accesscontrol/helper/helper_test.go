@@ -23,7 +23,7 @@ func assertDeployment(t *testing.T, deployment *appsv1.Deployment) {
 	assert.Equal(t, int32(1), *deployment.Spec.Replicas)
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	assert.Equal(t, parameters.TestDeploymentLabels, deployment.Spec.Template.Labels)
-	assert.Equal(t, globalhelper.GetConfiguration().General.TestImage, deployment.Spec.Template.Spec.Containers[0].Image)
+	assert.Equal(t, parameters.SampleWorkloadImage, deployment.Spec.Template.Spec.Containers[0].Image)
 }
 
 func TestDefineDeployment(t *testing.T) {

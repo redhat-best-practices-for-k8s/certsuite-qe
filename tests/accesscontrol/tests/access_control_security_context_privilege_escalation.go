@@ -19,7 +19,7 @@ var _ = Describe("Access-control security-context-privilege-escalation,", func()
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
-			globalhelper.BeforeEachSetupWithRandomNamespace(
+			globalhelper.BeforeEachSetupWithRandomPrivilegedNamespace(
 				tsparams.TestAccessControlNameSpace)
 
 		By("Define certsuite config file")

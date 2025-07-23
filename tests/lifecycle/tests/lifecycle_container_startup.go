@@ -158,7 +158,7 @@ var _ = Describe("lifecycle-container-poststart", func() {
 	It("One daemonSet without postStart spec [negative]", func() {
 		By("Define daemonSet without postStart spec")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Deploy daemonSet")

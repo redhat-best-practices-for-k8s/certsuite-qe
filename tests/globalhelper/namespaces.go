@@ -48,10 +48,37 @@ func CreateNamespace(namespace string) error {
 	return createNamespace(namespace, egiClients.New(""))
 }
 
+// CreatePrivilegedNamespace creates a namespace with Pod Security Standards set to privileged mode.
+// This allows hostIPC, hostPID, and other privileged operations needed for access control tests.
+func CreatePrivilegedNamespace(namespace string) error {
+	return createPrivilegedNamespace(namespace, egiClients.New(""))
+}
+
 // Create creates a new namespace with the given name.
 // If the namespace exists, it returns.
 func createNamespace(namespace string, client *egiClients.Settings) error {
 	_, err := egiNamespaces.NewBuilder(client, namespace).Create()
+
+	return err
+}
+
+// createPrivilegedNamespace creates a namespace with Pod Security Standards labels set to privileged.
+func createPrivilegedNamespace(namespace string, client *egiClients.Settings) error {
+	// Define Pod Security Standard labels for privileged mode
+	labels := map[string]string{
+		"pod-security.kubernetes.io/enforce": "privileged",
+		"pod-security.kubernetes.io/audit":   "privileged",
+		"pod-security.kubernetes.io/warn":    "privileged",
+	}
+
+	nsBuilder := egiNamespaces.NewBuilder(client, namespace)
+
+	// Add Pod Security Standard labels
+	for key, value := range labels {
+		nsBuilder = nsBuilder.WithLabel(key, value)
+	}
+
+	_, err := nsBuilder.Create()
 
 	return err
 }

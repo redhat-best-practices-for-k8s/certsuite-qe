@@ -155,7 +155,7 @@ var _ = Describe("lifecycle-readiness", func() {
 	It("One daemonSet without a readiness probe [negative]", func() {
 		By("Define daemonSet without a readiness probe")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Create daemonSet")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)

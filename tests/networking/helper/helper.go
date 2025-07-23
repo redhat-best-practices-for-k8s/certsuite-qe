@@ -27,6 +27,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const (
+	sampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
+)
+
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
 func DefineAndCreateDeploymentOnCluster(replicaNumber int32, namespace string) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, namespace,
@@ -303,7 +307,7 @@ func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
 func defineDeploymentBasedOnArgs(
 	name string, namespace string, replicaNumber int32, privileged bool, multus []string, label map[string]string) *appsv1.Deployment {
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+		sampleWorkloadImage, tsparams.TestDeploymentLabels)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
 	if privileged {
@@ -329,7 +333,7 @@ func DefineDeploymentWithContainers(replica int32, containers int,
 
 	deploymentStruct := defineDeploymentBasedOnArgs(name, namespace, replica, false, nil, nil)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, sampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -337,20 +341,20 @@ func DefineDeploymentWithContainers(replica int32, containers int,
 
 func defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName string, labels map[string]string) error {
 	testDaemonset := daemonset.DefineDaemonSet(namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels, daemonsetName)
+		sampleWorkloadImage, tsparams.TestDeploymentLabels, daemonsetName)
 	daemonset.RedefineWithMultus(testDaemonset, nadName)
 	//nolint:lll
 	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.GetConfiguration().General.CnfNodeLabel: ""})
 
 	if labels != nil {
-		daemonset.RedefineDaemonSetWithLabel(testDaemonset, labels)
+		daemonset.RedefineWithLabel(testDaemonset, labels)
 	}
 
 	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, tsparams.WaitingTime)
 }
 
 func defineAndCreatePrivilegedDaemonset(namespace string) error {
-	daemonSet := daemonset.DefineDaemonSet(namespace, globalhelper.GetConfiguration().General.TestImage,
+	daemonSet := daemonset.DefineDaemonSet(namespace, sampleWorkloadImage,
 		tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.GetConfiguration().General.WorkerNodeLabel: ""})
 	daemonset.RedefineWithPrivilegeAndHostNetwork(daemonSet)
@@ -404,7 +408,7 @@ func createContainerSpecsFromContainerPorts(ports []corev1.ContainerPort) []core
 		containerSpecs = append(containerSpecs,
 			corev1.Container{
 				Name:    fmt.Sprintf("%s-%d", tsparams.TestDeploymentAName, index),
-				Image:   globalhelper.GetConfiguration().General.TestImage,
+				Image:   sampleWorkloadImage,
 				Command: []string{"/bin/bash", "-c", "sleep INF"},
 				Ports:   []corev1.ContainerPort{ports[index]},
 			},
@@ -421,12 +425,12 @@ func DefineDeploymentWithContainerPorts(name, namespace string,
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+		sampleWorkloadImage, tsparams.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, sampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
-	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports, globalhelper.GetConfiguration().General.TestImage, "test")
+	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports, sampleWorkloadImage, "test")
 
 	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
 

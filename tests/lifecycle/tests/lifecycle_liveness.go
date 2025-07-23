@@ -160,7 +160,7 @@ var _ = Describe("lifecycle-liveness", func() {
 	It("One daemonSet without a liveness probe [negative]", func() {
 		By("Define daemonSet without a liveness probe")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Create daemonSet")

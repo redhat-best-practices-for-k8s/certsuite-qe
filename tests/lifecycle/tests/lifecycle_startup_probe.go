@@ -158,7 +158,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(deploymenta, 1, tsparams.SampleWorkloadImage)
 		deployment.RedefineWithStartUpProbe(deploymenta)
 
 		By("Create deployment")
@@ -184,7 +184,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 	It("One daemonSet without a startup probe [negative]", func() {
 		By("Define daemonSet without a startup probe")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Create daemonSet")
@@ -248,7 +248,7 @@ var _ = Describe("lifecycle-startup-probe", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		deployment.RedefineWithStartUpProbe(deploymenta)
-		globalhelper.AppendContainersToDeployment(deploymenta, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(deploymenta, 1, tsparams.SampleWorkloadImage)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

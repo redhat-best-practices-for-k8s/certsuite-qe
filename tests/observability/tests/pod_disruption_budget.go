@@ -47,7 +47,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget minAvailable value meet requirements", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -82,7 +82,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget maxUnavailable value meet requirements", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -117,7 +117,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One statefulSet, pod disruption budget minAvailable value is zero [negative]", func() {
 		By("Create statefulSet")
 		myStatefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		statefulset.RedefineWithReplicaNumber(myStatefulSet, 1)
 
@@ -152,7 +152,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget maxUnavailable equals to replica number [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -187,7 +187,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget maxUnavailable is bigger than the replica number [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 2)
 
@@ -221,7 +221,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment, pod disruption budget matchLabels does not match deployment label [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -255,7 +255,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment, no pod disruption budget [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -284,7 +284,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 		extraPodLabels := maps.Clone(tsparams.CertsuiteTargetPodLabels)
 		extraPodLabels[tsparams.TestPodExtraLabelKey] = tsparams.TestPodExtraLabelValue
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, extraPodLabels)
+			tsparams.SampleWorkloadImage, extraPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -318,7 +318,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 	It("One deployment that misses one label present in the pod disruption budget matchLabels [negative]", func() {
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -356,7 +356,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 		extraPodLabels := maps.Clone(tsparams.CertsuiteTargetPodLabels)
 		extraPodLabels[tsparams.TestPodExtraLabelKey] = tsparams.TestPodExtraLabelValue
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, extraPodLabels)
+			tsparams.SampleWorkloadImage, extraPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 
@@ -400,7 +400,7 @@ var _ = Describe(tsparams.CertsuitePodDisruptionBudgetTcName, func() {
 		extraPodLabels := maps.Clone(tsparams.CertsuiteTargetPodLabels)
 		extraPodLabels[tsparams.TestPodExtraLabelKey] = tsparams.TestPodExtraLabelValue
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentBaseName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, extraPodLabels)
+			tsparams.SampleWorkloadImage, extraPodLabels)
 
 		deployment.RedefineWithReplicaNumber(dep, 1)
 

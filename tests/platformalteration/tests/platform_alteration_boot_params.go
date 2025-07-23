@@ -48,7 +48,7 @@ var _ = Describe("platform-alteration-boot-params", func() {
 	// 51302
 	It("unchanged boot params", func() {
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)

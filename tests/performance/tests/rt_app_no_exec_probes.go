@@ -99,7 +99,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", func() {
 	It("One non-Rt exclusive pod with no exec probes", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")

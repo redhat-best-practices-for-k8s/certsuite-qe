@@ -2,6 +2,8 @@ package pod
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -9,6 +11,42 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+// Package pod provides utilities for creating and configuring Kubernetes pods
+// for testing purposes.
+//
+// Infrastructure Tolerations:
+// This package provides functionality to handle infrastructure taints that can
+// occur in test/CI environments, such as disk pressure, memory pressure, etc.
+//
+// Usage Examples:
+//
+// 1. Basic pod with infrastructure tolerations (recommended for CI):
+//    pod := DefinePod("test-pod", "test-ns", "nginx", map[string]string{"app": "test"})
+//    RedefineWithInfrastructureTolerationsIfEnabled(pod) // Checks env var automatically
+//
+// 2. Always apply infrastructure tolerations:
+//    pod := DefinePod("test-pod", "test-ns", "nginx", map[string]string{"app": "test"})
+//    RedefineWithInfrastructureTolerations(pod)
+//
+// 3. Custom tolerations for specific scenarios:
+//    customTolerations := []corev1.Toleration{{
+//        Key:      "custom-taint",
+//        Operator: corev1.TolerationOpEqual,
+//        Value:    "custom-value",
+//        Effect:   corev1.TaintEffectNoExecute,
+//    }}
+//    RedefineWithCustomTolerations(pod, customTolerations)
+//
+// Environment Configuration:
+// Infrastructure tolerations are now enabled by default.
+//
+// To disable infrastructure tolerations, set the environment variable `ENABLE_INFRASTRUCTURE_TOLERATIONS` to `false`.
+//
+// Example:
+//    export ENABLE_INFRASTRUCTURE_TOLERATIONS=false
+//
+// This will cause `RedefineWithInfrastructureTolerationsIfEnabled` to not apply infrastructure tolerations.
 
 const (
 	HugePages2Mi = "2Mi"
@@ -194,6 +232,75 @@ func RedefineWith2MiHugepages(pod *corev1.Pod, hugepages int) {
 		pod.Spec.Containers[i].Resources.Requests[corev1.ResourceHugePagesPrefix+HugePages2Mi] = hugepagesVal
 		pod.Spec.Containers[i].Resources.Limits[corev1.ResourceHugePagesPrefix+HugePages2Mi] = hugepagesVal
 	}
+}
+
+// RedefineWithInfrastructureTolerations adds tolerations for common infrastructure taints
+// that can occur in test/CI environments. This helps improve test reliability when
+// nodes have transient resource pressure.
+func RedefineWithInfrastructureTolerations(pod *corev1.Pod) {
+	infrastructureTolerations := []corev1.Toleration{
+		{
+			Key:      "node.kubernetes.io/disk-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/pid-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/network-unavailable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/unreachable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for transient network issues
+			TolerationSeconds: ptr.To[int64](30),
+		},
+		{
+			Key:      "node.kubernetes.io/not-ready",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for node startup
+			TolerationSeconds: ptr.To[int64](30),
+		},
+	}
+
+	// Append to existing tolerations rather than replacing them
+	pod.Spec.Tolerations = append(pod.Spec.Tolerations, infrastructureTolerations...)
+}
+
+// RedefineWithCustomTolerations adds custom tolerations to the pod.
+func RedefineWithCustomTolerations(pod *corev1.Pod, tolerations []corev1.Toleration) {
+	pod.Spec.Tolerations = append(pod.Spec.Tolerations, tolerations...)
+}
+
+// RedefineWithInfrastructureTolerationsIfEnabled conditionally adds infrastructure tolerations
+// based on configuration. This is the recommended way to apply infrastructure tolerations.
+func RedefineWithInfrastructureTolerationsIfEnabled(pod *corev1.Pod) {
+	if shouldEnableInfrastructureTolerations() {
+		RedefineWithInfrastructureTolerations(pod)
+	}
+}
+
+// shouldEnableInfrastructureTolerations checks if infrastructure tolerations should be enabled
+// based on environment configuration.
+func shouldEnableInfrastructureTolerations() bool {
+	enabled := os.Getenv("ENABLE_INFRASTRUCTURE_TOLERATIONS")
+	if enabled == "" {
+		return true
+	}
+
+	return strings.ToLower(enabled) == "true"
 }
 
 func RedefineWith1GiHugepages(pod *corev1.Pod, hugepages int) {

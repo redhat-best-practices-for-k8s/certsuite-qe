@@ -97,6 +97,23 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 	return randomNamespace, randomReportDir, randomConfigDir
 }
 
+// BeforeEachSetupWithRandomPrivilegedNamespace creates a random namespace with privileged Pod Security Standards
+// for tests that require hostIPC, hostPID, or other privileged operations (like access control tests).
+func BeforeEachSetupWithRandomPrivilegedNamespace(incomingNamespace string) (randomNamespace, randomReportDir,
+	randomConfigDir string) {
+	randomNamespace = incomingNamespace + "-" + GenerateRandomString(10)
+
+	By(fmt.Sprintf("Create %s privileged namespace", randomNamespace))
+	err := CreatePrivilegedNamespace(randomNamespace)
+	Expect(err).ToNot(HaveOccurred())
+
+	By("Generate directories")
+
+	randomReportDir, randomConfigDir = GenerateDirectories(randomNamespace)
+
+	return randomNamespace, randomReportDir, randomConfigDir
+}
+
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {
 	// logfile := "certsuite.log"
 	// By("Print logs")

@@ -13,6 +13,10 @@ import (
 
 var commandToLaunchTwoProcesses = []string{"/bin/bash", "-c", "seq 998 999| xargs -n 1 -P 2 sleep"}
 
+const (
+	sampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
+)
+
 var _ = Describe("Access-control one-process-per-container,", func() {
 	var randomNamespace string
 	var randomReportDir string
@@ -63,7 +67,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 
 	It("one deployment, one pod, one container, two processes [negative]", func() {
 		By("Define deployment with one container that runs two processes")
-		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
+		dep, err := tshelper.DefineDeploymentWithImage(1, 1, "accesscontroldeployment", randomNamespace, sampleWorkloadImage)
 		Expect(err).ToNot(HaveOccurred())
 		err = deployment.RedefineContainerCommand(dep, 0, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())
@@ -90,7 +94,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, imageWithSSHDaemon)
 
 		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
@@ -114,7 +118,7 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		dep, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, imageWithSSHDaemon)
 
 		err = deployment.RedefineContainerCommand(dep, 1, commandToLaunchTwoProcesses)
 		Expect(err).ToNot(HaveOccurred())
