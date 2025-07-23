@@ -41,7 +41,7 @@ var (
 	RedhatOperatorGroup                       = "redhat-operators"
 	CommunityOperatorGroup                    = "community-operators"
 	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorPrefixLightweight                 = "jaeger-operator"
+	OperatorPrefixLightweight                 = "postgresoperator"
 	OperatorPrefixKiali                       = "kiali-operator"
 	CertifiedOperatorPrefix                   = "grafana-operator"
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
@@ -80,4 +80,9 @@ const (
 	TestOperatorSingleCrdOwner              = "operator-single-crd-owner"
 
 	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+)
+
+const (
+	OperatorPackageNamePrefixLightweight              = "postgresql"
+	OperatorPackageNamePrefixLightweightCustomCatalog = "nginx-ingress-operator"
 )

@@ -65,7 +65,7 @@ var _ = Describe("Operator crd-openapi-schema", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			grafanaOperatorName)
 
-		err = waitUntilOperatorIsReady(grafanaOperatorName,
+		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")

@@ -95,7 +95,7 @@ func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorN
 	}
 
 	for _, item := range pkgManifest {
-		if strings.Contains(item.Object.GetName(), searchString) {
+		if strings.HasPrefix(item.Object.GetName(), searchString) {
 			packageName := item.Object.GetName()
 			catalogSource := item.Object.Status.CatalogSource
 			fmt.Printf("Found package: %s in catalog source: %s matching search string: %s\n", packageName, catalogSource, searchString)
