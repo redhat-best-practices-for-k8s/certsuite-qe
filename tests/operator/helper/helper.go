@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/golang/glog"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -58,7 +59,54 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
 		csvPrefix+" is not ready.")
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Additional check: verify that the subscription's installedcsv matches currentCsv
+	// This ensures the operator was installed successfully
+	Eventually(func() bool {
+		subscriptions, err := globalhelper.GetAPIClient().OperatorsV1alpha1Interface.Subscriptions(namespace).List(
+			context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			glog.V(5).Infof("Failed to list subscriptions in namespace %s: %v", namespace, err)
+
+			return false
+		}
+
+		if len(subscriptions.Items) == 0 {
+			glog.V(5).Infof("No subscriptions found in namespace %s", namespace)
+
+			return false
+		}
+
+		// Assume there's a single subscription in the namespace
+		subscription := subscriptions.Items[0]
+
+		if subscription.Status.InstalledCSV == "" || subscription.Status.CurrentCSV == "" {
+			glog.V(5).Infof("Subscription %s: InstalledCSV='%s', CurrentCSV='%s' - not ready yet",
+				subscription.Name, subscription.Status.InstalledCSV, subscription.Status.CurrentCSV)
+
+			return false
+		}
+
+		if subscription.Status.InstalledCSV != subscription.Status.CurrentCSV {
+			glog.V(5).Infof("Subscription %s: InstalledCSV='%s' does not match CurrentCSV='%s'",
+				subscription.Name, subscription.Status.InstalledCSV, subscription.Status.CurrentCSV)
+
+			return false
+		}
+
+		glog.V(5).Infof("Subscription %s: InstalledCSV matches CurrentCSV (%s) - operator installed successfully",
+			subscription.Name, subscription.Status.InstalledCSV)
+
+		return true
+	}, 20*time.Second, tsparams.PollingInterval).Should(Equal(true),
+		"Subscription's installedCSV does not match currentCSV within 10 seconds")
+
+	glog.Infof("Operator %s is ready and subscription verification passed in namespace %s", csvPrefix, namespace)
+
+	return nil
 }
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
@@ -94,7 +142,7 @@ func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterSe
 	var neededCSV v1alpha1.ClusterServiceVersion
 
 	for _, csv := range csvs.Items {
-		if strings.Contains(csv.Name, prefixCsvName) {
+		if strings.HasPrefix(csv.Name, prefixCsvName) {
 			neededCSV = csv
 		}
 	}

@@ -98,7 +98,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	It("two operators, one does not reports Succeeded as its installation status (quick failure) [negative]", func() {
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
 		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"cloud-native-postgresql", randomNamespace)
+			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
 		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
 		Expect(catalogSource).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
@@ -130,14 +130,15 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		// Do not wait for the PostgreSQL operator to be ready - it should fail due to nodeSelector
 
 		By("Verify that PostgreSQL operator CSV is not in Succeeded phase")
+
 		Eventually(func() bool {
-			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(postgresOperatorName, randomNamespace)
+			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(tsparams.OperatorPrefixLightweight, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", postgresOperatorName, err)
+				fmt.Printf("Error checking CSV status for %s: %v\n", tsparams.OperatorPrefixLightweight, err)
 
 				return false
 			}
-			fmt.Printf("PostgreSQL operator %s CSV status is not Succeeded: %t\n", postgresOperatorName, isNotSucceeded)
+			fmt.Printf("PostgreSQL operator %s CSV status is not Succeeded: %t\n", tsparams.OperatorPrefixLightweight, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
@@ -154,7 +155,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				postgresOperatorName,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
@@ -185,28 +186,28 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	})
 
 	It("two operators, one does not reports Succeeded as its installation status (delayed failure) [negative]", Serial, func() {
-		By("Query the packagemanifest for Jaeger operator package name and catalog source")
-		jaegerOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"jaeger", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Jaeger operator")
-		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
-		Expect(catalogSource2).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
+		By("Query the packagemanifest for postgresql operator package name and catalog source")
+		postgresqlOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
+		Expect(postgresqlOperatorName).ToNot(Equal("not found"), "postgresql operator package not found")
+		Expect(catalogSource2).ToNot(Equal("not found"), "postgresql operator catalog source not found")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
+		By("Query the packagemanifest for available channel, version and CSV for " + postgresqlOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			jaegerOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+jaegerOperatorName)
+			postgresqlOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresqlOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By("Deploy Jaeger operator for testing")
-		// The jaeger operator fails to deploy, which creates a delayed failure scenario
+		By("Deploy postgresql operator for testing")
+		// The postgresql operator fails to deploy, which creates a delayed failure scenario
 		// This allows testing of the CNF Certification Suite timeout mechanism
 		// for operator readiness.
 		nodeSelector := map[string]string{"target": "none"}
 		err = tshelper.DeployOperatorSubscriptionWithNodeSelector(
-			jaegerOperatorName,
+			postgresqlOperatorName,
 			channel,
 			randomNamespace,
 			catalogSource2,
@@ -216,28 +217,28 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			nodeSelector,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			jaegerOperatorName)
+			postgresqlOperatorName)
 
 		// Do not wait until the operator is ready. This time the CNF Certification suite must handle the situation.
 
-		By("Verify that Jaeger operator CSV is not in Succeeded phase")
+		By("Verify that postgresql operator CSV is not in Succeeded phase")
 		Eventually(func() bool {
-			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(jaegerOperatorName, randomNamespace)
+			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(tsparams.OperatorPrefixLightweight, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", jaegerOperatorName, err)
+				fmt.Printf("Error checking CSV status for %s: %v\n", tsparams.OperatorPrefixLightweight, err)
 
 				return false
 			}
-			fmt.Printf("Jaeger operator %s CSV status is not Succeeded: %t\n", jaegerOperatorName, isNotSucceeded)
+			fmt.Printf("postgresql operator %s CSV status is not Succeeded: %t\n", tsparams.OperatorPrefixLightweight, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
-			"Jaeger operator CSV should not be in Succeeded phase for this negative test")
+			"postgresql operator CSV should not be in Succeeded phase for this negative test")
 
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				operatorName,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
@@ -245,11 +246,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				jaegerOperatorName,
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+jaegerOperatorName)
+			ErrorLabelingOperatorStr+postgresqlOperatorName)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

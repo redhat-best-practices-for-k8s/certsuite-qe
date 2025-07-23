@@ -41,7 +41,7 @@ var (
 	RedhatOperatorGroup                       = "redhat-operators"
 	CommunityOperatorGroup                    = "community-operators"
 	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorPrefixLightweight                 = "jaeger-operator"
+	OperatorPrefixLightweight                 = "postgresoperator"
 	OperatorPrefixKiali                       = "kiali-operator"
 	CertifiedOperatorPrefix                   = "grafana-operator"
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
@@ -72,4 +72,9 @@ const (
 	CertsuiteOperatorPodRunAsUserID                                   = "operator-run-as-user-id"
 	CertsuiteOperatorMultipleInstalled                                = "operator-multiple-same-operators"
 	CertsuiteOperatorBundleCount                                      = "operator-catalogsource-bundle-count"
+)
+
+const (
+	OperatorPackageNamePrefixLightweight     = "postgresql"
+	OperatorPackageNamePrefixLightweightQuay = "nginx-ingress-operator"
 )

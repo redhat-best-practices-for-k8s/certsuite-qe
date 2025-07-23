@@ -63,17 +63,17 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		err = tshelper.DeployTestOperatorGroup(secondNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		By("Query the packagemanifest for Jaeger operator package name and catalog source")
-		jaegerOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"jaeger", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for Jaeger operator")
-		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
+		By("Query the packagemanifest for postgresql operator package name and catalog source")
+		postgresqlOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
+		Expect(postgresqlOperatorName).ToNot(Equal("not found"), "postgresql operator package not found")
+		Expect(catalogSource).ToNot(Equal("not found"), "postgresql operator catalog source not found")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
+		By("Query the packagemanifest for available channel, version and CSV for " + postgresqlOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			jaegerOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+jaegerOperatorName)
+			postgresqlOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresqlOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
@@ -82,10 +82,10 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// This is because the operator/csv name is the same, but the subscription name is different.
 		// The subscription name cannot be the same, as it is a unique identifier in the namespace.
 
-		By(fmt.Sprintf("Deploy first operator (jaeger-operator) version %s for testing", version))
+		By(fmt.Sprintf("Deploy first operator (postgresql-operator) version %s for testing", version))
 		err = tshelper.DeployOperatorSubscription(
 			"operator1",
-			jaegerOperatorName,
+			postgresqlOperatorName,
 			channel,
 			randomNamespace,
 			catalogSource,
@@ -94,12 +94,12 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			jaegerOperatorName)
+			postgresqlOperatorName)
 
-		By(fmt.Sprintf("Deploy second operator (jaeger-operator) version %s for testing", version))
+		By(fmt.Sprintf("Deploy second operator (postgresql-operator) version %s for testing", version))
 		err = tshelper.DeployOperatorSubscription(
 			"operator2",
-			jaegerOperatorName,
+			postgresqlOperatorName,
 			channel,
 			secondNamespace,
 			catalogSource,
@@ -108,16 +108,16 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			jaegerOperatorName)
+			postgresqlOperatorName)
 
-		By("Wait until the first Jaeger operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(jaegerOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+jaegerOperatorName+
+		By("Wait until the first postgresql operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+postgresqlOperatorName+
 			" is not ready")
 
-		By("Wait until the second Jaeger operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady(jaegerOperatorName, secondNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+jaegerOperatorName+
+		By("Wait until the second postgresql operator is ready")
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, secondNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+postgresqlOperatorName+
 			" is not ready")
 
 		// Note: No need to label these operators as we are testing all operators in the cluster.
@@ -143,7 +143,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// in different namespaces with different versions. This is an invalid use case.
 
 		// We want to create a custom catalog source for this test.
-		// This means we will have access to a "new" and "old" channel for the cloud-native-postgresql.
+		// This means we will have access to a "new" and "old" channel for the postgresql.
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
 
 		By("Create custom-operator catalog source")
@@ -172,42 +172,42 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		err = tshelper.DeployTestOperatorGroup(secondNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		By(fmt.Sprintf("Deploy first operator (cloud-native-postgresql) for testing - channel %s", "new"))
+		By(fmt.Sprintf("Deploy first operator (postgresql) for testing - channel %s", "new"))
 		err = tshelper.DeployOperatorSubscription(
 			"operator1",
-			"cloud-native-postgresql",
+			tsparams.OperatorPackageNamePrefixLightweightQuay,
 			"new",
 			randomNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			"cloud-native-postgresql.v1.26.0",
+			"nginx-ingress-operator.v3.0.1",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			"cloud-native-postgresql")
+			tsparams.OperatorPackageNamePrefixLightweightQuay)
 
-		By(fmt.Sprintf("Deploy second operator (cloud-native-postgresql) for testing - channel %s", "old"))
+		By(fmt.Sprintf("Deploy second operator (postgresql) for testing - channel %s", "old"))
 		err = tshelper.DeployOperatorSubscription(
 			"operator2",
-			"cloud-native-postgresql",
+			tsparams.OperatorPackageNamePrefixLightweightQuay,
 			"old",
 			secondNamespace,
 			"custom-catalog",
 			tsparams.OperatorSourceNamespace,
-			"cloud-native-postgresql.v1.24.4",
+			"nginx-ingress-operator.v3.0.0",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			"cloud-native-postgresql")
+			tsparams.OperatorPackageNamePrefixLightweightQuay)
 
 		By("Wait until the first postgresql operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+"cloud-native-postgresql"+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPackageNamePrefixLightweightQuay, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPackageNamePrefixLightweightQuay+
 			" is not ready")
 
 		By("Wait until the second postgresql operator is ready")
-		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql", secondNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+"cloud-native-postgresql"+
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPackageNamePrefixLightweightQuay, secondNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.OperatorPackageNamePrefixLightweightQuay+
 			" is not ready")
 
 		By("Start test")
