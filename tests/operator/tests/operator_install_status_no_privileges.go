@@ -65,26 +65,26 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 
-		// jaeger operator has no clusterPermissions
-		By("Query the packagemanifest for jaeger operator package name and catalog source")
-		jaegerOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			"jaeger", randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for jaeger operator")
-		Expect(jaegerOperatorName).ToNot(Equal("not found"), "Jaeger operator package not found")
-		Expect(catalogSource2).ToNot(Equal("not found"), "Jaeger operator catalog source not found")
+		// postgresql operator has no clusterPermissions
+		By("Query the packagemanifest for postgresql operator package name and catalog source")
+		postgresqlOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
+		Expect(postgresqlOperatorName).ToNot(Equal("not found"), "postgresql operator package not found")
+		Expect(catalogSource2).ToNot(Equal("not found"), "postgresql operator catalog source not found")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + jaegerOperatorName)
+		By("Query the packagemanifest for available channel, version and CSV for " + postgresqlOperatorName)
 		channel2, version2, csvName2, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			jaegerOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+jaegerOperatorName)
+			postgresqlOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresqlOperatorName)
 		Expect(channel2).ToNot(Equal("not found"), "Channel not found")
 		Expect(version2).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName2).ToNot(Equal("not found"), "CSV name not found")
 
-		By(fmt.Sprintf("Deploy jaeger operator (channel %s, version %s) for testing", channel2, version2))
+		By(fmt.Sprintf("Deploy postgresql operator (channel %s, version %s) for testing", channel2, version2))
 		err = tshelper.DeployOperatorSubscription(
-			jaegerOperatorName,
-			jaegerOperatorName,
+			postgresqlOperatorName,
+			postgresqlOperatorName,
 			channel2,
 			randomNamespace,
 			catalogSource2,
@@ -93,7 +93,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			jaegerOperatorName)
+			postgresqlOperatorName)
 
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
 			randomNamespace)
@@ -132,34 +132,8 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 66382
-	It("one operator with clusterPermissions but no resourceNames", func() {
-		By("Label operator")
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				operatorName,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+operatorName)
-
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCasePassed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
 	// 66383
-	It("one operator with clusterPermissions and resourceNames [negative]", func() {
+	It("one operator with clusterPermissions [negative]", func() {
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
 				operatorName,
@@ -184,7 +158,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 	})
 
 	// 66384
-	It("two operators, one with no clusterPermissions and one with clusterPermissions but no resourceNames", func() {
+	It("two operators, one with no clusterPermissions and one with clusterPermissions", func() {
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -217,36 +191,4 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// 66385
-	It("two operators, one with clusterPermissions and resourceNames", func() {
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				operatorName,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+operatorName)
-
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
-
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorInstallStatusNoPrivileges,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorInstallStatusNoPrivileges,
-			globalparameters.TestCasePassed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
-	})
 })

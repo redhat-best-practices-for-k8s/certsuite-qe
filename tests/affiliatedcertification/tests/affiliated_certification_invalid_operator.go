@@ -10,8 +10,8 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
-	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 )
 
 const (
@@ -62,7 +62,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			grafanaOperatorName)
 
-		err = waitUntilOperatorIsReady(grafanaOperatorName,
+		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -104,7 +104,7 @@ var _ = Describe("Affiliated-certification invalid operator certification,", Ser
 		approveInstallPlanWhenReady(tsparams.UncertifiedOperatorFullSriov,
 			randomNamespace)
 
-		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixSriov,
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixSriov,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixSriov+
 			" is not ready")

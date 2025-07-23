@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 
-	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
@@ -69,33 +67,6 @@ func preConfigureAffiliatedCertificationEnvironment(namespace, configDir string)
 		[]string{},
 		[]string{}, configDir)
 	Expect(err).ToNot(HaveOccurred(), "Error defining certsuite config file")
-}
-
-func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
-	var err error
-
-	var csv *v1alpha1.ClusterServiceVersion
-
-	Eventually(func() bool {
-		csv, err = tshelper.GetCsvByPrefix(csvPrefix, namespace)
-		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
-			return csv.Status.Phase != "InstallReady" &&
-				csv.Status.Phase != "Deleting" &&
-				csv.Status.Phase != "Replacing" &&
-				csv.Status.Phase != "Unknown"
-		}
-
-		if err != nil {
-			log.Printf("Error getting csv: %s", err)
-
-			return false
-		}
-
-		return false
-	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
-		csvPrefix+" is not ready.")
-
-	return err
 }
 
 func approveInstallPlanWhenReady(csvName, namespace string) {
