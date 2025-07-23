@@ -64,7 +64,57 @@ func RedefineDaemonSetWithNodeSelector(daemonSet *appsv1.DaemonSet, nodeSelector
 	daemonSet.Spec.Template.Spec.NodeSelector = nodeSelector
 }
 
-func RedefineDaemonSetWithLabel(daemonSet *appsv1.DaemonSet, label map[string]string) {
+// RedefineWithInfrastructureTolerations adds tolerations for common infrastructure taints
+// that can occur in test/CI environments. This helps improve test reliability when
+// nodes have transient resource pressure.
+func RedefineWithInfrastructureTolerations(daemonSet *appsv1.DaemonSet) {
+	infrastructureTolerations := []corev1.Toleration{
+		{
+			Key:      "node.kubernetes.io/disk-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/pid-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/network-unavailable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/unreachable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for transient network issues
+			TolerationSeconds: ptr.To[int64](30),
+		},
+		{
+			Key:      "node.kubernetes.io/not-ready",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for node startup
+			TolerationSeconds: ptr.To[int64](30),
+		},
+	}
+
+	// Append to existing tolerations rather than replacing them
+	daemonSet.Spec.Template.Spec.Tolerations = append(daemonSet.Spec.Template.Spec.Tolerations, infrastructureTolerations...)
+}
+
+// RedefineWithCustomTolerations adds custom tolerations to the daemonset.
+func RedefineWithCustomTolerations(daemonSet *appsv1.DaemonSet, tolerations []corev1.Toleration) {
+	daemonSet.Spec.Template.Spec.Tolerations = append(daemonSet.Spec.Template.Spec.Tolerations, tolerations...)
+}
+
+func RedefineWithLabel(daemonSet *appsv1.DaemonSet, label map[string]string) {
 	newMap := make(map[string]string)
 	for k, v := range daemonSet.Spec.Template.Labels {
 		newMap[k] = v

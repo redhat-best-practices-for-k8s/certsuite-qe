@@ -28,6 +28,8 @@ jobs:
       DOCKER_CONFIG_DIR: '/home/runner/.docker/'
       SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
       TEST_REPO: redhat-best-practices-for-k8s/certsuite
+      # Enable infrastructure tolerations for better test reliability in CI environments
+      ENABLE_INFRASTRUCTURE_TOLERATIONS: true
 
     steps:
       - name: Write temporary docker file

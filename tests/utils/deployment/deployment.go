@@ -3,6 +3,8 @@ package deployment
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -413,10 +415,79 @@ func RedefineWithPostStart(deployment *appsv1.Deployment) {
 	}
 }
 
-func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, uid int64) {
+func RedefineWithPodSecurityContextRunAsUser(deployment *appsv1.Deployment, runAsUser int64) {
 	deployment.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
-		RunAsUser: ptr.To[int64](uid),
+		RunAsUser: ptr.To[int64](runAsUser),
 	}
+}
+
+// RedefineWithInfrastructureTolerations adds tolerations for common infrastructure taints
+// that can occur in test/CI environments. This helps improve test reliability when
+// nodes have transient resource pressure.
+func RedefineWithInfrastructureTolerations(deployment *appsv1.Deployment) {
+	infrastructureTolerations := []corev1.Toleration{
+		{
+			Key:      "node.kubernetes.io/disk-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/pid-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/network-unavailable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/unreachable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for transient network issues
+			TolerationSeconds: ptr.To[int64](30),
+		},
+		{
+			Key:      "node.kubernetes.io/not-ready",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for node startup
+			TolerationSeconds: ptr.To[int64](30),
+		},
+	}
+
+	// Append to existing tolerations rather than replacing them
+	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, infrastructureTolerations...)
+}
+
+// RedefineWithCustomTolerations adds custom tolerations to the deployment.
+func RedefineWithCustomTolerations(deployment *appsv1.Deployment, tolerations []corev1.Toleration) {
+	deployment.Spec.Template.Spec.Tolerations = append(deployment.Spec.Template.Spec.Tolerations, tolerations...)
+}
+
+// RedefineWithInfrastructureTolerationsIfEnabled conditionally adds infrastructure tolerations
+// based on configuration. This is the recommended way to apply infrastructure tolerations.
+func RedefineWithInfrastructureTolerationsIfEnabled(deployment *appsv1.Deployment) {
+	if shouldEnableInfrastructureTolerations() {
+		RedefineWithInfrastructureTolerations(deployment)
+	}
+}
+
+// shouldEnableInfrastructureTolerations checks if infrastructure tolerations should be enabled
+// based on environment configuration.
+func shouldEnableInfrastructureTolerations() bool {
+	enabled := os.Getenv("ENABLE_INFRASTRUCTURE_TOLERATIONS")
+	if enabled == "" {
+		return true
+	}
+
+	return strings.ToLower(enabled) == "true"
 }
 
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.
