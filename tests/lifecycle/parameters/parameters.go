@@ -64,4 +64,6 @@ const (
 	CertsuiteContainerStartUpTcName              = "lifecycle-container-poststart"
 	CertsuitePodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
 	CertsuiteStorageProvisioner                  = "lifecycle-storage-provisioner"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 )

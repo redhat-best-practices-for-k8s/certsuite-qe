@@ -50,7 +50,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
 
@@ -71,7 +71,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 	It("One pod with 1Gi hugepages", func() {
 
 		By("Define pod with 1Gi hugepages")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 		pod.RedefineWith1GiHugepages(put, 1)
@@ -94,10 +94,10 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 		deployment.RedefineWithCPUResources(dep, "500m", "250m")
 		deployment.RedefineWith1GiHugepages(dep, 1)
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, tsparams.SampleWorkloadImage)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -117,8 +117,8 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
-		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
+		globalhelper.AppendContainersToPod(put, 1, tsparams.SampleWorkloadImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
 		err := pod.RedefineFirstContainerWith1GiHugepages(put, 1)
@@ -144,8 +144,8 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
-		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
+		globalhelper.AppendContainersToPod(put, 1, tsparams.SampleWorkloadImage)
 		pod.RedefineWithCPUResources(put, "500m", "250m")
 
 		err := pod.RedefineFirstContainerWith2MiHugepages(put, 4)

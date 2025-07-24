@@ -17,6 +17,7 @@ var (
 	InvalidNamespace                     = "openshift-test"
 	AdditionalValidNamespace             = "ac-test"
 	AdditionalNamespaceForResourceQuotas = "ac-rq-test"
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,

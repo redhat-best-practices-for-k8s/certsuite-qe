@@ -72,4 +72,12 @@ const (
 	CertsuiteOperatorPodRunAsUserID                                   = "operator-run-as-user-id"
 	CertsuiteOperatorMultipleInstalled                                = "operator-multiple-same-operators"
 	CertsuiteOperatorBundleCount                                      = "operator-catalogsource-bundle-count"
+
+	TestOperatorInstallStatusSucceeded      = "operator-install-status-succeeded"
+	TestOperatorNoPrivileges                = "operator-no-privileges"
+	TestOperatorIsNotUsingDeprecatedAPIs    = "operator-is-not-using-deprecated-apis"
+	TestOperatorHubSubscriptionValidChannel = "operator-hub-subscription-is-valid-channel"
+	TestOperatorSingleCrdOwner              = "operator-single-crd-owner"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 )

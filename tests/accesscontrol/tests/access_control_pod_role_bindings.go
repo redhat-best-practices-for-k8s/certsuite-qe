@@ -58,7 +58,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 
@@ -82,7 +82,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -104,7 +104,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
@@ -145,7 +145,7 @@ var _ = Describe("Access-control pod-role-bindings,", func() {
 	It("one pod with role binding in different namespace", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)

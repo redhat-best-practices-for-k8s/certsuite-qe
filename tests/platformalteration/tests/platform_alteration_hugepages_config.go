@@ -75,7 +75,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)

@@ -54,4 +54,6 @@ const (
 	Reboot                = `chroot /host systemctl reboot`
 	FindHugePagesFiles    = "find /host/sys/devices/system/node/ -name nr_hugepages"
 	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 )

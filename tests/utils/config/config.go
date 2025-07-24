@@ -26,7 +26,6 @@ type Config struct {
 		ReportDirAbsPath          string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
 		CnfNodeLabel              string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
 		WorkerNodeLabel           string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
-		TestImage                 string `yaml:"test_image" envconfig:"TEST_IMAGE"`
 		VerificationLogLevel      string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
 		DebugCertsuite            string `envconfig:"DEBUG_CERTSUITE"`
 		CertsuiteConfigDir        string `yaml:"certsuite_config_dir" envconfig:"CERTSUITE_CONFIG_DIR"`

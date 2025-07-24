@@ -68,7 +68,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 
 		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
@@ -115,7 +115,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		})
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
 		pod.RedefineWithPVC(put, persistentVolume.Name, pvc.Name)
 
@@ -158,7 +158,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		By("Define replicaSet")
 		rs := replicaset.DefineReplicaSet(tsparams.TestReplicaSetName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 		replicaset.RedefineWithPVC(rs, persistentVolume.Name, pvc.Name)
 
 		err = globalhelper.CreateAndWaitUntilReplicaSetIsReady(rs, tsparams.WaitingTime)
@@ -200,7 +200,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 
 		deployment.RedefineWithPVC(dep, persistentVolume.Name, pvc.Name)
 
@@ -248,7 +248,7 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define pod")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
 		pod.RedefineWithPVC(put, persistentVolume.Name, pvc.Name)
 
@@ -312,11 +312,11 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
 
 		By("Define deployments")
 		depa := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 
 		deployment.RedefineWithPVC(depa, persistentVolumea.Name, pvca.Name)
 
-		depb := deployment.DefineDeployment("lifecycle-dpb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		depb := deployment.DefineDeployment("lifecycle-dpb", randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
 
 		deployment.RedefineWithPVC(depb, persistentVolumeb.Name, pvcb.Name)

@@ -54,7 +54,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
@@ -76,7 +76,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	It("One pod with one exclusive container, and one shared container", func() {
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		tshelper.RedefinePodWithSharedContainer(testPod, 0)
 
@@ -100,7 +100,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	It("One pod with only shared containers", func() {
 		By("Define pod")
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "0.75", "0.5")
 

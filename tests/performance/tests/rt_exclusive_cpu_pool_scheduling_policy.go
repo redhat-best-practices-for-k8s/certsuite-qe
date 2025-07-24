@@ -128,7 +128,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 	It("One pod running in shared cpu pool", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {

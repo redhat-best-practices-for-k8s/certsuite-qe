@@ -54,7 +54,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define pod with resources and runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
@@ -102,9 +102,9 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		}
 
 		By("Define pod with resources and runTimeClass")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
-		globalhelper.AppendContainersToPod(put, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToPod(put, 1, tsparams.SampleWorkloadImage)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -147,7 +147,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Define deployment with resources and runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -196,7 +196,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		annotationsMap := make(map[string]string)
 
 		By("Define daemonSet with resources and runTimeClass")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Add annotations to the pod")
@@ -244,7 +244,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 	// 54734
 	It("One daemonSet no annotations [negative]", func() {
 		By("Define daemonSet with resources and runTimeClass")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Define runTimeClass")
@@ -282,7 +282,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 
 		By("Define deployment with resources and no runTimeClass")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")
 		annotationsMap["cpu-load-balancing.crio.io"] = disableVar
@@ -324,9 +324,9 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 		}
 
 		By("Define pod with resources and runTimeClass")
-		puta := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		puta := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
-		putb := pod.DefinePod("lifecycle-podb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		putb := pod.DefinePod("lifecycle-podb", randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels)
 
 		By("Add annotations to the pod")

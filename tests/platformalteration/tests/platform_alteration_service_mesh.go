@@ -77,9 +77,9 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	// 56594
 	It("istio is installed", func() {
 		By("Define a test pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
-		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
+		tshelper.AppendIstioContainerToPod(put, tsparams.SampleWorkloadImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -97,7 +97,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	// 56596
 	It("istio is installed but proxy containers does not exist [negative]", func() {
 		By("Define a test pod without istio container")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
@@ -116,14 +116,14 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	// 56597
 	It("istio is installed but proxy container exist on one pod only [negative]", func() {
 		By("Define first pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
-		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
+		tshelper.AppendIstioContainerToPod(put, tsparams.SampleWorkloadImage)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		putb := pod.DefinePod("lifecycle-putb", randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		putb := pod.DefinePod("lifecycle-putb", randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, WaitingTime)
@@ -185,9 +185,9 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 		}
 
 		By("Define a test pod with istio container")
-		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		put := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
-		tshelper.AppendIstioContainerToPod(put, globalhelper.GetConfiguration().General.TestImage)
+		tshelper.AppendIstioContainerToPod(put, tsparams.SampleWorkloadImage)
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

@@ -42,9 +42,9 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
-		globalhelper.AppendContainersToDeployment(deployment, 3, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(deployment, 3, tsparams.SampleWorkloadImage)
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -67,7 +67,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 
 		By("Create and wait until daemonSet is ready")
@@ -94,7 +94,7 @@ var _ = Describe("platform-alteration-is-redhat-release", func() {
 		dep := tshelper.DefineDeploymentWithNonUBIContainer(randomNamespace)
 
 		// Append UBI-based container.
-		globalhelper.AppendContainersToDeployment(dep, 1, globalhelper.GetConfiguration().General.TestImage)
+		globalhelper.AppendContainersToDeployment(dep, 1, tsparams.SampleWorkloadImage)
 
 		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
