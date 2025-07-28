@@ -14,6 +14,11 @@ import (
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 )
 
+const (
+	ErrorDeployOperatorStr   = "Error deploying operator "
+	ErrorLabelingOperatorStr = "Error labeling operator "
+)
+
 var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
