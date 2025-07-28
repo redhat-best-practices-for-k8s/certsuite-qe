@@ -4,22 +4,34 @@ package affiliatedcertification
 
 import (
 	"flag"
+	"fmt"
 	"os/exec"
 
 	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"fmt"
-
 	"runtime"
 	"testing"
 
+	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/tests"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
+	ophelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
+	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
+)
+
+// Suite-level shared variables for operators.
+var (
+	isCloudCasaAlreadyLabeled bool
+	sharedOperatorNamespace   string
+	grafanaOperatorName       string
+	grafanaChannel            string
+	grafanaVersion            string
+	grafanaCSVName            string
 )
 
 func TestAffiliatedCertification(t *testing.T) {
@@ -32,8 +44,6 @@ func TestAffiliatedCertification(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "CNFCert affiliated-certification tests", reporterConfig)
 }
-
-var isCloudCasaAlreadyLabeled bool
 
 var _ = SynchronizedBeforeSuite(func() {
 
@@ -100,13 +110,156 @@ var _ = SynchronizedBeforeSuite(func() {
 		By("Check if catalog sources are available")
 		err = globalhelper.ValidateCatalogSources()
 		Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
+
+		// ==========================================================================
+		// 🚀 SUITE-LEVEL OPERATOR DEPLOYMENT FOR PERFORMANCE OPTIMIZATION
+		// ==========================================================================
+		By("🚀 SUITE OPTIMIZATION: Deploy shared operators for all tests")
+
+		// Create dedicated namespace for shared operators
+		sharedOperatorNamespace = tsparams.TestCertificationNameSpace + "-operators"
+		By(fmt.Sprintf("Create shared operator namespace: %s", sharedOperatorNamespace))
+		err = globalhelper.CreateNamespace(sharedOperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error creating shared operator namespace")
+
+		By("Setup shared operator environment")
+		setupSharedOperatorEnvironment(sharedOperatorNamespace)
+
+		By("Deploy cockroachdb operator (uncertified) for shared use")
+		err = ophelper.DeployOperatorSubscription(
+			"cockroachdb",
+			"cockroachdb",
+			"stable-v6.x",
+			sharedOperatorNamespace,
+			tsparams.CommunityOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			"",
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying shared cockroachdb operator")
+
+		By("Wait for cockroachdb operator to be ready")
+		err = ophelper.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCockroach,
+			sharedOperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Shared cockroachdb operator is not ready")
+
+		By("Query packagemanifest for cockroachdb-certified operator")
+		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
+			"cockroachdb-certified",
+			sharedOperatorNamespace,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error querying cockroachdb-certified manifest")
+
+		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified",
+			sharedOperatorNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying cockroachdb-certified version")
+
+		By(fmt.Sprintf("Deploy cockroachdb-certified operator %s for shared use", "v"+version))
+		err = ophelper.DeployOperatorSubscription(
+			"cockroachdb-certified",
+			"cockroachdb-certified",
+			channel,
+			sharedOperatorNamespace,
+			tsparams.CertifiedOperatorGroup,
+			tsparams.OperatorSourceNamespace,
+			tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying shared cockroachdb-certified operator")
+
+		By("Wait for cockroachdb-certified operator to be ready")
+		err = ophelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixCockroachCertified,
+			sharedOperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Shared cockroachdb-certified operator is not ready")
+
+		By("Query packagemanifest for Grafana operator")
+		var catalogSource string
+		grafanaOperatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", sharedOperatorNamespace)
+		grafanaChannel, grafanaVersion, grafanaCSVName = globalhelper.CheckOperatorChannelAndVersionOrFail(
+			grafanaOperatorName, sharedOperatorNamespace)
+
+		By(fmt.Sprintf("Deploy Grafana operator (%s, %s) for shared use", grafanaChannel, grafanaVersion))
+		err = ophelper.DeployOperatorSubscription(
+			grafanaOperatorName,
+			grafanaOperatorName,
+			grafanaChannel,
+			sharedOperatorNamespace,
+			catalogSource,
+			tsparams.OperatorSourceNamespace,
+			grafanaCSVName,
+			v1alpha1.ApprovalAutomatic,
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying shared Grafana operator")
+
+		By("Wait for Grafana operator to be ready")
+		err = ophelper.WaitUntilOperatorIsReady(grafanaOperatorName,
+			sharedOperatorNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Shared Grafana operator is not ready")
+
+		By("✅ Suite-level operators deployment completed successfully!")
 	}
 }, func() {})
+
+// setupSharedOperatorEnvironment configures the shared operator namespace.
+func setupSharedOperatorEnvironment(namespace string) {
+	By("Clean shared operator namespace")
+	err := globalhelper.CleanNamespace(namespace)
+	Expect(err).ToNot(HaveOccurred(), "Error cleaning shared operator namespace")
+
+	By("Ensure certified catalog source is enabled")
+	catalogEnabled, err := globalhelper.IsCatalogSourceEnabled(
+		tsparams.CertifiedOperatorGroup,
+		tsparams.OperatorSourceNamespace,
+		tsparams.CertifiedOperatorDisplayName)
+	Expect(err).ToNot(HaveOccurred(), "Cannot collect catalogSource object")
+
+	if !catalogEnabled {
+		Expect(globalhelper.EnableCatalogSource(tsparams.CertifiedOperatorGroup)).ToNot(HaveOccurred())
+		Eventually(func() bool {
+			catalogEnabled, err = globalhelper.IsCatalogSourceEnabled(
+				tsparams.CertifiedOperatorGroup,
+				tsparams.OperatorSourceNamespace,
+				tsparams.CertifiedOperatorDisplayName)
+			Expect(err).ToNot(HaveOccurred())
+
+			return catalogEnabled
+		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(BeTrue(),
+			"Certified catalog source is not enabled")
+	}
+
+	By("Deploy OperatorGroup in shared namespace")
+
+	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName, namespace) != nil {
+		err = globalhelper.DeployOperatorGroup(namespace,
+			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
+				namespace,
+				[]string{namespace}),
+		)
+		Expect(err).ToNot(HaveOccurred(), "Error deploying shared operatorgroup")
+	}
+}
+
+// GetSharedOperatorNamespace returns the shared operator namespace for tests to use.
+func GetSharedOperatorNamespace() string {
+	return sharedOperatorNamespace
+}
+
+// GetGrafanaOperatorName returns the grafana operator name for tests to use.
+func GetGrafanaOperatorName() string {
+	return grafanaOperatorName
+}
 
 var _ = SynchronizedAfterSuite(func() {}, func() {
 	By(fmt.Sprintf("Remove %s namespace", tsparams.TestCertificationNameSpace))
 	err := globalhelper.DeleteNamespaceAndWait(tsparams.TestCertificationNameSpace, tsparams.Timeout)
 	Expect(err).ToNot(HaveOccurred())
+
+	// Clean up shared operator namespace
+	if sharedOperatorNamespace != "" {
+		By(fmt.Sprintf("🧹 Clean up shared operator namespace: %s", sharedOperatorNamespace))
+		err = globalhelper.DeleteNamespaceAndWait(sharedOperatorNamespace, tsparams.Timeout)
+		Expect(err).ToNot(HaveOccurred())
+	}
 
 	if isCloudCasaAlreadyLabeled {
 		By("Re-label operator used in other suites")

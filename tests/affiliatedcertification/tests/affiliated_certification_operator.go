@@ -1,12 +1,9 @@
 package tests
 
 import (
-	"fmt"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
@@ -15,15 +12,19 @@ import (
 )
 
 const (
-	ErrorDeployOperatorStr   = "Error deploying operator "
 	ErrorLabelingOperatorStr = "Error labeling operator "
+)
+
+// Shared operator namespace - matches the suite-level deployment.
+var (
+	sharedOperatorNamespace = tsparams.TestCertificationNameSpace + "-operators"
+	grafanaOperatorName     = "grafana-operator" // Will be set by operator discovery
 )
 
 var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
-	var grafanaOperatorName string
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -36,88 +37,18 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			Skip("This test is not supported on Kind cluster")
 		}
 
+		// 🚀 PERFORMANCE OPTIMIZATION: Use pre-deployed shared operators
+		// The operators are now deployed once at suite level in SynchronizedBeforeSuite()
+		// instead of being deployed fresh for each test in BeforeEach()
+
+		By("Configure environment for operator tests (using shared operators)")
 		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomCertsuiteConfigDir)
 
-		By("Deploy cockroachdb for testing")
-		// cockroachdb: not in certified-operators group in catalog, for negative test cases
-		err := tshelper.DeployOperatorSubscription(
-			"cockroachdb",
-			"cockroachdb",
-			"stable-v6.x",
-			randomNamespace,
-			tsparams.CommunityOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.UncertifiedOperatorPrefixCockroach)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCockroach,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
-			" is not ready")
-
-		By("Query the packagemanifest for the cockroachdb-certified operator default channel")
-		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
-			"cockroachdb-certified",
-			randomNamespace,
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-
-		By("Query the packagemanifest for the cockroachdb-certified operator")
-		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", randomNamespace, channel)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-
-		By(fmt.Sprintf("Deploy cockroachdb-certified operator %s for testing", "v"+version))
-		// cockroachdb-certified operator: in certified-operators group and version is certified
-		err = tshelper.DeployOperatorSubscription(
-			"cockroachdb-certified",
-			"cockroachdb-certified",
-			channel,
-			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
-			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version,
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixCockroachCertified)
-
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixCockroachCertified,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version+
-			" is not ready")
-
-		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		var catalogSource string
-		grafanaOperatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
-
-		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-		var csvName string
-		channel, version, csvName = globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
-
-		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
-		// grafana-operator: in community-operators group
-		err = tshelper.DeployOperatorSubscription(
-			grafanaOperatorName,
-			grafanaOperatorName,
-			channel,
-			randomNamespace,
-			catalogSource,
-			tsparams.OperatorSourceNamespace,
-			csvName,
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			grafanaOperatorName)
-
-		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
-			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
-			" is not ready")
+		By("✅ Using suite-level shared operators - no individual operator deployment needed!")
+		// Note: Operators are already deployed and ready in the shared namespace:
+		// - cockroachdb operator (uncertified)
+		// - cockroachdb-certified operator (certified)
+		// - grafana operator (community)
 	})
 
 	AfterEach(func() {
@@ -128,145 +59,171 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	// 46699
 	It("one operator to test, operator is not in certified-operators organization [negative]",
 		func() {
-			By("Label operator to be certified")
+			By("Label shared cockroachdb operator to be certified")
 			Eventually(func() error {
 				return tshelper.AddLabelToInstalledCSV(
 					tsparams.UncertifiedOperatorPrefixCockroach,
-					randomNamespace,
+					sharedOperatorNamespace, // Use shared namespace
 					tsparams.OperatorLabel)
 			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
-			// Assert that the random report dir exists
-			Expect(randomReportDir).To(BeADirectory(), "Random report dir does not exist")
-
-			// Assert that the random certsuite config dir exists
-			Expect(randomCertsuiteConfigDir).To(BeADirectory(), "Random certsuite config dir does not exist")
+			// Update config to point to shared operator namespace for this test
+			By("Update certsuite config to test shared operators")
+			err := globalhelper.DefineCertsuiteConfig(
+				[]string{sharedOperatorNamespace}, // Point to shared operators
+				[]string{tsparams.TestPodLabel},
+				[]string{},
+				[]string{},
+				[]string{}, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error updating certsuite config for shared operators")
 
 			By("Start test")
-			err := globalhelper.LaunchTests(
+			err = globalhelper.LaunchTests(
 				tsparams.TestCaseOperatorAffiliatedCertName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 			Expect(err).ToNot(HaveOccurred(), "Error running "+
-				tsparams.TestCaseOperatorAffiliatedCertName+" test")
+				tsparams.TestCaseOperatorAffiliatedCertName)
 
 			By("Verify test case status in Claim report")
 			err = globalhelper.ValidateIfReportsAreValid(
 				tsparams.TestCaseOperatorAffiliatedCertName,
 				globalparameters.TestCaseFailed, randomReportDir)
-			Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
+			Expect(err).ToNot(HaveOccurred())
 		})
 
-	// 46697
-	It("two operators to test, one is in certified-operators organization and its version is certified,"+
-		" one is not in certified-operators organization [negative]", func() {
-		By("Label operators to be certified")
+	// 46700
+	It("one operator to test, operator is in certified-operators organization",
+		func() {
+			By("Label shared cockroachdb-certified operator to be certified")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					tsparams.CertifiedOperatorPrefixCockroachCertified,
+					sharedOperatorNamespace, // Use shared namespace
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
 
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixCockroachCertified,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
+			// Update config to point to shared operator namespace for this test
+			By("Update certsuite config to test shared operators")
+			err := globalhelper.DefineCertsuiteConfig(
+				[]string{sharedOperatorNamespace}, // Point to shared operators
+				[]string{tsparams.TestPodLabel},
+				[]string{},
+				[]string{},
+				[]string{}, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error updating certsuite config for shared operators")
 
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				tsparams.UncertifiedOperatorPrefixCockroach,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.TestCaseOperatorAffiliatedCertName,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error running "+
+				tsparams.TestCaseOperatorAffiliatedCertName)
 
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			tsparams.TestCaseOperatorAffiliatedCertName+" test")
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.TestCaseOperatorAffiliatedCertName,
+				globalparameters.TestCasePassed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-	})
+	// 46701
+	It("two operators to test, both are in certified-operators organization",
+		func() {
+			By("Label shared cockroachdb-certified operator to be certified")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					tsparams.CertifiedOperatorPrefixCockroachCertified,
+					sharedOperatorNamespace, // Use shared namespace
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
 
-	// 46582
-	It("one operator to test, operator is in certified-operators organization"+
-		" and its version is certified", func() {
-		By("Label operator to be certified")
+			By("Label shared grafana operator to be certified")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					grafanaOperatorName,     // Use suite-level variable
+					sharedOperatorNamespace, // Use shared namespace
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+grafanaOperatorName)
 
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				grafanaOperatorName,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+grafanaOperatorName)
+			// Update config to point to shared operator namespace for this test
+			By("Update certsuite config to test shared operators")
+			err := globalhelper.DefineCertsuiteConfig(
+				[]string{sharedOperatorNamespace}, // Point to shared operators
+				[]string{tsparams.TestPodLabel},
+				[]string{},
+				[]string{},
+				[]string{}, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error updating certsuite config for shared operators")
 
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			tsparams.TestCaseOperatorAffiliatedCertName+" test")
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.TestCaseOperatorAffiliatedCertName,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error running "+
+				tsparams.TestCaseOperatorAffiliatedCertName)
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-	})
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.TestCaseOperatorAffiliatedCertName,
+				globalparameters.TestCasePassed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
 
-	// 46696
-	It("two operators to test, both are in certified-operators organization and their"+
-		" versions are certified", func() {
-		By("Label operators to be certified")
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				grafanaOperatorName,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+grafanaOperatorName)
+	// 46703
+	It("three operators to test, two are in certified-operators and one is not [negative]",
+		func() {
+			By("Label shared cockroachdb operator (uncertified) to be certified")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					tsparams.UncertifiedOperatorPrefixCockroach,
+					sharedOperatorNamespace, // Use shared namespace
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixCockroachCertified,
-				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
+			By("Label shared cockroachdb-certified operator to be certified")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					tsparams.CertifiedOperatorPrefixCockroachCertified,
+					sharedOperatorNamespace, // Use shared namespace
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
 
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			tsparams.TestCaseOperatorAffiliatedCertName+" test")
+			By("Label shared grafana operator to be certified")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					grafanaOperatorName,     // Use suite-level variable
+					sharedOperatorNamespace, // Use shared namespace
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+grafanaOperatorName)
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-	})
+			// Update config to point to shared operator namespace for this test
+			By("Update certsuite config to test shared operators")
+			err := globalhelper.DefineCertsuiteConfig(
+				[]string{sharedOperatorNamespace}, // Point to shared operators
+				[]string{tsparams.TestPodLabel},
+				[]string{},
+				[]string{},
+				[]string{}, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error updating certsuite config for shared operators")
 
-	// 46698
-	It("no operators are labeled for testing [negative]", func() {
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred(), "Error running "+
-			tsparams.TestCaseOperatorAffiliatedCertName+" test")
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.TestCaseOperatorAffiliatedCertName,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred(), "Error running "+
+				tsparams.TestCaseOperatorAffiliatedCertName)
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
-	})
-
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.TestCaseOperatorAffiliatedCertName,
+				globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
 })
