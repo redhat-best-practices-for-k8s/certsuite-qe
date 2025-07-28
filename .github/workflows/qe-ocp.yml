@@ -51,7 +51,26 @@ jobs:
       - name: Disable default go problem matcher
         run: echo "::remove-matcher owner=go::"
 
+      - name: Check for CRC Pull Secret
+        id: check-secret
+        run: |
+          if [ -z "${{ secrets.CRC_PULL_SECRET }}" ]; then
+            echo "❌ WARNING: CRC_PULL_SECRET is not available"
+            echo "This is expected for:"
+            echo "  - External pull requests from forks"
+            echo "  - Repositories without the secret configured"
+            echo ""
+            echo "OCP cluster setup will be SKIPPED."
+            echo "To run full OCP tests, ensure CRC_PULL_SECRET is set in repository secrets."
+            echo "For more info: https://docs.github.com/en/actions/security-guides/encrypted-secrets"
+            echo "has-secret=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ CRC_PULL_SECRET is available - proceeding with OCP cluster setup"
+            echo "has-secret=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup up OCP cluster
+        if: steps.check-secret.outputs.has-secret == 'true'
         uses: palmsoftware/quick-ocp@v0.0.16
         with:
           ocpPullSecret: $OCP_PULL_SECRET
@@ -62,6 +81,7 @@ jobs:
           OCP_PULL_SECRET: ${{ secrets.CRC_PULL_SECRET }}
 
       - name: Wait for all pods to be ready and show them
+        if: steps.check-secret.outputs.has-secret == 'true'
         run: |
           while oc get pods --all-namespaces --no-headers | grep -vE 'Running|Completed'; do echo "⏳ Waiting for pods..."; sleep 5; done; echo "✅ All pods are Running or Completed."
           oc get pods -A
@@ -74,9 +94,16 @@ jobs:
           ref: main
 
       - name: Run the tests (against image)
+        if: steps.check-secret.outputs.has-secret == 'true'
         uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
         with:
           timeout_minutes: 150
           max_attempts: 3
           command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite CERTSUITE_IMAGE=${{env.TEST_CERTSUITE_IMAGE_NAME}} CERTSUITE_IMAGE_TAG=${{env.TEST_CERTSUITE_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=false ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
 
+      - name: Skip message for missing pull secret
+        if: steps.check-secret.outputs.has-secret == 'false'
+        run: |
+          echo "⏭️  SKIPPED: OCP tests were skipped due to missing CRC_PULL_SECRET"
+          echo "This is normal for external pull requests from forks."
+          echo "The workflow completed successfully, but no OCP cluster tests were executed."
