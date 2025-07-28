@@ -140,7 +140,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			grafanaOperatorName)
 
-		err = waitUntilOperatorIsReady(grafanaOperatorName,
+		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -172,7 +172,8 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	// 66143
 	It("one operator not installed with OLM [negative]", func() {
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
+		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail(tsparams.OperatorPackageNamePrefixLightweight,
+			randomNamespace)
 
 		// PostgreSQL operator can be deployed in the same namespace (OwnNamespace install mode)
 		By("Deploy postgresql operator group")
@@ -196,7 +197,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			postgresOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql",
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -204,7 +205,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				"cloud-native-postgresql",
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
@@ -262,7 +263,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			grafanaOperatorName)
 
-		err = waitUntilOperatorIsReady(grafanaOperatorName,
+		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -277,7 +278,8 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			ErrorLabelingOperatorStr+grafanaOperatorName)
 
 		By("Query the packagemanifest for postgresql operator package name and catalog source for second operator")
-		postgresOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
+		postgresOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrFail(tsparams.OperatorPackageNamePrefixLightweight,
+			randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName + " for second operator")
 		channel2, version2, csvName2 := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
@@ -296,7 +298,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			postgresOperatorName)
 
-		err = waitUntilOperatorIsReady("cloud-native-postgresql",
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName2+
 			" is not ready")
@@ -304,7 +306,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				"cloud-native-postgresql",
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
@@ -328,7 +330,8 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	// 66145
 	It("two operators, one not installed with OLM [negative]", func() {
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("cloud-native-postgresql", randomNamespace)
+		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail(tsparams.OperatorPackageNamePrefixLightweight,
+			randomNamespace)
 
 		// PostgreSQL operator can be deployed in the same namespace (OwnNamespace install mode)
 		By("Deploy postgresql operator group")
@@ -352,7 +355,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			postgresOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady("cloud-native-postgresql",
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -402,7 +405,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				"cloud-native-postgresql",
+				tsparams.OperatorPrefixLightweight,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),

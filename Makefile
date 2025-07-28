@@ -20,6 +20,7 @@ RESET   := \033[0m
 		lint \
 		deps-update \
 		gofmt \
+		fmt \
 		test-all \
 		test-features \
 		install \
@@ -74,6 +75,10 @@ gofmt: ## Check Go code formatting (use 'gofmt -w' to fix issues)
 	else \
 		echo "$(GREEN)✅ All Go files are properly formatted$(RESET)"; \
 	fi
+
+fmt: ## Format Go code using gofmt
+	@echo "$(BOLD)$(BLUE)✨ Formatting Go code...$(RESET)"
+	@gofmt -s -w `find . -path ./vendor -prune -o -type f -name '*.go' -print` && echo "$(GREEN)✅ Go code formatted successfully$(RESET)" || (echo "$(RED)❌ Failed to format Go code$(RESET)" && exit 1)
 
 # Dependency Management
 deps-update: ## Update and vendor Go module dependencies

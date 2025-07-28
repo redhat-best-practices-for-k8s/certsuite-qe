@@ -2,17 +2,14 @@ package tests
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 
-	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
@@ -69,54 +66,4 @@ func preConfigureAffiliatedCertificationEnvironment(namespace, configDir string)
 		[]string{},
 		[]string{}, configDir)
 	Expect(err).ToNot(HaveOccurred(), "Error defining certsuite config file")
-}
-
-func waitUntilOperatorIsReady(csvPrefix, namespace string) error {
-	var err error
-
-	var csv *v1alpha1.ClusterServiceVersion
-
-	Eventually(func() bool {
-		csv, err = tshelper.GetCsvByPrefix(csvPrefix, namespace)
-		if csv != nil && csv.Status.Phase != v1alpha1.CSVPhaseNone {
-			return csv.Status.Phase != "InstallReady" &&
-				csv.Status.Phase != "Deleting" &&
-				csv.Status.Phase != "Replacing" &&
-				csv.Status.Phase != "Unknown"
-		}
-
-		if err != nil {
-			log.Printf("Error getting csv: %s", err)
-
-			return false
-		}
-
-		return false
-	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
-		csvPrefix+" is not ready.")
-
-	return err
-}
-
-func approveInstallPlanWhenReady(csvName, namespace string) {
-	Eventually(func() bool {
-		installPlan, err := globalhelper.GetInstallPlanByCSV(namespace, csvName)
-		if err != nil {
-			return false
-		}
-
-		if installPlan.Spec.Approval == v1alpha1.ApprovalAutomatic {
-			return true
-		}
-
-		if installPlan.Status.Phase == v1alpha1.InstallPlanPhaseRequiresApproval {
-			err = globalhelper.ApproveInstallPlan(namespace,
-				installPlan)
-
-			return err == nil
-		}
-
-		return false
-	}, tsparams.Timeout, tsparams.PollingInterval).Should(Equal(true),
-		csvName+" install plan is not ready.")
 }

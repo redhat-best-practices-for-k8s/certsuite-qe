@@ -10,8 +10,13 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
-	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
+)
+
+const (
+	ErrorDeployOperatorStr   = "Error deploying operator "
+	ErrorLabelingOperatorStr = "Error labeling operator "
 )
 
 var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
@@ -48,7 +53,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.UncertifiedOperatorPrefixCockroach)
 
-		err = waitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCockroach,
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCockroach,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
 			" is not ready")
@@ -81,7 +86,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.CertifiedOperatorPrefixCockroachCertified)
 
-		err = waitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixCockroachCertified,
+		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixCockroachCertified,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version+
 			" is not ready")
@@ -109,7 +114,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			grafanaOperatorName)
 
-		err = waitUntilOperatorIsReady(grafanaOperatorName,
+		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
