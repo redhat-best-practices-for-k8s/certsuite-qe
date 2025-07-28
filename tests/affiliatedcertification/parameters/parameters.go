@@ -22,6 +22,8 @@ const (
 	Timeout         = 5 * time.Minute
 	TimeoutLabelCsv = 2 * time.Minute
 	PollingInterval = 5 * time.Second
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 )
 
 var (

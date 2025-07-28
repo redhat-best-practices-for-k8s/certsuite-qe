@@ -69,7 +69,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, configSuite.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 
@@ -160,7 +160,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Define daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, configSuite.General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
 		daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{configSuite.General.CnfNodeLabel: ""})
 

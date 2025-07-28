@@ -186,7 +186,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.TestTargetLabels, tsparams.TestDaemonSetName)
 
 		By("Create daemonSet")

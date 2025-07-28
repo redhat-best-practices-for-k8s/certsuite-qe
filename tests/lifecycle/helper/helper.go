@@ -30,9 +30,9 @@ func DefineDeployment(replica int32, containers int, name, namespace string) (*a
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -41,20 +41,20 @@ func DefineDeployment(replica int32, containers int, name, namespace string) (*a
 func DefineReplicaSet(name, namespace string) *appsv1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
 		namespace,
-		globalhelper.GetConfiguration().General.TestImage,
+		tsparams.SampleWorkloadImage,
 		tsparams.TestTargetLabels)
 }
 
 func DefineStatefulSet(name, namespace string) *appsv1.StatefulSet {
 	return statefulset.DefineStatefulSet(name,
 		namespace,
-		globalhelper.GetConfiguration().General.TestImage,
+		tsparams.SampleWorkloadImage,
 		tsparams.TestTargetLabels)
 }
 
 func DefinePod(name, namespace string) *corev1.Pod {
 	return pod.DefinePod(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestTargetLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestTargetLabels)
 }
 
 func DefineDaemonSetWithImagePullPolicy(name, namespace string, image string, pullPolicy corev1.PullPolicy) *appsv1.DaemonSet {

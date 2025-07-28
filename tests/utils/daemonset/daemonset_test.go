@@ -34,9 +34,9 @@ func TestRedefineDaemonSetWithNodeSelector(t *testing.T) {
 	assert.Equal(t, "", ds.Spec.Template.Spec.NodeSelector["node-role.kubernetes.io/master"])
 }
 
-func TestRedefineDaemonSetWithLabel(t *testing.T) {
+func TestRedefineWithLabel(t *testing.T) {
 	ds := DefineDaemonSet("default", "nginx", map[string]string{"app": "nginx"}, "nginx")
-	RedefineDaemonSetWithLabel(ds, map[string]string{"app": "nginx"})
+	RedefineWithLabel(ds, map[string]string{"app": "nginx"})
 	assert.Equal(t, "nginx", ds.Spec.Template.Labels["app"])
 }
 

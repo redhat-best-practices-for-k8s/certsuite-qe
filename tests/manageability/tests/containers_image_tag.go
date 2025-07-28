@@ -9,6 +9,10 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
+const (
+	sampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
+)
+
 var _ = Describe("manageability-containers-image-tag", func() {
 	var randomNamespace string
 	var randomReportDir string
@@ -58,7 +62,7 @@ var _ = Describe("manageability-containers-image-tag", func() {
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			sampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())

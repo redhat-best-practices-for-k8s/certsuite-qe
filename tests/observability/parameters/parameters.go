@@ -4,12 +4,15 @@ import "time"
 
 const (
 	CertsuiteTestSuiteName = "observability"
+	ObservabilityNamespace = "observability-ns"
 
 	// Certsuite test case names.
 	CertsuiteContainerLoggingTcName     = "observability-container-logging"
 	CertsuiteCrdStatusTcName            = "observability-crd-status"
 	CertsuiteTerminationMsgPolicyTcName = "observability-termination-policy"
 	CertsuitePodDisruptionBudgetTcName  = "observability-pod-disruption-budget"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 
 	TestNamespace = "observability-ns"
 

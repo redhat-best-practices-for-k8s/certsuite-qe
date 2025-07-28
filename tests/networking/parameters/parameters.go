@@ -55,3 +55,27 @@ type IPOutputInterface struct {
 	Address   string   `json:"address"`
 	Broadcast string   `json:"broadcast"`
 }
+
+const (
+	CertsuiteTestSuiteName = "networking"
+	NetworkingNamespace    = "networking-ns"
+
+	// Certsuite test case names.
+	CertsuiteNetworkingIcmpv4TcName               = "networking-icmpv4-connectivity"
+	CertsuiteNetworkingIcmpv6TcName               = "networking-icmpv6-connectivity"
+	CertsuiteNetworkingOcpReservedPortsTcName     = "networking-ocp-reserved-ports"
+	CertsuiteNetworkingDefaultNetworkTcName       = "networking-network-policy-deny-all"
+	CertsuiteNetworkingUnderTestContainersTcName  = "networking-undeclared-container-ports"
+	CertsuiteNetworkingUnderTestPodsTcName        = "networking-dual-stack-service"
+	CertsuiteNetworkingReservedPartnerPortsTcName = "networking-reserved-partner-ports"
+	CertsuiteNetworkingPtpDaemonTcName            = "networking-ptp-daemon"
+	CertsuiteNetworkingRestartUnderTestTcName     = "networking-restart-on-reboot"
+	CertsuiteNetworkingDpdkCPUPinningTcName       = "networking-dpdk-cpu-pinning"
+	CertsuiteNetworkingDpdkExecProbeTcName        = "networking-dpdk-cpu-pinning-exec-probe"
+	CertsuiteNetworkingMultipleIPTcName           = "networking-multiple-ip-families"
+	CertsuiteNetworkingMultusBridgeTcName         = "networking-multus-bridge"
+	CertsuiteNetworkingMultusIpamTcName           = "networking-multus-ipam"
+	CertsuiteNetworkingMultusNodeSelectorTcName   = "networking-multus-node-selector"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+)

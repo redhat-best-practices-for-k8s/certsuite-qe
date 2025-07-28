@@ -57,7 +57,7 @@ func DefineDaemonSetWithStdoutBuffers(name, namespace string, stdoutBuffers []st
 }
 
 func DefinePodWithStdoutBuffer(name, namespace string, stdoutBuffer string) *corev1.Pod {
-	newPod := pod.DefinePod(name, namespace, globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+	newPod := pod.DefinePod(name, namespace, tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 	// Change command to use the stdout buffer.
 	newPod.Spec.Containers[0].Command = getContainerCommandWithStdout(stdoutBuffer)
@@ -67,7 +67,7 @@ func DefinePodWithStdoutBuffer(name, namespace string, stdoutBuffer string) *cor
 
 func DefineDeploymentWithoutTargetLabels(name, namespace string) *appsv1.Deployment {
 	return deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage,
+		tsparams.SampleWorkloadImage,
 		map[string]string{"fakeLabelKey": "fakeLabelValue"})
 }
 
@@ -190,7 +190,7 @@ func createContainerSpecsFromStdoutBuffers(stdoutBuffers []string) []corev1.Cont
 		containerSpecs = append(containerSpecs,
 			corev1.Container{
 				Name:    fmt.Sprintf("%s-%d", tsparams.TestContainerBaseName, index),
-				Image:   globalhelper.GetConfiguration().General.TestImage,
+				Image:   tsparams.SampleWorkloadImage,
 				Command: getContainerCommandWithStdout(stdoutLines),
 			},
 		)
@@ -206,7 +206,7 @@ func createContainerSpecsFromTerminationMsgPolicies(policies []corev1.Terminatio
 	for index := 0; index < numContainers; index++ {
 		container := corev1.Container{
 			Name:    fmt.Sprintf("%s-%d", tsparams.TestContainerBaseName, index),
-			Image:   globalhelper.GetConfiguration().General.TestImage,
+			Image:   tsparams.SampleWorkloadImage,
 			Command: tsparams.TestContainerNormalCommand,
 		}
 
@@ -225,7 +225,7 @@ func defineDeploymentWithContainerSpecs(name, namespace string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.Deployment {
 	// Define base deployment
 	dep := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+		tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	deployment.RedefineWithReplicaNumber(dep, int32(replicas))
@@ -238,7 +238,7 @@ func defineStatefulSetWithContainerSpecs(name, namespace string, replicas int,
 	containerSpecs []corev1.Container) *appsv1.StatefulSet {
 	// Define base statefulSet
 	sts := statefulset.DefineStatefulSet(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+		tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 	// Customize its replicas and container specs.
 	statefulset.RedefineWithReplicaNumber(sts, int32(replicas))
@@ -251,7 +251,7 @@ func defineDaemonSetWithContainerSpecs(name, namespace string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
 	// Define base daemonSet
 	daemonSet := daemonset.DefineDaemonSet(namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels, name)
+		tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels, name)
 
 	// Customize its container specs.
 	daemonset.RedefineWithContainerSpecs(daemonSet, containerSpecs)

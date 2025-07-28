@@ -26,7 +26,6 @@ type Config struct {
 		ReportDirAbsPath          string `yaml:"report" envconfig:"REPORT_DIR_NAME"`
 		CnfNodeLabel              string `yaml:"cnf_worker_label" envconfig:"ROLE_WORKER_CNF"`
 		WorkerNodeLabel           string `yaml:"worker_label" envconfig:"ROLE_WORKER"`
-		TestImage                 string `yaml:"test_image" envconfig:"TEST_IMAGE"`
 		VerificationLogLevel      string `yaml:"verification_log_level" envconfig:"VERIFICATION_LOG_LEVEL"`
 		DebugCertsuite            string `envconfig:"DEBUG_CERTSUITE"`
 		CertsuiteConfigDir        string `yaml:"certsuite_config_dir" envconfig:"CERTSUITE_CONFIG_DIR"`
@@ -39,6 +38,9 @@ type Config struct {
 		DisableIntrusiveTests     string `yaml:"disable_intrusive_tests" envconfig:"DISABLE_INTRUSIVE_TESTS"`
 		ContainerEngine           string `default:"docker" yaml:"container_engine" envconfig:"CONTAINER_ENGINE"`
 		UseBinary                 string `default:"false" yaml:"use_binary" envconfig:"USE_BINARY"`
+		// EnableInfraTolerations enables tolerations for infrastructure taints
+		// (disk-pressure, memory-pressure, etc.) to improve test reliability in CI environments
+		EnableInfraTolerations string `default:"true" yaml:"enable_infrastructure_tolerations" envconfig:"ENABLE_INFRASTRUCTURE_TOLERATIONS"`
 	} `yaml:"general"`
 }
 

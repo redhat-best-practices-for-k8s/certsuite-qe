@@ -9,6 +9,10 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
+const (
+	imageWithSSHDaemon = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
+)
+
 var _ = Describe("Access-control ssh-daemons,", func() {
 	var randomNamespace string
 	var randomReportDir string
@@ -39,7 +43,7 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			imageWithSSHDaemon, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
@@ -61,7 +65,7 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 		By("Define pod")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			imageWithSSHDaemon, tsparams.TestDeploymentLabels)
 
 		err := pod.RedefineWithContainerExecCommand(testPod, tsparams.SSHDaemonStartContainerCommand, 0)
 		Expect(err).ToNot(HaveOccurred())

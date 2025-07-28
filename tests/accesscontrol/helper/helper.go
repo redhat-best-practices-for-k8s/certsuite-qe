@@ -28,15 +28,29 @@ import (
 	egiNodes "github.com/openshift-kni/eco-goinfra/pkg/nodes"
 )
 
+func DefineDeploymentWithImage(replica int32, containers int, name, namespace, image string) (*appsv1.Deployment, error) {
+	if containers < 1 {
+		return nil, errors.New("invalid number of containers")
+	}
+
+	deploymentStruct := deployment.DefineDeployment(name, namespace,
+		image, tsparams.TestDeploymentLabels)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, image)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+
+	return deploymentStruct, nil
+}
+
 func DefineDeployment(replica int32, containers int, name, namespace string) (*appsv1.Deployment, error) {
 	if containers < 1 {
 		return nil, errors.New("invalid number of containers")
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -48,9 +62,9 @@ func DefineStatefulSet(replica int32, containers int, name, namespace string) (*
 	}
 
 	sts := statefulset.DefineStatefulSet(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestStatefulSetLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestStatefulSetLabels)
 
-	globalhelper.AppendContainersToStatefulSet(sts, containers-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToStatefulSet(sts, containers-1, tsparams.SampleWorkloadImage)
 	statefulset.RedefineWithReplicaNumber(sts, replica)
 
 	return sts, nil
@@ -59,9 +73,9 @@ func DefineStatefulSet(replica int32, containers int, name, namespace string) (*
 func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32,
 	containers int, name, namespace, serviceAccountName string) (*appsv1.Deployment, error) {
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 	deployment.AppendServiceAccount(deploymentStruct, serviceAccountName)
 
@@ -74,9 +88,9 @@ func DefineDeploymentWithNamespace(replica int32, containers int, name string, n
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 
 	return deploymentStruct, nil
@@ -89,13 +103,13 @@ func DefineDeploymentWithContainerPorts(name, namespace string, replicaNumber in
 	}
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, globalhelper.GetConfiguration().General.TestImage)
+	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, tsparams.SampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
 	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports,
-		globalhelper.GetConfiguration().General.TestImage, "test")
+		tsparams.SampleWorkloadImage, "test")
 
 	deployment.RedefineWithContainerSpecs(deploymentStruct, portSpecs)
 

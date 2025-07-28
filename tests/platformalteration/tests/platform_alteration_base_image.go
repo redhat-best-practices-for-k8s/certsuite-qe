@@ -51,7 +51,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName,
 			randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
 
 		By("Create and wait until deployment is ready")
@@ -75,7 +75,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("One daemonSet, running test image", func() {
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 
 		By("Create and wait until daemonSet is ready")
@@ -99,7 +99,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 	It("Two deployments, one pod each, change container base image by creating a file [negative]", func() {
 		By("Define first deployment")
 		deploymenta := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
@@ -120,7 +120,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define second deployment")
 		deploymentb := deployment.DefineDeployment("platform-alteration-dpb",
 			randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
@@ -142,7 +142,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Define statefulSet")
 		statefulSet := statefulset.DefineStatefulSet(tsparams.TestStatefulSetName,
 			randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage,
+			tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
 		statefulset.RedefineWithPrivilegedContainer(statefulSet)
 

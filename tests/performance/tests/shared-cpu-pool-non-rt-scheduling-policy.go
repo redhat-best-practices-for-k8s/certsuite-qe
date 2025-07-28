@@ -44,7 +44,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 	It("One pod with container running in shared cpu pool", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
@@ -68,7 +68,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() 
 	It("One pod with container running in exclusive cpu pool", func() {
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.CertsuiteTargetPodLabels)
+			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")

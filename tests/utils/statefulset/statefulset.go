@@ -73,6 +73,56 @@ func RedefineWithStartUpProbe(statefulSet *appsv1.StatefulSet) {
 	}
 }
 
+// RedefineWithInfrastructureTolerations adds tolerations for common infrastructure taints
+// that can occur in test/CI environments. This helps improve test reliability when
+// nodes have transient resource pressure.
+func RedefineWithInfrastructureTolerations(statefulSet *appsv1.StatefulSet) {
+	infrastructureTolerations := []corev1.Toleration{
+		{
+			Key:      "node.kubernetes.io/disk-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/pid-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/network-unavailable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/unreachable",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for transient network issues
+			TolerationSeconds: ptr.To[int64](30),
+		},
+		{
+			Key:      "node.kubernetes.io/not-ready",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a short time to allow for node startup
+			TolerationSeconds: ptr.To[int64](30),
+		},
+	}
+
+	// Append to existing tolerations rather than replacing them
+	statefulSet.Spec.Template.Spec.Tolerations = append(statefulSet.Spec.Template.Spec.Tolerations, infrastructureTolerations...)
+}
+
+// RedefineWithCustomTolerations adds custom tolerations to the statefulset.
+func RedefineWithCustomTolerations(statefulSet *appsv1.StatefulSet, tolerations []corev1.Toleration) {
+	statefulSet.Spec.Template.Spec.Tolerations = append(statefulSet.Spec.Template.Spec.Tolerations, tolerations...)
+}
+
 func RedefineWithContainerSpecs(statefulSet *appsv1.StatefulSet, containerSpecs []corev1.Container) {
 	statefulSet.Spec.Template.Spec.Containers = containerSpecs
 }

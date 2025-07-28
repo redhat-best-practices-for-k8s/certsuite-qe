@@ -37,4 +37,6 @@ const (
 	CertsuiteRunTimeClass = "performance-rtc"
 
 	DisableStr = "disable"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 )

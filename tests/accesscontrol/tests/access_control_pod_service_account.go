@@ -43,7 +43,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 
 		By("Define pod with service account")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, tsparams.TestServiceAccount)
 
@@ -66,7 +66,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 	It("one pod with empty service account [negative]", func() {
 		By("Define pod with empty service account")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
@@ -88,7 +88,7 @@ var _ = Describe("Access-control pod-service-account,", func() {
 	It("one pod with default service account [negative]", func() {
 		By("Define pod with empty service account")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "default")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)

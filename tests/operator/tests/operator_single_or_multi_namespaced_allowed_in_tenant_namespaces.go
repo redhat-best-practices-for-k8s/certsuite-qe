@@ -152,7 +152,7 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			globalhelper.GetConfiguration().General.TestImage, tsparams.TestDeploymentLabels)
+			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())

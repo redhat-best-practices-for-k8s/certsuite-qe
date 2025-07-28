@@ -29,4 +29,6 @@ const (
 	// Certsuite test case names.
 	CertsuiteContainerPortName = "manageability-container-port-name-format"
 	CertsuiteContainerImageTag = "manageability-containers-image-tag"
+
+	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 )

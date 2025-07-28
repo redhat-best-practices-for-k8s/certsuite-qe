@@ -44,7 +44,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 	// 51310
 	It("SELinux is enforcing on all nodes", func() {
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
@@ -87,7 +87,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 		Skip("Skipping. Remove this skip when we can detect if SELinux is enabled on the node")
 
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, globalhelper.GetConfiguration().General.TestImage,
+		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
