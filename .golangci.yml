@@ -43,7 +43,7 @@ linters:
     - usetesting
     - varnamelen
     - wastedassign
-    - wsl
+    - wsl_v5
   settings:
     funlen:
       lines: 175
@@ -63,9 +63,14 @@ linters:
       dot-import-whitelist:
         - github.com/onsi/gomega
         - github.com/onsi/ginkgo/v2
-    wsl:
-      strict-append: false
-      allow-assign-and-anything: true
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
+      disable:
+        - append
+        - assign
+        - err
   exclusions:
     generated: lax
     presets:
