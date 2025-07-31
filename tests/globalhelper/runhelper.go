@@ -7,11 +7,73 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
 	"github.com/golang/glog"
 )
+
+const (
+	// MaxRetries is the maximum number of retries for test execution.
+	MaxRetries = 3
+	// TestTimeout is the timeout duration for test execution.
+	TestTimeout = 15 * time.Minute
+)
+
+// executeWithRetry executes a command with timeout and retry logic.
+func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File) error {
+	var err error
+
+	for attempt := 1; attempt <= MaxRetries; attempt++ {
+		// Create a context with timeout for each attempt
+		ctx, cancel := context.WithTimeout(context.Background(), TestTimeout)
+
+		// Create a new command for each attempt
+		cmd := exec.CommandContext(ctx, cmdPath, args...)
+		if stdout != nil {
+			cmd.Stdout = stdout
+		}
+
+		if stderr != nil {
+			cmd.Stderr = stderr
+		}
+
+		glog.V(5).Info(fmt.Sprintf("Attempt %d/%d: Running test: %s", attempt, MaxRetries, testCaseName))
+
+		err = cmd.Run()
+
+		// If the command succeeded, return success
+		if err == nil {
+			cancel()
+
+			return nil
+		}
+
+		// Check if it was a timeout error
+		if ctx.Err() == context.DeadlineExceeded {
+			glog.V(5).Info(fmt.Sprintf("Attempt %d/%d timed out after %v for test: %s",
+				attempt, MaxRetries, TestTimeout, testCaseName))
+			cancel()
+
+			// If this wasn't the last attempt, continue retrying
+			if attempt < MaxRetries {
+				glog.V(5).Info(fmt.Sprintf("Retrying test: %s", testCaseName))
+
+				continue
+			}
+		} else {
+			// If it's not a timeout error, don't retry
+			cancel()
+
+			break
+		}
+
+		cancel()
+	}
+
+	return err
+}
 
 func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir string, configDir string) error {
 	// check that the binary exists and is executable in the certsuite repo path
@@ -45,19 +107,19 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--sanitize-claim", "true",
 	}
 
-	cmd := exec.CommandContext(context.TODO(), fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
-		GetConfiguration().General.CertsuiteEntryPointBinary))
-	cmd.Args = append(cmd.Args, testArgs...)
+	cmdPath := fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
+		GetConfiguration().General.CertsuiteEntryPointBinary)
 
-	fmt.Printf("cmd: %s\n", cmd.String())
+	fmt.Printf("cmd: %s %s\n", cmdPath, strings.Join(testArgs, " "))
 
 	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
+	var outfile *os.File
 	if debugCertsuite {
-		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
+		outfile = GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
 
@@ -65,15 +127,12 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
-
-		cmd.Stdout = outfile
-		cmd.Stderr = outfile
 	}
 
-	err = cmd.Run()
+	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile)
 	if err != nil {
-		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s",
-			testCaseName, err, cmd.String())
+		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s %s",
+			testCaseName, err, cmdPath, strings.Join(testArgs, " "))
 	}
 
 	CopyClaimFileToTcFolder(testCaseName, tcNameForReport, reportDir)
@@ -110,8 +169,6 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	// print the command
 	glog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
 
-	cmd := exec.CommandContext(context.TODO(), containerEngine, certsuiteCmdArgs...)
-
 	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
@@ -127,15 +184,12 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
-
-		cmd.Stdout = outfile
-		cmd.Stderr = outfile
 	}
 
-	err = cmd.Run()
+	err = executeWithRetry(containerEngine, certsuiteCmdArgs, testCaseName, outfile, outfile)
 	if err != nil {
-		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s",
-			testCaseName, err, cmd.String())
+		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s %s",
+			testCaseName, err, containerEngine, strings.Join(certsuiteCmdArgs, " "))
 		if debugCertsuite {
 			errStr += ", outFile=" + outfile.Name()
 		}
