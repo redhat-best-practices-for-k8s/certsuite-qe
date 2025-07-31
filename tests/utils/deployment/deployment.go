@@ -276,14 +276,9 @@ func RedefineWithCPUResources(deployment *appsv1.Deployment, limit string, req s
 	}
 }
 
-func RedefineWithAllRequestsAndLimits(deployment *appsv1.Deployment, memoryLimit string, cpuLimit string,
-	memoryRequest string, cpuRequest string) {
+func RedefineWithAllRequests(deployment *appsv1.Deployment, memoryRequest string, cpuRequest string) {
 	for i := range deployment.Spec.Template.Spec.Containers {
 		deployment.Spec.Template.Spec.Containers[i].Resources = corev1.ResourceRequirements{
-			Limits: corev1.ResourceList{
-				corev1.ResourceMemory: resource.MustParse(memoryLimit),
-				corev1.ResourceCPU:    resource.MustParse(cpuLimit),
-			},
 			Requests: corev1.ResourceList{
 				corev1.ResourceMemory: resource.MustParse(memoryRequest),
 				corev1.ResourceCPU:    resource.MustParse(cpuRequest),

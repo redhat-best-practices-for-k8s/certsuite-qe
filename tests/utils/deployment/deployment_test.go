@@ -338,17 +338,15 @@ func TestRedefineWithCPUResources(t *testing.T) {
 	assert.Equal(t, "150m", deployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String())
 }
 
-func TestRedefineWithAllRequestsAndLimits(t *testing.T) {
+func TestRedefineWithAllRequests(t *testing.T) {
 	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
 
-	RedefineWithAllRequestsAndLimits(deployment, "150m", "100m", "150Mi", "100Mi")
+	RedefineWithAllRequests(deployment, "150Mi", "100m")
 	assert.NotNil(t, deployment)
 
-	// Assert that the deployment has resources set.
-	assert.Equal(t, "100Mi", deployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String())
-	assert.Equal(t, "100m", deployment.Spec.Template.Spec.Containers[0].Resources.Limits.Cpu().String())
+	// Assert that the deployment has requests set.
+	assert.Equal(t, "100m", deployment.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().String())
 	assert.Equal(t, "150Mi", deployment.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().String())
-	assert.Equal(t, "150m", deployment.Spec.Template.Spec.Containers[0].Resources.Limits.Memory().String())
 }
 
 func TestRedefineWithMemoryRequestsAndLimitsAndCPURequest(t *testing.T) {
