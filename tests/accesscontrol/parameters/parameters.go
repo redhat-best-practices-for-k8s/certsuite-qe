@@ -55,7 +55,7 @@ const (
 	TestCaseNameAccessControlPodAutomountToken      = "access-control-pod-automount-service-account-token"
 	TestCaseNameAccessControlPodHostNetwork         = "access-control-pod-host-network"
 	TestCaseNameAccessControlSysPtraceCapability    = "access-control-sys-ptrace-capability"
-	TestCaseNameAccessControlRequestsAndLimits      = "access-control-requests-and-limits"
+	TestCaseNameAccessControlRequests               = "access-control-requests"
 	TestCaseNameAccessControlNo1337Uid              = "access-control-no-1337-uid"
 	TestCaseNameAccessControlNamespaceResourceQuota = "access-control-namespace-resource-quota"
 	TestCaseNameAccessControlIpcLockCapability      = "access-control-ipc-lock-capability-check"

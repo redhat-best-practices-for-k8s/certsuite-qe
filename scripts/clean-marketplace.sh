@@ -8,5 +8,5 @@ PODS=$(kubectl get pods -n "$NAMESPACE" -o name)
 
 # Delete each pod
 for pod in $PODS; do
-	kubectl delete "$pod" -n "$NAMESPACE"
+	kubectl delete "$pod" -n "$NAMESPACE" --ignore-not-found
 done
