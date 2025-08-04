@@ -3,6 +3,7 @@ package daemonset
 import (
 	"fmt"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/infra"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -11,7 +12,7 @@ import (
 )
 
 func DefineDaemonSet(namespace string, image string, label map[string]string, name string) *appsv1.DaemonSet {
-	return &appsv1.DaemonSet{
+	daemonSet := &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace},
@@ -32,13 +33,18 @@ func DefineDaemonSet(namespace string, image string, label map[string]string, na
 							Name:    "test",
 							Image:   image,
 							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
+
+	// Automatically add infrastructure tolerations if enabled
+	RedefineWithInfrastructureTolerationsIfEnabled(daemonSet)
+
+	return daemonSet
 }
 
 // DefineDaemonSetWithContainerSpecs returns k8s statefulset using configurable
 // labels and container specs.
 func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string]string,
 	containerSpecs []corev1.Container) *appsv1.DaemonSet {
-	return &appsv1.DaemonSet{
+	daemonSet := &appsv1.DaemonSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
 			Namespace: namespace},
@@ -58,6 +64,11 @@ func DefineDaemonSetWithContainerSpecs(name, namespace string, labels map[string
 			},
 		},
 	}
+
+	// Automatically add infrastructure tolerations if enabled
+	RedefineWithInfrastructureTolerationsIfEnabled(daemonSet)
+
+	return daemonSet
 }
 
 func RedefineDaemonSetWithNodeSelector(daemonSet *appsv1.DaemonSet, nodeSelector map[string]string) {
@@ -112,6 +123,14 @@ func RedefineWithInfrastructureTolerations(daemonSet *appsv1.DaemonSet) {
 // RedefineWithCustomTolerations adds custom tolerations to the daemonset.
 func RedefineWithCustomTolerations(daemonSet *appsv1.DaemonSet, tolerations []corev1.Toleration) {
 	daemonSet.Spec.Template.Spec.Tolerations = append(daemonSet.Spec.Template.Spec.Tolerations, tolerations...)
+}
+
+// RedefineWithInfrastructureTolerationsIfEnabled conditionally adds infrastructure tolerations
+// based on configuration. This is the recommended way to apply infrastructure tolerations.
+func RedefineWithInfrastructureTolerationsIfEnabled(daemonSet *appsv1.DaemonSet) {
+	if infra.ShouldEnableInfrastructureTolerations() {
+		RedefineWithInfrastructureTolerations(daemonSet)
+	}
 }
 
 func RedefineWithLabel(daemonSet *appsv1.DaemonSet, label map[string]string) {

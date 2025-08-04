@@ -1,6 +1,7 @@
 package statefulset
 
 import (
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/infra"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -10,7 +11,7 @@ import (
 // DefineStatefulSet returns statefulset struct.
 func DefineStatefulSet(statefulSetName string, namespace string,
 	image string, label map[string]string) *appsv1.StatefulSet {
-	return &appsv1.StatefulSet{
+	statefulSet := &appsv1.StatefulSet{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      statefulSetName,
 			Namespace: namespace},
@@ -32,6 +33,11 @@ func DefineStatefulSet(statefulSetName string, namespace string,
 							Name:    "test",
 							Image:   image,
 							Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}}}
+
+	// Automatically add infrastructure tolerations if enabled
+	RedefineWithInfrastructureTolerationsIfEnabled(statefulSet)
+
+	return statefulSet
 }
 
 // RedefineWithReadinessProbe adds readiness probe to statefulSet manifest.
@@ -121,6 +127,14 @@ func RedefineWithInfrastructureTolerations(statefulSet *appsv1.StatefulSet) {
 // RedefineWithCustomTolerations adds custom tolerations to the statefulset.
 func RedefineWithCustomTolerations(statefulSet *appsv1.StatefulSet, tolerations []corev1.Toleration) {
 	statefulSet.Spec.Template.Spec.Tolerations = append(statefulSet.Spec.Template.Spec.Tolerations, tolerations...)
+}
+
+// RedefineWithInfrastructureTolerationsIfEnabled conditionally adds infrastructure tolerations
+// based on configuration. This is the recommended way to apply infrastructure tolerations.
+func RedefineWithInfrastructureTolerationsIfEnabled(statefulSet *appsv1.StatefulSet) {
+	if infra.ShouldEnableInfrastructureTolerations() {
+		RedefineWithInfrastructureTolerations(statefulSet)
+	}
 }
 
 func RedefineWithContainerSpecs(statefulSet *appsv1.StatefulSet, containerSpecs []corev1.Container) {

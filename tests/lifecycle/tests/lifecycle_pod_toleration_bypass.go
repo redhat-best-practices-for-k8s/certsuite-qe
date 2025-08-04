@@ -39,7 +39,7 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 	// 54984
 	It("one deployment, one pod, no tolerations modified", func() {
 		By("Define deployment with no tolerations modified")
-		dep, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment", randomNamespace)
+		dep, err := tshelper.DefineDeploymentWithoutInfrastructureTolerations(1, 1, "lifecycledeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
@@ -137,14 +137,14 @@ var _ = Describe("Lifecycle pod-toleration-bypass", func() {
 	// 54990
 	It("two deployments, one pod each, no tolerations modified", func() {
 		By("Define deployments with no tolerations modified")
-		dep, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment", randomNamespace)
+		dep, err := tshelper.DefineDeploymentWithoutInfrastructureTolerations(1, 1, "lifecycledeployment", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 1")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		dep2, err := tshelper.DefineDeployment(1, 1, "lifecycledeployment2", randomNamespace)
+		dep2, err := tshelper.DefineDeploymentWithoutInfrastructureTolerations(1, 1, "lifecycledeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
