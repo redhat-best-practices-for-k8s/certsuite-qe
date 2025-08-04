@@ -3,9 +3,8 @@ package deployment
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"strings"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/infra"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -19,7 +18,14 @@ type MultusAnnotation struct {
 
 // DefineDeployment returns deployment struct.
 func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *appsv1.Deployment {
-	return &appsv1.Deployment{
+	return DefineDeploymentWithInfrastructureTolerations(deploymentName, namespace, image, label, true)
+}
+
+// DefineDeploymentWithInfrastructureTolerations returns deployment struct with optional infrastructure tolerations.
+func DefineDeploymentWithInfrastructureTolerations(
+	deploymentName string, namespace string, image string, label map[string]string, enableInfrastructureTolerations bool,
+) *appsv1.Deployment {
+	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      deploymentName,
 			Namespace: namespace,
@@ -50,6 +56,13 @@ func DefineDeployment(deploymentName string, namespace string, image string, lab
 			},
 		},
 	}
+
+	// Automatically add infrastructure tolerations if enabled
+	if enableInfrastructureTolerations {
+		RedefineWithInfrastructureTolerationsIfEnabled(deployment)
+	}
+
+	return deployment
 }
 
 // RedefineAllContainersWithPreStopSpec redefines deployment with requested lifecycle/preStop spec.
@@ -469,20 +482,9 @@ func RedefineWithCustomTolerations(deployment *appsv1.Deployment, tolerations []
 // RedefineWithInfrastructureTolerationsIfEnabled conditionally adds infrastructure tolerations
 // based on configuration. This is the recommended way to apply infrastructure tolerations.
 func RedefineWithInfrastructureTolerationsIfEnabled(deployment *appsv1.Deployment) {
-	if shouldEnableInfrastructureTolerations() {
+	if infra.ShouldEnableInfrastructureTolerations() {
 		RedefineWithInfrastructureTolerations(deployment)
 	}
-}
-
-// shouldEnableInfrastructureTolerations checks if infrastructure tolerations should be enabled
-// based on environment configuration.
-func shouldEnableInfrastructureTolerations() bool {
-	enabled := os.Getenv("ENABLE_INFRASTRUCTURE_TOLERATIONS")
-	if enabled == "" {
-		return true
-	}
-
-	return strings.ToLower(enabled) == "true"
 }
 
 // RedefineWithContainersSecurityContextAll redefines deployment with extended permissions.

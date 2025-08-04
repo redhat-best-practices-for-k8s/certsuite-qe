@@ -148,15 +148,30 @@ func TestRedefineWithCustomTolerations(t *testing.T) {
 
 	RedefineWithCustomTolerations(testPod, customTolerations)
 
-	assert.Equal(t, 1, len(testPod.Spec.Tolerations))
-	assert.Equal(t, "custom-taint", testPod.Spec.Tolerations[0].Key)
-	assert.Equal(t, "custom-value", testPod.Spec.Tolerations[0].Value)
+	// Should have infrastructure tolerations + custom toleration
+	assert.Greater(t, len(testPod.Spec.Tolerations), 1, "Should have infrastructure tolerations plus custom toleration")
+
+	// Find the custom toleration among all tolerations
+	var foundCustomToleration *corev1.Toleration
+
+	for i := range testPod.Spec.Tolerations {
+		if testPod.Spec.Tolerations[i].Key == "custom-taint" {
+			foundCustomToleration = &testPod.Spec.Tolerations[i]
+
+			break
+		}
+	}
+
+	assert.NotNil(t, foundCustomToleration, "Should find the custom toleration")
+	assert.Equal(t, "custom-taint", foundCustomToleration.Key)
+	assert.Equal(t, "custom-value", foundCustomToleration.Value)
+	assert.Equal(t, corev1.TaintEffectNoExecute, foundCustomToleration.Effect)
 }
 
 func TestRedefineWithInfrastructureTolerationsIfEnabled(t *testing.T) {
 	// Test with default (should be enabled since default is now true)
 	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
-	RedefineWithInfrastructureTolerationsIfEnabled(testPod)
+	// Note: DefinePod() already calls RedefineWithInfrastructureTolerationsIfEnabled internally
 
 	// Should have tolerations since default is true
 	assert.Greater(t, len(testPod.Spec.Tolerations), 0, "Should have tolerations with default configuration")
@@ -164,7 +179,7 @@ func TestRedefineWithInfrastructureTolerationsIfEnabled(t *testing.T) {
 	// Test disabled case
 	t.Setenv("ENABLE_INFRASTRUCTURE_TOLERATIONS", "false")
 	testPod2 := DefinePod("test-pod-2", "test-namespace", "nginx", map[string]string{"app": "nginx"})
-	RedefineWithInfrastructureTolerationsIfEnabled(testPod2)
+	// Note: DefinePod() already calls RedefineWithInfrastructureTolerationsIfEnabled internally
 
 	// Should NOT have tolerations when explicitly disabled
 	assert.Equal(t, 0, len(testPod2.Spec.Tolerations), "Should not have tolerations when disabled")

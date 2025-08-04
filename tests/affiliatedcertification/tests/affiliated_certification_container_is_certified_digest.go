@@ -19,6 +19,10 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
+		if globalhelper.IsKindCluster() {
+			Skip("Skip test due to image pull missing credentials in Kind")
+		}
+
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
@@ -52,10 +56,6 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	// 66765
 	It("one container to test, container is certified digest", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("Skip test due to image pull missing credentials in Kind")
-		}
-
 		By("Define deployment with certified container")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
@@ -103,10 +103,6 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	// 66767
 	It("two containers to test, both are certified digest", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("Skip test due to image pull missing credentials in Kind")
-		}
-
 		By("Define deployments with certified containers")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
@@ -137,10 +133,6 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	// 66768
 	It("two containers to test, one is certified, one is not digest [negative]", func() {
-		if globalhelper.IsKindCluster() {
-			Skip("Skip test due to image pull missing credentials in Kind")
-		}
-
 		By("Define deployments with different container certification statuses")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)

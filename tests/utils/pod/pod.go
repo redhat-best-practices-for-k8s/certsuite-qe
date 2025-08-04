@@ -2,9 +2,8 @@ package pod
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/infra"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/utils/ptr"
@@ -55,7 +54,7 @@ const (
 
 // DefinePod defines pod manifest based on given params.
 func DefinePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
-	return &corev1.Pod{
+	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      podName,
 			Namespace: namespace,
@@ -72,6 +71,11 @@ func DefinePod(podName string, namespace string, image string, label map[string]
 					Name:    "test",
 					Image:   image,
 					Command: []string{"/bin/bash", "-c", "sleep INF"}}}}}
+
+	// Automatically add infrastructure tolerations if enabled
+	RedefineWithInfrastructureTolerationsIfEnabled(pod)
+
+	return pod
 }
 
 func RedefineWithServiceAccount(pod *corev1.Pod, serviceAccountName string) {
@@ -287,20 +291,9 @@ func RedefineWithCustomTolerations(pod *corev1.Pod, tolerations []corev1.Tolerat
 // RedefineWithInfrastructureTolerationsIfEnabled conditionally adds infrastructure tolerations
 // based on configuration. This is the recommended way to apply infrastructure tolerations.
 func RedefineWithInfrastructureTolerationsIfEnabled(pod *corev1.Pod) {
-	if shouldEnableInfrastructureTolerations() {
+	if infra.ShouldEnableInfrastructureTolerations() {
 		RedefineWithInfrastructureTolerations(pod)
 	}
-}
-
-// shouldEnableInfrastructureTolerations checks if infrastructure tolerations should be enabled
-// based on environment configuration.
-func shouldEnableInfrastructureTolerations() bool {
-	enabled := os.Getenv("ENABLE_INFRASTRUCTURE_TOLERATIONS")
-	if enabled == "" {
-		return true
-	}
-
-	return strings.ToLower(enabled) == "true"
 }
 
 func RedefineWith1GiHugepages(pod *corev1.Pod, hugepages int) {

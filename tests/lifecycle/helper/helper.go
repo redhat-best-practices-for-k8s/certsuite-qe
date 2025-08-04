@@ -38,6 +38,24 @@ func DefineDeployment(replica int32, containers int, name, namespace string) (*a
 	return deploymentStruct, nil
 }
 
+// DefineDeploymentWithoutInfrastructureTolerations defines a deployment without automatic infrastructure tolerations.
+// This is useful for tests that need to verify toleration bypass behavior with clean state.
+func DefineDeploymentWithoutInfrastructureTolerations(replica int32, containers int, name, namespace string) (
+	*appsv1.Deployment, error,
+) {
+	if containers < 1 {
+		return nil, errors.New("invalid containers number")
+	}
+
+	deploymentStruct := deployment.DefineDeploymentWithInfrastructureTolerations(name, namespace,
+		tsparams.SampleWorkloadImage, tsparams.TestTargetLabels, false)
+
+	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
+	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
+
+	return deploymentStruct, nil
+}
+
 func DefineReplicaSet(name, namespace string) *appsv1.ReplicaSet {
 	return replicaset.DefineReplicaSet(name,
 		namespace,
