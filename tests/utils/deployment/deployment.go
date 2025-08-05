@@ -14,6 +14,8 @@ import (
 
 type MultusAnnotation struct {
 	Name string `json:"name"`
+	// Explicitly set the namespace so Multus resolves the NAD reliably across clusters
+	Namespace string `json:"namespace,omitempty"`
 }
 
 // DefineDeployment returns deployment struct.
@@ -101,7 +103,10 @@ func RedefineWithMultus(deployment *appsv1.Deployment, nadNames []string) {
 	var nadAnnotations []MultusAnnotation
 
 	for _, nadName := range nadNames {
-		nadAnnotations = append(nadAnnotations, MultusAnnotation{Name: nadName})
+		nadAnnotations = append(nadAnnotations, MultusAnnotation{
+			Name:      nadName,
+			Namespace: deployment.Spec.Template.Namespace,
+		})
 	}
 
 	bString, _ := json.Marshal(nadAnnotations)

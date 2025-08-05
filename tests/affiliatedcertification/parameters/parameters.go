@@ -46,7 +46,7 @@ var (
 	ContainerRepoOnlyRedHatRegistry     = ";registry.connect.redhat.com;;"
 	CertifiedContainerURLNodeJs         = "registry.access.redhat.com/ubi8/nodejs-12:latest"
 	CertifiedContainerURLCockroachDB    = "registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17" // 'latest' tag is not available
-	UncertifiedContainerURLCnfTest      = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
+	UncertifiedContainerURLCnfTest      = "quay.io/fedora/fedora-minimal:40"
 
 	TestCaseOperatorAffiliatedCertName        = "affiliated-certification-operator-is-certified"
 	TestHelmChartCertified                    = "affiliated-certification-helmchart-is-certified"

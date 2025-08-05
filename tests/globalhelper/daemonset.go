@@ -82,6 +82,19 @@ func getDaemonSetPullPolicy(daemonset *appsv1.DaemonSet, client *egiClients.Sett
 	return ds.Object.Spec.Template.Spec.Containers[0].ImagePullPolicy, nil
 }
 
+func GetRunningDaemonsetByName(name, namespace string) (*appsv1.DaemonSet, error) {
+	return getRunningDaemonsetByName(name, namespace, egiClients.New(""))
+}
+
+func getRunningDaemonsetByName(name, namespace string, client *egiClients.Settings) (*appsv1.DaemonSet, error) {
+	ds, err := egiDaemonset.Pull(client, name, namespace)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get daemonset %q (ns %s): %w", name, namespace, err)
+	}
+
+	return ds.Object, nil
+}
+
 func GetRunningDaemonset(ds *appsv1.DaemonSet) (*appsv1.DaemonSet, error) {
 	return getRunningDaemonset(ds, egiClients.New(""))
 }

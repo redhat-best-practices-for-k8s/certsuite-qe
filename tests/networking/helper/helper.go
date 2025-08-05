@@ -187,6 +187,11 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port, targetPort in
 func DefineAndCreateNadOnCluster(name, namespace, network string) error {
 	nadOneInterface := nad.DefineNad(name, namespace)
 
+	// Auto-detect master uplink from host if not given in NAD
+	if masterIf, _ := detectHostDefaultInterface(namespace); masterIf != "" {
+		nad.AddMasterToNad(nadOneInterface, masterIf)
+	}
+
 	if network != "" {
 		nad.RedefineNadWithWhereaboutsIpam(nadOneInterface, network)
 	}
@@ -200,6 +205,27 @@ func DefineAndCreateNadOnCluster(name, namespace, network string) error {
 	}
 
 	return nil
+}
+
+// detectHostDefaultInterface executes `ip route get 1.1.1.1` in a hostNetwork pod to find the uplink
+func detectHostDefaultInterface(namespace string) (string, error) {
+	// Ensure a privileged hostNetwork daemonset exists
+	if err := defineAndCreatePrivilegedDaemonset(namespace); err != nil {
+		return "", err
+	}
+	podsList, err := globalhelper.GetListOfPodsInNamespace(namespace)
+	if err != nil || len(podsList.Items) == 0 {
+		return "", fmt.Errorf("no pods available to detect master interface")
+	}
+	pod := podsList.Items[0]
+	out, err := globalhelper.ExecCommand(
+		pod,
+		[]string{"sh", "-lc", "ip -4 route get 1.1.1.1 | awk '/dev/{print $5}'"},
+	)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(out.String()), nil
 }
 
 func GetClusterMultusInterfaces(namespace string) ([]string, error) {
