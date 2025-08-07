@@ -93,7 +93,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	}
 
 	// enable the collector
-	err = os.Setenv("CERTSUITE_ENABLE_DATA_COLLECTION", "true")
+	err = os.Setenv("CERTSUITE_ENABLE_DATA_COLLECTION", "false")
 	if err != nil {
 		return fmt.Errorf("failed to set CERTSUITE_ENABLE_DATA_COLLECTION: %w", err)
 	}
@@ -164,7 +164,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"--config-file", "/usr/certsuite/config/certsuite_config.yml",
 		"--output-dir", "/usr/certsuite/results",
 		"--omit-artifacts-zip-file", "true",
-		"--enable-data-collection", "true",
+		"--enable-data-collection", "false",
 		"--sanitize-claim", "true",
 		"--label-filter", testCaseName,
 	}
