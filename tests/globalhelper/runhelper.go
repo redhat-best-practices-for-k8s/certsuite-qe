@@ -142,6 +142,9 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 
 func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir string, configDir string) error {
 	// use the container to run the tests
+	// Note: Unlike launchTestsViaBinary, this function does not use executeWithRetry to avoid
+	// abandoned containers. When executeWithRetry times out, the container process may continue
+	// running even after the parent process gives up, leading to resource leaks.
 	containerEngine := GetConfiguration().General.ContainerEngine
 	glog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
 
@@ -169,14 +172,15 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	// print the command
 	glog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
 
+	cmd := exec.CommandContext(context.TODO(), containerEngine, certsuiteCmdArgs...)
+
 	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
-	var outfile *os.File
 	if debugCertsuite {
-		outfile = GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
+		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
 
 		defer outfile.Close()
 
@@ -184,14 +188,19 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
+
+		cmd.Stdout = outfile
+		cmd.Stderr = outfile
 	}
 
-	err = executeWithRetry(containerEngine, certsuiteCmdArgs, testCaseName, outfile, outfile)
+	err = cmd.Run()
 	if err != nil {
-		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s %s",
-			testCaseName, err, containerEngine, strings.Join(certsuiteCmdArgs, " "))
-		if debugCertsuite {
-			errStr += ", outFile=" + outfile.Name()
+		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s",
+			testCaseName, err, cmd.String())
+		if debugCertsuite && cmd.Stdout != nil {
+			if outfile, ok := cmd.Stdout.(*os.File); ok {
+				errStr += ", outFile=" + outfile.Name()
+			}
 		}
 
 		return errors.New(errStr)
