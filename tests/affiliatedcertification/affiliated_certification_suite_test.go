@@ -89,6 +89,10 @@ var _ = SynchronizedBeforeSuite(func() {
 	}
 
 	if !globalhelper.IsKindCluster() {
+		By("Ensure openshift-marketplace namespace exists")
+		err = globalhelper.CreateNamespace("openshift-marketplace")
+		Expect(err).ToNot(HaveOccurred())
+
 		By("Create community-operators catalog source")
 		err = globalhelper.CreateCommunityOperatorsCatalogSource()
 		Expect(err).ToNot(HaveOccurred())
