@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
-        # suite: [operator]
+        # suite: [affiliatedcertification]
     env:
       SHELL: /bin/bash
       KUBECONFIG: '/home/runner/.kube/config'
@@ -81,12 +81,13 @@ jobs:
 
       - name: Setup up OCP cluster
         if: steps.check-secret.outputs.has-secret == 'true'
-        uses: palmsoftware/quick-ocp@v0.0.16
+        uses: palmsoftware/quick-ocp@5eca874ab6dcdf5d32778922904527fb6ba89464
         with:
           ocpPullSecret: $OCP_PULL_SECRET
           bundleCache: true
           waitForOperatorsReady: true
-          crcMemory: 12000
+          enableMicroshift: true
+          # crcMemory: 12500
         env:
           OCP_PULL_SECRET: ${{ secrets.CRC_PULL_SECRET }}
 
