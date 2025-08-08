@@ -20,7 +20,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", func() {
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
-			globalhelper.BeforeEachSetupWithRandomNamespace(tsparams.PerformanceNamespace)
+			globalhelper.BeforeEachSetupWithRandomPrivilegedNamespace(tsparams.PerformanceNamespace)
 
 		By("Define certsuite config file")
 		err := globalhelper.DefineCertsuiteConfig(
