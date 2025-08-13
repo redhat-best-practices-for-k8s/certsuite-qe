@@ -63,6 +63,17 @@ func GetConfiguration() *config.Config {
 		glog.Fatalf("can not load configuration - %s", err)
 	}
 
+	// Apply optional memory/GC tuning to the current test process (with defaults)
+	if conf.General.GoMemLimit != "" {
+		_ = os.Setenv("GOMEMLIMIT", conf.General.GoMemLimit)
+	}
+	if conf.General.GoGC != "" {
+		_ = os.Setenv("GOGC", conf.General.GoGC)
+	} else if os.Getenv("GOGC") == "" {
+		// Default to a moderately conservative GC to reduce memory footprint
+		_ = os.Setenv("GOGC", "75")
+	}
+
 	return conf
 }
 

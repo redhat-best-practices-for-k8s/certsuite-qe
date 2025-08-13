@@ -22,7 +22,7 @@ const (
 )
 
 // executeWithRetry executes a command with timeout and retry logic.
-func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File) error {
+func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File, env []string) error {
 	var err error
 
 	for attempt := 1; attempt <= MaxRetries; attempt++ {
@@ -31,6 +31,9 @@ func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout
 
 		// Create a new command for each attempt
 		cmd := exec.CommandContext(ctx, cmdPath, args...)
+		if len(env) > 0 {
+			cmd.Env = env
+		}
 		if stdout != nil {
 			cmd.Stdout = stdout
 		}
@@ -129,7 +132,22 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		}
 	}
 
-	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile)
+	// construct environment for the child process without mutating global env
+	childEnv := os.Environ()
+	if GetConfiguration().General.CertsuiteGoMemLimit != "" {
+		childEnv = append(childEnv, fmt.Sprintf("GOMEMLIMIT=%s", GetConfiguration().General.CertsuiteGoMemLimit))
+	}
+	if GetConfiguration().General.CertsuiteGoGC != "" {
+		childEnv = append(childEnv, fmt.Sprintf("GOGC=%s", GetConfiguration().General.CertsuiteGoGC))
+	} else if os.Getenv("GOGC") == "" {
+		// Default GOGC for certsuite if not set anywhere
+		childEnv = append(childEnv, "GOGC=75")
+	}
+	if GetConfiguration().General.CertsuiteGoMaxProcs != "" {
+		childEnv = append(childEnv, fmt.Sprintf("GOMAXPROCS=%s", GetConfiguration().General.CertsuiteGoMaxProcs))
+	}
+
+	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile, childEnv)
 	if err != nil {
 		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s %s",
 			testCaseName, err, cmdPath, strings.Join(testArgs, " "))
@@ -148,10 +166,30 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	containerEngine := GetConfiguration().General.ContainerEngine
 	glog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
 
-	certsuiteCmdArgs := []string{
-		"run",
-		"--rm",
-		"--network", "host",
+	// Build the container run command with optional resource limits and env
+	certsuiteCmdArgs := []string{"run", "--rm", "--network", "host"}
+	// Set default container memory limit to 500m unless explicitly provided
+	if mem := GetConfiguration().General.CertsuiteContainerMemory; mem != "" {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "--memory", mem)
+	} else {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "--memory", "500m")
+	}
+	if cpus := GetConfiguration().General.CertsuiteContainerCPUs; cpus != "" {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "--cpus", cpus)
+	}
+	// Pass GC/mem envs through to the container
+	if GetConfiguration().General.CertsuiteGoMemLimit != "" {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "-e", fmt.Sprintf("GOMEMLIMIT=%s", GetConfiguration().General.CertsuiteGoMemLimit))
+	}
+	if GetConfiguration().General.CertsuiteGoGC != "" {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "-e", fmt.Sprintf("GOGC=%s", GetConfiguration().General.CertsuiteGoGC))
+	} else if os.Getenv("GOGC") == "" {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "-e", "GOGC=75")
+	}
+	if GetConfiguration().General.CertsuiteGoMaxProcs != "" {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "-e", fmt.Sprintf("GOMAXPROCS=%s", GetConfiguration().General.CertsuiteGoMaxProcs))
+	}
+	certsuiteCmdArgs = append(certsuiteCmdArgs,
 		"-v", fmt.Sprintf("%s:%s", os.Getenv("KUBECONFIG"), "/usr/certsuite/kubeconfig/config:Z"),
 		"-v", fmt.Sprintf("%s:%s", GetConfiguration().General.DockerConfigDir+"/config", "/usr/certsuite/dockerconfig/config:Z"),
 		"-v", fmt.Sprintf("%s:%s", configDir, "/usr/certsuite/config:Z"),
@@ -167,7 +205,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"--enable-data-collection", "false",
 		"--sanitize-claim", "true",
 		"--label-filter", testCaseName,
-	}
+	)
 
 	// print the command
 	glog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))

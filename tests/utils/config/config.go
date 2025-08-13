@@ -41,6 +41,15 @@ type Config struct {
 		// EnableInfraTolerations enables tolerations for infrastructure taints
 		// (disk-pressure, memory-pressure, etc.) to improve test reliability in CI environments
 		EnableInfraTolerations string `default:"true" yaml:"enable_infrastructure_tolerations" envconfig:"ENABLE_INFRASTRUCTURE_TOLERATIONS"`
+		// Optional memory/GC tuning for the test runner process
+		GoMemLimit string `envconfig:"GO_TEST_GOMEMLIMIT"`
+		GoGC       string `envconfig:"GO_TEST_GOGC"`
+		// Optional memory/GC tuning for certsuite execution
+		CertsuiteGoMemLimit      string `envconfig:"CERTSUITE_GOMEMLIMIT"`
+		CertsuiteGoGC            string `envconfig:"CERTSUITE_GOGC"`
+		CertsuiteGoMaxProcs      string `envconfig:"CERTSUITE_GOMAXPROCS"`
+		CertsuiteContainerMemory string `envconfig:"CERTSUITE_CONTAINER_MEMORY"`
+		CertsuiteContainerCPUs   string `envconfig:"CERTSUITE_CONTAINER_CPUS"`
 	} `yaml:"general"`
 }
 
