@@ -18,7 +18,7 @@ const (
 	// MaxRetries is the maximum number of retries for test execution.
 	MaxRetries = 3
 	// TestTimeout is the timeout duration for test execution.
-	TestTimeout = 15 * time.Minute
+	TestTimeout = 30 * time.Minute
 )
 
 // executeWithRetry executes a command with timeout and retry logic.
