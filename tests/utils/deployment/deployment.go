@@ -3,6 +3,7 @@ package deployment
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/infra"
 	appsv1 "k8s.io/api/apps/v1"
@@ -16,9 +17,78 @@ type MultusAnnotation struct {
 	Name string `json:"name"`
 }
 
-// DefineDeployment returns deployment struct.
+// DefineDeployment returns deployment struct with environment-aware resource limits.
 func DefineDeployment(deploymentName string, namespace string, image string, label map[string]string) *appsv1.Deployment {
-	return DefineDeploymentWithInfrastructureTolerations(deploymentName, namespace, image, label, true)
+	return DefineDeploymentWithEnvironmentAwareResources(deploymentName, namespace, image, label)
+}
+
+// DefineDeploymentWithResourceLimits returns deployment struct with specific resource limits applied.
+func DefineDeploymentWithResourceLimits(deploymentName string, namespace string, image string, label map[string]string, resourceRequirements corev1.ResourceRequirements) *appsv1.Deployment {
+	deployment := DefineDeploymentWithInfrastructureTolerations(deploymentName, namespace, image, label, true)
+
+	// Apply resource limits to all containers
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = resourceRequirements
+	}
+
+	return deployment
+}
+
+// DefineDeploymentWithEnvironmentAwareResources returns deployment with resource limits based on environment.
+func DefineDeploymentWithEnvironmentAwareResources(deploymentName string, namespace string, image string, label map[string]string) *appsv1.Deployment {
+	deployment := DefineDeploymentWithInfrastructureTolerations(deploymentName, namespace, image, label, true)
+
+	// Apply environment-aware resource limits
+	resourceRequirements := infra.GetDefaultResourceRequirements()
+
+	// Special handling for database containers that need more resources
+	if isDatabaseImage(image) {
+		if infra.IsConstrainedEnvironment() {
+			resourceRequirements = infra.GetConstrainedResourceRequirementsForDatabase()
+		} else {
+			// Use standard but still apply some limits
+			resourceRequirements = infra.GetStandardResourceRequirements()
+		}
+	} else if isLightweightImage(image) {
+		// Use minimal resources for lightweight images
+		resourceRequirements = infra.GetMinimalResourceRequirements()
+	}
+
+	// Apply resource limits to all containers
+	for i := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[i].Resources = resourceRequirements
+	}
+
+	return deployment
+}
+
+// isDatabaseImage checks if the image is likely a database container that needs more resources.
+func isDatabaseImage(image string) bool {
+	dbImages := []string{
+		"cockroach", "postgres", "mysql", "mongodb", "mongo", "redis", "cassandra",
+		"elasticsearch", "mariadb", "oracle", "mssql", "influxdb", "timescaledb",
+	}
+
+	for _, dbName := range dbImages {
+		if strings.Contains(strings.ToLower(image), dbName) {
+			return true
+		}
+	}
+	return false
+}
+
+// isLightweightImage checks if the image is a lightweight container.
+func isLightweightImage(image string) bool {
+	lightweightImages := []string{
+		"ubi-micro", "alpine", "distroless", "scratch", "busybox",
+	}
+
+	for _, lightName := range lightweightImages {
+		if strings.Contains(strings.ToLower(image), lightName) {
+			return true
+		}
+	}
+	return false
 }
 
 // DefineDeploymentWithInfrastructureTolerations returns deployment struct with optional infrastructure tolerations.
@@ -440,14 +510,35 @@ func RedefineWithInfrastructureTolerations(deployment *appsv1.Deployment) {
 			Effect:   corev1.TaintEffectNoSchedule,
 		},
 		{
+			Key:      "node.kubernetes.io/disk-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a reasonable time to allow disk cleanup
+			TolerationSeconds: ptr.To[int64](300),
+		},
+		{
 			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a shorter time for memory pressure
+			TolerationSeconds: ptr.To[int64](120),
+		},
+		{
+			Key:      "node.kubernetes.io/pid-pressure",
 			Operator: corev1.TolerationOpExists,
 			Effect:   corev1.TaintEffectNoSchedule,
 		},
 		{
 			Key:      "node.kubernetes.io/pid-pressure",
 			Operator: corev1.TolerationOpExists,
-			Effect:   corev1.TaintEffectNoSchedule,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate briefly for PID pressure
+			TolerationSeconds: ptr.To[int64](60),
 		},
 		{
 			Key:      "node.kubernetes.io/network-unavailable",

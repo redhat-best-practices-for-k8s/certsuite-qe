@@ -90,14 +90,35 @@ func RedefineWithInfrastructureTolerations(statefulSet *appsv1.StatefulSet) {
 			Effect:   corev1.TaintEffectNoSchedule,
 		},
 		{
+			Key:      "node.kubernetes.io/disk-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a reasonable time to allow disk cleanup
+			TolerationSeconds: ptr.To[int64](300),
+		},
+		{
 			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoSchedule,
+		},
+		{
+			Key:      "node.kubernetes.io/memory-pressure",
+			Operator: corev1.TolerationOpExists,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate for a shorter time for memory pressure
+			TolerationSeconds: ptr.To[int64](120),
+		},
+		{
+			Key:      "node.kubernetes.io/pid-pressure",
 			Operator: corev1.TolerationOpExists,
 			Effect:   corev1.TaintEffectNoSchedule,
 		},
 		{
 			Key:      "node.kubernetes.io/pid-pressure",
 			Operator: corev1.TolerationOpExists,
-			Effect:   corev1.TaintEffectNoSchedule,
+			Effect:   corev1.TaintEffectNoExecute,
+			// Tolerate briefly for PID pressure
+			TolerationSeconds: ptr.To[int64](60),
 		},
 		{
 			Key:      "node.kubernetes.io/network-unavailable",

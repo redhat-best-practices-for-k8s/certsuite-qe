@@ -21,6 +21,8 @@ concurrency:
 
 env:
   TEST_REPO: redhat-best-practices-for-k8s/certsuite
+  CONSTRAINED_ENVIRONMENT: "true"
+  ENABLE_INFRASTRUCTURE_TOLERATIONS: "true"
 
 jobs:
   build-and-store-binary:

@@ -73,6 +73,9 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		// print the conditions
 		fmt.Printf("Deployment %s conditions: %v\n", testDeployment.Name, testDeployment.Status.Conditions)
 
+		// Add detailed pod-level debugging
+		printPodDebugInfo(client, deployment.Namespace, deployment.Name)
+
 		for _, condition := range testDeployment.Status.Conditions {
 			if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
 				deploymentUnschedulable = true
@@ -89,10 +92,10 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 	}
 
 	Eventually(func() bool {
-		status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
+		status, err := IsDeploymentReady(client, deployment.Namespace, deployment.Name)
 		if err != nil {
 			glog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not ready, retry in 1 second", runningDeployment.Name))
+				"deployment %s is not ready, retry in 1 second", deployment.Name))
 
 			return false
 		}
@@ -101,6 +104,68 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 	}, timeout, 1*time.Second).Should(Equal(true), "Deployment is not ready")
 
 	return nil
+}
+
+// printPodDebugInfo prints detailed debugging information about pods related to a deployment
+func printPodDebugInfo(client *egiClients.Settings, namespace, deploymentName string) {
+	// Get pods owned by the deployment
+	pods, err := client.Pods(namespace).List(context.TODO(), metav1.ListOptions{
+		LabelSelector: "app=test", // Assuming the test label
+	})
+
+	if err != nil {
+		fmt.Printf("Failed to get pods for debugging: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Debug info for deployment %s:\n", deploymentName)
+	for _, pod := range pods.Items {
+		fmt.Printf("Pod %s status:\n", pod.Name)
+		fmt.Printf("  Phase: %s\n", pod.Status.Phase)
+		fmt.Printf("  Node: %s\n", pod.Spec.NodeName)
+
+		// Print pod conditions
+		if len(pod.Status.Conditions) > 0 {
+			fmt.Printf("  Conditions:\n")
+			for _, condition := range pod.Status.Conditions {
+				fmt.Printf("    %s: %s (Reason: %s, Message: %s)\n",
+					condition.Type, condition.Status, condition.Reason, condition.Message)
+			}
+		}
+
+		// Print container statuses
+		if len(pod.Status.ContainerStatuses) > 0 {
+			fmt.Printf("  Container Statuses:\n")
+			for _, containerStatus := range pod.Status.ContainerStatuses {
+				fmt.Printf("    Container %s: Ready=%t, Started=%t\n",
+					containerStatus.Name, containerStatus.Ready,
+					containerStatus.Started != nil && *containerStatus.Started)
+
+				if containerStatus.State.Waiting != nil {
+					fmt.Printf("      Waiting: %s - %s\n",
+						containerStatus.State.Waiting.Reason,
+						containerStatus.State.Waiting.Message)
+				}
+				if containerStatus.State.Terminated != nil {
+					fmt.Printf("      Terminated: %s - %s (Exit Code: %d)\n",
+						containerStatus.State.Terminated.Reason,
+						containerStatus.State.Terminated.Message,
+						containerStatus.State.Terminated.ExitCode)
+				}
+			}
+		}
+
+		// Print events related to the pod
+		events, err := client.Events(namespace).List(context.TODO(), metav1.ListOptions{
+			FieldSelector: fmt.Sprintf("involvedObject.name=%s", pod.Name),
+		})
+		if err == nil && len(events.Items) > 0 {
+			fmt.Printf("  Recent Events:\n")
+			for _, event := range events.Items {
+				fmt.Printf("    %s: %s - %s\n", event.Type, event.Reason, event.Message)
+			}
+		}
+	}
 }
 
 // GetRunningDeployment returns a running deployment.

@@ -10,6 +10,8 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 var _ = Describe("Operator multiple installed,", Serial, func() {
@@ -138,7 +140,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("Deploy the same operator (different versions) different namespaces [negative]", func() {
+	It("Deploy the same operator (different versions) different namespaces [negative]", Serial, func() {
 		// This is a negative test case to verify that the same operator cannot be deployed
 		// in different namespaces with different versions. This is an invalid use case.
 
@@ -172,8 +174,20 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		err = tshelper.DeployTestOperatorGroup(secondNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		By(fmt.Sprintf("Deploy first operator (nginx-ingress-operator) for testing - channel %s", "new"))
-		err = tshelper.DeployOperatorSubscription(
+		// Define resource limits to reduce memory footprint
+		resourceLimits := &corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse("512Mi"),
+				corev1.ResourceCPU:    resource.MustParse("500m"),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: resource.MustParse("256Mi"),
+				corev1.ResourceCPU:    resource.MustParse("250m"),
+			},
+		}
+
+		By(fmt.Sprintf("Deploy first operator (nginx-ingress-operator) for testing - channel %s with resource limits", "new"))
+		err = tshelper.DeployOperatorSubscriptionWithResourceLimits(
 			"operator1",
 			tsparams.OperatorPackageNamePrefixLightweightCustomCatalog,
 			"new",
@@ -182,12 +196,13 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			tsparams.OperatorSourceNamespace,
 			"nginx-ingress-operator.v3.0.1",
 			v1alpha1.ApprovalAutomatic,
+			resourceLimits,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPackageNamePrefixLightweightCustomCatalog)
 
-		By(fmt.Sprintf("Deploy second operator (nginx-ingress-operator) for testing - channel %s", "old"))
-		err = tshelper.DeployOperatorSubscription(
+		By(fmt.Sprintf("Deploy second operator (nginx-ingress-operator) for testing - channel %s with resource limits", "old"))
+		err = tshelper.DeployOperatorSubscriptionWithResourceLimits(
 			"operator2",
 			tsparams.OperatorPackageNamePrefixLightweightCustomCatalog,
 			"old",
@@ -196,6 +211,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			tsparams.OperatorSourceNamespace,
 			"nginx-ingress-operator.v3.0.0",
 			v1alpha1.ApprovalAutomatic,
+			resourceLimits,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
 			tsparams.OperatorPackageNamePrefixLightweightCustomCatalog)

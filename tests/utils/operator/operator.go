@@ -3,6 +3,7 @@ package utils
 import (
 	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -54,6 +55,29 @@ func DefineSubscriptionWithNodeSelector(subName, namespace, channel, operatorNam
 			InstallPlanApproval:    installPlanApproval,
 			Config: &v1alpha1.SubscriptionConfig{
 				NodeSelector: nodeSelector,
+			},
+		},
+	}
+}
+
+// DefineSubscriptionWithResourceLimits returns a subscription struct with resource limits set.
+func DefineSubscriptionWithResourceLimits(subName, namespace, channel, operatorName, catalogSource,
+	catalogSourceNamespace, startingCSV string, installPlanApproval v1alpha1.Approval,
+	resources *corev1.ResourceRequirements) *v1alpha1.Subscription {
+	return &v1alpha1.Subscription{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      subName,
+			Namespace: namespace,
+		},
+		Spec: &v1alpha1.SubscriptionSpec{
+			Channel:                channel,
+			Package:                operatorName,
+			CatalogSource:          catalogSource,
+			CatalogSourceNamespace: catalogSourceNamespace,
+			StartingCSV:            startingCSV,
+			InstallPlanApproval:    installPlanApproval,
+			Config: &v1alpha1.SubscriptionConfig{
+				Resources: resources,
 			},
 		},
 	}

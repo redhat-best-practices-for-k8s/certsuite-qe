@@ -103,7 +103,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	// 66767
 	It("two containers to test, both are certified digest", func() {
-		By("Define deployments with certified containers")
+		By("Define deployments with certified containers (environment-aware resource limits)")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.CertifiedContainerURLNodeJs, tsparams.TestDeploymentLabels)
 
@@ -111,6 +111,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Define deployment 2 with CockroachDB (will get database-specific resource limits)")
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
@@ -133,7 +134,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	// 66768
 	It("two containers to test, one is certified, one is not digest [negative]", func() {
-		By("Define deployments with different container certification statuses")
+		By("Define deployments with different container certification statuses (environment-aware resource limits)")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 			tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
 
@@ -141,6 +142,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Define deployment 2 with CockroachDB (will get database-specific resource limits)")
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 

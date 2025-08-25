@@ -8,6 +8,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/gomega"
@@ -278,6 +279,27 @@ func DeployOperatorSubscriptionWithNodeSelector(operatorPackage, channel, namesp
 		startingCSV,
 		installApproval,
 		nodeSelector)
+
+	err := globalhelper.DeployOperator(operatorSubscription)
+	if err != nil {
+		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
+	}
+
+	return nil
+}
+
+func DeployOperatorSubscriptionWithResourceLimits(subscriptionName, operatorPackage, channel, namespace, group,
+	sourceNamespace, startingCSV string, installApproval v1alpha1.Approval, resourceRequirements *corev1.ResourceRequirements) error {
+	operatorSubscription := utils.DefineSubscriptionWithResourceLimits(
+		subscriptionName+"-subscription",
+		namespace,
+		channel,
+		operatorPackage,
+		group,
+		sourceNamespace,
+		startingCSV,
+		installApproval,
+		resourceRequirements)
 
 	err := globalhelper.DeployOperator(operatorSubscription)
 	if err != nil {
