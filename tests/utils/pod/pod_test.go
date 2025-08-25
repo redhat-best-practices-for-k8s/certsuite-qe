@@ -112,27 +112,45 @@ func TestRedefineWithInfrastructureTolerations(t *testing.T) {
 	// Check that tolerations were added
 	assert.Greater(t, len(testPod.Spec.Tolerations), 0)
 
-	// Check for specific tolerations
-	var hasDiskPressure, hasMemoryPressure bool
+	// Check for specific tolerations - we should have both NoSchedule and NoExecute effects
+	var hasDiskPressureNoSchedule, hasDiskPressureNoExecute bool
+
+	var hasMemoryPressureNoSchedule, hasMemoryPressureNoExecute bool
 
 	for _, toleration := range testPod.Spec.Tolerations {
 		if toleration.Key == "node.kubernetes.io/disk-pressure" {
-			hasDiskPressure = true
-
 			assert.Equal(t, corev1.TolerationOpExists, toleration.Operator)
-			assert.Equal(t, corev1.TaintEffectNoSchedule, toleration.Effect)
+
+			if toleration.Effect == corev1.TaintEffectNoSchedule {
+				hasDiskPressureNoSchedule = true
+			}
+
+			if toleration.Effect == corev1.TaintEffectNoExecute {
+				hasDiskPressureNoExecute = true
+				// Check that NoExecute tolerations have timeout
+				assert.NotNil(t, toleration.TolerationSeconds, "NoExecute tolerations should have timeout")
+			}
 		}
 
 		if toleration.Key == "node.kubernetes.io/memory-pressure" {
-			hasMemoryPressure = true
-
 			assert.Equal(t, corev1.TolerationOpExists, toleration.Operator)
-			assert.Equal(t, corev1.TaintEffectNoSchedule, toleration.Effect)
+
+			if toleration.Effect == corev1.TaintEffectNoSchedule {
+				hasMemoryPressureNoSchedule = true
+			}
+
+			if toleration.Effect == corev1.TaintEffectNoExecute {
+				hasMemoryPressureNoExecute = true
+				// Check that NoExecute tolerations have timeout
+				assert.NotNil(t, toleration.TolerationSeconds, "NoExecute tolerations should have timeout")
+			}
 		}
 	}
 
-	assert.True(t, hasDiskPressure, "Should have disk pressure toleration")
-	assert.True(t, hasMemoryPressure, "Should have memory pressure toleration")
+	assert.True(t, hasDiskPressureNoSchedule, "Should have disk pressure NoSchedule toleration")
+	assert.True(t, hasDiskPressureNoExecute, "Should have disk pressure NoExecute toleration")
+	assert.True(t, hasMemoryPressureNoSchedule, "Should have memory pressure NoSchedule toleration")
+	assert.True(t, hasMemoryPressureNoExecute, "Should have memory pressure NoExecute toleration")
 }
 
 func TestRedefineWithCustomTolerations(t *testing.T) {
