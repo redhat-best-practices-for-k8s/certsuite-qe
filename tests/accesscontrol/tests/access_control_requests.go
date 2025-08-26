@@ -13,7 +13,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("Access-control requests,", func() {
+var _ = Describe("Access-control requests,", Serial, func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
@@ -48,7 +48,7 @@ var _ = Describe("Access-control requests,", func() {
 		deployment.RedefineWithAllRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has requests set")
@@ -79,7 +79,7 @@ var _ = Describe("Access-control requests,", func() {
 		deployment.RedefineWithResourceRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has requests set")
@@ -108,7 +108,7 @@ var _ = Describe("Access-control requests,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no requests set")
@@ -146,7 +146,7 @@ var _ = Describe("Access-control requests,", func() {
 		}
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has CPU requests not set")
@@ -184,7 +184,7 @@ var _ = Describe("Access-control requests,", func() {
 		}
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment has memory requests not set")
@@ -215,7 +215,7 @@ var _ = Describe("Access-control requests,", func() {
 		deployment.RedefineWithAllRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment1 has requests set")
@@ -230,7 +230,7 @@ var _ = Describe("Access-control requests,", func() {
 		deployment.RedefineWithAllRequests(dep2, tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment2 has requests set")
@@ -261,7 +261,7 @@ var _ = Describe("Access-control requests,", func() {
 		deployment.RedefineWithAllRequests(dep, tsparams.MemoryRequest, tsparams.CPURequest)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment1 has requests set")
@@ -283,7 +283,7 @@ var _ = Describe("Access-control requests,", func() {
 		}
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert that deployment2 has memory requests not set")

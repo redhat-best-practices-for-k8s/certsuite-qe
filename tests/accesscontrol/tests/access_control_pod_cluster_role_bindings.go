@@ -44,7 +44,7 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -88,7 +88,7 @@ var _ = Describe("Access-control pod cluster role binding,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has service account")

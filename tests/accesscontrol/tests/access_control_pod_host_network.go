@@ -46,7 +46,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		deployment.RedefineWithHostNetwork(dep, false)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostNetwork set to false")
@@ -76,7 +76,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		deployment.RedefineWithHostNetwork(dep, true)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostNetwork set to true")
@@ -106,7 +106,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		deployment.RedefineWithHostNetwork(dep, false)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostNetwork set to false")
@@ -120,7 +120,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		deployment.RedefineWithHostNetwork(dep2, false)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start test")
@@ -145,7 +145,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		deployment.RedefineWithHostNetwork(dep, true)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment1 has hostNetwork set to true")
@@ -159,7 +159,7 @@ var _ = Describe("Access-control pod-host-network ", func() {
 		deployment.RedefineWithHostNetwork(dep2, false)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment2 has hostNetwork set to false")

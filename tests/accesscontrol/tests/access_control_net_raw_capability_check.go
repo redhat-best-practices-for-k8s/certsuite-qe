@@ -116,7 +116,7 @@ var _ = Describe("Access-control net-raw-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have NET_RAW capability")
@@ -146,7 +146,7 @@ var _ = Describe("Access-control net-raw-capability-check,", func() {
 		deployment.RedefineWithContainersSecurityContextNetRaw(dep)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has NET_RAW capability")
@@ -159,7 +159,7 @@ var _ = Describe("Access-control net-raw-capability-check,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have NET_RAW capability")

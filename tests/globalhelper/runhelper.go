@@ -113,6 +113,10 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--label-filter", testCaseName,
 		"--sanitize-claim", "true",
 	}
+	// For access-control tests, allow running against non-running pods
+	if strings.Contains(testCaseName, globalparameters.AccessControlSuiteName) {
+		testArgs = append(testArgs, "--allow-non-running", "true")
+	}
 
 	cmdPath := fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
 		GetConfiguration().General.CertsuiteEntryPointBinary)
@@ -153,7 +157,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile, env)
 	if err != nil {
 		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s %s",
-			testCaseName, err, cmdPath, strings.Join(testArgs, " "))
+			testCaseName, err, wrappedCmdPath, strings.Join(wrappedArgs, " "))
 	}
 
 	CopyClaimFileToTcFolder(testCaseName, tcNameForReport, reportDir)
@@ -188,6 +192,38 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"--enable-data-collection", "false",
 		"--sanitize-claim", "true",
 		"--label-filter", testCaseName,
+	}
+
+	// Optional memory limits for container runtime as a soft cap
+	enableMemLimit := os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") == "true"
+	memLimitMB := MemoryLimitMB
+
+	if v := os.Getenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB"); v != "" {
+		if parsed, perr := strconv.Atoi(v); perr == nil && parsed > 0 {
+			memLimitMB = parsed
+		}
+	}
+
+	if enableMemLimit {
+		// Insert memory flags right after "run"
+		memoryFlags := []string{"--memory", fmt.Sprintf("%dm", memLimitMB), "--memory-reservation", fmt.Sprintf("%dm", memLimitMB)}
+		// Also pass GOMEMLIMIT to the containerized process
+		envFlags := []string{"-e", fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB)}
+		// Build new args: run, mem flags, existing args starting from index 1 (preserve --rm and others)
+		base := []string{"run"}
+		base = append(base, memoryFlags...)
+		base = append(base, envFlags...)
+		base = append(base, certsuiteCmdArgs[1:]...)
+		certsuiteCmdArgs = base
+	}
+
+	allowedSuitesNonRunning := []string{
+		globalparameters.AccessControlSuiteName,
+		globalparameters.NetworkSuiteName,
+	}
+
+	if slices.Contains(allowedSuitesNonRunning, testCaseName) {
+		certsuiteCmdArgs = append(certsuiteCmdArgs, "--allow-non-running", "true")
 	}
 
 	// print the command

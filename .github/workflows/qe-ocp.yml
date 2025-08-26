@@ -22,6 +22,7 @@ concurrency:
 env:
   TEST_REPO: redhat-best-practices-for-k8s/certsuite
   ENABLE_CERTSUITE_MEMORY_LIMIT: true
+  TEST_REPO_BRANCH: main
 
 jobs:
   build-and-store-binary:
@@ -42,7 +43,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.TEST_REPO_BRANCH }}
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
@@ -69,7 +70,7 @@ jobs:
       fail-fast: false
       matrix:
         suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
-        # suite: [operator]
+        # suite: [accesscontrol, networking]
     env:
       SHELL: /bin/bash
       KUBECONFIG: '/home/runner/.kube/config'
@@ -80,6 +81,7 @@ jobs:
       SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
       # Enable infrastructure tolerations for better test reliability in CI environments
       ENABLE_INFRASTRUCTURE_TOLERATIONS: true
+      ENABLE_CERTSUITE_MEMORY_LIMIT: "true"
 
     steps:
       - name: Write temporary docker file
@@ -140,7 +142,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.TEST_REPO_BRANCH }}
 
       - name: Download pre-built certsuite binary
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
@@ -151,13 +153,13 @@ jobs:
       - name: Make binary executable
         run: chmod +x certsuite/certsuite
 
-      - name: Run the tests (against binary)
+      - name: Run the tests (against binary) with selective retry
         if: steps.check-secret.outputs.has-secret == 'true'
         uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
         with:
           timeout_minutes: 150
           max_attempts: 3
-          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=false ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
+          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=false ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} bash scripts/ci-retry-wrapper.sh
 
       - name: Skip message for missing pull secret
         if: steps.check-secret.outputs.has-secret == 'false'

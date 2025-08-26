@@ -139,5 +139,4 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

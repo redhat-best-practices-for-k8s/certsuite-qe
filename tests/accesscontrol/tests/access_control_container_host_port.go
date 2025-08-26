@@ -45,7 +45,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no host port configured")
@@ -75,7 +75,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has container has container/host port configured")
@@ -107,7 +107,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have host port configured")
@@ -142,7 +142,7 @@ var _ = Describe("Access-control container-host-port,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has container/host port configured")

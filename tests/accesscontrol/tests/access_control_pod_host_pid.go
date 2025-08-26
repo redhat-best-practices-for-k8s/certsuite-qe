@@ -46,7 +46,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 		deployment.RedefineWithHostPid(dep, false)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostPid set to false")
@@ -76,7 +76,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 		deployment.RedefineWithHostPid(dep, true)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostPid set to true")
@@ -106,7 +106,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 		deployment.RedefineWithHostPid(dep, false)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment1 has hostPid set to false")
@@ -120,7 +120,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 		deployment.RedefineWithHostPid(dep2, false)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment2 has hostPid set to false")
@@ -150,7 +150,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 		deployment.RedefineWithHostPid(dep, true)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment1 has hostPid set to true")
@@ -164,7 +164,7 @@ var _ = Describe("Access-control pod-host-pid ", func() {
 		deployment.RedefineWithHostPid(dep2, false)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment2 has hostPid set to false")

@@ -52,7 +52,7 @@ var _ = Describe("Access-control non-root user,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no securityContext RunAsUser 0")
@@ -82,7 +82,7 @@ var _ = Describe("Access-control non-root user,", func() {
 		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 0)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has securityContext RunAsUser 0")
@@ -119,7 +119,7 @@ var _ = Describe("Access-control non-root user,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no securityContext RunAsUser 0")
@@ -132,7 +132,7 @@ var _ = Describe("Access-control non-root user,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no securityContext RunAsUser 0")
@@ -162,7 +162,7 @@ var _ = Describe("Access-control non-root user,", func() {
 		deployment.RedefineWithPodSecurityContextRunAsUser(dep, 0)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has securityContext RunAsUser 0")
@@ -176,7 +176,7 @@ var _ = Describe("Access-control non-root user,", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has no securityContext")

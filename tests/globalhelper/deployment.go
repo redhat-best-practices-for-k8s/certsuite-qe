@@ -124,3 +124,23 @@ func DeleteDeployment(name, namespace string) error {
 func deleteDeployment(client *egiClients.Settings, name, namespace string) error {
 	return egiDeployment.NewBuilder(client, name, namespace, map[string]string{"test-app": "test"}, corev1.Container{}).Delete()
 }
+
+// CreateDeploymentNoWait creates the given Deployment without waiting for readiness.
+// If the Deployment already exists, it returns nil.
+func CreateDeploymentNoWait(dep *appsv1.Deployment) error {
+	_, err := GetAPIClient().Deployments(dep.Namespace).Create(
+		context.TODO(),
+		dep,
+		metav1.CreateOptions{},
+	)
+
+	if k8serrors.IsAlreadyExists(err) {
+		glog.V(5).Infof("deployment %s already exists", dep.Name)
+
+		return nil
+	} else if err != nil {
+		return fmt.Errorf("failed to create deployment %q (ns %s): %w", dep.Name, dep.Namespace, err)
+	}
+
+	return nil
+}

@@ -46,7 +46,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
@@ -81,7 +81,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 		deployment.RedefineWithHostPath(dep, "volume", "mnt/data")
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
@@ -116,7 +116,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment1 does not have hostPath set")
@@ -130,7 +130,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment2 does not have hostPath set")
@@ -160,7 +160,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment1 does not have hostPath set")
@@ -176,7 +176,7 @@ var _ = Describe("Access-control pod-host-path, ", func() {
 		deployment.RedefineWithHostPath(dep2, "volume", "mnt/data")
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment2 has hostPath set")

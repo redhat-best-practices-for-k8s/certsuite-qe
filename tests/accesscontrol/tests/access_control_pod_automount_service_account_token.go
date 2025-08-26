@@ -52,7 +52,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is false")
@@ -86,7 +86,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, true)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is true")
@@ -118,7 +118,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithServiceAccount(dep, tsparams.ServiceAccountName)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is nil")
@@ -154,7 +154,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithServiceAccount(dep, tsparams.ServiceAccountName)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to true")
@@ -193,7 +193,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithServiceAccount(dep, tsparams.ServiceAccountName)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to nil")
@@ -233,7 +233,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		By("Create deployment")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Set namespace's default serviceaccount's automountServiceAccountToken to true")
@@ -274,7 +274,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, false)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is false")
@@ -292,7 +292,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is false")
@@ -326,7 +326,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep, true)
 
 		By("Create deployment 1")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is true")
@@ -344,7 +344,7 @@ var _ = Describe("Access-control pod-automount-service-account-token, ", func() 
 		deployment.RedefineWithAutomountServiceAccountToken(dep2, false)
 
 		By("Create deployment 2")
-		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
+		err = globalhelper.CreateDeploymentNoWait(dep2)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment automountServiceAccountToken is false")
