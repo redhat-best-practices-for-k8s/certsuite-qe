@@ -19,6 +19,11 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
+		if globalhelper.IsCRCCluster() {
+			// Note: This test actually does work on CRC clusters, but temporarily (maybe?)
+			// disabled because the free-tier CRC clusters don't have enough resources to run properly.
+			Skip("Skipping: requires >=2 nodes, found 1")
+		}
 
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
