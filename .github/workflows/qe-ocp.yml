@@ -21,6 +21,7 @@ concurrency:
 
 env:
   TEST_REPO: redhat-best-practices-for-k8s/certsuite
+  ENABLE_CERTSUITE_MEMORY_LIMIT: true
 
 jobs:
   build-and-store-binary:
@@ -120,7 +121,7 @@ jobs:
 
       - name: Setup up OCP cluster
         if: steps.check-secret.outputs.has-secret == 'true'
-        uses: palmsoftware/quick-ocp@v0.0.16
+        uses: palmsoftware/quick-ocp@v0.0.17
         with:
           ocpPullSecret: $OCP_PULL_SECRET
           bundleCache: true

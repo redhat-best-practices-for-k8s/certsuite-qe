@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -19,10 +20,12 @@ const (
 	MaxRetries = 3
 	// TestTimeout is the timeout duration for test execution.
 	TestTimeout = 30 * time.Minute
+	// MemoryLimitMB is the default soft cap for Go-managed memory when enabled.
+	MemoryLimitMB = 50
 )
 
 // executeWithRetry executes a command with timeout and retry logic.
-func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File) error {
+func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File, env []string) error {
 	var err error
 
 	for attempt := 1; attempt <= MaxRetries; attempt++ {
@@ -31,6 +34,10 @@ func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout
 
 		// Create a new command for each attempt
 		cmd := exec.CommandContext(ctx, cmdPath, args...)
+		if env != nil {
+			cmd.Env = env
+		}
+
 		if stdout != nil {
 			cmd.Stdout = stdout
 		}
@@ -129,7 +136,21 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		}
 	}
 
-	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile)
+	// before running, construct env with optional GOMEMLIMIT
+	env := os.Environ()
+
+	if os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") == "true" {
+		memLimitMB := MemoryLimitMB
+
+		if v := os.Getenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB"); v != "" {
+			if parsed, perr := strconv.Atoi(v); perr == nil && parsed > 0 {
+				memLimitMB = parsed
+			}
+		}
+		env = append(env, fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB))
+	}
+
+	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile, env)
 	if err != nil {
 		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s %s",
 			testCaseName, err, cmdPath, strings.Join(testArgs, " "))
@@ -191,6 +212,18 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 		cmd.Stdout = outfile
 		cmd.Stderr = outfile
+	}
+
+	// set optional GOMEMLIMIT inside container
+	if os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") == "true" {
+		memLimitMB := MemoryLimitMB
+
+		if v := os.Getenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB"); v != "" {
+			if parsed, perr := strconv.Atoi(v); perr == nil && parsed > 0 {
+				memLimitMB = parsed
+			}
+		}
+		cmd.Env = append(os.Environ(), fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB))
 	}
 
 	err = cmd.Run()
