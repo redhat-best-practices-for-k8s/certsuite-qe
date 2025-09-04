@@ -17,7 +17,7 @@ require (
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.57
 	github.com/redhat-best-practices-for-k8s/oct v0.0.46
 	github.com/sirupsen/logrus v1.9.3
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.33.4
