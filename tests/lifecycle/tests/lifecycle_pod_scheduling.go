@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	klog "k8s.io/klog/v2"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -22,7 +22,7 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatalf("can not load config file: %w", err)
+		klog.Fatalf("can not load config file: %v", err)
 	}
 
 	BeforeEach(func() {

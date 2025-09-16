@@ -1,13 +1,13 @@
 package tests
 
 import (
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
+	klog "k8s.io/klog/v2"
 
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
@@ -16,7 +16,7 @@ import (
 var _ = Describe("Networking custom namespace, custom deployment,", func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatalf("can not load config file: %w", err)
+		klog.Fatalf("can not load config file: %v", err)
 	}
 
 	var randomNamespace string

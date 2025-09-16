@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/glog"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/rbac"
@@ -51,7 +51,7 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir
 		isTestCaseInValidStatusInClaimReport = IsTestCaseSkippedInClaimReport
 	}
 
-	glog.V(5).Info("Verify test case status in claim report file")
+	klog.V(5).Info("Verify test case status in claim report file")
 
 	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
 	if err != nil {
@@ -122,7 +122,7 @@ func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, target
 		return fmt.Errorf("failed to encode certsuite yaml config file on %s: %w", certsuiteConfigFilePath, err)
 	}
 
-	glog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
+	klog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
 		globalparameters.DefaultCertsuiteConfigFileName, configDir))
 
 	return nil
@@ -190,7 +190,7 @@ func defineCertifiedContainersInfo(config *globalparameters.CertsuiteConfig, cer
 		tag := strings.TrimSpace(repositoryRegistryTagDigest[2])
 		digest := strings.TrimSpace(repositoryRegistryTagDigest[3])
 
-		glog.V(5).Info(fmt.Sprintf("Adding container repository:%s registry:%s to configuration", repo, registry))
+		klog.V(5).Info(fmt.Sprintf("Adding container repository:%s registry:%s to configuration", repo, registry))
 
 		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
 			Repository: repo,
@@ -260,7 +260,7 @@ func defineCrdFilters(config *globalparameters.CertsuiteConfig, crdSuffixes []st
 	}
 
 	for _, crdSuffix := range crdSuffixes {
-		glog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to certsuite configuration file", crdSuffix))
+		klog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to certsuite configuration file", crdSuffix))
 
 		config.TargetCrdFilters = append(config.TargetCrdFilters, globalparameters.TargetCrdFilter{
 			NameSuffix: crdSuffix,
@@ -288,7 +288,7 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 		metav1.GetOptions{},
 	)
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info("RBAC policy is not found")
+		klog.V(5).Info("RBAC policy is not found")
 
 		roleBind := rbac.DefineClusterRoleBinding(
 			*rbac.DefineRbacAuthorizationClusterRoleRef("system:openshift:scc:privileged"),
@@ -297,19 +297,19 @@ func AllowAuthenticatedUsersRunPrivilegedContainers() error {
 
 		_, err = GetAPIClient().ClusterRoleBindings().Create(context.TODO(), roleBind, metav1.CreateOptions{})
 		if k8serrors.IsAlreadyExists(err) {
-			glog.V(5).Info("RBAC policy already exists")
+			klog.V(5).Info("RBAC policy already exists")
 		} else if err != nil {
 			return fmt.Errorf("failed to create RBAC policy: %w", err)
 		}
 
-		glog.V(5).Info("RBAC policy created")
+		klog.V(5).Info("RBAC policy created")
 
 		return nil
 	} else if err == nil {
-		glog.V(5).Info("RBAC policy detected")
+		klog.V(5).Info("RBAC policy detected")
 	}
 
-	glog.V(5).Info("error to query RBAC policy")
+	klog.V(5).Info("error to query RBAC policy")
 
 	return nil
 }

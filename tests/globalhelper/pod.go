@@ -10,13 +10,13 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/golang/glog"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/remotecommand"
+	klog "k8s.io/klog/v2"
 )
 
 // ExecCommand runs command in the pod and returns buffer output.
@@ -70,7 +70,7 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
 	createdPod, err := GetAPIClient().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("pod %s already exists", pod.Name))
+		klog.V(5).Info(fmt.Sprintf("pod %s already exists", pod.Name))
 	} else if err != nil {
 		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
@@ -85,7 +85,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 			context.TODO(), pod.Name, metav1.GetOptions{})
 
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"Pod %s is not running, retry in 1 second", createdPod.Name))
 
 			return false
@@ -117,8 +117,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 	Eventually(func() bool {
 		status, err := isPodReady(createdPod.Namespace, createdPod.Name)
 		if err != nil {
-
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"Pod %s is not ready, retry in 1 second", createdPod.Name))
 
 			return false

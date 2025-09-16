@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -13,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 	rbacv1Typed "k8s.io/client-go/kubernetes/typed/rbac/v1"
+	klog "k8s.io/klog/v2"
 	"k8s.io/utils/ptr"
 )
 
@@ -31,7 +31,7 @@ func createServiceAccount(client corev1Typed.CoreV1Interface, serviceAccountName
 		client.ServiceAccounts(namespace).Create(context.TODO(), &serviceAccount, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("serviceaccount %s already installed", serviceAccountName))
+		klog.V(5).Info(fmt.Sprintf("serviceaccount %s already installed", serviceAccountName))
 
 		return nil
 	}
@@ -102,7 +102,7 @@ func createRole(client rbacv1Typed.RbacV1Interface, aRole *rbacv1.Role) error {
 		client.Roles(aRole.Namespace).Create(context.TODO(), aRole, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("role %s already installed", aRole.Name))
+		klog.V(5).Info(fmt.Sprintf("role %s already installed", aRole.Name))
 
 		return nil
 	}
@@ -120,7 +120,7 @@ func deleteRole(client rbacv1Typed.RbacV1Interface, roleName, namespace string) 
 		client.Roles(namespace).Delete(context.TODO(), roleName, metav1.DeleteOptions{})
 
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("role %s does not exist", roleName))
+		klog.V(5).Info(fmt.Sprintf("role %s does not exist", roleName))
 
 		return nil
 	}
@@ -138,7 +138,7 @@ func deleteRoleBinding(client rbacv1Typed.RbacV1Interface, bindingName, namespac
 		client.RoleBindings(namespace).Delete(context.TODO(), bindingName, metav1.DeleteOptions{})
 
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("rolebinding %s does not exist", bindingName))
+		klog.V(5).Info(fmt.Sprintf("rolebinding %s does not exist", bindingName))
 
 		return nil
 	}
@@ -180,7 +180,7 @@ func createRoleBindingWithServiceAccountSubject(client rbacv1Typed.RbacV1Interfa
 		client.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", bindingName))
+		klog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", bindingName))
 
 		return nil
 	}
@@ -196,7 +196,7 @@ func CreatePersistentVolume(persistentVolume *corev1.PersistentVolume) error {
 func createPersistentVolume(client corev1Typed.CoreV1Interface, persistentVolume *corev1.PersistentVolume) error {
 	_, err := client.PersistentVolumes().Create(context.TODO(), persistentVolume, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("persistent volume %s already created", persistentVolume.Name))
+		klog.V(5).Info(fmt.Sprintf("persistent volume %s already created", persistentVolume.Name))
 	} else if err != nil {
 		return fmt.Errorf("failed to create persistent volume: %w", err)
 	}
@@ -214,7 +214,7 @@ func deletePersistentVolume(client corev1Typed.CoreV1Interface, persistentVolume
 		GracePeriodSeconds: ptr.To[int64](0),
 	})
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("persistent volume %s does not exist", persistentVolume))
+		klog.V(5).Info(fmt.Sprintf("persistent volume %s does not exist", persistentVolume))
 
 		return nil
 	} else if err != nil {
@@ -239,7 +239,7 @@ func createAndWaitUntilPVCIsBound(client corev1Typed.CoreV1Interface, pvc *corev
 	timeout time.Duration, pvName string) error {
 	pvc, err := client.PersistentVolumeClaims(pvc.Namespace).Create(context.TODO(), pvc, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("persistent volume claim %s already created", pvc.Name))
+		klog.V(5).Info(fmt.Sprintf("persistent volume claim %s already created", pvc.Name))
 	} else if err != nil {
 		return fmt.Errorf("failed to create persistent volume claim: %w", err)
 	}
@@ -249,7 +249,7 @@ func createAndWaitUntilPVCIsBound(client corev1Typed.CoreV1Interface, pvc *corev
 		status, err := isPvcBound(client, pvc.Name, pvc.Namespace, pvName)
 		if err != nil {
 
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"pvc %s is not bound, retry in %d seconds", pvc.Name, retryInterval))
 
 			return false
@@ -279,7 +279,7 @@ func deletePersistentVolumeClaim(client corev1Typed.CoreV1Interface, pvc *corev1
 		GracePeriodSeconds: ptr.To[int64](0),
 	})
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("persistent volume claim %s does not exist", pvc.Name))
+		klog.V(5).Info(fmt.Sprintf("persistent volume claim %s does not exist", pvc.Name))
 
 		return nil
 	} else if err != nil {

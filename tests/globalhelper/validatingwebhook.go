@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/golang/glog"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	admissionregistrationtypedv1 "k8s.io/client-go/kubernetes/typed/admissionregistration/v1"
+	klog "k8s.io/klog/v2"
 )
 
 func DeleteValidatingWebhookConfiguration(name string) error {
@@ -21,7 +21,7 @@ func deleteValidatingWebhookConfiguration(client admissionregistrationtypedv1.Ad
 		metav1.DeleteOptions{},
 	)
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("validating webhook configuration %s is not found", name))
+		klog.V(5).Info(fmt.Sprintf("validating webhook configuration %s is not found", name))
 
 		return nil
 	} else if err != nil {

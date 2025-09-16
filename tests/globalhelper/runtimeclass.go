@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
 	nodev1 "k8s.io/api/node/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	klog "k8s.io/klog/v2"
 )
 
 func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
@@ -20,7 +20,7 @@ func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 func createRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) error {
 	rtc, err := client.NodeV1().RuntimeClasses().Create(context.TODO(), rtc, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("runtimeclass %s already created", rtc.Name))
+		klog.V(5).Info(fmt.Sprintf("runtimeclass %s already created", rtc.Name))
 	} else if err != nil {
 		return fmt.Errorf("failed to create runtimeclass %q (ns %s): %w", rtc.Name, rtc.Namespace, err)
 	}
@@ -28,7 +28,7 @@ func createRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) e
 	Eventually(func() bool {
 		rtcCreated, err := isRtcCreated(client, rtc)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf("rtc %s was not created, retry in %d seconds", rtc.Name, retryInterval))
+			klog.V(5).Info(fmt.Sprintf("rtc %s was not created, retry in %d seconds", rtc.Name, retryInterval))
 
 			return false
 		}
@@ -61,7 +61,7 @@ func deleteRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) e
 	Eventually(func() bool {
 		rtcDeleted, err := isRtcDeleted(client, rtc)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf("rtc %s was not deleted, retry in %d seconds", rtc.Name, retryInterval))
+			klog.V(5).Info(fmt.Sprintf("rtc %s was not deleted, retry in %d seconds", rtc.Name, retryInterval))
 
 			return false
 		}

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiDaemonset "github.com/openshift-kni/eco-goinfra/pkg/daemonset"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 
 	. "github.com/onsi/gomega"
 )
@@ -26,7 +26,7 @@ func createAndWaitUntilDaemonSetIsReady(client *egiClients.Settings,
 	runningDaemonSet, err := client.AppsV1Interface.DaemonSets(daemonSet.Namespace).Create(
 		context.TODO(), daemonSet, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("daemonset %s already exists", daemonSet.Name))
+		klog.V(5).Info(fmt.Sprintf("daemonset %s already exists", daemonSet.Name))
 
 		return nil
 	} else if err != nil {
@@ -36,7 +36,7 @@ func createAndWaitUntilDaemonSetIsReady(client *egiClients.Settings,
 	Eventually(func() bool {
 		status, err := isDaemonSetReady(client, runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
-			glog.Errorf(
+			klog.Errorf(
 				"daemonset %s is not ready, retry in 1 second", runningDaemonSet.Name)
 
 			return false

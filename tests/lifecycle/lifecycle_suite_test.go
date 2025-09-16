@@ -8,11 +8,11 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/tests"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
+	klog "k8s.io/klog/v2"
 
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -34,7 +34,7 @@ func TestLifecycle(t *testing.T) {
 var _ = SynchronizedBeforeSuite(func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatalf("can not load config file: %w", err)
+		klog.Fatalf("can not load config file: %v", err)
 	}
 
 	err = tshelper.WaitUntilClusterIsStable()

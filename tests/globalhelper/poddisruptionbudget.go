@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	policyv1 "k8s.io/api/policy/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 
 	. "github.com/onsi/gomega"
 )
@@ -30,7 +30,7 @@ func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.D
 		pdb,
 		metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("Pod Disruption Budget %s already exists", pdb.Name))
+		klog.V(5).Info(fmt.Sprintf("Pod Disruption Budget %s already exists", pdb.Name))
 	} else if err != nil {
 		return fmt.Errorf("failed to create Pod Disruption Budget %q (ns %s): %w", pdb.Name, pdb.Namespace, err)
 	}
@@ -38,7 +38,7 @@ func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.D
 	Eventually(func() bool {
 		status, err := IsPodDisruptionBudgetCreated(poddisruptionbudget.Name, poddisruptionbudget.Namespace)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"Pod Disruption Budget %s is not ready, retry in 5 seconds", poddisruptionbudget.Name))
 
 			return false

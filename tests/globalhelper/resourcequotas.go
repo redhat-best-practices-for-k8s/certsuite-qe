@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/golang/glog"
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 )
 
 func CreateResourceQuota(quota *corev1.ResourceQuota) error {
@@ -28,7 +28,7 @@ func createResourceQuota(client *egiClients.Settings, quota *corev1.ResourceQuot
 	_, err = client.ResourceQuotas(quota.Namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("resource quota %s already exists", quota.Name))
+		klog.V(5).Info(fmt.Sprintf("resource quota %s already exists", quota.Name))
 
 		return nil
 	}

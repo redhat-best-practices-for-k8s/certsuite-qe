@@ -13,7 +13,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
 	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 
-	"github.com/golang/glog"
+	klog "k8s.io/klog/v2"
 )
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
@@ -135,7 +135,7 @@ func DeleteIstioCRDs() error {
 			continue
 		}
 
-		glog.Infof("Deleting istio CRD %s", crdName)
+		klog.Infof("Deleting istio CRD %s", crdName)
 
 		err = crd.DeleteCustomResourceDefinition(crdName)
 		if err != nil {

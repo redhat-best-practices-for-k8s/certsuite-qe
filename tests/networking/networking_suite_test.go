@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	klog "k8s.io/klog/v2"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/tests"
@@ -36,7 +36,7 @@ var _ = SynchronizedBeforeSuite(func() {
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatalf("can not load config file: %w", err)
+		klog.Fatalf("can not load config file: %v", err)
 	}
 
 	By("Validate that cluster is Schedulable")

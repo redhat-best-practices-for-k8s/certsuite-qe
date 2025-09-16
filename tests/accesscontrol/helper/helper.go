@@ -23,9 +23,9 @@ import (
 	machineconfigv1 "github.com/openshift/api/machineconfiguration/v1"
 	mcv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 
-	"github.com/golang/glog"
 	egiMco "github.com/openshift-kni/eco-goinfra/pkg/mco"
 	egiNodes "github.com/openshift-kni/eco-goinfra/pkg/nodes"
+	klog "k8s.io/klog/v2"
 )
 
 func DefineDeploymentWithImage(replica int32, containers int, name, namespace, image string) (*appsv1.Deployment, error) {
@@ -248,14 +248,14 @@ func GetWorkersMCPs() (mcpNodes map[string][]string, err error) {
 
 		// Continue if this MCP doesn't manage any worker node
 		if len(mcpNodes) == 0 {
-			glog.V(5).Infof("MCP=%s doesn't manage any worker node", mcp.Name)
+			klog.V(5).Infof("MCP=%s doesn't manage any worker node", mcp.Name)
 
 			continue
 		}
 
 		mcps[mcp.Name] = mcpNodes
 
-		glog.V(5).Infof("MCP=%s is candidate, num workers=%d", mcp.Name, len(mcpNodes))
+		klog.V(5).Infof("MCP=%s is candidate, num workers=%d", mcp.Name, len(mcpNodes))
 	}
 
 	return mcps, nil
@@ -339,7 +339,7 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 		mcBuilder.WithLabel(k, v)
 	}
 
-	glog.V(5).Infof("Creating MC=%s in the cluster.", mcName)
+	klog.V(5).Infof("Creating MC=%s in the cluster.", mcName)
 	// Apply MachineConfig
 	_, err := mcBuilder.Create()
 	if err != nil {
@@ -353,7 +353,7 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	}
 
 	// Wait for MCP to start updating: condition Updating=True
-	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
+	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
 
 	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
 		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, tsparams.McpStartTimeout)
@@ -362,7 +362,7 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	}
 
 	// Wait for MCP to finish the update using the dynamic timeout as deadline.
-	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
+	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
 
 	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
 		mcv1.MachineConfigPoolUpdating), corev1.ConditionFalse, timeout)
@@ -401,7 +401,7 @@ func RemoveRTKernelMachineConfig(mcpName string, mcName string, timeout time.Dur
 	}
 
 	// Wait for MCP to start updating: condition Updating=True
-	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
+	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
 
 	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
 		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, tsparams.McpStartTimeout)
@@ -410,7 +410,7 @@ func RemoveRTKernelMachineConfig(mcpName string, mcName string, timeout time.Dur
 	}
 
 	// Wait for MCP to finish the update using the dynamic timeout as deadline.
-	glog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
+	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
 
 	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
 		mcv1.MachineConfigPoolUpdating), corev1.ConditionFalse, timeout)

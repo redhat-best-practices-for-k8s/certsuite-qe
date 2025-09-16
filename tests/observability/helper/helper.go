@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/gomega"
+	klog "k8s.io/klog/v2"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
@@ -96,7 +96,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		metav1.CreateOptions{},
 	)
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("crd %s already exists", crd.Name))
+		klog.V(5).Info(fmt.Sprintf("crd %s already exists", crd.Name))
 
 		return nil
 	} else if err != nil {
@@ -110,7 +110,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 			metav1.GetOptions{},
 		)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"crd %s is not ready, retry in 5 seconds", runningCrd.Name))
 
 			return false
