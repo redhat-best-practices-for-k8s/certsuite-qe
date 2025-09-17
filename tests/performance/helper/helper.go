@@ -8,8 +8,6 @@ import (
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
-	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/client-go/tools/remotecommand"
 	klog "k8s.io/klog/v2"
 	"k8s.io/utils/ptr"
 
@@ -20,6 +18,8 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
 )
 
 func DefineExclusivePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
@@ -140,46 +140,26 @@ func ExecCommandContainer(
 
 	var buffOut bytes.Buffer
 
-	var buffErr bytes.Buffer
-
 	podName := pod.Name
 	podNamespace := pod.Namespace
-	container := pod.Spec.Containers[0].Name
 
+	containerName := pod.Spec.Containers[0].Name
 	klog.V(5).Infof("execute command on ns=%s, pod=%s container=%s, cmd: %s",
-		podNamespace, podName, container, strings.Join(commandStr, " "))
+		podNamespace, podName, containerName, strings.Join(commandStr, " "))
 
-	req := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().
-		Post().
-		Namespace(podNamespace).
-		Resource("pods").
-		Name(podName).
-		SubResource("exec").
-		VersionedParams(&corev1.PodExecOptions{
-			Container: container,
-			Command:   commandStr,
-			Stdin:     false,
-			Stdout:    true,
-			Stderr:    true,
-			TTY:       false,
-		}, scheme.ParameterCodec)
-
-	exec, err := remotecommand.NewSPDYExecutor(globalhelper.GetAPIClient().Config, "POST", req.URL())
+	builder, err := egiPod.Pull(globalhelper.GetEcoGoinfraClient(), podName, podNamespace)
 	if err != nil {
 		klog.ErrorS(err, "failed to create SPDY executor")
 
-		return stdout, stderr, err
+		return "", "", err
 	}
 
-	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
-		Stdout: &buffOut,
-		Stderr: &buffErr,
-	})
-
-	stdout, stderr = buffOut.String(), buffErr.String()
+	buffOut, err = builder.ExecCommand(commandStr)
+	stdout = buffOut.String()
+	// stderr is not captured by eco-goinfra ExecCommand; leave empty
 
 	if err != nil {
-		klog.ErrorS(err, "exec stream failed", "url", req.URL(), "command", command, "stderr", stderr, "stdout", stdout)
+		klog.ErrorS(err, "exec stream failed", "command", command, "stderr", stderr, "stdout", stdout)
 
 		return stdout, stderr, err
 	}
