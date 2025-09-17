@@ -8,7 +8,6 @@ import (
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
-	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
 	klog "k8s.io/klog/v2"
@@ -147,8 +146,8 @@ func ExecCommandContainer(
 	podNamespace := pod.Namespace
 	container := pod.Spec.Containers[0].Name
 
-	logrus.Trace(fmt.Sprintf("execute command on ns=%s, pod=%s container=%s, cmd: %s",
-		podNamespace, podName, container, strings.Join(commandStr, " ")))
+	klog.V(5).Infof("execute command on ns=%s, pod=%s container=%s, cmd: %s",
+		podNamespace, podName, container, strings.Join(commandStr, " "))
 
 	req := globalhelper.GetAPIClient().CoreV1Interface.RESTClient().
 		Post().
@@ -167,7 +166,7 @@ func ExecCommandContainer(
 
 	exec, err := remotecommand.NewSPDYExecutor(globalhelper.GetAPIClient().Config, "POST", req.URL())
 	if err != nil {
-		logrus.Error(err)
+		klog.ErrorS(err, "failed to create SPDY executor")
 
 		return stdout, stderr, err
 	}
@@ -180,11 +179,7 @@ func ExecCommandContainer(
 	stdout, stderr = buffOut.String(), buffErr.String()
 
 	if err != nil {
-		logrus.Error(err)
-		logrus.Error(req.URL())
-		logrus.Error("command: ", command)
-		logrus.Error("stderr: ", stderr)
-		logrus.Error("stdout: ", stdout)
+		klog.ErrorS(err, "exec stream failed", "url", req.URL(), "command", command, "stderr", stderr, "stdout", stdout)
 
 		return stdout, stderr, err
 	}

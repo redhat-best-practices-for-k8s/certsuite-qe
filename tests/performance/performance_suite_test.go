@@ -17,6 +17,7 @@ import (
 
 func TestPerformance(t *testing.T) {
 	_, currentFile, _, _ := runtime.Caller(0)
+
 	_ = flag.Lookup("logtostderr").Value.Set("true")
 	_ = flag.Lookup("v").Value.Set(globalhelper.GetConfiguration().General.VerificationLogLevel)
 	_, reporterConfig := GinkgoConfiguration()
