@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
+	klog "k8s.io/klog/v2"
 
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
@@ -193,7 +193,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("r
 		Eventually(func() bool {
 			podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 			if err != nil {
-				glog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+				klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
 
 				return false
 			}
@@ -293,7 +293,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("r
 		Eventually(func() bool {
 			podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 			if err != nil {
-				glog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+				klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
 
 				return false
 			}
@@ -431,7 +431,8 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 		Eventually(func() bool {
 			podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 			if err != nil {
-				glog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+				klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+				klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
 
 				return false
 			}

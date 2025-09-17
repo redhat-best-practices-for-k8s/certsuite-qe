@@ -10,9 +10,9 @@ import (
 
 	testclient "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 
-	"github.com/golang/glog"
 	"github.com/kelseyhightower/envconfig"
 	"gopkg.in/yaml.v3"
+	klog "k8s.io/klog/v2"
 )
 
 const (
@@ -63,7 +63,7 @@ func NewConfig() (*Config, error) {
 
 	confFile, err := checkFileExists(baseDir, FileConfigPath)
 	if err != nil {
-		glog.Fatal(err)
+		klog.Fatal(err)
 	}
 
 	err = readFile(&conf, confFile)
@@ -96,7 +96,7 @@ func NewConfig() (*Config, error) {
 	if conf.General.UseBinary == "true" {
 		conf.General.CertsuiteRepoPath, err = conf.defineCertsuiteRepoPath()
 		if err != nil {
-			glog.Fatalf("Failed to define certsuite repo path: %w", err)
+			klog.Fatalf("Failed to define certsuite repo path: %v", err)
 		}
 	}
 
@@ -228,7 +228,7 @@ func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, env
 				"%s env var is set", dirName, yamlTag, envVar, confFileName)
 	}
 
-	glog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
+	klog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
 
 	err = os.MkdirAll(dirName, 0777)
 	if err != nil {

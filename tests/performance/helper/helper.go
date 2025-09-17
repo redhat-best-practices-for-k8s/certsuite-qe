@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/golang/glog"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
+	klog "k8s.io/klog/v2"
 	"k8s.io/utils/ptr"
 
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/parameters"
@@ -198,7 +198,7 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 	_, err := globalhelper.GetAPIClient().RbacV1Interface.Roles(namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// role already exists
-		glog.V(5).Info(fmt.Sprintf("role %s already exists", aRole.Name))
+		klog.V(5).Info(fmt.Sprintf("role %s already exists", aRole.Name))
 	} else if err != nil {
 		return fmt.Errorf("error creating role, err=%w", err)
 	}
@@ -208,7 +208,7 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 	_, err = globalhelper.GetAPIClient().RbacV1Interface.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// rolebinding already exists
-		glog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", aRoleBinding.Name))
+		klog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", aRoleBinding.Name))
 	} else if err != nil {
 		return fmt.Errorf("error creating rolebinding, err=%w", err)
 	}
@@ -218,7 +218,7 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 		&aServiceAccount, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// service account already exists
-		glog.V(5).Info(fmt.Sprintf("service account %s already exists", aServiceAccount.Name))
+		klog.V(5).Info(fmt.Sprintf("service account %s already exists", aServiceAccount.Name))
 	} else if err != nil {
 		return fmt.Errorf("error creating service account, err=%w", err)
 	}

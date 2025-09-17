@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/golang/glog"
+	klog "k8s.io/klog/v2"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -55,7 +55,7 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 
 // RemoveContentsFromReportDir removes all files from report dir.
 func RemoveContentsFromReportDir(reportDir string) error {
-	glog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
+	klog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
 
 	certsuiteReportDir, err := os.Open(reportDir)
 	if err != nil {
@@ -75,7 +75,7 @@ func RemoveContentsFromReportDir(reportDir string) error {
 			return fmt.Errorf("failed to remove content from report directory: %w", err)
 		}
 
-		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
+		klog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
 			reportDir))
 	}
@@ -108,7 +108,7 @@ func RemoveContentsFromConfigDir(configDir string) error {
 			return fmt.Errorf("failed to remove content from config directory: %w", err)
 		}
 
-		glog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
+		klog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
 			configDir))
 	}
@@ -153,7 +153,7 @@ func isTestCaseInExpectedStatusInClaimReport(
 			}
 
 			if testCaseResult.State == expectedStatus {
-				glog.V(5).Info("claim report test case status passed")
+				klog.V(5).Info("claim report test case status passed")
 
 				return true, nil
 			}
@@ -192,17 +192,17 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
 
 	_, err := os.Stat(srcClaim)
 	if err != nil {
-		glog.Error("file does not exist ", srcClaim)
+		klog.Error("file does not exist ", srcClaim)
 	}
 
 	// create destination folder
 	err = os.MkdirAll(dstDir, os.ModePerm)
 	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", dstDir, err)
+		klog.ErrorS(err, "could not create dest directory", "dir", dstDir)
 	}
 
 	err = CopyFiles(srcClaim, dstClaim)
 	if err != nil {
-		glog.Errorf("failed to copy %s to %s", srcClaim, dstClaim)
+		klog.ErrorS(err, "failed to copy claim file", "src", srcClaim, "dst", dstClaim)
 	}
 }

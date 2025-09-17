@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
+	klog "k8s.io/klog/v2"
 
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/tests"
@@ -35,7 +35,7 @@ func TestPlatformAlteration(t *testing.T) {
 var _ = SynchronizedBeforeSuite(func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
-		glog.Fatalf("can not load config file: %w", err)
+		klog.Fatalf("can not load config file: %v", err)
 	}
 
 	By("Validate that cluster is Schedulable")

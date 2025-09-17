@@ -1,9 +1,9 @@
 package globalhelper
 
 import (
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	klog "k8s.io/klog/v2"
 	ctrlLogger "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
@@ -14,7 +14,7 @@ func GetEcoGoinfraClient() *egiClients.Settings {
 		return egiClient
 	}
 
-	glog.Info("Creating new eco-goinfra k8s go-client with GinkgoLogr")
+	klog.Info("Creating new eco-goinfra k8s go-client with GinkgoLogr")
 
 	ctrlLogger.SetLogger(GinkgoLogr)
 

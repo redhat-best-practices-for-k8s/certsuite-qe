@@ -6,9 +6,9 @@ import (
 	"flag"
 	"os/exec"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	klog "k8s.io/klog/v2"
 
 	"fmt"
 
@@ -76,7 +76,7 @@ var _ = SynchronizedBeforeSuite(func() {
 		tsparams.UnrelatedNamespace,
 		tsparams.OperatorLabel)
 	if err != nil {
-		glog.Info(tsparams.UnrelatedOperatorPrefixCloudcasa+" not installed or error accessing it: ", err)
+		klog.Info(tsparams.UnrelatedOperatorPrefixCloudcasa+" not installed or error accessing it: ", err)
 	}
 
 	By("Un-label operator used in other suites if labeled")

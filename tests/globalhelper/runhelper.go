@@ -12,7 +12,7 @@ import (
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 
-	"github.com/golang/glog"
+	klog "k8s.io/klog/v2"
 )
 
 const (
@@ -46,7 +46,7 @@ func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout
 			cmd.Stderr = stderr
 		}
 
-		glog.V(5).Info(fmt.Sprintf("Attempt %d/%d: Running test: %s", attempt, MaxRetries, testCaseName))
+		klog.V(5).Info(fmt.Sprintf("Attempt %d/%d: Running test: %s", attempt, MaxRetries, testCaseName))
 
 		err = cmd.Run()
 
@@ -59,13 +59,13 @@ func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout
 
 		// Check if it was a timeout error
 		if ctx.Err() == context.DeadlineExceeded {
-			glog.V(5).Info(fmt.Sprintf("Attempt %d/%d timed out after %v for test: %s",
+			klog.V(5).Info(fmt.Sprintf("Attempt %d/%d timed out after %v for test: %s",
 				attempt, MaxRetries, TestTimeout, testCaseName))
 			cancel()
 
 			// If this wasn't the last attempt, continue retrying
 			if attempt < MaxRetries {
-				glog.V(5).Info(fmt.Sprintf("Retrying test: %s", testCaseName))
+				klog.V(5).Info(fmt.Sprintf("Retrying test: %s", testCaseName))
 
 				continue
 			}
@@ -87,7 +87,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
 		GetConfiguration().General.CertsuiteEntryPointBinary))
 	if err != nil {
-		glog.V(5).Info(fmt.Sprintf("binary does not exist: %s. "+
+		klog.V(5).Info(fmt.Sprintf("binary does not exist: %s. "+
 			"Please run `make build-certsuite-tool` in the certsuite repo.", err))
 
 		return fmt.Errorf("binary does not exist: %w", err)
@@ -167,7 +167,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	// abandoned containers. When executeWithRetry times out, the container process may continue
 	// running even after the parent process gives up, leading to resource leaks.
 	containerEngine := GetConfiguration().General.ContainerEngine
-	glog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
+	klog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
 
 	certsuiteCmdArgs := []string{
 		"run",
@@ -191,7 +191,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	}
 
 	// print the command
-	glog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
+	klog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
 
 	cmd := exec.CommandContext(context.TODO(), containerEngine, certsuiteCmdArgs...)
 

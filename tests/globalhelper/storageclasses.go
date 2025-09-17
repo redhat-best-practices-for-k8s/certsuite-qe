@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/golang/glog"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	storagev1typed "k8s.io/client-go/kubernetes/typed/storage/v1"
+	klog "k8s.io/klog/v2"
 	"k8s.io/utils/ptr"
 )
 
@@ -35,7 +35,7 @@ func createStorageClass(client storagev1typed.StorageV1Interface, storageClassNa
 		&storageClassTemplate, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("storageclass %s already installed", storageClassName))
+		klog.V(5).Info(fmt.Sprintf("storageclass %s already installed", storageClassName))
 
 		return nil
 	}
@@ -52,7 +52,7 @@ func deleteStorageClass(client storagev1typed.StorageV1Interface, storageClassNa
 		storageClassName, metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
 
 	if k8serrors.IsNotFound(err) {
-		glog.V(5).Info(fmt.Sprintf("storageclass %s already deleted", storageClassName))
+		klog.V(5).Info(fmt.Sprintf("storageclass %s already deleted", storageClassName))
 
 		return nil
 	} else if err != nil {

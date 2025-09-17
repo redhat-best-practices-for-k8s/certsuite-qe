@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiDeployment "github.com/openshift-kni/eco-goinfra/pkg/deployment"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 
 	. "github.com/onsi/gomega"
 )
@@ -41,7 +41,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("deployment %s already exists", deployment.Name))
+		klog.V(5).Info(fmt.Sprintf("deployment %s already exists", deployment.Name))
 
 		return nil
 	} else if err != nil {
@@ -56,7 +56,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 			context.TODO(), deployment.Name, metav1.GetOptions{})
 
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"deployment %s is not running, retry in 1 second", testDeployment.Name))
 
 			return false
@@ -64,8 +64,8 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 		// If it is running, we can break the loop
 		if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
-			glog.V(5).Info(fmt.Sprintf("deployment %s is running", testDeployment.Name))
-			glog.V(5).Info(fmt.Sprintf("deployment %s status: %v", testDeployment.Name, testDeployment.Status))
+			klog.V(5).Info(fmt.Sprintf("deployment %s is running", testDeployment.Name))
+			klog.V(5).Info(fmt.Sprintf("deployment %s status: %v", testDeployment.Name, testDeployment.Status))
 
 			return true
 		}
@@ -91,7 +91,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 	Eventually(func() bool {
 		status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"deployment %s is not ready, retry in 1 second", runningDeployment.Name))
 
 			return false

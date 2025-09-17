@@ -7,12 +7,12 @@ import (
 
 	. "github.com/onsi/gomega"
 
-	"github.com/golang/glog"
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiStatefulSet "github.com/openshift-kni/eco-goinfra/pkg/statefulset"
 	appsv1 "k8s.io/api/apps/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 )
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
@@ -25,7 +25,7 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 		context.TODO(), statefulSet, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		glog.V(5).Info(fmt.Sprintf("statefulSet %s already exists", statefulSet.Name))
+		klog.V(5).Info(fmt.Sprintf("statefulSet %s already exists", statefulSet.Name))
 
 		return nil
 	} else if err != nil {
@@ -35,7 +35,7 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 	Eventually(func() bool {
 		status, err := isStatefulSetReady(client, statefulSet.Namespace, statefulSet.Name)
 		if err != nil {
-			glog.V(5).Info(fmt.Sprintf(
+			klog.V(5).Info(fmt.Sprintf(
 				"statefulSet %s is not ready, retry in 1 second", statefulSet.Name))
 
 			return false

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
+	klog "k8s.io/klog/v2"
 )
 
 const (
@@ -33,7 +33,7 @@ func WaitForNodesReady(client corev1Typed.NodeInterface, timeout, interval time.
 				}
 			}
 
-			glog.V(5).Info("All nodes are Ready")
+			klog.V(5).Info("All nodes are Ready")
 
 			return true, nil
 		})

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/glog"
 	v1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
+	klog "k8s.io/klog/v2"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiDaemonSet "github.com/openshift-kni/eco-goinfra/pkg/daemonset"
@@ -35,7 +35,7 @@ func WaitForNamespaceDeletion(cs corev1Typed.CoreV1Interface, nsName string, tim
 		func(ctx context.Context) (bool, error) {
 			_, err := cs.Namespaces().Get(ctx, nsName, metav1.GetOptions{})
 			if k8serrors.IsNotFound(err) {
-				glog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
+				klog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
 
 				return true, nil
 			}

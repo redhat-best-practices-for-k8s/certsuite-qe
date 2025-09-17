@@ -5,12 +5,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang/glog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	testclient "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
 	"k8s.io/client-go/kubernetes"
+	klog "k8s.io/klog/v2"
 )
 
 var (
@@ -45,7 +45,7 @@ func GetAPIClient() *testclient.ClientSet {
 	apiclient, err = config.DefineClients()
 
 	if err != nil {
-		glog.Fatalf("can not load api client. Please check KUBECONFIG env var - %s", err)
+		klog.Fatalf("can not load api client. Please check KUBECONFIG env var - %s", err)
 	}
 
 	return apiclient
@@ -60,7 +60,7 @@ func GetConfiguration() *config.Config {
 	conf, err = config.NewConfig()
 
 	if err != nil {
-		glog.Fatalf("can not load configuration - %s", err)
+		klog.Fatalf("can not load configuration - %s", err)
 	}
 
 	return conf
@@ -72,12 +72,12 @@ func GenerateDirectories(randomStr string) (reportDir, configDir string) {
 
 	err := os.MkdirAll(reportDir, os.ModePerm)
 	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+		klog.ErrorS(err, "could not create dest directory", "dir", reportDir)
 	}
 
 	err = os.MkdirAll(configDir, os.ModePerm)
 	if err != nil {
-		glog.Error("could not create dest directory= %s, err=%s", reportDir, err)
+		klog.ErrorS(err, "could not create dest directory", "dir", reportDir)
 	}
 
 	return reportDir, configDir
@@ -119,7 +119,7 @@ func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, rando
 	// By("Print logs")
 	// myFile, err := os.ReadFile(randomReportDir + "/" + logfile)
 	// if err != nil {
-	// 	glog.Errorf("can not read file %s - %s", logfile, err)
+	// 	klog.Errorf("can not read file %s - %s", logfile, err)
 	// }
 	// fmt.Println(string(myFile))
 	// By(fmt.Sprintf("Remove reports from report directory: %s", randomReportDir))
