@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -13,44 +12,25 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes/scheme"
 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/client-go/tools/remotecommand"
 	klog "k8s.io/klog/v2"
+
+	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
 )
 
 // ExecCommand runs command in the pod and returns buffer output.
 func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
 
-	req := GetAPIClient().CoreV1Interface.RESTClient().
-		Post().
-		Namespace(pod.Namespace).
-		Resource("pods").
-		Name(pod.Name).
-		SubResource("exec").
-		VersionedParams(&corev1.PodExecOptions{
-			Container: pod.Spec.Containers[0].Name,
-			Command:   command,
-			Stdin:     true,
-			Stdout:    true,
-			Stderr:    true,
-			TTY:       true,
-		}, scheme.ParameterCodec)
-
-	exec, err := remotecommand.NewSPDYExecutor(GetAPIClient().Config, "POST", req.URL())
+	builder, err := egiPod.Pull(GetEcoGoinfraClient(), pod.Name, pod.Namespace)
 	if err != nil {
 		return buf, err
 	}
 
-	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
-		Stdin:  os.Stdin,
-		Stdout: &buf,
-		Stderr: os.Stderr,
-		Tty:    true,
-	})
+	// Exec in the first container by default (matches previous behavior)
+	buf, err = builder.ExecCommand(command)
 	if err != nil {
-		return buf, err
+		return bytes.Buffer{}, err
 	}
 
 	return buf, nil
