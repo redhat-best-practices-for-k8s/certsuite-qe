@@ -21,6 +21,7 @@ concurrency:
 
 env:
   TEST_REPO: redhat-best-practices-for-k8s/certsuite
+  TEST_REPO_BRANCH: add_daemonset_label
   ENABLE_CERTSUITE_MEMORY_LIMIT: true
 
 jobs:
@@ -42,7 +43,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.TEST_REPO_BRANCH }}
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
@@ -140,7 +141,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.TEST_REPO_BRANCH }}
 
       - name: Download pre-built certsuite binary
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0

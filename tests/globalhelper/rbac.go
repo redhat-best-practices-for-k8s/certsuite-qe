@@ -245,10 +245,8 @@ func createAndWaitUntilPVCIsBound(client corev1Typed.CoreV1Interface, pvc *corev
 	}
 
 	Eventually(func() bool {
-
 		status, err := isPvcBound(client, pvc.Name, pvc.Namespace, pvName)
 		if err != nil {
-
 			klog.V(5).Info(fmt.Sprintf(
 				"pvc %s is not bound, retry in %d seconds", pvc.Name, retryInterval))
 
