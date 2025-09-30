@@ -1,6 +1,8 @@
 # Export GO111MODULE=on to enable project to be built from within GOPATH/src
 export GO111MODULE=on
 GO_PACKAGES=$(shell go list ./... | grep -v vendor)
+GOPATH ?= $(shell go env GOPATH)
+GINKGO=$(GOPATH)/bin/ginkgo
 
 # Color definitions for better output formatting
 RED     := \033[31m
@@ -87,7 +89,11 @@ deps-update: ## Update and vendor Go module dependencies
 
 install-ginkgo: ## Install Ginkgo testing framework
 	@echo "$(BOLD)$(BLUE)⚙️  Installing Ginkgo...$(RESET)"
-	@go install "$$(awk '/ginkgo/ {printf "%s/ginkgo@%s", $$1, $$2}' go.mod)" && echo "$(GREEN)✅ Ginkgo installed successfully$(RESET)" || (echo "$(RED)❌ Failed to install Ginkgo$(RESET)" && exit 1)
+	@go install "$$(awk '/ginkgo/ {printf "%s/ginkgo@%s", $$1, $$2}' go.mod)" && echo "$(GREEN)✅ Ginkgo installed successfully to $(GOPATH)/bin/ginkgo$(RESET)" || (echo "$(RED)❌ Failed to install Ginkgo$(RESET)" && exit 1)
+	@if [ -f "$(GINKGO)" ]; then \
+		echo "$(CYAN)📍 Ginkgo location: $(GINKGO)$(RESET)"; \
+		echo "$(YELLOW)💡 If 'ginkgo' command not found, add to PATH: export PATH=\$$PATH:$(GOPATH)/bin$(RESET)"; \
+	fi
 
 install: deps-update install-ginkgo ## Install all project dependencies and tools
 	@echo "$(BOLD)$(GREEN)🎉 All dependencies installed successfully!$(RESET)"
@@ -112,6 +118,17 @@ test-features: install-ginkgo download-unstable ## Run specific feature tests (s
 	else \
 		echo "$(CYAN)📋 Running tests for features: $(BOLD)$(FEATURES)$(RESET)"; \
 		FEATURES="$(FEATURES)" ./scripts/run-tests.sh features && echo "$(GREEN)✅ Feature tests completed successfully$(RESET)" || (echo "$(RED)❌ Feature tests failed$(RESET)" && exit 1); \
+	fi
+
+test-labels: install-ginkgo download-unstable ## Run tests with Ginkgo label filter (set LABELS env var)
+	@echo "$(BOLD)$(BLUE)🏷️  Running label-filtered tests...$(RESET)"
+	@if [ -z "$(LABELS)" ]; then \
+		echo "$(YELLOW)⚠️  No LABELS specified. Set LABELS environment variable.$(RESET)"; \
+		echo "$(CYAN)Example: LABELS=poc-v3 make test-labels$(RESET)"; \
+		echo "$(CYAN)Example: LABELS='poc && optimization' make test-labels$(RESET)"; \
+	else \
+		echo "$(CYAN)📋 Running tests with label filter: $(BOLD)$(LABELS)$(RESET)"; \
+		$(GINKGO) -v --label-filter="$(LABELS)" -r tests/ && echo "$(GREEN)✅ Label-filtered tests completed successfully$(RESET)" || (echo "$(RED)❌ Label-filtered tests failed$(RESET)" && exit 1); \
 	fi
 
 coverage-html: test ## Generate HTML coverage report from test results
