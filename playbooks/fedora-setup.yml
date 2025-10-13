@@ -51,7 +51,7 @@
 
     - name: Install Kind
       shell: |
-        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
         chmod +x ./kind
         mv ./kind /usr/local/bin/kind
       when: ansible_distribution == "Fedora"
