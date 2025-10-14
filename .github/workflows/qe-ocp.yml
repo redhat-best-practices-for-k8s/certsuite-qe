@@ -21,6 +21,7 @@ concurrency:
 
 env:
   TEST_REPO: redhat-best-practices-for-k8s/certsuite
+  CERTSUITE_REF: main
   ENABLE_CERTSUITE_MEMORY_LIMIT: true
 
 jobs:
@@ -42,7 +43,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.CERTSUITE_REF }}
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
@@ -129,18 +130,12 @@ jobs:
         env:
           OCP_PULL_SECRET: ${{ secrets.CRC_PULL_SECRET }}
 
-      - name: Wait for all pods to be ready and show them
-        if: steps.check-secret.outputs.has-secret == 'true'
-        run: |
-          while oc get pods --all-namespaces --no-headers | grep -vE 'Running|Completed'; do echo "⏳ Waiting for pods..."; sleep 5; done; echo "✅ All pods are Running or Completed."
-          oc get pods -A
-
       - name: Clone the certsuite repository
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.CERTSUITE_REF }}
 
       - name: Download pre-built certsuite binary
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
