@@ -21,6 +21,7 @@ concurrency:
 
 env:
   TEST_REPO: redhat-best-practices-for-k8s/certsuite
+  CERTSUITE_REF: main
 
 jobs:
   build-and-store-image:
@@ -36,7 +37,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.CERTSUITE_REF }}
 
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
@@ -74,7 +75,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.CERTSUITE_REF }}
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
@@ -168,7 +169,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
-          ref: main
+          ref: ${{ env.CERTSUITE_REF }}
 
       - name: Extract dependent Pull Requests
         uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
