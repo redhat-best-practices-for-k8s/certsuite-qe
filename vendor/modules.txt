@@ -444,8 +444,8 @@ github.com/prometheus/procfs/internal/util
 # github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df
 ## explicit; go 1.22.7
 github.com/red-hat-storage/odf-operator/api/v1alpha1
-# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.59
-## explicit; go 1.25.1
+# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.60
+## explicit; go 1.25.3
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
 # github.com/redhat-best-practices-for-k8s/oct v0.0.48
 ## explicit; go 1.25.1
