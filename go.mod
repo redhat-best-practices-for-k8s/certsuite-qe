@@ -5,7 +5,7 @@ go 1.25.3
 require (
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.7
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/onsi/ginkgo/v2 v2.27.1
+	github.com/onsi/ginkgo/v2 v2.27.2
 	github.com/onsi/gomega v1.38.2
 	github.com/openshift-kni/eco-goinfra v0.0.0-20250626134339-a4d8fdcb3572
 	github.com/openshift/api v3.9.0+incompatible
@@ -123,7 +123,6 @@ require (
 	go.mongodb.org/mongo-driver v1.17.1 // indirect
 	go.opentelemetry.io/otel v1.36.0 // indirect
 	go.opentelemetry.io/otel/trace v1.36.0 // indirect
-	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.41.0 // indirect
