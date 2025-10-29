@@ -43,6 +43,12 @@ var _ = Describe("manageability-container-port-name", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is ready with container port configured")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+		Expect(len(runningPod.Spec.Containers[0].Ports)).To(BeNumerically(">", 0))
+
 		By("Start container-port-name test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerPortName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -64,6 +70,12 @@ var _ = Describe("manageability-container-port-name", func() {
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is ready with container port configured")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+		Expect(len(runningPod.Spec.Containers[0].Ports)).To(BeNumerically(">", 0))
 
 		By("Start container-port-name test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerPortName,

@@ -47,6 +47,11 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		err := globalhelper.CreateAndWaitUntilReplicaSetIsReady(replicaSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert replicaSet has pods")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">=", 3))
+
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -75,6 +80,11 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert both deployments have pods")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">=", 4))
+
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -92,6 +102,11 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert statefulSet has pod")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet).ToNot(BeNil())
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,
@@ -111,6 +126,12 @@ var _ = Describe("lifecycle-pod-owner-type", func() {
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is ready and not owned by any workload")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, put.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+		Expect(len(runningPod.OwnerReferences)).To(Equal(0))
 
 		By("Start lifecycle-pod-owner-type test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodOwnerTypeTcName,

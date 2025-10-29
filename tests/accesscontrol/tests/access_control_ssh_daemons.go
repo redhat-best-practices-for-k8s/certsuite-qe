@@ -48,6 +48,11 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is ready")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+
 		By("Start ssh-daemons")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteNoSSHDaemonsAllowed,
@@ -72,6 +77,12 @@ var _ = Describe("Access-control ssh-daemons,", func() {
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is ready with ssh daemon command configured")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+		Expect(runningPod.Spec.Containers[0].Command).To(Equal(tsparams.SSHDaemonStartContainerCommand))
 
 		By("Start ssh-daemons")
 		err = globalhelper.LaunchTests(

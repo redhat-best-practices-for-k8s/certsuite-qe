@@ -47,6 +47,12 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is ready")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+		Expect(runningPod.Spec.Containers[0].Image).To(ContainSubstring(":"))
+
 		By("Start containers-image-tag test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerImageTag,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)

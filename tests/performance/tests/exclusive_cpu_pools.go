@@ -11,6 +11,7 @@ import (
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var _ = Describe("performance-exclusive-cpu-pool", func() {
@@ -62,6 +63,21 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		}
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is ready with exclusive CPU configuration")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+
+		// Log container count and resources for debugging
+		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		for i, container := range runningPod.Spec.Containers {
+			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
+			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
+			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
+		}
+
+		Expect(runningPod.Spec.Containers[0].Resources.Requests).To(HaveKey(corev1.ResourceCPU))
+
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteExclusiveCPUPool,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -86,6 +102,21 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		}
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is ready with mixed CPU configuration")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+
+		// Log container count and resources for debugging
+		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		for i, container := range runningPod.Spec.Containers {
+			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
+			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
+			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
+		}
+
+		Expect(runningPod.Spec.Containers[0].Resources.Requests).To(HaveKey(corev1.ResourceCPU))
+
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteExclusiveCPUPool,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -102,6 +133,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		testPod := tshelper.DefineExclusivePod(tsparams.TestPodName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
+		By("Redefine all containers with shared CPU resources")
 		pod.RedefineWithCPUResources(testPod, "0.75", "0.5")
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
@@ -109,6 +141,27 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is ready with shared CPU configuration")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+
+		// Log container count and resources for debugging
+		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		for i, container := range runningPod.Spec.Containers {
+			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
+			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
+			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
+			GinkgoWriter.Printf("Container[%d] Memory requests: %v\n", i, container.Resources.Requests.Memory())
+			GinkgoWriter.Printf("Container[%d] Memory limits: %v\n", i, container.Resources.Limits.Memory())
+		}
+
+		// Verify CPU requests exist and are fractional (shared, not exclusive)
+		Expect(runningPod.Spec.Containers[0].Resources.Requests).To(HaveKey(corev1.ResourceCPU))
+		cpuRequest := runningPod.Spec.Containers[0].Resources.Requests.Cpu().String()
+		GinkgoWriter.Printf("Expected CPU request: 500m, Actual CPU request: %s\n", cpuRequest)
+		Expect(cpuRequest).To(Equal("500m"), "CPU request should be 500m (0.5 cores) for shared container")
 
 		By("Start exclusive-cpu-pool test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteExclusiveCPUPool,

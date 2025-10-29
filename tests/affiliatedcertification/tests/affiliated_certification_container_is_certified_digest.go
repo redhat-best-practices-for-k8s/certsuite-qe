@@ -64,6 +64,11 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameContainerDigest,
@@ -87,6 +92,11 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		By("Create deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -141,12 +151,22 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 is ready")
+		runningDeployment1, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment1).ToNot(BeNil())
+
 		dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 			tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
 		By("Create deployment 2")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 is ready")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2).ToNot(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

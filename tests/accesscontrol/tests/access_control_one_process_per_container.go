@@ -3,6 +3,7 @@ package accesscontrol
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
@@ -52,6 +53,13 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is running with expected process count")
+		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podList.Items)).To(Equal(1))
+		pod := &podList.Items[0]
+		Expect(pod.Status.Phase).To(Equal(corev1.PodRunning))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlOneProcessPerContainer,
@@ -76,6 +84,11 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has container with command to launch two processes")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].Command).To(Equal(commandToLaunchTwoProcesses))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlOneProcessPerContainer,
@@ -99,6 +112,11 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has two containers")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(runningDeployment.Spec.Template.Spec.Containers)).To(Equal(2))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -126,6 +144,12 @@ var _ = Describe("Access-control one-process-per-container,", func() {
 		By("Create deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has two containers and second container has multi-process command")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(runningDeployment.Spec.Template.Spec.Containers)).To(Equal(2))
+		Expect(runningDeployment.Spec.Template.Spec.Containers[1].Command).To(Equal(commandToLaunchTwoProcesses))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

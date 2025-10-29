@@ -137,6 +137,11 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
+			By("Assert operator CSV is ready")
+			csv, err := tshelper.GetCsvByPrefix(tsparams.UncertifiedOperatorPrefixCockroach, randomNamespace)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(csv).ToNot(BeNil())
+
 			// Assert that the random report dir exists
 			Expect(randomReportDir).To(BeADirectory(), "Random report dir does not exist")
 
@@ -144,7 +149,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			Expect(randomCertsuiteConfigDir).To(BeADirectory(), "Random certsuite config dir does not exist")
 
 			By("Start test")
-			err := globalhelper.LaunchTests(
+			err = globalhelper.LaunchTests(
 				tsparams.TestCaseOperatorAffiliatedCertName,
 				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 			Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -178,8 +183,16 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
+		By("Assert both operator CSVs are ready")
+		certifiedCSV, err := tshelper.GetCsvByPrefix(tsparams.CertifiedOperatorPrefixCockroachCertified, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(certifiedCSV).ToNot(BeNil())
+		uncertifiedCSV, err := tshelper.GetCsvByPrefix(tsparams.UncertifiedOperatorPrefixCockroach, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(uncertifiedCSV).ToNot(BeNil())
+
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -205,8 +218,13 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+grafanaOperatorName)
 
+		By("Assert operator CSV is ready")
+		csv, err := tshelper.GetCsvByPrefix(grafanaOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(csv).ToNot(BeNil())
+
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+
@@ -239,8 +257,16 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
 
+		By("Assert both operator CSVs are ready")
+		grafanaCSV, err := tshelper.GetCsvByPrefix(grafanaOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(grafanaCSV).ToNot(BeNil())
+		cockroachCSV, err := tshelper.GetCsvByPrefix(tsparams.CertifiedOperatorPrefixCockroachCertified, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(cockroachCSV).ToNot(BeNil())
+
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.TestCaseOperatorAffiliatedCertName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred(), "Error running "+

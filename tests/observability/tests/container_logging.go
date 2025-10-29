@@ -48,6 +48,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -70,6 +75,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -91,6 +101,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -116,6 +131,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet,
 			tsparams.DaemonSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet is ready")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -145,6 +165,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 is ready")
+		runningDeployment1, err := globalhelper.GetRunningDeployment(deployment1.Namespace, deployment1.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment1).ToNot(BeNil())
+
 		By("Create deployment2 in the cluster")
 		deployment2 := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName+"2", randomNamespace, 2,
@@ -153,6 +178,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 is ready")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(deployment2.Namespace, deployment2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -177,6 +207,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Create statefulset in the cluster")
 		statefulset := tshelper.DefineStatefulSetWithStdoutBuffers(
 			tsparams.TestStatefulSetBaseName, randomNamespace, 1,
@@ -185,6 +220,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset,
 			tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert statefulSet is ready")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulset.Namespace, statefulset.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -206,6 +246,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is ready")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, pod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
+
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -225,6 +270,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is ready")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, pod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -248,6 +298,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -269,6 +324,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -292,6 +352,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 is ready")
+		runningDeployment1, err := globalhelper.GetRunningDeployment(deployment1.Namespace, deployment1.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment1).ToNot(BeNil())
+
 		By("Create deployment2 in the cluster but only the first of its containers prints a line to stdout")
 		deployment2 := tshelper.DefineDeploymentWithStdoutBuffers(
 			tsparams.TestDeploymentBaseName+"2", randomNamespace, 1,
@@ -300,6 +365,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment2,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 is ready")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(deployment2.Namespace, deployment2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -320,6 +390,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(pod, tsparams.PodDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is ready")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, pod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -344,6 +419,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Deploy statefulset in the cluster")
 		statefulset := tshelper.DefineStatefulSetWithStdoutBuffers(
 			tsparams.TestStatefulSetBaseName, randomNamespace, 1,
@@ -352,6 +432,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err = globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulset,
 			tsparams.StatefulSetDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert statefulSet is ready")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulset.Namespace, statefulset.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -378,6 +463,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
@@ -406,6 +496,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -426,6 +521,11 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment,
 			tsparams.DeploymentDeployTimeoutMins)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
 
 		By("Start Certsuite " + tsparams.CertsuiteContainerLoggingTcName + " test case")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerLoggingTcName,

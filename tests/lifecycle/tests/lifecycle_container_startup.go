@@ -143,6 +143,12 @@ var _ = Describe("lifecycle-container-poststart", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod has postStart configured")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, put.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Spec.Containers[0].Lifecycle).ToNot(BeNil())
+		Expect(runningPod.Spec.Containers[0].Lifecycle.PostStart).ToNot(BeNil())
+
 		By("Start lifecycle-container-poststart test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerStartUpTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)

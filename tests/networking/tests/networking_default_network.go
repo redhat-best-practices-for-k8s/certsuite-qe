@@ -49,6 +49,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err := tshelper.DefineAndCreateDeploymentOnCluster(3, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has 3 pods running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(3))
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteDefaultNetworkTcName,
@@ -68,6 +73,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err := tshelper.DefineAndCreateDeploymentOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has 2 pods running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(2))
+
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
@@ -76,6 +86,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Create DaemonSet on cluster")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet is ready")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet).ToNot(BeNil())
 
 		By("Start tests")
 		err = globalhelper.LaunchTests(
@@ -97,10 +112,12 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err := tshelper.DefineAndCreatePrivilegedDeploymentOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Close communication between deployment pods")
+		By("Assert deployment has pods running")
 		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">=", 2))
 
+		By("Close communication between deployment pods")
 		for index := range podsList.Items {
 			_, err := globalhelper.ExecCommand(
 				podsList.Items[0],
@@ -129,6 +146,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err := tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has pods running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(2))
+
 		By("Remove ping binary from test pod")
 		err = tshelper.ExecCmdOnOnePodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"}, randomNamespace)
@@ -154,6 +176,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		err := tshelper.DefineAndCreateDeploymentWithSkippedLabelOnCluster(2, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has pods running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(2))
+
 		By("Remove ping binary from test pod")
 		err = tshelper.ExecCmdOnAllPodInNamespace(
 			[]string{"rm", "-rf", "/usr/bin/ping", "/usr/sbin/ping"}, randomNamespace)
@@ -167,6 +194,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", func() {
 		By("Create DaemonSet on cluster")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet is ready")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet).ToNot(BeNil())
 
 		// Note: We cannot perform the icmpv4 connectivity test on a single node cluster when defining a daemonset.
 		expectedState := globalparameters.TestCasePassed

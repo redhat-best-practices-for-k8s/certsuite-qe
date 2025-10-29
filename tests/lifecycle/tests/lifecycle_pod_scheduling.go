@@ -55,6 +55,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has no nodeSelector or nodeAffinity")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.NodeSelector).To(BeEmpty())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
+
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -86,6 +92,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has nodeSelector configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.NodeSelector).ToNot(BeEmpty())
+		Expect(runningDeployment.Spec.Template.Spec.NodeSelector).To(HaveKey(configSuite.General.CnfNodeLabel))
+
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -116,6 +128,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has nodeAffinity configured")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).ToNot(BeNil())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity.NodeAffinity).ToNot(BeNil())
+
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -145,6 +163,11 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deploymenta has no nodeAffinity")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
+
 		By("Define Deployment with nodeAffinity")
 		deploymentb, err := tshelper.DefineDeployment(1, 1, "lifecycle-dpb", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -154,6 +177,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Create Deployment")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deploymentb has nodeAffinity configured")
+		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).ToNot(BeNil())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity.NodeAffinity).ToNot(BeNil())
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
@@ -184,6 +213,12 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has no nodeSelector or nodeAffinity")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.NodeSelector).To(BeEmpty())
+		Expect(runningDeployment.Spec.Template.Spec.Affinity).To(BeNil())
+
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
 			tsparams.SampleWorkloadImage,
@@ -192,6 +227,11 @@ var _ = Describe("lifecycle-pod-scheduling", func() {
 		By("Create daemonSet")
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet is ready")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet).ToNot(BeNil())
 
 		By("Start lifecycle-pod-scheduling test")
 		err = globalhelper.LaunchTests(tsparams.CertsuitePodSchedulingTcName,
