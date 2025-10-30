@@ -58,6 +58,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteBaseImageName,
@@ -81,6 +86,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet is ready")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet).ToNot(BeNil())
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
@@ -125,6 +135,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert second deployment is ready")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2).ToNot(BeNil())
+
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteBaseImageName,
@@ -148,6 +163,11 @@ var _ = Describe("platform-alteration-base-image", func() {
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tshelper.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert statefulSet is ready")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet).ToNot(BeNil())
 
 		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())

@@ -141,6 +141,11 @@ var _ = Describe("lifecycle-readiness", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod has readiness probe configured")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, put.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Spec.Containers[0].ReadinessProbe).ToNot(BeNil())
+
 		By("Start lifecycle-readiness test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteReadinessTcName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)

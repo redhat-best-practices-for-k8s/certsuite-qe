@@ -42,6 +42,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has pod running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(1))
+
 		By("Define and create network policy")
 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 			randomNamespace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
@@ -67,6 +72,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment has pod running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(1))
 
 		By("Define and create network policy")
 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
@@ -94,6 +104,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has pod running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(1))
+
 		By("Define and create network policy")
 		err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 			randomNamespace, []string{"Egress"}, tsparams.TestDeploymentLabels)
@@ -119,6 +134,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has pod running")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(1))
+
 		By("Start tests")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
@@ -141,6 +161,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
+			By("Assert first deployment has pod running")
+			podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(podsList.Items)).To(Equal(1))
+
 			By("Define and create first network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 				randomNamespace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
@@ -159,6 +184,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			By("Define second deployment and create it on cluster")
 			err = tshelper.DefineAndCreateDeploymentWithNamespace(randomSecondaryNamespace, 1)
 			Expect(err).ToNot(HaveOccurred())
+
+			By("Assert second deployment has pod running")
+			podsList2, err := globalhelper.GetListOfPodsInNamespace(randomSecondaryNamespace)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(podsList2.Items)).To(Equal(1))
 
 			By("Define and create second network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
@@ -195,6 +225,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
+			By("Assert first deployment has pod running")
+			podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(podsList.Items)).To(Equal(1))
+
 			By("Define and create first network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",
 				randomNamespace, []string{"Ingress", "Egress"}, tsparams.TestDeploymentLabels)
@@ -213,6 +248,11 @@ var _ = Describe("Networking network-policy-deny-all,", func() {
 			By("Define second deployment and create it on cluster")
 			err = tshelper.DefineAndCreateDeploymentWithNamespace(randomSecondaryNamespace, 1)
 			Expect(err).ToNot(HaveOccurred())
+
+			By("Assert second deployment has pod running")
+			podsList2, err := globalhelper.GetListOfPodsInNamespace(randomSecondaryNamespace)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(podsList2.Items)).To(Equal(1))
 
 			By("Define and create second network policy")
 			err = tshelper.DefineAndCreateNetworkPolicy("netpolicy1",

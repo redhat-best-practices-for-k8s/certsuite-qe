@@ -80,8 +80,13 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+operatorName)
 
+		By("Assert operator CSV is in Succeeded phase")
+		csv, err := tshelper.GetCsvByPrefix(operatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(csv.Status.Phase).To(Equal(v1alpha1.CSVPhaseSucceeded))
+
 		By("Start test")
-		err := globalhelper.LaunchTests(
+		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteOperatorInstallStatus,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
 			randomReportDir,
@@ -170,6 +175,16 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			tsparams.CertsuiteTargetCrdFilters, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert grafana operator CSV is in Succeeded phase")
+		csv, err := tshelper.GetCsvByPrefix(operatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(csv.Status.Phase).To(Equal(v1alpha1.CSVPhaseSucceeded))
+
+		By("Assert PostgreSQL operator CSV is not in Succeeded phase")
+		postgresCSV, err := tshelper.GetCsvByPrefix(tsparams.OperatorPrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(postgresCSV.Status.Phase).ToNot(Equal(v1alpha1.CSVPhaseSucceeded))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteOperatorInstallStatus,
@@ -251,6 +266,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+postgresqlOperatorName)
+
+		By("Assert PostgreSQL operator CSV is not in Succeeded phase")
+		postgresCSV, err := tshelper.GetCsvByPrefix(tsparams.OperatorPrefixLightweight, randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(postgresCSV.Status.Phase).ToNot(Equal(v1alpha1.CSVPhaseSucceeded))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

@@ -50,6 +50,11 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod has valid service account configured")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Spec.ServiceAccountName).To(Equal(tsparams.TestServiceAccount))
+
 		By("Start pod-service-account")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuitePodServiceAccount,
@@ -72,6 +77,11 @@ var _ = Describe("Access-control pod-service-account,", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod has default service account (Kubernetes assigns 'default' when empty)")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Spec.ServiceAccountName).To(Equal("default"))
+
 		By("Start pod-service-account")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuitePodServiceAccount,
@@ -86,13 +96,18 @@ var _ = Describe("Access-control pod-service-account,", func() {
 	})
 
 	It("one pod with default service account [negative]", func() {
-		By("Define pod with empty service account")
+		By("Define pod with default service account")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
 		pod.RedefineWithServiceAccount(testPod, "default")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod has default service account")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Spec.ServiceAccountName).To(Equal("default"))
 
 		By("Start pod-service-account")
 		err = globalhelper.LaunchTests(

@@ -3,6 +3,7 @@ package accesscontrol
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
@@ -46,6 +47,11 @@ var _ = Describe("Access-control bpf-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment does not have BPF capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlBpfCapability,
@@ -70,6 +76,14 @@ var _ = Describe("Access-control bpf-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment has BPF capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).ToNot(BeNil())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities).ToNot(BeNil())
+		capabilities := runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities.Add
+		Expect(capabilities).To(ContainElement(corev1.Capability("BPF")))
+
 		By("Start test")
 		err = globalhelper.LaunchTests(
 			tsparams.TestCaseNameAccessControlBpfCapability,
@@ -92,6 +106,11 @@ var _ = Describe("Access-control bpf-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 does not have BPF capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
+
 		By("Define deployment 2 without BPF")
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -99,6 +118,11 @@ var _ = Describe("Access-control bpf-capability-check,", func() {
 		By("Create deployment 2 without BPF")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 does not have BPF capability")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -124,6 +148,14 @@ var _ = Describe("Access-control bpf-capability-check,", func() {
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment1 has BPF capability")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext).ToNot(BeNil())
+		Expect(runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities).ToNot(BeNil())
+		capabilities := runningDeployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities.Add
+		Expect(capabilities).To(ContainElement(corev1.Capability("BPF")))
+
 		By("Define deployment 2 without BPF")
 		dep2, err := tshelper.DefineDeployment(1, 1, "accesscontroldeployment2", randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -131,6 +163,11 @@ var _ = Describe("Access-control bpf-capability-check,", func() {
 		By("Create deployment 2 without BPF")
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment2 does not have BPF capability")
+		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment2.Spec.Template.Spec.Containers[0].SecurityContext).To(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
