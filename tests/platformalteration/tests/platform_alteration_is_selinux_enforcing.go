@@ -32,7 +32,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Kind cluster does not support SELinux")
 		}
 	})
@@ -81,7 +81,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", func() {
 
 	// 51311
 	It("SELinux is permissive on one node [negative]", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Kind cluster does not support SELinux")
 		}
 

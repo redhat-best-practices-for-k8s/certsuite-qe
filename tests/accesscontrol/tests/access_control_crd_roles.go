@@ -19,7 +19,7 @@ var _ = Describe("access-control-crd-roles", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			By("Make masters schedulable")
 			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().K8sClient.CoreV1().Nodes(), true)
 			Expect(err).ToNot(HaveOccurred())

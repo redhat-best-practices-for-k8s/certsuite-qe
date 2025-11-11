@@ -35,7 +35,7 @@ var _ = Describe("platform-alteration-base-image", func() {
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			// The Certsuite actually proactively skips this test if the cluster is Non-OCP.
 			Skip(fmt.Sprintf("%s test is not applicable for Kind cluster", tsparams.CertsuiteBaseImageName))
 		}

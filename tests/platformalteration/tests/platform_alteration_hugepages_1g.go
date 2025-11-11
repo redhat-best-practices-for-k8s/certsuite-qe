@@ -31,7 +31,7 @@ var _ = Describe("platform-alteration-hugepages-1g-only", Serial, func() {
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Hugepages are not supported in Kind clusters")
 		}
 

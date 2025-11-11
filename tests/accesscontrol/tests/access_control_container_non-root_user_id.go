@@ -39,7 +39,7 @@ var _ = Describe("Access-control non-root user,", func() {
 
 	// 56427
 	It("one deployment, one pod, does not have securityContext RunAsUser 0", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			// This test case deploys a pod without any securityContext fields in both pod and container level. In OCP,
 			// the most restrictive SecurityContextConstraint resource will be selected, making those fields to be automatically
 			// set with the appropriate values. In kind clusters, there's no SCC so both fields will be kept as nil, which makes
@@ -106,7 +106,7 @@ var _ = Describe("Access-control non-root user,", func() {
 
 	// 56429
 	It("two deployments, one pod each, does not have securityContext RunAsUser 0", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			// This test case deploys a pod without any securityContext fields in both pod and container level. In OCP,
 			// the most restrictive SecurityContextConstraint resource will be selected, making those fields to be automatically
 			// set with the appropriate values. In kind clusters, there's no SCC so both fields will be kept as nil, which makes

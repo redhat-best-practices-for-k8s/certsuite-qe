@@ -26,7 +26,7 @@ var _ = Describe("lifecycle-pod-recreation", Serial, func() {
 		err := os.Setenv("CERTSUITE_NON_INTRUSIVE_ONLY", "false")
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			By("Make masters schedulable")
 			err := nodes.EnableMasterScheduling(globalhelper.GetAPIClient().Nodes(), true)
 			Expect(err).ToNot(HaveOccurred())

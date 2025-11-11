@@ -37,7 +37,7 @@ var isCloudCasaAlreadyLabeled bool
 
 var _ = SynchronizedBeforeSuite(func() {
 
-	if !globalhelper.IsKindCluster() {
+	if !globalhelper.IsVanillaK8sCluster() {
 		// Always install Helm v3 right before running the suite
 		By("Install helm v3")
 		cmd := exec.Command("/bin/bash", "-c",
@@ -88,7 +88,7 @@ var _ = SynchronizedBeforeSuite(func() {
 		Expect(err).ToNot(HaveOccurred())
 	}
 
-	if !globalhelper.IsKindCluster() {
+	if !globalhelper.IsVanillaK8sCluster() {
 		By("Ensure openshift-marketplace namespace exists")
 		err = globalhelper.CreateNamespace("openshift-marketplace")
 		Expect(err).ToNot(HaveOccurred())

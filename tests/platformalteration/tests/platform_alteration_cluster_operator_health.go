@@ -30,7 +30,7 @@ var _ = Describe("platform-alteration-cluster-operator-health", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Kind cluster does not have cluster operators")
 		}
 	})

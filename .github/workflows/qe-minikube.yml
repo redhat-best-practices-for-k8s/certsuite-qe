@@ -1,0 +1,177 @@
+---
+name: QE Testing (Minikube)
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'tests/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/qe-ocp.yml'
+      - '.github/workflows/qe-minikube.yml'
+  workflow_dispatch:
+  # Schedule a daily cron at midnight UTC
+  schedule:
+    - cron: '0 0 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  TEST_REPO: redhat-best-practices-for-k8s/certsuite
+  CERTSUITE_REF: main
+
+jobs:
+  # Build and store the certsuite binary
+  build-and-store-binary:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Clone the certsuite repository
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          repository: ${{ env.TEST_REPO }}
+          path: certsuite
+          ref: ${{ env.CERTSUITE_REF }}
+
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          extra-dirs: certsuite
+
+      - name: Build the certsuite binary
+        run: make build-certsuite-tool
+        working-directory: certsuite
+
+      - name: Upload certsuite binary as artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: certsuite-binary
+          path: certsuite/certsuite
+          retention-days: 1
+
+  qe-testing-minikube:
+    needs: [build-and-store-binary]
+    if: ${{ needs.build-and-store-binary.result == 'success' }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
+    env:
+      SHELL: /bin/bash
+      KUBECONFIG: '/home/runner/.kube/config'
+      PFLT_DOCKERCONFIG: '/home/runner/.docker/config'
+      TEST_CERTSUITE_IMAGE_NAME: quay.io/redhat-best-practices-for-k8s/certsuite
+      TEST_CERTSUITE_IMAGE_TAG: localtest
+      DOCKER_CONFIG_DIR: '/home/runner/.docker/'
+      SKIP_PRELOAD_IMAGES: true # Not needed for github-hosted runs
+
+    steps:
+      - name: Write temporary docker file
+        run: |
+          mkdir -p /home/runner/.docker
+          touch ${PFLT_DOCKERCONFIG}
+          echo '{ "auths": {} }' >> ${PFLT_DOCKERCONFIG}
+
+      - name: Check out code
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Disable default go problem matcher
+        run: echo "::remove-matcher owner=go::"
+
+      - name: Check out `certsuite-sample-workload`
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          repository: redhat-best-practices-for-k8s/certsuite-sample-workload
+          path: certsuite-sample-workload
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+
+      - name: Setup minikube k8s cluster
+        uses: palmsoftware/quick-k8s@v0.0.42
+        with:
+          clusterProvider: minikube
+          disableDefaultCni: true
+          numControlPlaneNodes: 1
+          numWorkerNodes: 2
+          installOLM: true
+          removeDefaultStorageClass: true
+          removeControlPlaneTaint: true
+
+      - name: Install partner resources
+        run: python3 -m venv .venv; source .venv/bin/activate; pip install --upgrade pip; pip install jinjanator; cp .venv/bin/jinjanate .venv/bin/j2; make install-for-qe
+        working-directory: certsuite-sample-workload
+
+      - name: Show pods
+        run: oc get pods -A
+
+      - name: Wait for all pods to be ready
+        run: ./scripts/wait-for-all-pods-running.sh
+        working-directory: certsuite-sample-workload
+        timeout-minutes: 10
+
+      - name: Clone the certsuite repository
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+        with:
+          repository: ${{ env.TEST_REPO }}
+          path: certsuite
+          ref: ${{ env.CERTSUITE_REF }}
+
+      - name: Extract dependent Pull Requests
+        uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          extra-dirs: certsuite-sample-workload certsuite
+
+      - name: Download pre-built certsuite binary
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: certsuite-binary
+          path: certsuite/
+
+      - name: Make binary executable
+        run: chmod +x certsuite/certsuite
+
+      # Only run against the binary during a scheduled run
+      - name: Run the tests (against binary)
+        uses: nick-fields/retry@ce71cc2ab81d554ebbe88c79ab5975992d79ba08 # v3.0.2
+        with:
+          timeout_minutes: 150
+          max_attempts: 3
+          command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
+
+  check-all-dependencies-are-merged:
+    runs-on: ubuntu-24.04
+    steps:
+
+      - name: Extract dependent PR
+        uses: depends-on/depends-on-action@61cb3f4a0e2c8ae4b90c9448dc57c7ba9ca24c35 # main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          check-unmerged-pr: true
+
+...
+

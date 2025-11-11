@@ -19,7 +19,7 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Skip test due to image pull missing credentials in Kind")
 		}
 

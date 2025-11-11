@@ -49,7 +49,7 @@ var _ = Describe("platform-alteration-ocp-lifecycle", func() {
 	})
 
 	It("OCP version should be supported", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("OCP version is not applicable for Kind cluster")
 		}
 

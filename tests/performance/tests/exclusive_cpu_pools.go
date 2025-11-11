@@ -37,7 +37,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 		err = tshelper.ConfigurePrivilegedServiceAccount(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() && runtime.NumCPU() <= 2 {
+		if globalhelper.IsVanillaK8sCluster() && runtime.NumCPU() <= 2 {
 			Skip("This test requires more than 2 CPU cores")
 		}
 	})
@@ -48,7 +48,7 @@ var _ = Describe("performance-exclusive-cpu-pool", func() {
 	})
 
 	It("One pod with only exclusive containers", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			// We cannot guarantee the number of available CPUs so we skip this test
 			Skip("Exclusive CPU pool is not supported on Kind cluster, skipping...")
 		}

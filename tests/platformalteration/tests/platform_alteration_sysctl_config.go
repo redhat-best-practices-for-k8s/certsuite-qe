@@ -37,7 +37,7 @@ var _ = Describe("platform-alteration-sysctl-config", func() {
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Kind cluster does not support MCO")
 		}
 	})

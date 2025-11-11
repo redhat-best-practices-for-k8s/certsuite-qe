@@ -16,7 +16,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, func() {
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Skipping helm version test on Kind cluster")
 		}
 

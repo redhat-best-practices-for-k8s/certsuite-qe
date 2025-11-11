@@ -32,7 +32,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Install istio")
 			//nolint:goconst
-			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.24.1 sh - "+
+			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.28.0 sh - "+
 				"&& istio-1.24.1/bin/istioctl install --set profile=demo -y --set hub=gcr.io/istio-release")
 			err := cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error installing istio")
@@ -42,7 +42,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	AfterAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Uninstall istio")
-			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.24.1 sh - "+
+			cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.28.0 sh - "+
 				"&& istio-1.24.1/bin/istioctl uninstall -y --purge")
 			err := cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
@@ -64,8 +64,8 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() {
-			Skip("Service mesh test is not applicable for Kind cluster")
+		if globalhelper.IsVanillaK8sCluster() {
+			Skip("Service mesh test is not applicable for vanilla K8s clusters")
 		}
 	})
 
@@ -177,7 +177,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, f
 		if err == nil {
 			By("Uninstall istio")
 			if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
-				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.24.1 sh - "+
+				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.28.0 sh - "+
 					"&& istio-1.24.1/bin/istioctl uninstall -y --purge")
 				err := cmd.Run()
 				Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
