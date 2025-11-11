@@ -33,9 +33,7 @@ var (
 	CertsuiteUndeclaredContainerPortsUsageTcName = "networking-undeclared-container-ports-usage"
 	CertsuiteReservedPartnerPortsTcName          = "networking-reserved-partner-ports"
 	CertsuiteDualStackServiceTcName              = "networking-dual-stack-service"
-	CertsuiteDpdkCPUPinningExecProbe             = "networking-dpdk-cpu-pinning-exec-probe"
 
-	DpdkPodName                   = "dpdk-pod"
 	NetworkingTestSkipLabel       = map[string]string{"redhat-best-practices-for-k8s.com/skip_connectivity_tests": ""}
 	NetworkingTestMultusSkipLabel = map[string]string{"redhat-best-practices-for-k8s.com/skip_multus_connectivity_tests": ""}
 )
@@ -71,7 +69,6 @@ const (
 	CertsuiteNetworkingPtpDaemonTcName            = "networking-ptp-daemon"
 	CertsuiteNetworkingRestartUnderTestTcName     = "networking-restart-on-reboot"
 	CertsuiteNetworkingDpdkCPUPinningTcName       = "networking-dpdk-cpu-pinning"
-	CertsuiteNetworkingDpdkExecProbeTcName        = "networking-dpdk-cpu-pinning-exec-probe"
 	CertsuiteNetworkingMultipleIPTcName           = "networking-multiple-ip-families"
 	CertsuiteNetworkingMultusBridgeTcName         = "networking-multus-bridge"
 	CertsuiteNetworkingMultusIpamTcName           = "networking-multus-ipam"

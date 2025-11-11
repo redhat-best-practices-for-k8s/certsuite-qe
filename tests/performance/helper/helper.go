@@ -269,3 +269,66 @@ func DefineRtPodInIsolatedCPUPool(namespace string, rtc *nodev1.RuntimeClass) (*
 
 	return testPod, nil
 }
+
+func DefineDpdkPod(podName, namespace string) *corev1.Pod {
+	cpuLimit := "1"
+	memoryLimit := "512Mi"
+	containerCommand := []string{"/bin/sh", "-c", "touch /tmp/healthy && sleep infinity"}
+
+	containerResource := corev1.ResourceRequirements{
+		Limits: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+			corev1.ResourceMemory: resource.MustParse(memoryLimit),
+		},
+		Requests: corev1.ResourceList{
+			corev1.ResourceCPU:    resource.MustParse(cpuLimit),
+			corev1.ResourceMemory: resource.MustParse(memoryLimit),
+		},
+	}
+
+	containerSecurityContext := &corev1.SecurityContext{
+		Privileged: ptr.To[bool](true),
+		RunAsUser:  ptr.To[int64](0),
+		Capabilities: &corev1.Capabilities{
+			Add: []corev1.Capability{"IPC_LOCK", "SYS_RESOURCE", "NET_RAW"}},
+	}
+
+	annotations := make(map[string]string)
+	annotations["k8s.v1.cni.cncf.io/networks"] = "sriovnet1"
+
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        podName,
+			Namespace:   namespace,
+			Labels:      tsparams.CertsuiteTargetPodLabels,
+			Annotations: annotations,
+		},
+		Spec: corev1.PodSpec{
+			TerminationGracePeriodSeconds: ptr.To[int64](0),
+			Containers: []corev1.Container{
+				{
+					Name:            "app-container",
+					Image:           "registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9",
+					Command:         containerCommand,
+					Resources:       containerResource,
+					SecurityContext: containerSecurityContext,
+					VolumeMounts: []corev1.VolumeMount{
+						{
+							Name:      "hugepage",
+							MountPath: "/dev/hugepages",
+						},
+					}},
+			},
+			Volumes: []corev1.Volume{
+				{
+					Name: "hugepage",
+					VolumeSource: corev1.VolumeSource{
+						EmptyDir: &corev1.EmptyDirVolumeSource{
+							Medium: corev1.StorageMediumHugePages,
+						},
+					},
+				},
+			},
+		},
+	}
+}
