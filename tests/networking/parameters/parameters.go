@@ -33,8 +33,9 @@ var (
 	CertsuiteUndeclaredContainerPortsUsageTcName = "networking-undeclared-container-ports-usage"
 	CertsuiteReservedPartnerPortsTcName          = "networking-reserved-partner-ports"
 	CertsuiteDualStackServiceTcName              = "networking-dual-stack-service"
-	NetworkingTestSkipLabel                      = map[string]string{"redhat-best-practices-for-k8s.com/skip_connectivity_tests": ""}
-	NetworkingTestMultusSkipLabel                = map[string]string{"redhat-best-practices-for-k8s.com/skip_multus_connectivity_tests": ""}
+
+	NetworkingTestSkipLabel       = map[string]string{"redhat-best-practices-for-k8s.com/skip_connectivity_tests": ""}
+	NetworkingTestMultusSkipLabel = map[string]string{"redhat-best-practices-for-k8s.com/skip_multus_connectivity_tests": ""}
 )
 
 type IPOutputInterface struct {
