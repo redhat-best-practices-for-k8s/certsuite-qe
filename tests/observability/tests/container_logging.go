@@ -120,7 +120,7 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 
 	// 51755
 	It("One daemonset with two containers, first prints two lines, the second one line", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
@@ -152,7 +152,7 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 
 	// 51756
 	It("Two deployments, two pods with two containers each, all printing 1 log line", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
@@ -451,7 +451,7 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 
 	// 51765
 	It("One deployment one pod one container printing one log line without newline char", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 
@@ -483,7 +483,7 @@ var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
 	// 51767
 	It("One deployment one pod two containers, first prints one line, second prints "+
 		"one line without newline", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Test skipped on KIND cluster due to newline char issue")
 		}
 

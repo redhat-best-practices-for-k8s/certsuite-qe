@@ -35,7 +35,7 @@ var _ = Describe("Networking dpdk-cpu-pinning-exec-probe,", func() {
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("DPDK is not supported on Kind cluster. Skipping.")
 		}
 

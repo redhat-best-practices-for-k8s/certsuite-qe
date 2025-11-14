@@ -366,6 +366,23 @@ func IsKindCluster() bool {
 	return cmd.Run() == nil
 }
 
+// Returns true if the cluster is a minikube cluster, otherwise false.
+func IsMinikubeCluster() bool {
+	cmd := exec.CommandContext(context.TODO(),
+		"oc",
+		"cluster-info", "--context", "minikube",
+		">/dev/null", "2>&1")
+
+	return cmd.Run() == nil
+}
+
+// Returns true if the cluster is a vanilla Kubernetes cluster (Kind or Minikube),
+// otherwise false. This is useful for skipping OpenShift-specific tests that
+// require features like SecurityContextConstraints, OCP lifecycle, etc.
+func IsVanillaK8sCluster() bool {
+	return IsKindCluster() || IsMinikubeCluster()
+}
+
 // Returns true if the cluster is a CRC (Code Ready Containers) cluster, otherwise false.
 // CRC clusters are typically single-node OpenShift clusters used for development.
 func IsCRCCluster() bool {

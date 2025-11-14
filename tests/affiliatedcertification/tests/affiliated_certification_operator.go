@@ -32,7 +32,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 				tsparams.TestCertificationNameSpace)
 
 		// If Kind cluster, skip.
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("This test is not supported on Kind cluster")
 		}
 
