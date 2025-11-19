@@ -20,6 +20,35 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	var operatorName string
 	var catalogSource string
 
+	// findAvailableLightweightOperator searches for a lightweight operator available in the cluster
+	// It tries a list of commonly available operators and returns the first one found
+	findAvailableLightweightOperator := func(namespace string) (packageName, catalogSource, csvPrefix string) {
+		// List of lightweight operators to try, in order of preference
+		lightweightOperators := []string{
+			"postgresql",                  // Original choice, good for OCP 4.19 and earlier
+			"redis-operator",              // Alternative for newer versions
+			"etcd",                        // Usually available across versions
+			"prometheus",                  // Common monitoring operator
+			"node-observability-operator", // Lightweight observability operator
+		}
+
+		for _, operatorPrefix := range lightweightOperators {
+			opName, catSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+				operatorPrefix,
+				namespace,
+			)
+			if err == nil && opName != "not found" && catSource != "not found" {
+				By(fmt.Sprintf("Found available lightweight operator: %s from catalog: %s", opName, catSource))
+
+				return opName, catSource, operatorPrefix
+			}
+		}
+
+		Skip("No suitable lightweight operators found in this OCP version - skipping operator install status tests")
+
+		return "", "", ""
+	}
+
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
@@ -101,53 +130,51 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	})
 
 	It("two operators, one does not reports Succeeded as its installation status (quick failure) [negative]", func() {
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
+		By("Find an available lightweight operator for testing")
+		lightweightOperatorName, lightweightCatalogSource, operatorCSVPrefix := findAvailableLightweightOperator(randomNamespace)
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
+		By(fmt.Sprintf("Using lightweight operator: %s from catalog: %s", lightweightOperatorName, lightweightCatalogSource))
+
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresOperatorName)
+			lightweightOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By("Deploy postgresql operator for testing")
-		// Deploy PostgreSQL operator with nodeSelector that will cause quick failure
+		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOperatorName))
+		// Deploy lightweight operator with nodeSelector that will cause quick failure
 		nodeSelector := map[string]string{"target": "nonexistent-node"}
 		err = tshelper.DeployOperatorSubscriptionWithNodeSelector(
-			postgresOperatorName,
+			lightweightOperatorName,
 			channel,
 			randomNamespace,
-			catalogSource,
+			lightweightCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
 			nodeSelector,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresOperatorName)
+			lightweightOperatorName)
 
-		// Do not wait for the PostgreSQL operator to be ready - it should fail due to nodeSelector
+		// Do not wait for the lightweight operator to be ready - it should fail due to nodeSelector
 
-		By("Verify that PostgreSQL operator CSV is not in Succeeded phase")
+		By(fmt.Sprintf("Verify that %s operator CSV is not in Succeeded phase", lightweightOperatorName))
 
 		Eventually(func() bool {
-			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(tsparams.OperatorPrefixLightweight, randomNamespace)
+			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(operatorCSVPrefix, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", tsparams.OperatorPrefixLightweight, err)
+				fmt.Printf("Error checking CSV status for %s: %v\n", operatorCSVPrefix, err)
 
 				return false
 			}
-			fmt.Printf("PostgreSQL operator %s CSV status is not Succeeded: %t\n", tsparams.OperatorPrefixLightweight, isNotSucceeded)
+			fmt.Printf("%s operator %s CSV status is not Succeeded: %t\n", lightweightOperatorName, operatorCSVPrefix, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
-			"PostgreSQL operator CSV should not be in Succeeded phase for this negative test")
+			fmt.Sprintf("%s operator CSV should not be in Succeeded phase for this negative test", lightweightOperatorName))
 
 		By("Label operators")
 		Eventually(func() error {
@@ -160,11 +187,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				operatorCSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+postgresOperatorName)
+			ErrorLabelingOperatorStr+lightweightOperatorName)
 
 		By("Update certsuite config to include both operators")
 		err = globalhelper.DefineCertsuiteConfig(
@@ -180,10 +207,10 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred())
 		Expect(csv.Status.Phase).To(Equal(v1alpha1.CSVPhaseSucceeded))
 
-		By("Assert PostgreSQL operator CSV is not in Succeeded phase")
-		postgresCSV, err := tshelper.GetCsvByPrefix(tsparams.OperatorPrefixLightweight, randomNamespace)
+		By(fmt.Sprintf("Assert %s operator CSV is not in Succeeded phase", lightweightOperatorName))
+		lightweightCSV, err := tshelper.GetCsvByPrefix(operatorCSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(postgresCSV.Status.Phase).ToNot(Equal(v1alpha1.CSVPhaseSucceeded))
+		Expect(lightweightCSV.Status.Phase).ToNot(Equal(v1alpha1.CSVPhaseSucceeded))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -201,59 +228,57 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	})
 
 	It("two operators, one does not reports Succeeded as its installation status (delayed failure) [negative]", Serial, func() {
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresqlOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresqlOperatorName).ToNot(Equal("not found"), "postgresql operator package not found")
-		Expect(catalogSource2).ToNot(Equal("not found"), "postgresql operator catalog source not found")
+		By("Find an available lightweight operator for testing")
+		lightweightOperatorName, lightweightCatalogSource, operatorCSVPrefix := findAvailableLightweightOperator(randomNamespace)
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresqlOperatorName)
+		By(fmt.Sprintf("Using lightweight operator: %s from catalog: %s", lightweightOperatorName, lightweightCatalogSource))
+
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresqlOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresqlOperatorName)
+			lightweightOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By("Deploy postgresql operator for testing")
-		// The postgresql operator fails to deploy, which creates a delayed failure scenario
+		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOperatorName))
+		// The lightweight operator fails to deploy, which creates a delayed failure scenario
 		// This allows testing of the CNF Certification Suite timeout mechanism
 		// for operator readiness.
 		nodeSelector := map[string]string{"target": "none"}
 		err = tshelper.DeployOperatorSubscriptionWithNodeSelector(
-			postgresqlOperatorName,
+			lightweightOperatorName,
 			channel,
 			randomNamespace,
-			catalogSource2,
+			lightweightCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
 			nodeSelector,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresqlOperatorName)
+			lightweightOperatorName)
 
 		// Do not wait until the operator is ready. This time the CNF Certification suite must handle the situation.
 
-		By("Verify that postgresql operator CSV is not in Succeeded phase")
+		By(fmt.Sprintf("Verify that %s operator CSV is not in Succeeded phase", lightweightOperatorName))
 		Eventually(func() bool {
-			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(tsparams.OperatorPrefixLightweight, randomNamespace)
+			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(operatorCSVPrefix, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", tsparams.OperatorPrefixLightweight, err)
+				fmt.Printf("Error checking CSV status for %s: %v\n", operatorCSVPrefix, err)
 
 				return false
 			}
-			fmt.Printf("postgresql operator %s CSV status is not Succeeded: %t\n", tsparams.OperatorPrefixLightweight, isNotSucceeded)
+			fmt.Printf("%s operator %s CSV status is not Succeeded: %t\n", lightweightOperatorName, operatorCSVPrefix, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
-			"postgresql operator CSV should not be in Succeeded phase for this negative test")
+			fmt.Sprintf("%s operator CSV should not be in Succeeded phase for this negative test", lightweightOperatorName))
 
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				operatorCSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
@@ -261,16 +286,16 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				operatorCSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+postgresqlOperatorName)
+			ErrorLabelingOperatorStr+lightweightOperatorName)
 
-		By("Assert PostgreSQL operator CSV is not in Succeeded phase")
-		postgresCSV, err := tshelper.GetCsvByPrefix(tsparams.OperatorPrefixLightweight, randomNamespace)
+		By(fmt.Sprintf("Assert %s operator CSV is not in Succeeded phase", lightweightOperatorName))
+		lightweightCSV, err := tshelper.GetCsvByPrefix(operatorCSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(postgresCSV.Status.Phase).ToNot(Equal(v1alpha1.CSVPhaseSucceeded))
+		Expect(lightweightCSV.Status.Phase).ToNot(Equal(v1alpha1.CSVPhaseSucceeded))
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
