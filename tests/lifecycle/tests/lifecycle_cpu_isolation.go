@@ -37,7 +37,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
 			[]string{}, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		if globalhelper.IsKindCluster() && runtime.NumCPU() <= 2 {
+		if globalhelper.IsVanillaK8sCluster() && runtime.NumCPU() <= 2 {
 			Skip("This test requires more than 2 CPU cores")
 		}
 	})

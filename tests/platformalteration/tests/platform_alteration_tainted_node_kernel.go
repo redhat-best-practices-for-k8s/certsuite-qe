@@ -54,7 +54,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
 
 	// 51390
 	It("Tainted node [negative]", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("Tainting a node not support on Kind cluster, skipping...")
 		}
 

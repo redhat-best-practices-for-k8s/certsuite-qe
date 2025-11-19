@@ -47,7 +47,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("r
 		}
 
 		// Skip all if running in a kind cluster
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			skipTestSuite = true
 			Skip("Kind cluster detected")
 		}
@@ -449,7 +449,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 
 		pod := &podList.Items[0]
 		By("Ensure pod " + pod.Name + " has not added SYS_NICE cap")
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Expect(pod.Spec.Containers[0].SecurityContext).To(BeNil())
 			Expect(pod.Spec.Containers[1].SecurityContext).To(BeNil())
 		} else {
@@ -459,7 +459,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 
 		pod = &podList.Items[1]
 		By("Ensure pod " + pod.Name + " has not added SYS_NICE cap")
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Expect(pod.Spec.Containers[0].SecurityContext).To(BeNil())
 			Expect(pod.Spec.Containers[1].SecurityContext).To(BeNil())
 		} else {

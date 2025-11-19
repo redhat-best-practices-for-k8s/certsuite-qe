@@ -36,7 +36,7 @@ var _ = Describe("platform-alteration-ocp-node-os", func() {
 	})
 
 	It("Nodes OS should be compatible with OCP version", func() {
-		if globalhelper.IsKindCluster() {
+		if globalhelper.IsVanillaK8sCluster() {
 			Skip("OCP version is not applicable for Kind cluster")
 		}
 

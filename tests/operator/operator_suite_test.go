@@ -27,12 +27,12 @@ func TestOperator(t *testing.T) {
 
 var _ = SynchronizedBeforeSuite(func() {
 
-	if globalhelper.IsKindCluster() {
+	if globalhelper.IsVanillaK8sCluster() {
 		Skip("Skipping operator tests on kind cluster")
 	}
 
 	// Safeguard against running the operator tests on a cluster without catalog sources
-	if !globalhelper.IsKindCluster() {
+	if !globalhelper.IsVanillaK8sCluster() {
 		By("Create community-operators catalog source")
 		err := globalhelper.CreateCommunityOperatorsCatalogSource()
 		Expect(err).ToNot(HaveOccurred())
