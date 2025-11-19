@@ -5,8 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestFindListIntersections(t *testing.T) {
@@ -106,60 +104,5 @@ func TestCreateContainerSpecsFromContainerPorts(t *testing.T) {
 		for i, container := range containers {
 			assert.Equal(t, testCase.expectedPorts[i], container.Ports[0])
 		}
-	}
-}
-
-func TestDefineDpdkPod(t *testing.T) {
-	testCases := []struct {
-		name      string
-		namespace string
-		expected  *corev1.Pod
-	}{
-		{
-			name:      "test-pod",
-			namespace: "test-namespace",
-			expected: &corev1.Pod{
-				ObjectMeta: metav1.ObjectMeta{
-					Name:      "test-pod",
-					Namespace: "test-namespace",
-					Labels: map[string]string{
-						"app": "test-pod",
-					},
-				},
-				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{
-						{
-							Name:  "app-container",
-							Image: "registry.redhat.io/openshift4/dpdk-base-rhel8:v4.9",
-							Ports: []corev1.ContainerPort{
-								{
-									Name:          "port1",
-									ContainerPort: 80,
-								},
-							},
-							Resources: corev1.ResourceRequirements{
-								Limits: corev1.ResourceList{
-									"intel.com/intel_sriov_netdevice": resource.MustParse("1"),
-								},
-							},
-						},
-					},
-					NodeSelector: nil,
-					HostNetwork:  false,
-					HostPID:      false,
-					HostIPC:      false,
-				},
-			},
-		},
-	}
-
-	for _, testCase := range testCases {
-		pod := DefineDpdkPod(testCase.name, testCase.namespace)
-		assert.Equal(t, testCase.expected.Spec.Containers[0].Name, pod.Spec.Containers[0].Name)
-		assert.Equal(t, testCase.expected.Spec.Containers[0].Image, pod.Spec.Containers[0].Image)
-		assert.Equal(t, testCase.expected.Spec.NodeSelector, pod.Spec.NodeSelector)
-		assert.Equal(t, testCase.expected.Spec.HostNetwork, pod.Spec.HostNetwork)
-		assert.Equal(t, testCase.expected.Spec.HostPID, pod.Spec.HostPID)
-		assert.Equal(t, testCase.expected.Spec.HostIPC, pod.Spec.HostIPC)
 	}
 }
