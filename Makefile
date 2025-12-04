@@ -63,6 +63,8 @@ vet: ## Run go vet to examine Go source code and report suspicious constructs
 lint: ## Run golangci-lint to check code quality and style
 	@echo "$(BOLD)$(BLUE)🔧 Running golangci-lint...$(RESET)"
 	@scripts/golangci-lint.sh && echo "$(GREEN)✅ Linting completed successfully$(RESET)" || (echo "$(RED)❌ Linting failed$(RESET)" && exit 1)
+	@echo "$(BOLD)$(BLUE)🔧 Running shfmt on shell scripts...$(RESET)"
+	@shfmt -d scripts/*.sh && echo "$(GREEN)✅ Shell scripts formatted correctly$(RESET)" || (echo "$(RED)❌ Shell script formatting issues found. Run 'shfmt -w scripts/*.sh' to fix$(RESET)" && exit 1)
 
 gofmt: ## Check Go code formatting (use 'gofmt -w' to fix issues)
 	@echo "$(BOLD)$(BLUE)📝 Checking Go code formatting...$(RESET)"
