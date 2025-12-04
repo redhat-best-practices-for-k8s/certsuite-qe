@@ -2,6 +2,7 @@ package operator
 
 import (
 	"fmt"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -101,6 +102,13 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	})
 
 	It("two operators, one does not reports Succeeded as its installation status (quick failure) [negative]", func() {
+		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		if !globalhelper.IsKindCluster() {
+			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
+				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
+			}
+		}
+
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
 		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
 			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
@@ -201,6 +209,13 @@ var _ = Describe("Operator install-source,", Serial, func() {
 	})
 
 	It("two operators, one does not reports Succeeded as its installation status (delayed failure) [negative]", Serial, func() {
+		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		if !globalhelper.IsKindCluster() {
+			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
+				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
+			}
+		}
+
 		By("Query the packagemanifest for postgresql operator package name and catalog source")
 		postgresqlOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
 			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
