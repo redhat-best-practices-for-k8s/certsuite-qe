@@ -1,0 +1,227 @@
+---
+name: Check Operator Catalogs
+
+on:
+  schedule:
+    # Run daily at 6:00 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      ocp_versions:
+        description: 'Comma-separated list of OCP versions to check (e.g., 4.14,4.17,4.18,4.19,4.20)'
+        required: false
+        default: '4.14,4.17,4.18,4.19,4.20'
+
+env:
+  # Operators we depend on for QE tests
+  # Format: catalog_type:operator_package_name
+  REQUIRED_OPERATORS: |
+    certified-operators:cockroachdb-certified
+    community-operators:grafana-operator
+    community-operators:postgresql
+    redhat-operators:cluster-logging
+
+jobs:
+  check-catalogs:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up OCP versions to check
+        id: versions
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSIONS="${{ github.event.inputs.ocp_versions }}"
+          else
+            # Default versions for scheduled runs
+            VERSIONS="4.14,4.17,4.18,4.19,4.20"
+          fi
+          echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
+          echo "Checking OCP versions: $VERSIONS"
+
+      - name: Install opm (Operator Package Manager)
+        run: |
+          # Download opm binary
+          OPM_VERSION="v1.61.0"
+          curl -sLO "https://github.com/operator-framework/operator-registry/releases/download/${OPM_VERSION}/linux-amd64-opm"
+          chmod +x linux-amd64-opm
+          sudo mv linux-amd64-opm /usr/local/bin/opm
+          opm version
+          
+          # Create containers policy.json (required by opm render)
+          mkdir -p ~/.config/containers
+          cat > ~/.config/containers/policy.json << 'EOF'
+          {
+              "default": [{"type": "insecureAcceptAnything"}],
+              "transports": {"docker-daemon": {"": [{"type": "insecureAcceptAnything"}]}}
+          }
+          EOF
+          echo "Created containers policy.json"
+
+      - name: Login to Red Hat Registry
+        if: ${{ env.REDHAT_REGISTRY_TOKEN != '' }}
+        env:
+          REDHAT_REGISTRY_TOKEN: ${{ secrets.REDHAT_REGISTRY_TOKEN }}
+        run: |
+          echo "${REDHAT_REGISTRY_TOKEN}" | podman login -u "|token" --password-stdin registry.redhat.io
+
+      - name: Check operator catalogs
+        id: check
+        run: |
+          #!/bin/bash
+          set -e
+          
+          # Parse versions
+          IFS=',' read -ra OCP_VERSIONS <<< "${{ steps.versions.outputs.versions }}"
+          
+          # Define catalog images
+          declare -A CATALOG_IMAGES
+          CATALOG_IMAGES["certified-operators"]="registry.redhat.io/redhat/certified-operator-index"
+          CATALOG_IMAGES["community-operators"]="registry.redhat.io/redhat/community-operator-index"
+          CATALOG_IMAGES["redhat-operators"]="registry.redhat.io/redhat/redhat-operator-index"
+          
+          # Results file
+          RESULTS_FILE="catalog-check-results.md"
+          MISSING_FILE="missing-operators.txt"
+          
+          echo "# Operator Catalog Check Results" > "$RESULTS_FILE"
+          echo "" >> "$RESULTS_FILE"
+          echo "**Check Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$RESULTS_FILE"
+          echo "" >> "$RESULTS_FILE"
+          
+          FOUND_MISSING=false
+          
+          # Process each OCP version
+          for OCP_VERSION in "${OCP_VERSIONS[@]}"; do
+            echo "## OCP $OCP_VERSION" >> "$RESULTS_FILE"
+            echo "" >> "$RESULTS_FILE"
+            echo "| Catalog | Operator | Status |" >> "$RESULTS_FILE"
+            echo "|---------|----------|--------|" >> "$RESULTS_FILE"
+            
+            echo "=== Checking OCP $OCP_VERSION ==="
+            
+            # Check each required operator
+            while IFS= read -r line; do
+              [[ -z "$line" ]] && continue
+              
+              CATALOG_TYPE=$(echo "$line" | cut -d: -f1)
+              OPERATOR_NAME=$(echo "$line" | cut -d: -f2)
+              
+              CATALOG_IMAGE="${CATALOG_IMAGES[$CATALOG_TYPE]}:v${OCP_VERSION}"
+              
+              echo "Checking $OPERATOR_NAME in $CATALOG_TYPE for OCP $OCP_VERSION..."
+              
+              # Force pull fresh catalog image to ensure we're checking latest content
+              echo "  Pulling fresh catalog image..."
+              podman pull --quiet "$CATALOG_IMAGE" 2>/dev/null || true
+              
+              # Try to render the catalog and grep for the operator
+              # Using a timeout to avoid hanging
+              if timeout 120 opm render "$CATALOG_IMAGE" 2>/dev/null | grep -qE "\"(name|package)\":\\s*\"$OPERATOR_NAME\""; then
+                echo "  ✅ Found: $OPERATOR_NAME"
+                echo "| $CATALOG_TYPE | $OPERATOR_NAME | ✅ Found |" >> "$RESULTS_FILE"
+              else
+                echo "  ❌ MISSING: $OPERATOR_NAME"
+                echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** |" >> "$RESULTS_FILE"
+                echo "$OCP_VERSION:$CATALOG_TYPE:$OPERATOR_NAME" >> "$MISSING_FILE"
+                FOUND_MISSING=true
+              fi
+              
+            done <<< "$REQUIRED_OPERATORS"
+            
+            echo "" >> "$RESULTS_FILE"
+          done
+          
+          # Summary
+          echo "## Summary" >> "$RESULTS_FILE"
+          echo "" >> "$RESULTS_FILE"
+          
+          if [ "$FOUND_MISSING" = true ]; then
+            echo "⚠️ **Some operators are missing from catalog sources!**" >> "$RESULTS_FILE"
+            echo "" >> "$RESULTS_FILE"
+            echo "Missing operators:" >> "$RESULTS_FILE"
+            echo '```' >> "$RESULTS_FILE"
+            cat "$MISSING_FILE" >> "$RESULTS_FILE"
+            echo '```' >> "$RESULTS_FILE"
+            echo "has_missing=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ All required operators are available in all checked OCP versions." >> "$RESULTS_FILE"
+            echo "has_missing=false" >> $GITHUB_OUTPUT
+          fi
+          
+          # Output results
+          cat "$RESULTS_FILE"
+          
+          # Save for artifact
+          echo "results_file=$RESULTS_FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-check-results
+          path: catalog-check-results.md
+          retention-days: 30
+
+      - name: Create issue if operators are missing
+        if: steps.check.outputs.has_missing == 'true' && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('catalog-check-results.md', 'utf8');
+            
+            // Check if there's already an open issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'operator-catalog-check'
+            });
+            
+            const existingIssue = issues.data.find(i => 
+              i.title.includes('Operator Catalog Check'));
+            
+            const issueBody = `## Automated Operator Catalog Check
+            
+            The daily operator catalog check found missing operators that our QE tests depend on.
+            
+            ${results}
+            
+            ### Action Required
+            
+            Please review the missing operators and update the QE tests accordingly:
+            1. Add Skip() conditions for affected OCP versions
+            2. Or find alternative operators to use in tests
+            3. Or update the required operators list if no longer needed
+            
+            ---
+            *This issue was automatically created by the operator catalog check workflow.*
+            `;
+            
+            if (existingIssue) {
+              // Update existing issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: `## Updated Check Results\n\n${results}`
+              });
+            } else {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '⚠️ Operator Catalog Check: Missing Operators Detected',
+                body: issueBody,
+                labels: ['operator-catalog-check', 'automated']
+              });
+            }
+
+      - name: Fail if operators are missing (manual run only)
+        if: steps.check.outputs.has_missing == 'true' && github.event_name == 'workflow_dispatch'
+        run: |
+          echo "❌ Some required operators are missing from catalog sources!"
+          echo "Check the uploaded artifact for details."
+          exit 1
+

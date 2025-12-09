@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -26,6 +27,13 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	var grafanaOperatorName string
 
 	BeforeEach(func() {
+		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		if !globalhelper.IsKindCluster() {
+			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
+				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
+			}
+		}
+
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(

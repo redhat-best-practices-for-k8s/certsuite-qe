@@ -2,6 +2,7 @@ package operator
 
 import (
 	"fmt"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -247,6 +248,13 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 
 	// negative
 	It("operator namespace contains single namespaced operator with operators not labelled", func() {
+		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		if !globalhelper.IsKindCluster() {
+			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
+				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
+			}
+		}
+
 		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
 		installAndLabelOperator(randomNamespace)
 
