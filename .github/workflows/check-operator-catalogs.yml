@@ -42,9 +42,33 @@ jobs:
 
       - name: Install opm (Operator Package Manager)
         run: |
-          # Download opm binary
-          OPM_VERSION="v1.61.0"
-          curl -sLO "https://github.com/operator-framework/operator-registry/releases/download/${OPM_VERSION}/linux-amd64-opm"
+          # Retry function for flaky GitHub API calls
+          retry_curl() {
+            local max_attempts=5
+            local delay=5
+            local attempt=1
+            while [[ $attempt -le $max_attempts ]]; do
+              if "$@"; then
+                return 0
+              fi
+              echo "Attempt $attempt/$max_attempts failed. Retrying in ${delay}s..."
+              sleep $delay
+              delay=$((delay * 2))
+              attempt=$((attempt + 1))
+            done
+            echo "❌ All $max_attempts attempts failed"
+            return 1
+          }
+
+          # Get latest opm version from GitHub API
+          OPM_VERSION=$(retry_curl curl -sL "https://api.github.com/repos/operator-framework/operator-registry/releases/latest" | grep '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+          if [[ -z "$OPM_VERSION" ]]; then
+            echo "❌ Failed to get opm version from GitHub API"
+            exit 1
+          fi
+          echo "Installing opm version: $OPM_VERSION"
+          
+          retry_curl curl -sLO "https://github.com/operator-framework/operator-registry/releases/download/${OPM_VERSION}/linux-amd64-opm"
           chmod +x linux-amd64-opm
           sudo mv linux-amd64-opm /usr/local/bin/opm
           opm version
@@ -60,11 +84,16 @@ jobs:
           echo "Created containers policy.json"
 
       - name: Login to Red Hat Registry
-        if: ${{ env.REDHAT_REGISTRY_TOKEN != '' }}
         env:
           REDHAT_REGISTRY_TOKEN: ${{ secrets.REDHAT_REGISTRY_TOKEN }}
+          REDHAT_REGISTRY_USERNAME: ${{ secrets.REDHAT_REGISTRY_USERNAME }}
         run: |
-          echo "${REDHAT_REGISTRY_TOKEN}" | podman login -u "|token" --password-stdin registry.redhat.io
+          if [[ -z "${REDHAT_REGISTRY_TOKEN}" || -z "${REDHAT_REGISTRY_USERNAME}" ]]; then
+            echo "❌ REDHAT_REGISTRY_TOKEN and REDHAT_REGISTRY_USERNAME secrets are required"
+            exit 1
+          fi
+          echo "${REDHAT_REGISTRY_TOKEN}" | podman login -u "${REDHAT_REGISTRY_USERNAME}" --password-stdin registry.redhat.io
+          echo "✅ Successfully logged in to registry.redhat.io"
 
       - name: Check operator catalogs
         id: check
