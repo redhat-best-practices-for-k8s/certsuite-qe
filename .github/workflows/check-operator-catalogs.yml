@@ -212,48 +212,32 @@ jobs:
               i.title.includes('Operator Catalog Check'));
             
             const issueBody = `## Automated Operator Catalog Check
-            
+
             The operator catalog check found missing operators that our QE tests depend on.
-            
+
             ${results}
-            
+
             ### Action Required
-            
+
             Please review the missing operators and update the QE tests accordingly:
             1. Add Skip() conditions for affected OCP versions
             2. Or find alternative operators to use in tests
             3. Or update the required operators list if no longer needed
-            
+
             ---
-            *This issue was automatically created by the operator catalog check workflow.*
+            *Last updated: ${new Date().toISOString()}*
+            *This issue is automatically updated by the operator catalog check workflow.*
             `;
             
             if (existingIssue) {
-              // Check last comment to avoid duplicates
-              const comments = await github.rest.issues.listComments({
+              // Update the issue body directly instead of adding comments
+              await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: existingIssue.number,
-                per_page: 1,
-                sort: 'created',
-                direction: 'desc'
+                body: issueBody
               });
-              
-              const lastComment = comments.data[0];
-              const newCommentBody = `## Updated Check Results\n\n${results}`;
-              
-              // Only add comment if results are different from the last comment
-              if (!lastComment || !lastComment.body.includes(results.trim().substring(0, 200))) {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: existingIssue.number,
-                  body: newCommentBody
-                });
-                console.log(`Updated issue #${existingIssue.number} with new results`);
-              } else {
-                console.log(`Skipping comment - results unchanged from last check`);
-              }
+              console.log(`Updated issue #${existingIssue.number} body with latest results`);
             } else {
               // Create new issue
               const newIssue = await github.rest.issues.create({
