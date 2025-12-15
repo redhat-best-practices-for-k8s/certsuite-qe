@@ -142,21 +142,44 @@ jobs:
               echo "Checking $OPERATOR_NAME in $CATALOG_TYPE for OCP $OCP_VERSION..."
               
               # Force pull fresh catalog image to ensure we're checking latest content
-              echo "  Pulling fresh catalog image..."
-              podman pull --quiet "$CATALOG_IMAGE" 2>/dev/null || true
+              echo "  Pulling fresh catalog image: $CATALOG_IMAGE"
+              if ! podman pull --quiet "$CATALOG_IMAGE" 2>&1; then
+                echo "  ⚠️ Warning: Failed to pull image, will try with cached version"
+              fi
               
               # Try to render the catalog and grep for the operator
-              # Using a timeout to avoid hanging
+              # Using a timeout to avoid hanging (5 min for larger catalogs like 4.19+)
               # Note: Use [ ]* instead of \s* for portable regex (works on both GNU and BSD grep)
-              if timeout 120 opm render "$CATALOG_IMAGE" 2>/dev/null | grep -qE "\"(name|package)\":[ ]*\"$OPERATOR_NAME\""; then
-                echo "  ✅ Found: $OPERATOR_NAME"
-                echo "| $CATALOG_TYPE | $OPERATOR_NAME | ✅ Found |" >> "$RESULTS_FILE"
+              # Use a temp file to avoid loading huge catalog into memory
+              echo "  Rendering catalog (this may take a few minutes)..."
+              RENDER_TEMP=$(mktemp)
+              RENDER_ERR=$(mktemp)
+              
+              if timeout 300 opm render "$CATALOG_IMAGE" > "$RENDER_TEMP" 2> "$RENDER_ERR"; then
+                if grep -qE "\"(name|package)\":[ ]*\"$OPERATOR_NAME\"" "$RENDER_TEMP"; then
+                  echo "  ✅ Found: $OPERATOR_NAME"
+                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ✅ Found |" >> "$RESULTS_FILE"
+                else
+                  echo "  ❌ MISSING: $OPERATOR_NAME"
+                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** |" >> "$RESULTS_FILE"
+                  echo "$OCP_VERSION:$CATALOG_TYPE:$OPERATOR_NAME" >> "$MISSING_FILE"
+                  FOUND_MISSING=true
+                fi
               else
-                echo "  ❌ MISSING: $OPERATOR_NAME"
-                echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** |" >> "$RESULTS_FILE"
+                RENDER_EXIT=$?
+                if [[ "$RENDER_EXIT" -eq 124 ]]; then
+                  echo "  ⚠️ Render timed out after 300 seconds"
+                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** (timeout) |" >> "$RESULTS_FILE"
+                else
+                  echo "  ⚠️ Render failed with exit code $RENDER_EXIT"
+                  echo "  Error output: $(head -c 500 "$RENDER_ERR")"
+                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** (render error) |" >> "$RESULTS_FILE"
+                fi
                 echo "$OCP_VERSION:$CATALOG_TYPE:$OPERATOR_NAME" >> "$MISSING_FILE"
                 FOUND_MISSING=true
               fi
+              
+              rm -f "$RENDER_TEMP" "$RENDER_ERR"
               
             done <<< "$REQUIRED_OPERATORS"
             
