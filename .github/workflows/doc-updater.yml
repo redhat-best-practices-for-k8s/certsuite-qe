@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6
 
       - name: Fix outdated documentation URLs
         uses: sebrandon1/ocp-doc-checker@v1
