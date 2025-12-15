@@ -147,7 +147,8 @@ jobs:
               
               # Try to render the catalog and grep for the operator
               # Using a timeout to avoid hanging
-              if timeout 120 opm render "$CATALOG_IMAGE" 2>/dev/null | grep -qE "\"(name|package)\":\\s*\"$OPERATOR_NAME\""; then
+              # Note: Use [ ]* instead of \s* for portable regex (works on both GNU and BSD grep)
+              if timeout 120 opm render "$CATALOG_IMAGE" 2>/dev/null | grep -qE "\"(name|package)\":[ ]*\"$OPERATOR_NAME\""; then
                 echo "  ✅ Found: $OPERATOR_NAME"
                 echo "| $CATALOG_TYPE | $OPERATOR_NAME | ✅ Found |" >> "$RESULTS_FILE"
               else
