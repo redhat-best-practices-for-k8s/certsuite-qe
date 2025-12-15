@@ -299,9 +299,10 @@ check_operator() {
 	# Try to find the operator in the catalog
 	# opm render pulls the catalog image and outputs all packages/channels/bundles as JSON
 	# We grep for the operator package name (handles both "name": "X" and "name":"X" formats)
+	# Note: Use [ ]* instead of \s* for portable regex (works on both GNU and BSD grep)
 	echo -n "    Status:  "
 	# Note: 'timeout' may not exist on macOS, so we run without it
-	if opm render "$catalog_image" 2>/dev/null | grep -qE "\"(name|package)\":\\s*\"$operator_name\""; then
+	if opm render "$catalog_image" 2>/dev/null | grep -qE "\"(name|package)\":[ ]*\"$operator_name\""; then
 		echo -e "${GREEN}✅ Found${NC}"
 		return 0
 	else
