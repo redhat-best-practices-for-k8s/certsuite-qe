@@ -14,7 +14,7 @@ require (
 	github.com/operator-framework/api v0.37.0
 	github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.61
-	github.com/redhat-best-practices-for-k8s/oct v0.0.53
+	github.com/redhat-best-practices-for-k8s/oct v0.0.54
 	github.com/stretchr/testify v1.11.1
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 	gopkg.in/yaml.v3 v3.0.1
