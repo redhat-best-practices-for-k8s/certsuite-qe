@@ -6,7 +6,17 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      k8s-io:
+        patterns:
+          - "k8s.io/*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions-artifacts:
+        patterns:
+          - "actions/upload-artifact"
+          - "actions/download-artifact"
+          - "actions/github-script"
