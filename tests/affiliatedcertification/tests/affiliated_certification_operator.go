@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -10,6 +9,7 @@ import (
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operatorversions"
 
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/parameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
@@ -25,15 +25,9 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
 	var grafanaOperatorName string
+	var certifiedOperator operatorversions.OperatorInfo
 
 	BeforeEach(func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
-		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
-		}
-
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
 			globalhelper.BeforeEachSetupWithRandomNamespace(
@@ -44,11 +38,19 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			Skip("This test is not supported on Kind cluster")
 		}
 
+		// Get the OCP version and select the appropriate certified operator
+		// For OCP 4.20+, we use an alternative certified operator since cockroachdb-certified
+		// is not available in that version's catalog
+		ocpVersion, err := globalhelper.GetClusterVersion()
+		Expect(err).ToNot(HaveOccurred(), "Error getting cluster version")
+		certifiedOperator = operatorversions.GetCertifiedOperator(ocpVersion)
+		By(fmt.Sprintf("Using certified operator for OCP %s: %s", ocpVersion, certifiedOperator.String()))
+
 		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomCertsuiteConfigDir)
 
 		By("Deploy cockroachdb for testing")
 		// cockroachdb: not in certified-operators group in catalog, for negative test cases
-		err := tshelper.DeployOperatorSubscription(
+		err = tshelper.DeployOperatorSubscription(
 			"cockroachdb",
 			"cockroachdb",
 			"stable-v6.x",
@@ -66,37 +68,36 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
 			" is not ready")
 
-		By("Query the packagemanifest for the cockroachdb-certified operator default channel")
+		By("Query the packagemanifest for the certified operator: " + certifiedOperator.PackageName)
 		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
-			"cockroachdb-certified",
+			certifiedOperator.PackageName,
 			randomNamespace,
 		)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+certifiedOperator.PackageName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 
-		By("Query the packagemanifest for the cockroachdb-certified operator")
-		version, err := globalhelper.QueryPackageManifestForVersion("cockroachdb-certified", randomNamespace, channel)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for cockroachdb-certified")
+		By("Query the packagemanifest for the certified operator version")
+		version, err := globalhelper.QueryPackageManifestForVersion(certifiedOperator.PackageName, randomNamespace, channel)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+certifiedOperator.PackageName)
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 
-		By(fmt.Sprintf("Deploy cockroachdb-certified operator %s for testing", "v"+version))
-		// cockroachdb-certified operator: in certified-operators group and version is certified
+		By(fmt.Sprintf("Deploy certified operator %s v%s for testing", certifiedOperator.PackageName, version))
+		// certified operator: in certified-operators group and version is certified
 		err = tshelper.DeployOperatorSubscription(
-			"cockroachdb-certified",
-			"cockroachdb-certified",
+			certifiedOperator.PackageName,
+			certifiedOperator.PackageName,
 			channel,
 			randomNamespace,
-			tsparams.CertifiedOperatorGroup,
+			certifiedOperator.CatalogSource,
 			tsparams.OperatorSourceNamespace,
-			tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version,
+			certifiedOperator.CSVPrefix+".v"+version,
 			v1alpha1.ApprovalAutomatic,
 		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.CertifiedOperatorPrefixCockroachCertified)
+		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+certifiedOperator.PackageName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.CertifiedOperatorPrefixCockroachCertified,
+		err = tshelper.WaitUntilOperatorIsReady(certifiedOperator.CSVPrefix,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.CertifiedOperatorPrefixCockroachCertified+".v"+version+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+certifiedOperator.CSVPrefix+".v"+version+
 			" is not ready")
 
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
@@ -177,11 +178,11 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixCockroachCertified,
+				certifiedOperator.CSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
+			ErrorLabelingOperatorStr+certifiedOperator.CSVPrefix)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -192,7 +193,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
 
 		By("Assert both operator CSVs are ready")
-		certifiedCSV, err := tshelper.GetCsvByPrefix(tsparams.CertifiedOperatorPrefixCockroachCertified, randomNamespace)
+		certifiedCSV, err := tshelper.GetCsvByPrefix(certifiedOperator.CSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(certifiedCSV).ToNot(BeNil())
 		uncertifiedCSV, err := tshelper.GetCsvByPrefix(tsparams.UncertifiedOperatorPrefixCockroach, randomNamespace)
@@ -259,19 +260,19 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, fun
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.CertifiedOperatorPrefixCockroachCertified,
+				certifiedOperator.CSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.CertifiedOperatorPrefixCockroachCertified)
+			ErrorLabelingOperatorStr+certifiedOperator.CSVPrefix)
 
 		By("Assert both operator CSVs are ready")
 		grafanaCSV, err := tshelper.GetCsvByPrefix(grafanaOperatorName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(grafanaCSV).ToNot(BeNil())
-		cockroachCSV, err := tshelper.GetCsvByPrefix(tsparams.CertifiedOperatorPrefixCockroachCertified, randomNamespace)
+		certifiedCSV, err := tshelper.GetCsvByPrefix(certifiedOperator.CSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(cockroachCSV).ToNot(BeNil())
+		Expect(certifiedCSV).ToNot(BeNil())
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

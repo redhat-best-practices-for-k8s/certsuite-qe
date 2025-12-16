@@ -15,10 +15,19 @@ on:
 env:
   # Operators we depend on for QE tests
   # Format: catalog_type:operator_package_name
+  #
+  # Note: We have version-specific operators due to catalog availability:
+  #   - cockroachdb-certified: Used for OCP 4.14-4.19 (certified operator)
+  #   - mongodb-enterprise: Used for OCP 4.20+ (alternative certified operator)
+  #   - postgresql: Used for OCP 4.14-4.19 (lightweight operator)
+  #   - redis-operator: Used for OCP 4.20+ (alternative lightweight operator)
+  # See tests/utils/operatorversions/ for the mapping logic.
   REQUIRED_OPERATORS: |
     certified-operators:cockroachdb-certified
+    certified-operators:mongodb-enterprise
     community-operators:grafana-operator
     community-operators:postgresql
+    community-operators:redis-operator
     redhat-operators:cluster-logging
 
 jobs:
