@@ -2,7 +2,6 @@ package operator
 
 import (
 	"fmt"
-	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -12,6 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operatorversions"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
@@ -180,36 +180,45 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
 		installAndLabelOperator(randomNamespace)
 
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			tsparams.OperatorPackageNamePrefixLightweight, randomTargetingNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
+		// Get the lightweight operator based on OCP version
+		ocpVersion := "4.19"
+		if !globalhelper.IsKindCluster() {
+			var verr error
+			ocpVersion, verr = globalhelper.GetClusterVersion()
+			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
+		}
+		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
+		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+		lightweightOperatorName, lwCatalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			lightweightOp.PackageName, randomTargetingNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
+		Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
+		Expect(lwCatalogSource).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
+
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresOperatorName, randomTargetingNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresOperatorName)
+			lightweightOperatorName, randomTargetingNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By("Deploy postgresql operator for testing")
+		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
 		err = tshelper.DeployOperatorSubscription(
-			"postgresql-operator-targeting",
-			postgresOperatorName,
+			lightweightOperatorName+"-targeting",
+			lightweightOperatorName,
 			channel,
 			randomTargetingNamespace,
-			catalogSource,
+			lwCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresOperatorName)
+			lightweightOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
+		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix,
 			randomTargetingNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -217,11 +226,11 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				lightweightOp.CSVPrefix,
 				randomTargetingNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+postgresOperatorName)
+			ErrorLabelingOperatorStr+lightweightOperatorName)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -248,46 +257,51 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 
 	// negative
 	It("operator namespace contains single namespaced operator with operators not labelled", func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
-		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
-		}
+		// Note: This test uses grafana-operator and a lightweight operator that varies by OCP version
+		// See issue #1283 and operatorversions package for operator catalog availability
 
 		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
 		installAndLabelOperator(randomNamespace)
 
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresOperatorName).ToNot(Equal("not found"), "PostgreSQL operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "PostgreSQL operator catalog source not found")
+		// Get the lightweight operator based on OCP version
+		ocpVersion := "4.19"
+		if !globalhelper.IsKindCluster() {
+			var verr error
+			ocpVersion, verr = globalhelper.GetClusterVersion()
+			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
+		}
+		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
+		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+		lightweightOperatorName, lwCatalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			lightweightOp.PackageName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
+		Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
+		Expect(lwCatalogSource).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
+
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresOperatorName)
+			lightweightOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By("Deploy postgresql operator for testing")
+		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
 		err = tshelper.DeployOperatorSubscription(
-			postgresOperatorName,
-			postgresOperatorName,
+			lightweightOperatorName,
+			lightweightOperatorName,
 			channel,
 			randomNamespace,
-			catalogSource,
+			lwCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresOperatorName)
+			lightweightOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, randomNamespace)
+		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 

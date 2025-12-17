@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"strings"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -145,12 +143,8 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 	// 66768
 	It("two containers to test, one is certified, one is not digest [negative]", func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
-		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
-		}
+		// Note: This test uses container images, not operators, so it's not affected by
+		// the OCP 4.20 certified-operators catalog issue (see issue #1283)
 
 		By("Define deployments with different container certification statuses")
 		dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,

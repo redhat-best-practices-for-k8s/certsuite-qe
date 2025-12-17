@@ -2,7 +2,6 @@ package operator
 
 import (
 	"fmt"
-	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -12,6 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operatorversions"
 )
 
 const (
@@ -172,40 +172,43 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66143
 	It("one operator not installed with OLM [negative]", func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		// Note: This test uses a lightweight operator that varies by OCP version
+		// See issue #1283 and operatorversions package for operator catalog availability
+		ocpVersion := "4.19"
 		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
+			var verr error
+			ocpVersion, verr = globalhelper.GetClusterVersion()
+			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
 		}
+		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail(tsparams.OperatorPackageNamePrefixLightweight,
+		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+		lightweightOperatorName, lwCatalogSource := globalhelper.CheckOperatorExistsOrFail(lightweightOp.PackageName,
 			randomNamespace)
 
-		// PostgreSQL operator can be deployed in the same namespace (OwnNamespace install mode)
-		By("Deploy postgresql operator group")
+		// Lightweight operator can be deployed in the same namespace (OwnNamespace install mode)
+		By(fmt.Sprintf("Deploy %s operator group", lightweightOp.PackageName))
 		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for postgresql operator")
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for "+lightweightOp.PackageName+" operator")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
-		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(lightweightOperatorName, randomNamespace)
 
-		By("Deploy postgresql operator for testing")
+		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
 		err = tshelper.DeployOperatorSubscription(
-			postgresOperatorName,
-			postgresOperatorName,
+			lightweightOperatorName,
+			lightweightOperatorName,
 			channel,
 			randomNamespace,
-			catalogSource,
+			lwCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresOperatorName)
+			lightweightOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
+		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -213,18 +216,18 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				lightweightOp.CSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+postgresOperatorName)
+			ErrorLabelingOperatorStr+lightweightOperatorName)
 
 		By("Delete operator's subscription")
 		err = globalhelper.DeleteSubscription(randomNamespace,
-			postgresOperatorName+"-subscription")
+			lightweightOperatorName+"-subscription")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Update certsuite config to include postgresql operator")
+		By(fmt.Sprintf("Update certsuite config to include %s operator", lightweightOp.PackageName))
 		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},
@@ -250,15 +253,18 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66144
 	It("two operators, both installed with OLM", func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		// Note: This test uses grafana-operator and a lightweight operator that varies by OCP version
+		// See issue #1283 and operatorversions package for operator catalog availability
+		ocpVersion := "4.19"
 		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
+			var verr error
+			ocpVersion, verr = globalhelper.GetClusterVersion()
+			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
 		}
+		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
+		grafanaOperatorName, gCatalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
 		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
@@ -270,7 +276,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			grafanaOperatorName,
 			channel,
 			randomNamespace,
-			catalogSource,
+			gCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
@@ -292,17 +298,17 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
 			ErrorLabelingOperatorStr+grafanaOperatorName)
 
-		By("Query the packagemanifest for postgresql operator package name and catalog source for second operator")
-		postgresOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrFail(tsparams.OperatorPackageNamePrefixLightweight,
+		By(fmt.Sprintf("Query packagemanifest for %s operator (second)", lightweightOp.PackageName))
+		lightweightOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrFail(lightweightOp.PackageName,
 			randomNamespace)
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName + " for second operator")
-		channel2, version2, csvName2 := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName + " for second operator")
+		channel2, version2, csvName2 := globalhelper.CheckOperatorChannelAndVersionOrFail(lightweightOperatorName, randomNamespace)
 
-		By(fmt.Sprintf("Deploy postgresql operator (channel %s, version %s) for testing", channel2, version2))
+		By(fmt.Sprintf("Deploy %s operator (channel %s, version %s) for testing", lightweightOp.PackageName, channel2, version2))
 		err = tshelper.DeployOperatorSubscription(
-			"postgresql-operator-2",
-			postgresOperatorName,
+			lightweightOperatorName+"-2",
+			lightweightOperatorName,
 			channel2,
 			randomNamespace,
 			catalogSource2,
@@ -311,9 +317,9 @@ var _ = Describe("Operator install-source,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresOperatorName)
+			lightweightOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
+		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName2+
 			" is not ready")
@@ -321,11 +327,11 @@ var _ = Describe("Operator install-source,", Serial, func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				lightweightOp.CSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+postgresOperatorName)
+			ErrorLabelingOperatorStr+lightweightOperatorName)
 
 		By("Start test")
 		err = globalhelper.LaunchTests(
@@ -344,40 +350,43 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	// 66145
 	It("two operators, one not installed with OLM [negative]", func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
+		// Note: This test uses a lightweight operator that varies by OCP version
+		// See issue #1283 and operatorversions package for operator catalog availability
+		ocpVersion := "4.19"
 		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
+			var verr error
+			ocpVersion, verr = globalhelper.GetClusterVersion()
+			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
 		}
+		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail(tsparams.OperatorPackageNamePrefixLightweight,
+		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+		lightweightOperatorName, lwCatalogSource := globalhelper.CheckOperatorExistsOrFail(lightweightOp.PackageName,
 			randomNamespace)
 
-		// PostgreSQL operator can be deployed in the same namespace (OwnNamespace install mode)
-		By("Deploy postgresql operator group")
+		// Lightweight operator can be deployed in the same namespace (OwnNamespace install mode)
+		By(fmt.Sprintf("Deploy %s operator group", lightweightOp.PackageName))
 		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for postgresql operator")
+		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for "+lightweightOp.PackageName+" operator")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresOperatorName)
-		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(postgresOperatorName, randomNamespace)
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(lightweightOperatorName, randomNamespace)
 
-		By("Deploy postgresql operator for testing")
+		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
 		err = tshelper.DeployOperatorSubscription(
-			postgresOperatorName,
-			postgresOperatorName,
+			lightweightOperatorName,
+			lightweightOperatorName,
 			channel,
 			randomNamespace,
-			catalogSource,
+			lwCatalogSource,
 			tsparams.OperatorSourceNamespace,
 			csvName,
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresOperatorName)
+			lightweightOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
+		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
@@ -427,18 +436,18 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				lightweightOp.CSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+postgresOperatorName)
+			ErrorLabelingOperatorStr+lightweightOperatorName)
 
 		By("Delete operator's subscription")
 		err = globalhelper.DeleteSubscription(randomNamespace,
-			postgresOperatorName+"-subscription")
+			lightweightOperatorName+"-subscription")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Update certsuite config to include postgresql operator")
+		By(fmt.Sprintf("Update certsuite config to include %s operator", lightweightOp.PackageName))
 		err = globalhelper.DefineCertsuiteConfig(
 			[]string{randomNamespace},
 			[]string{tsparams.TestPodLabel},

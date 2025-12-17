@@ -2,7 +2,6 @@ package operator
 
 import (
 	"fmt"
-	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -12,6 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/operator/parameters"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operatorversions"
 )
 
 var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
@@ -20,14 +20,15 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 	var randomCertsuiteConfigDir string
 	var operatorName string
 	var catalogSource string
+	var lightweightOpCSVPrefix string
 
 	BeforeEach(func() {
-		// TODO: Known issue with OCP 4.20 certified-operators. Fix later.
-		if !globalhelper.IsKindCluster() {
-			if ocpVersion, err := globalhelper.GetClusterVersion(); err == nil && strings.HasPrefix(ocpVersion, "4.20") {
-				Skip("TODO: Known issue with OCP 4.20 certified-operators. Fix later.")
-			}
-		}
+		// Get OCP version to determine which lightweight operator to use
+		// postgresql is used for OCP 4.14-4.19, prometheus-exporter-operator for 4.20+
+		// See issue #1283 for operator catalog availability
+		ocpVersion := globalhelper.GetClusterVersionOrDefault()
+		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
+		lightweightOpCSVPrefix = lightweightOp.CSVPrefix
 
 		// Create random namespace and keep original report and certsuite config directories
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
@@ -73,26 +74,27 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 
-		// postgresql operator has no clusterPermissions
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresqlOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresqlOperatorName).ToNot(Equal("not found"), "postgresql operator package not found")
-		Expect(catalogSource2).ToNot(Equal("not found"), "postgresql operator catalog source not found")
+		// Deploy lightweight operator (postgresql for 4.14-4.19, prometheus-exporter-operator for 4.20+)
+		// This operator has no clusterPermissions
+		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+		lightweightOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+			lightweightOp.PackageName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
+		Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
+		Expect(catalogSource2).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresqlOperatorName)
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
 		channel2, version2, csvName2, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresqlOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresqlOperatorName)
+			lightweightOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
 		Expect(channel2).ToNot(Equal("not found"), "Channel not found")
 		Expect(version2).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName2).ToNot(Equal("not found"), "CSV name not found")
 
-		By(fmt.Sprintf("Deploy postgresql operator (channel %s, version %s) for testing", channel2, version2))
+		By(fmt.Sprintf("Deploy %s operator (channel %s, version %s) for testing", lightweightOp.PackageName, channel2, version2))
 		err = tshelper.DeployOperatorSubscription(
-			postgresqlOperatorName,
-			postgresqlOperatorName,
+			lightweightOperatorName,
+			lightweightOperatorName,
 			channel2,
 			randomNamespace,
 			catalogSource2,
@@ -101,9 +103,9 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresqlOperatorName)
+			lightweightOperatorName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight,
+		err = tshelper.WaitUntilOperatorIsReady(lightweightOpCSVPrefix,
 			randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName2+
 			" is not ready")
@@ -119,11 +121,11 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Label operator")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				lightweightOpCSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
+			ErrorLabelingOperatorStr+lightweightOpCSVPrefix)
 
 		By("Start test")
 		err := globalhelper.LaunchTests(
@@ -170,11 +172,11 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		By("Label operators")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.OperatorPrefixLightweight,
+				lightweightOpCSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.OperatorPrefixLightweight)
+			ErrorLabelingOperatorStr+lightweightOpCSVPrefix)
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(

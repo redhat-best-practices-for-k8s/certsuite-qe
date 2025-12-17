@@ -96,3 +96,17 @@ func GetClusterVersion() (string, error) {
 
 	return builder.Object.Status.Desired.Version, nil
 }
+
+// GetClusterVersionOrDefault returns the OCP cluster version, or a default value if unavailable.
+// This is useful for tests that need the version but can fall back to a reasonable default
+// (e.g., for kind clusters or when the version cannot be determined).
+// The default value is "4.14" which uses the standard operator set.
+func GetClusterVersionOrDefault() string {
+	version, err := GetClusterVersion()
+	if err != nil {
+		// Default to 4.14 which uses the standard operator set
+		return "4.14"
+	}
+
+	return version
+}
