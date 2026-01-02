@@ -34,7 +34,7 @@ func TestIsClusterStable(t *testing.T) {
 		var runtimeObjects []runtime.Object
 		runtimeObjects = append(runtimeObjects, generateNode(testCase.testUnschedulable))
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 		result, err := IsClusterStable(client.CoreV1().Nodes())
 		assert.Nil(t, err)
 		assert.True(t, result)

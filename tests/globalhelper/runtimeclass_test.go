@@ -33,7 +33,7 @@ func TestIsRTCCreated(t *testing.T) {
 		}
 
 		// Create a fake clientset
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 		isCreated, err := isRtcCreated(client, &nodev1.RuntimeClass{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "testRTC",
@@ -73,7 +73,7 @@ func TestIsRtcDeleted(t *testing.T) {
 		}
 
 		// Create a fake clientset
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 		isDeleted, err := isRtcDeleted(client, &nodev1.RuntimeClass{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "testRTC",

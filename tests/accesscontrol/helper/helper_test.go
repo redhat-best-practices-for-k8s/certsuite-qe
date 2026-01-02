@@ -110,7 +110,7 @@ func TestSetServiceAccountAutomountServiceAccountToken(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		client := k8sfake.NewSimpleClientset(generateServiceAccount())
+		client := k8sfake.NewClientset(generateServiceAccount())
 
 		// Set the globalhelper client to the fake client
 		globalhelper.SetTestK8sAPIClient(client)
@@ -176,7 +176,7 @@ func TestDefineAndCreateServiceOnCluster(t *testing.T) {
 
 	for _, testCase := range testCases {
 		// Create a fake clientset
-		client := k8sfake.NewSimpleClientset()
+		client := k8sfake.NewClientset()
 
 		// Set the globalhelper client to the fake client
 		globalhelper.SetTestK8sAPIClient(client)
