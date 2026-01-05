@@ -33,7 +33,7 @@ func TestAddControlPlaneTaint(t *testing.T) {
 	// Create a fake clientset
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, defineNode())
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
+	client := k8sfake.NewClientset(runtimeObjects...)
 
 	// Add the taint to the node
 	err := addControlPlaneTaint(client.CoreV1(), defineNode())
@@ -70,7 +70,7 @@ func TestRemoveControlPlaneTaint(t *testing.T) {
 	// Create a fake clientset
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, defineNode())
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
+	client := k8sfake.NewClientset(runtimeObjects...)
 
 	// Add the taint to the node
 	err := removeControlPlaneTaint(client.CoreV1(), defineNode())

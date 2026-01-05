@@ -43,7 +43,7 @@ func TestEnsureAllNodesAreLabeled(t *testing.T) {
 	for _, testCase := range testCases {
 		var runtimeObjects []runtime.Object
 		runtimeObjects = append(runtimeObjects, generateNode(testCase.testLabelValue))
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 
 		// Get all of the nodes from the fake client and test their labels
 		nodes, err := client.CoreV1().Nodes().List(t.Context(), metav1.ListOptions{})
@@ -94,7 +94,7 @@ func TestAddControlPlaneTaint(t *testing.T) {
 		var runtimeObjects []runtime.Object
 		runtimeObjects = append(runtimeObjects, testNode)
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 		assert.Nil(t, addControlPlaneTaint(client.CoreV1().Nodes(), testNode))
 
 		// Get all of the nodes from the fake client and test their labels
@@ -133,7 +133,7 @@ func TestRemoveControlPlaneTaint(t *testing.T) {
 		var runtimeObjects []runtime.Object
 		runtimeObjects = append(runtimeObjects, testNode)
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 		assert.Nil(t, removeControlPlaneTaint(client.CoreV1().Nodes(), testNode))
 
 		// Get all of the nodes from the fake client and test their labels
@@ -164,11 +164,11 @@ func TestIsMasterNode(t *testing.T) {
 		testNode := generateNode("test-value-1")
 		if testCase.isMasterNode {
 			testNode.Labels["node-role.kubernetes.io/control-plane"] = "true"
-			result, err := IsNodeMaster(testNode, k8sfake.NewSimpleClientset().CoreV1().Nodes())
+			result, err := IsNodeMaster(testNode, k8sfake.NewClientset().CoreV1().Nodes())
 			assert.Nil(t, err)
 			assert.True(t, result)
 		} else {
-			result, err := IsNodeMaster(testNode, k8sfake.NewSimpleClientset().CoreV1().Nodes())
+			result, err := IsNodeMaster(testNode, k8sfake.NewClientset().CoreV1().Nodes())
 			assert.Nil(t, err)
 			assert.False(t, result)
 		}
@@ -260,7 +260,7 @@ func TestGetNumOfReadyNodesInCluster(t *testing.T) {
 			runtimeObjects = append(runtimeObjects, generateNodeWithName(fmt.Sprintf("node-%d", i)))
 		}
 
-		client := k8sfake.NewSimpleClientset(runtimeObjects...)
+		client := k8sfake.NewClientset(runtimeObjects...)
 		result, err := GetNumOfReadyNodesInCluster(client.CoreV1().Nodes())
 		assert.Nil(t, err)
 		assert.Equal(t, testCase.readyNodes, int(result))
@@ -274,7 +274,7 @@ func TestUnCordon(t *testing.T) {
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, testNode)
 
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
+	client := k8sfake.NewClientset(runtimeObjects...)
 	assert.Nil(t, UnCordon(client.CoreV1().Nodes(), testNode.Name))
 
 	// Get all of the nodes from the fake client and test their labels
@@ -295,7 +295,7 @@ func TestEnableMasterScheduling(t *testing.T) {
 	var runtimeObjects []runtime.Object
 	runtimeObjects = append(runtimeObjects, testNode)
 
-	client := k8sfake.NewSimpleClientset(runtimeObjects...)
+	client := k8sfake.NewClientset(runtimeObjects...)
 	assert.Nil(t, EnableMasterScheduling(client.CoreV1().Nodes(), true))
 
 	// Get all of the nodes from the fake client and test their labels
