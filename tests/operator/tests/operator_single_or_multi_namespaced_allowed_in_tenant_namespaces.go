@@ -305,7 +305,7 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 
-		// NOTE: Intentionally NOT labeling the postgresql operator - this should cause the test to fail
+		// NOTE: Intentionally NOT labeling the lightweight operator - this should cause the test to fail
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

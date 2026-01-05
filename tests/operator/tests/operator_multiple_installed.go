@@ -68,17 +68,17 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		err = tshelper.DeployTestOperatorGroup(secondNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-		By("Query the packagemanifest for postgresql operator package name and catalog source")
-		postgresqlOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+		By("Query the packagemanifest for lightweight operator package name and catalog source")
+		lightweightOperatorName, catalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
 			tsparams.OperatorPackageNamePrefixLightweight, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for postgresql operator")
-		Expect(postgresqlOperatorName).ToNot(Equal("not found"), "postgresql operator package not found")
-		Expect(catalogSource).ToNot(Equal("not found"), "postgresql operator catalog source not found")
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for lightweight operator")
+		Expect(lightweightOperatorName).ToNot(Equal("not found"), "lightweight operator package not found")
+		Expect(catalogSource).ToNot(Equal("not found"), "lightweight operator catalog source not found")
 
-		By("Query the packagemanifest for available channel, version and CSV for " + postgresqlOperatorName)
+		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
 		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			postgresqlOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+postgresqlOperatorName)
+			lightweightOperatorName, randomNamespace)
+		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
 		Expect(channel).ToNot(Equal("not found"), "Channel not found")
 		Expect(version).ToNot(Equal("not found"), "Version not found")
 		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
@@ -87,10 +87,10 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// This is because the operator/csv name is the same, but the subscription name is different.
 		// The subscription name cannot be the same, as it is a unique identifier in the namespace.
 
-		By(fmt.Sprintf("Deploy first operator (postgresql-operator) version %s for testing", version))
+		By(fmt.Sprintf("Deploy first operator (lightweight) version %s for testing", version))
 		err = tshelper.DeployOperatorSubscription(
 			"operator1",
-			postgresqlOperatorName,
+			lightweightOperatorName,
 			channel,
 			randomNamespace,
 			catalogSource,
@@ -99,12 +99,12 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresqlOperatorName)
+			lightweightOperatorName)
 
-		By(fmt.Sprintf("Deploy second operator (postgresql-operator) version %s for testing", version))
+		By(fmt.Sprintf("Deploy second operator (lightweight) version %s for testing", version))
 		err = tshelper.DeployOperatorSubscription(
 			"operator2",
-			postgresqlOperatorName,
+			lightweightOperatorName,
 			channel,
 			secondNamespace,
 			catalogSource,
@@ -113,16 +113,16 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			postgresqlOperatorName)
+			lightweightOperatorName)
 
-		By("Wait until the first postgresql operator is ready")
+		By("Wait until the first lightweight operator is ready")
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+postgresqlOperatorName+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+lightweightOperatorName+
 			" is not ready")
 
-		By("Wait until the second postgresql operator is ready")
+		By("Wait until the second lightweight operator is ready")
 		err = tshelper.WaitUntilOperatorIsReady(tsparams.OperatorPrefixLightweight, secondNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+postgresqlOperatorName+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+lightweightOperatorName+
 			" is not ready")
 
 		// Note: No need to label these operators as we are testing all operators in the cluster.
@@ -148,7 +148,7 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// in different namespaces with different versions. This is an invalid use case.
 
 		// We want to create a custom catalog source for this test.
-		// This means we will have access to a "new" and "old" channel for the postgresql.
+		// This means we will have access to a "new" and "old" channel for the operator.
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
 
 		By("Create custom-operator catalog source")

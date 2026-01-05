@@ -8,6 +8,7 @@
 # Prerequisites:
 #   - podman or docker (for registry authentication)
 #   - opm (Operator Package Manager) - https://github.com/operator-framework/operator-registry
+#   - jq (for JSON parsing) - https://jqlang.github.io/jq/
 #   - Logged into registry.redhat.io (podman login registry.redhat.io)
 #
 # Usage:
@@ -32,8 +33,7 @@ VERBOSE="${VERBOSE:-false}"
 FRESH_PULL="${FRESH_PULL:-false}"
 
 # Default OCP versions to check
-# TODO: Change this to the latest OCP versions once they are available.
-DEFAULT_VERSIONS="4.14 4.17 4.18 4.19 4.20"
+DEFAULT_VERSIONS="4.14 4.16 4.17 4.18 4.19 4.20"
 
 # Operators we depend on for QE tests
 # Format: catalog_type:operator_package_name:description
@@ -41,15 +41,13 @@ DEFAULT_VERSIONS="4.14 4.17 4.18 4.19 4.20"
 # Note: We have version-specific operators due to catalog availability:
 #   - cockroachdb-certified: Used for OCP 4.14-4.19 (certified operator)
 #   - mongodb-enterprise: Used for OCP 4.20+ (alternative certified operator)
-#   - postgresql: Used for OCP 4.14-4.19 (lightweight operator)
-#   - prometheus-exporter-operator: Used for OCP 4.20+ (alternative lightweight operator)
+#   - prometheus-exporter-operator: Used for all OCP versions (lightweight operator)
 # See tests/utils/operatorversions/ for the mapping logic.
 REQUIRED_OPERATORS="
 certified-operators:cockroachdb-certified:Used for affiliated certification tests (OCP 4.14-4.19)
 certified-operators:mongodb-enterprise:Used for affiliated certification tests (OCP 4.20+)
 community-operators:grafana-operator:Used for operator tests
-community-operators:postgresql:Used as lightweight operator (OCP 4.14-4.19)
-community-operators:prometheus-exporter-operator:Used as lightweight operator (OCP 4.20+)
+community-operators:prometheus-exporter-operator:Used as lightweight operator (all OCP versions)
 redhat-operators:cluster-logging:Used for cluster-wide operator tests
 "
 
@@ -236,6 +234,20 @@ check_prerequisites() {
 
 	echo -e "  ${GREEN}✓${NC} opm found at: $(command -v opm)"
 	echo -e "  ${GREEN}✓${NC} opm version: ${current_version}"
+
+	# Check for jq
+	if ! command -v jq &>/dev/null; then
+		echo -e "${RED}Error: jq is not installed.${NC}"
+		echo ""
+		echo "Install jq from: https://jqlang.github.io/jq/download/"
+		echo ""
+		echo "Quick install:"
+		echo "  macOS: brew install jq"
+		echo "  Ubuntu/Debian: sudo apt-get install jq"
+		echo "  Fedora/RHEL: sudo dnf install jq"
+		exit 1
+	fi
+	echo -e "  ${GREEN}✓${NC} jq found at: $(command -v jq)"
 	echo ""
 
 	# Check for updates
@@ -302,16 +314,16 @@ check_operator() {
 	fi
 
 	if [ "$VERBOSE" = "true" ]; then
-		echo -e "    ${YELLOW}Running: opm render $catalog_image | grep \"name\":\"$operator_name\"${NC}"
+		echo -e "    ${YELLOW}Running: opm render $catalog_image | jq 'select(.schema==\"olm.package\" and .name==\"$operator_name\")'${NC}"
 	fi
 
 	# Try to find the operator in the catalog
 	# opm render pulls the catalog image and outputs all packages/channels/bundles as JSON
-	# We grep for the operator package name (handles both "name": "X" and "name":"X" formats)
-	# Note: Use [ ]* instead of \s* for portable regex (works on both GNU and BSD grep)
+	# IMPORTANT: Use jq to check for actual package names (only olm.package schema entries)
+	# NOT grep, which can produce false positives by matching relatedImages
 	echo -n "    Status:  "
 	# Note: 'timeout' may not exist on macOS, so we run without it
-	if opm render "$catalog_image" 2>/dev/null | grep -qE "\"(name|package)\":[ ]*\"$operator_name\""; then
+	if opm render "$catalog_image" 2>/dev/null | jq -e "select(.schema == \"olm.package\" and .name == \"$operator_name\")" >/dev/null 2>&1; then
 		echo -e "${GREEN}✅ Found${NC}"
 		return 0
 	else
