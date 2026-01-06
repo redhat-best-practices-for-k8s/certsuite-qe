@@ -24,7 +24,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 
 	BeforeEach(func() {
 		// Get OCP version to determine which lightweight operator to use
-		// postgresql is used for OCP 4.14-4.19, prometheus-exporter-operator for 4.20+
+		// prometheus-exporter-operator is used for all OCP versions (4.14+)
 		// See issue #1283 for operator catalog availability
 		ocpVersion := globalhelper.GetClusterVersionOrDefault()
 		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
@@ -74,7 +74,7 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
 			" is not ready")
 
-		// Deploy lightweight operator (postgresql for 4.14-4.19, prometheus-exporter-operator for 4.20+)
+		// Deploy lightweight operator (prometheus-exporter-operator for all OCP versions)
 		// This operator has no clusterPermissions
 		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
 		lightweightOperatorName, catalogSource2, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(

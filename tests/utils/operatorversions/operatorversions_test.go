@@ -61,7 +61,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			ocpVersion:             "4.14",
 			expectedCertifiedPkg:   "cockroachdb-certified",
 			expectedCommunityPkg:   "grafana-operator",
-			expectedLightweightPkg: "postgresql",
+			expectedLightweightPkg: "prometheus-exporter-operator",
 			expectedUncertifiedPkg: "cockroachdb",
 		},
 		{
@@ -69,7 +69,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			ocpVersion:             "4.19.3",
 			expectedCertifiedPkg:   "cockroachdb-certified",
 			expectedCommunityPkg:   "grafana-operator",
-			expectedLightweightPkg: "postgresql",
+			expectedLightweightPkg: "prometheus-exporter-operator",
 			expectedUncertifiedPkg: "cockroachdb",
 		},
 		{
@@ -85,7 +85,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			ocpVersion:             "4.99",
 			expectedCertifiedPkg:   "cockroachdb-certified",
 			expectedCommunityPkg:   "grafana-operator",
-			expectedLightweightPkg: "postgresql",
+			expectedLightweightPkg: "prometheus-exporter-operator",
 			expectedUncertifiedPkg: "cockroachdb",
 		},
 	}
@@ -124,11 +124,13 @@ func TestGetCommunityOperator(t *testing.T) {
 }
 
 func TestGetLightweightOperator(t *testing.T) {
-	// 4.14-4.19 should use postgresql
+	// All versions should use prometheus-exporter-operator (available in all OCP versions)
 	lightweightOp := GetLightweightOperator("4.14")
-	assert.Equal(t, "postgresql", lightweightOp.PackageName)
+	assert.Equal(t, "prometheus-exporter-operator", lightweightOp.PackageName)
 
-	// 4.20 should use prometheus-exporter-operator (postgresql not available in 4.20)
+	lightweightOp = GetLightweightOperator("4.17")
+	assert.Equal(t, "prometheus-exporter-operator", lightweightOp.PackageName)
+
 	lightweightOp = GetLightweightOperator("4.20")
 	assert.Equal(t, "prometheus-exporter-operator", lightweightOp.PackageName)
 }

@@ -52,7 +52,7 @@ type OCPOperatorConfig struct {
 	CommunityOperator OperatorInfo
 
 	// LightweightOperator is a lightweight operator used for various operator tests
-	// This is typically postgresql from community-operators catalog
+	// This is prometheus-exporter-operator from community-operators catalog
 	LightweightOperator OperatorInfo
 
 	// ClusterLoggingOperator is the cluster-logging operator for cluster-wide tests
@@ -81,10 +81,13 @@ var DefaultOperatorConfig = OCPOperatorConfig{
 		Description:   "Grafana operator for community operator tests",
 	},
 	LightweightOperator: OperatorInfo{
-		PackageName:   "postgresql",
+		// prometheus-exporter-operator is available in all OCP versions (4.14-4.20+)
+		// Note: postgresql was previously used but does NOT exist in any OCP catalog
+		// (the catalog check was producing false positives by matching relatedImages)
+		PackageName:   "prometheus-exporter-operator",
 		CatalogSource: CatalogCommunityOperators,
-		CSVPrefix:     "postgresoperator",
-		Description:   "PostgreSQL operator as lightweight operator for various tests",
+		CSVPrefix:     "prometheus-exporter-operator",
+		Description:   "Prometheus Exporter operator as lightweight operator for various tests",
 	},
 	ClusterLoggingOperator: OperatorInfo{
 		PackageName:   "cluster-logging",
@@ -103,15 +106,12 @@ var DefaultOperatorConfig = OCPOperatorConfig{
 // OCP420OperatorConfig is the configuration for OCP 4.20+
 // Several operators are NOT available in 4.20 catalogs:
 //   - cockroachdb-certified: Missing from certified-operators
-//   - postgresql: Missing from community-operators
 //
 // Reference: https://github.com/redhat-best-practices-for-k8s/certsuite-qe/issues/1283
 // The issue tracks which operators are missing from specific OCP version catalogs.
 //
 // Alternatives used for OCP 4.20:
 //   - mongodb-enterprise: Replaces cockroachdb-certified (certified operator)
-//   - prometheus-exporter-operator: Replaces postgresql (lightweight community operator)
-//     Note: redis-operator was previously tried but crashes on startup (CrashLoopBackOff)
 var OCP420OperatorConfig = OCPOperatorConfig{
 	OCPVersion: "4.20",
 	CertifiedOperator: OperatorInfo{
@@ -129,12 +129,11 @@ var OCP420OperatorConfig = OCPOperatorConfig{
 		Description:   "Grafana operator for community operator tests",
 	},
 	LightweightOperator: OperatorInfo{
-		// prometheus-exporter-operator replaces postgresql which is not available in 4.20
-		// redis-operator was tried but crashes on startup (CrashLoopBackOff)
+		// prometheus-exporter-operator is available in all OCP versions (4.14-4.20+)
 		PackageName:   "prometheus-exporter-operator",
 		CatalogSource: CatalogCommunityOperators,
 		CSVPrefix:     "prometheus-exporter-operator",
-		Description:   "Prometheus Exporter operator (replacement for postgresql in 4.20)",
+		Description:   "Prometheus Exporter operator as lightweight operator for various tests",
 	},
 	ClusterLoggingOperator: OperatorInfo{
 		PackageName:   "cluster-logging",

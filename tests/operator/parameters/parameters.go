@@ -83,6 +83,6 @@ const (
 )
 
 const (
-	OperatorPackageNamePrefixLightweight              = "postgresql"
+	OperatorPackageNamePrefixLightweight              = "prometheus-exporter-operator"
 	OperatorPackageNamePrefixLightweightCustomCatalog = "nginx-ingress-operator"
 )

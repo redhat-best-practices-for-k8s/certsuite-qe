@@ -103,7 +103,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	It("two operators, one does not reports Succeeded as its installation status (quick failure) [negative]", func() {
 		// Get OCP version to determine which lightweight operator to use
-		// postgresql is used for OCP 4.14-4.19, prometheus-exporter-operator for 4.20+
+		// prometheus-exporter-operator is used for all OCP versions (4.14+)
 		// See issue #1283 for operator catalog availability
 		ocpVersion := globalhelper.GetClusterVersionOrDefault()
 		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
@@ -209,7 +209,7 @@ var _ = Describe("Operator install-source,", Serial, func() {
 
 	It("two operators, one does not reports Succeeded as its installation status (delayed failure) [negative]", Serial, func() {
 		// Get OCP version to determine which lightweight operator to use
-		// postgresql is used for OCP 4.14-4.19, prometheus-exporter-operator for 4.20+
+		// prometheus-exporter-operator is used for all OCP versions (4.14+)
 		// See issue #1283 for operator catalog availability
 		ocpVersion := globalhelper.GetClusterVersionOrDefault()
 		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
