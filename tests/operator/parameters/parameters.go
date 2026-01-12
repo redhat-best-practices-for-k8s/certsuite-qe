@@ -41,7 +41,7 @@ var (
 	RedhatOperatorGroup                       = "redhat-operators"
 	CommunityOperatorGroup                    = "community-operators"
 	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorPrefixLightweight                 = "postgresoperator"
+	OperatorPrefixLightweight                 = "prometheus-exporter-operator"
 	OperatorPrefixKiali                       = "kiali-operator"
 	CertifiedOperatorPrefix                   = "grafana-operator"
 	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
