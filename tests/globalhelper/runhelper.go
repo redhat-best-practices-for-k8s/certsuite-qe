@@ -112,6 +112,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		"--output-dir", reportDir,
 		"--label-filter", testCaseName,
 		"--sanitize-claim", "true",
+		"--cleanup-probe", "false",
 	}
 
 	cmdPath := fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
@@ -187,6 +188,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"--omit-artifacts-zip-file", "true",
 		"--enable-data-collection", "false",
 		"--sanitize-claim", "true",
+		"--cleanup-probe", "false",
 		"--label-filter", testCaseName,
 	}
 
