@@ -15,7 +15,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
-var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", Serial, func() {
+var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", Serial, Label("operator", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

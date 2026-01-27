@@ -20,7 +20,7 @@ const (
 	ErrorRemovingLabelStr    = "Error removing label from operator "
 )
 
-var _ = Describe("Operator install-source,", Serial, func() {
+var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

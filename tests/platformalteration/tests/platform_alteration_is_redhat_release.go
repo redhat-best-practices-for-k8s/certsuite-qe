@@ -11,7 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("platform-alteration-is-redhat-release", func() {
+var _ = Describe("platform-alteration-is-redhat-release", Label("platformalteration3"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

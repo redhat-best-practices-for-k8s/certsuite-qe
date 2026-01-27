@@ -15,7 +15,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/statefulset"
 )
 
-var _ = Describe("platform-alteration-base-image", func() {
+var _ = Describe("platform-alteration-base-image", Label("platformalteration1", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

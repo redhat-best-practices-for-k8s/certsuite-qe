@@ -13,7 +13,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/onlinecheck"
 )
 
-var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, func() {
+var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial, Label("affiliatedcertification", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

@@ -13,7 +13,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
 )
 
-var _ = Describe("Access control custom namespace, custom deployment,", func() {
+var _ = Describe("Access control custom namespace, custom deployment,", Label("accesscontrol6"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

@@ -12,7 +12,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
-var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", func() {
+var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("performance", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

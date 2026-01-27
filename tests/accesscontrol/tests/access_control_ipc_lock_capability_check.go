@@ -12,7 +12,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("Access-control ipc-lock-capability-check,", func() {
+var _ = Describe("Access-control ipc-lock-capability-check,", Label("accesscontrol3"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

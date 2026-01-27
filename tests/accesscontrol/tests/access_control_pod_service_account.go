@@ -9,7 +9,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
-var _ = Describe("Access-control pod-service-account,", func() {
+var _ = Describe("Access-control pod-service-account,", Label("accesscontrol10"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

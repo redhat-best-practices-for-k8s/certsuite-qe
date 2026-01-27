@@ -13,7 +13,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/runtimeclass"
 )
 
-var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, func() {
+var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, Label("performance", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

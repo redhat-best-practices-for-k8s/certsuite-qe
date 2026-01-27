@@ -11,7 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
-var _ = Describe("Affiliated-certification helm chart certification,", Serial, func() {
+var _ = Describe("Affiliated-certification helm chart certification,", Serial, Label("affiliatedcertification", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

@@ -13,7 +13,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("lifecycle-image-pull-policy", func() {
+var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

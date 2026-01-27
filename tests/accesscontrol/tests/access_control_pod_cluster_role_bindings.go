@@ -11,7 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/rbac"
 )
 
-var _ = Describe("Access-control pod cluster role binding,", func() {
+var _ = Describe("Access-control pod cluster role binding,", Label("accesscontrol8"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

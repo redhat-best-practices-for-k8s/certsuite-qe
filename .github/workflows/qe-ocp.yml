@@ -69,8 +69,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [accesscontrol, affiliatedcertification, manageability, networking, lifecycle, performance, platformalteration, observability, operator]
-        # suite: [operator]
+        # Suites with -ocp suffix run only OCP-required tests
+        # These suites require OpenShift-specific features like MCO, CatalogSources, or CPU pinning
+        # K8S-compatible tests run on Kind (qe.yml) with -k8s suffix
+        suite: [affiliatedcertification-ocp, performance-ocp, platformalteration1-ocp, platformalteration2-ocp, platformalteration3-ocp, platformalteration4-ocp]
     env:
       SHELL: /bin/bash
       KUBECONFIG: '/home/runner/.kube/config'

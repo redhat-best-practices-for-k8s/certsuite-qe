@@ -10,7 +10,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
 )
 
-var _ = Describe("platform-alteration-tainted-node-kernel", Serial, func() {
+var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platformalteration4", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

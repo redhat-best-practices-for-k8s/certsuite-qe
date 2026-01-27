@@ -15,7 +15,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/replicaset"
 )
 
-var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, func() {
+var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, Label("lifecycle6"), func() {
 	var randomNamespace string
 	var randomPV string
 	var randomReportDir string

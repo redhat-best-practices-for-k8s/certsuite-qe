@@ -11,7 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("Lifecycle pod-toleration-bypass", func() {
+var _ = Describe("Lifecycle pod-toleration-bypass", Label("lifecycle8"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

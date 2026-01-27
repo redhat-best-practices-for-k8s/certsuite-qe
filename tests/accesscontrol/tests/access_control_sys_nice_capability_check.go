@@ -26,7 +26,7 @@ import (
 //     if they're running in parallel.
 //
 
-var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("rt-kernel"), func() {
+var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("rt-kernel"), Label("accesscontrol13", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
@@ -339,7 +339,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial, Label("r
 // They can run unordered and in parallel with other tcs.
 //
 
-var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel", func() {
+var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel", Label("accesscontrol13"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

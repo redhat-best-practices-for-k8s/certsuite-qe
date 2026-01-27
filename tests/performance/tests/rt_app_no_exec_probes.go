@@ -12,7 +12,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
-var _ = Describe("performance-rt-apps-no-exec-probes", func() {
+var _ = Describe("performance-rt-apps-no-exec-probes", Label("performance", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

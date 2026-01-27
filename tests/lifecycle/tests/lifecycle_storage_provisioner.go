@@ -15,7 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("lifecycle-storage-provisioner", func() {
+var _ = Describe("lifecycle-storage-provisioner", Label("lifecycle3"), func() {
 	var randomNamespace string
 	var randomStorageClassName string
 	var randomPV string
