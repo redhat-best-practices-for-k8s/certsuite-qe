@@ -16,7 +16,7 @@ import (
 	https://developers.redhat.com/articles/2021/08/27/using-virtual-functions-dpdk-red-hat-openshift
 */
 
-var _ = Describe("performance-cpu-pinning-no-exec-probes", func() {
+var _ = Describe("performance-cpu-pinning-no-exec-probes", Label("performance", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

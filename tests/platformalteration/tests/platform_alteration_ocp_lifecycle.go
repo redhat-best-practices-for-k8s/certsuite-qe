@@ -22,7 +22,7 @@ const (
 	rhcosVersionMapRelativePath = "tests/platform/operatingsystem/files/rhcos_version_map"
 )
 
-var _ = Describe("platform-alteration-ocp-lifecycle", func() {
+var _ = Describe("platform-alteration-ocp-lifecycle", Label("platformalteration4", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

@@ -13,7 +13,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-high-availability", Serial, func() {
+var _ = Describe("lifecycle-pod-high-availability", Serial, Label("lifecycle5", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

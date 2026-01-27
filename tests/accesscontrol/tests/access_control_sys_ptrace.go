@@ -12,7 +12,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("Access-control sys-ptrace-capability ", func() {
+var _ = Describe("Access-control sys-ptrace-capability ", Label("accesscontrol13"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

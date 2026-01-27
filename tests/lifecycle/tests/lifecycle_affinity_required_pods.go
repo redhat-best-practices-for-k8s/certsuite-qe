@@ -14,7 +14,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-affinity-required-pods", func() {
+var _ = Describe("lifecycle-affinity-required-pods", Label("lifecycle1"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

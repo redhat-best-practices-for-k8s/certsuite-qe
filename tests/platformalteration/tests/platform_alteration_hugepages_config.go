@@ -14,7 +14,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
 )
 
-var _ = Describe("platform-alteration-hugepages-config", Serial, func() {
+var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platformalteration3", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

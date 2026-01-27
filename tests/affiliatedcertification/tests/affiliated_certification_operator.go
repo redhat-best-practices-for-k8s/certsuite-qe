@@ -20,7 +20,7 @@ const (
 	ErrorLabelingOperatorStr = "Error labeling operator "
 )
 
-var _ = Describe("Affiliated-certification operator certification,", Serial, func() {
+var _ = Describe("Affiliated-certification operator certification,", Serial, Label("affiliatedcertification", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

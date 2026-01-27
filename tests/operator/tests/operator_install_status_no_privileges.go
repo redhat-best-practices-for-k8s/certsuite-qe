@@ -14,7 +14,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operatorversions"
 )
 
-var _ = Describe("Operator install-status-no-privileges,", Serial, func() {
+var _ = Describe("Operator install-status-no-privileges,", Serial, Label("operator", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

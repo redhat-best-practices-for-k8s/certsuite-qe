@@ -11,7 +11,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/parameters"
 )
 
-var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, func() {
+var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, Label("observability", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

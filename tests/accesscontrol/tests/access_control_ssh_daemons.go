@@ -13,7 +13,7 @@ const (
 	imageWithSSHDaemon = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
 )
 
-var _ = Describe("Access-control ssh-daemons,", func() {
+var _ = Describe("Access-control ssh-daemons,", Label("accesscontrol12"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

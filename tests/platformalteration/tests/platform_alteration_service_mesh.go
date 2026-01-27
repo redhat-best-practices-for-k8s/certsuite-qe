@@ -23,7 +23,7 @@ const (
 	istioNamespace = "istio-system"
 )
 
-var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, func() {
+var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, Label("platformalteration4", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
@@ -140,7 +140,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, fu
 	})
 })
 
-var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, func() {
+var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, Label("platformalteration4"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
