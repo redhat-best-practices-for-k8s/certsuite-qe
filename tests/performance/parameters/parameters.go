@@ -27,6 +27,9 @@ const (
 
 	RtImageName = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
 
+	// CRD names for prerequisite checks.
+	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
+
 	// Certsuite test case names.
 	CertsuiteExclusiveCPUPool                   = "performance-exclusive-cpu-pool"
 	CertsuiteSharedCPUPoolSchedulingPolicy      = "performance-shared-cpu-pool-non-rt-scheduling-policy"
