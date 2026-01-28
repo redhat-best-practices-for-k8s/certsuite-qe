@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -9,6 +11,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var _ = Describe("platform-alteration-is-redhat-release", Label("platformalteration3"), func() {
@@ -46,8 +49,26 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		globalhelper.AppendContainersToDeployment(deployment, 3, tsparams.SampleWorkloadImage)
 
+		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
@@ -73,6 +94,25 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet has ready pods on nodes")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet.Status.NumberReady).To(BeNumerically(">", 0), "DaemonSet should have ready pods")
+		Expect(runningDaemonSet.Status.NumberReady).To(Equal(runningDaemonSet.Status.DesiredNumberScheduled),
+			"All scheduled pods should be ready")
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
@@ -100,6 +140,23 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
+
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteIsRedHatReleaseName,
@@ -118,8 +175,26 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 		By("Define statefulSet")
 		statefulSet := tshelper.DefineStatefulSetWithNonUBIContainer(randomNamespace)
 
+		By("Create and wait until statefulSet is ready")
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert statefulSet has ready replicas")
+		runningStatefulSet, err := globalhelper.GetRunningStatefulSet(statefulSet.Namespace, statefulSet.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningStatefulSet.Status.ReadyReplicas).To(BeNumerically(">", 0), "StatefulSet should have ready replicas")
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
 
 		By("Start platform-alteration-is-redhat-release test")
 		err = globalhelper.LaunchTests(

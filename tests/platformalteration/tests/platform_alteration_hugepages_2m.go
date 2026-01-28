@@ -1,11 +1,14 @@
 package tests
 
 import (
+	"fmt"
+
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	corev1 "k8s.io/api/core/v1"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -59,6 +62,23 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
+
 		By("Start platform-alteration-hugepages-2m-only test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -83,6 +103,16 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		err := globalhelper.CreateAndWaitUntilPodIsReady(puta, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is running and has containers")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
+
 		By("Start platform-alteration-hugepages-2m-only test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -106,6 +136,23 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert deployment is ready")
+		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDeployment).ToNot(BeNil())
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
 
 		By("Start platform-alteration-hugepages-2m-only test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,
@@ -136,6 +183,16 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		By("Create and wait until pod is ready")
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is running and has containers")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestDeploymentName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
 
 		By("Start platform-alteration-hugepages-2m-only test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePages2mOnlyName,

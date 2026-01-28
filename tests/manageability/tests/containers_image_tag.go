@@ -1,12 +1,15 @@
 package tests
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/manageability/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	corev1 "k8s.io/api/core/v1"
 )
 
 const (
@@ -47,11 +50,17 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Assert pod is ready")
+		By("Assert pod is running and has containers")
 		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningPod).ToNot(BeNil())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 		Expect(runningPod.Spec.Containers[0].Image).To(ContainSubstring(":"))
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
 
 		By("Start containers-image-tag test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerImageTag,
@@ -70,8 +79,19 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			sampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
+		By("Create and wait until pod is ready")
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is running and has containers")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, testPod.Name)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
 
 		By("Start containers-image-tag test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteContainerImageTag,

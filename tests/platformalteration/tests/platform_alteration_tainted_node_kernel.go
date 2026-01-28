@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -8,6 +10,7 @@ import (
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/daemonset"
+	corev1 "k8s.io/api/core/v1"
 )
 
 var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platformalteration4", "ocp-required"), func() {
@@ -68,14 +71,30 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platf
 		daemonset.RedefineWithPrivilegedContainer(daemonSet)
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
+		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert daemonSet has ready pods on nodes")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningDaemonSet.Status.NumberReady).To(BeNumerically(">", 0), "DaemonSet should have ready pods")
+		Expect(runningDaemonSet.Status.NumberReady).To(Equal(runningDaemonSet.Status.DesiredNumberScheduled),
+			"All scheduled pods should be ready")
+
+		By("Assert pods are running with ready containers")
 		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 
 		if len(podList.Items) == 0 {
 			Skip("no pods have been found in namespace")
+		}
+
+		for _, p := range podList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
 		}
 
 		// we can only set a taint flag in this way, not remove it, there is no way to untaint a running kernel,
