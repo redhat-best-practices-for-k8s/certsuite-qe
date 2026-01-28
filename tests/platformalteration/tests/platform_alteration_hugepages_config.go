@@ -37,6 +37,12 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platform
 		if globalhelper.IsKindCluster() {
 			Skip("Hugepages are not supported in Kind clusters")
 		}
+
+		By("Verify MCO is healthy and accessible")
+		mcoHealthy, err := globalhelper.IsMCOHealthy()
+		if err != nil || !mcoHealthy {
+			Skip("MCO is not healthy or accessible on this cluster - skipping hugepages config tests")
+		}
 	})
 
 	AfterEach(func() {

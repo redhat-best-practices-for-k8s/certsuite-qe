@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"time"
@@ -12,6 +13,7 @@ import (
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
@@ -84,6 +86,16 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Assert pod is running and has containers")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
+
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
@@ -102,6 +114,16 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 
 		err := globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is running and has containers")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
@@ -128,6 +150,18 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(putb, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert all pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(Equal(2), "Expected 2 pods")
+
+		for _, p := range podsList.Items {
+			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+			for _, cs := range p.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
+			}
+		}
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,
@@ -191,6 +225,16 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, L
 
 		err = globalhelper.CreateAndWaitUntilPodIsReady(put, WaitingTime)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod is running and has containers")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+
+		By("Assert all containers are ready")
+		for _, cs := range runningPod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
 
 		By("Start platform-alteration-service-mesh-usage test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteServiceMeshUsageName,

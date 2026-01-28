@@ -5,6 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -39,6 +40,17 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			// The Certsuite actually proactively skips this test if the cluster is Non-OCP.
 			Skip(fmt.Sprintf("%s test is not applicable for Kind cluster", tsparams.CertsuiteBaseImageName))
 		}
+
+		By("Verify MCO is healthy and accessible")
+		mcoHealthy, err := globalhelper.IsMCOHealthy()
+		if err != nil || !mcoHealthy {
+			Skip("MCO is not healthy or accessible on this cluster - skipping base image tests")
+		}
+
+		By("Verify cluster has worker nodes")
+		if !globalhelper.HasWorkerNodes() {
+			Skip("Cluster has no worker nodes - skipping base image tests")
+		}
 	})
 
 	AfterEach(func() {
@@ -62,6 +74,18 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		runningDeployment, err := globalhelper.GetRunningDeployment(deployment.Namespace, deployment.Name)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDeployment).ToNot(BeNil())
+
+		By("Assert pod is running and has containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+		Expect(podsList.Items[0].Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
+		Expect(len(podsList.Items[0].Status.ContainerStatuses)).To(BeNumerically(">", 0), "Pod should have containers")
+
+		By("Assert all containers are ready")
+		for _, cs := range podsList.Items[0].Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
@@ -91,6 +115,23 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningDaemonSet).ToNot(BeNil())
+
+		By("Assert daemonSet has ready pods on nodes")
+		Expect(runningDaemonSet.Status.NumberReady).To(BeNumerically(">", 0), "DaemonSet should have ready pods")
+		Expect(runningDaemonSet.Status.NumberReady).To(Equal(runningDaemonSet.Status.DesiredNumberScheduled),
+			"All scheduled pods should be ready")
+
+		By("Assert pods are running with ready containers")
+		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
+
+		for _, pod := range podsList.Items {
+			Expect(pod.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", pod.Name))
+			for _, cs := range pod.Status.ContainerStatuses {
+				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, pod.Name))
+			}
+		}
 
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
