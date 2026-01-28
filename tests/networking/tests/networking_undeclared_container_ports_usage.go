@@ -12,7 +12,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
 )
 
-var _ = Describe("Networking undeclared-container-ports-usage,", func() {
+var _ = Describe("Networking undeclared-container-ports-usage,", Serial, Label("networking3"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

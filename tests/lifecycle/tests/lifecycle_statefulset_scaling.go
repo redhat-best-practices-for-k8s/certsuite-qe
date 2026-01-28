@@ -15,7 +15,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-statefulset-scaling", Serial, func() {
+var _ = Describe("lifecycle-statefulset-scaling", Serial, Label("lifecycle3", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

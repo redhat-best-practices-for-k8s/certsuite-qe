@@ -14,7 +14,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-var _ = Describe("performance-exclusive-cpu-pool", func() {
+var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

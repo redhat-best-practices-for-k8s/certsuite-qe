@@ -11,7 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/resourcequota"
 )
 
-var _ = Describe("Access-control namespace-resource-quota,", func() {
+var _ = Describe("Access-control namespace-resource-quota,", Label("accesscontrol3"), func() {
 	var randomNamespace string
 	var randomNamespace2 string
 	var randomReportDir string

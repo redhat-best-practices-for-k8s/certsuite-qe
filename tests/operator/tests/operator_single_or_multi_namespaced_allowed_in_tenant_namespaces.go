@@ -15,315 +15,316 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 )
 
-var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", Serial, func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
-	var randomTargetingNamespace string
+var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", Serial,
+	Label("operator", "ocp-required"), func() {
+		var randomNamespace string
+		var randomReportDir string
+		var randomCertsuiteConfigDir string
+		var randomTargetingNamespace string
 
-	BeforeEach(func() {
-		// Create random namespace and keep original report and certsuite config directories
-		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
-			globalhelper.BeforeEachSetupWithRandomNamespace(
-				tsparams.OperatorNamespace)
+		BeforeEach(func() {
+			// Create random namespace and keep original report and certsuite config directories
+			randomNamespace, randomReportDir, randomCertsuiteConfigDir =
+				globalhelper.BeforeEachSetupWithRandomNamespace(
+					tsparams.OperatorNamespace)
 
-		randomTargetingNamespace = randomNamespace + "-targeting"
+			randomTargetingNamespace = randomNamespace + "-targeting"
 
-		createTestOperatorGroup(randomTargetingNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace})
+			createTestOperatorGroup(randomTargetingNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace})
 
-		DeferCleanup(func() {
-			err := globalhelper.DeleteNamespaceAndWait(randomTargetingNamespace, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+randomTargetingNamespace)
+			DeferCleanup(func() {
+				err := globalhelper.DeleteNamespaceAndWait(randomTargetingNamespace, tsparams.Timeout)
+				Expect(err).ToNot(HaveOccurred(), "Error deleting namespace "+randomTargetingNamespace)
+			})
+
+			By("Define certsuite config file")
+			err := globalhelper.DefineCertsuiteConfig(
+				[]string{randomNamespace, randomTargetingNamespace},
+				[]string{tsparams.TestPodLabel},
+				[]string{tsparams.CertsuiteTargetOperatorLabels},
+				[]string{},
+				[]string{}, randomCertsuiteConfigDir)
+
+			Expect(err).ToNot(HaveOccurred())
 		})
 
-		By("Define certsuite config file")
-		err := globalhelper.DefineCertsuiteConfig(
-			[]string{randomNamespace, randomTargetingNamespace},
-			[]string{tsparams.TestPodLabel},
-			[]string{tsparams.CertsuiteTargetOperatorLabels},
-			[]string{},
-			[]string{}, randomCertsuiteConfigDir)
+		AfterEach(func() {
+			globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
+				randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
+		})
 
-		Expect(err).ToNot(HaveOccurred())
-	})
+		It("operator namespace contains only single/multi namespace operator", func() {
+			createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
+				[]string{randomNamespace + "-one"})
+			installAndLabelOperator(randomNamespace)
 
-	AfterEach(func() {
-		globalhelper.AfterEachCleanupWithRandomNamespace(randomNamespace,
-			randomReportDir, randomCertsuiteConfigDir, tsparams.Timeout)
-	})
+			By("Start test")
+			err := globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
 
-	It("operator namespace contains only single/multi namespace operator", func() {
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
-			[]string{randomNamespace + "-one"})
-		installAndLabelOperator(randomNamespace)
+			Expect(err).ToNot(HaveOccurred())
 
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCasePassed, randomReportDir)
 
-		Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
+		})
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCasePassed, randomReportDir)
+		// negative
+		It("operator namespace contains own-namespaced namespace operator", func() {
+			By("Deploy operator group")
+			err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 
-		Expect(err).ToNot(HaveOccurred())
-	})
+			Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
-	// negative
-	It("operator namespace contains own-namespaced namespace operator", func() {
-		By("Deploy operator group")
-		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
+			installAndLabelOperator(randomNamespace)
 
-		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
 
-		installAndLabelOperator(randomNamespace)
+			Expect(err).ToNot(HaveOccurred())
 
-		By("Start test")
-		err = globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCaseFailed, randomReportDir)
 
-		Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
+		})
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCaseFailed, randomReportDir)
+		// positive
+		It("operator namespace contains single namespaced operator with cluster-wide operator installed in a different namespace", func() {
+			installClusterWideOperator()
 
-		Expect(err).ToNot(HaveOccurred())
-	})
+			createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
+				[]string{randomNamespace + "-one", randomNamespace + "-two"})
+			installAndLabelOperator(randomNamespace)
 
-	// positive
-	It("operator namespace contains single namespaced operator with cluster-wide operator installed in a different namespace", func() {
-		installClusterWideOperator()
+			By("Start test")
+			err := globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
 
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
-			[]string{randomNamespace + "-one", randomNamespace + "-two"})
-		installAndLabelOperator(randomNamespace)
+			Expect(err).ToNot(HaveOccurred())
 
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCasePassed, randomReportDir)
 
-		Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
+		})
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCasePassed, randomReportDir)
+		// negative - not possible for InterOperatorGroupOwnerConflict
+		/*It("operator namespace contains single namespaced operator with cluster-wide operator installed in the same namespace", func() {
+			installClusterWideOperator("cluster-logging", randomNamespace)
+			installAndLabelOperator(randomNamespace)
 
-		Expect(err).ToNot(HaveOccurred())
-	})
+			By("Start test")
+			err := globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred())
 
-	// negative - not possible for InterOperatorGroupOwnerConflict
-	/*It("operator namespace contains single namespaced operator with cluster-wide operator installed in the same namespace", func() {
-		installClusterWideOperator("cluster-logging", randomNamespace)
-		installAndLabelOperator(randomNamespace)
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		})*/
 
-		By("Start test")
-		err := globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred())
+		// negative
+		It("operator namespace contains single namespaced operator with non-operator pods", func() {
+			createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
+				[]string{randomNamespace + "-one", randomNamespace + "-two"})
+			installAndLabelOperator(randomNamespace)
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
-	})*/
+			By("Define pod")
+			testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
+				tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
 
-	// negative
-	It("operator namespace contains single namespaced operator with non-operator pods", func() {
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup,
-			[]string{randomNamespace + "-one", randomNamespace + "-two"})
-		installAndLabelOperator(randomNamespace)
+			err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
+			Expect(err).ToNot(HaveOccurred())
 
-		By("Define pod")
-		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
-		Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
 
-		By("Start test")
-		err = globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCaseFailed, randomReportDir)
 
-		Expect(err).ToNot(HaveOccurred())
+			Expect(err).ToNot(HaveOccurred())
+		})
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCaseFailed, randomReportDir)
+		// negative - test is failing due to missing implementation in certsuite?
+		XIt("operator namespace contains single namespaced operator with operators targeting this namespace", func() {
+			createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
+			installAndLabelOperator(randomNamespace)
 
-		Expect(err).ToNot(HaveOccurred())
-	})
+			// Get the lightweight operator based on OCP version
+			ocpVersion := "4.19"
+			if !globalhelper.IsKindCluster() {
+				var verr error
+				ocpVersion, verr = globalhelper.GetClusterVersion()
+				Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
+			}
+			lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
-	// negative - test is failing due to missing implementation in certsuite?
-	XIt("operator namespace contains single namespaced operator with operators targeting this namespace", func() {
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
-		installAndLabelOperator(randomNamespace)
+			By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+			lightweightOperatorName, lwCatalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+				lightweightOp.PackageName, randomTargetingNamespace)
+			Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
+			Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
+			Expect(lwCatalogSource).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
 
-		// Get the lightweight operator based on OCP version
-		ocpVersion := "4.19"
-		if !globalhelper.IsKindCluster() {
-			var verr error
-			ocpVersion, verr = globalhelper.GetClusterVersion()
-			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
-		}
-		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
+			By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
+			channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
+				lightweightOperatorName, randomTargetingNamespace)
+			Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
+			Expect(channel).ToNot(Equal("not found"), "Channel not found")
+			Expect(version).ToNot(Equal("not found"), "Version not found")
+			Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
 
-		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
-		lightweightOperatorName, lwCatalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			lightweightOp.PackageName, randomTargetingNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
-		Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
-		Expect(lwCatalogSource).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
-
-		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			lightweightOperatorName, randomTargetingNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
-
-		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
-		err = tshelper.DeployOperatorSubscription(
-			lightweightOperatorName+"-targeting",
-			lightweightOperatorName,
-			channel,
-			randomTargetingNamespace,
-			lwCatalogSource,
-			tsparams.OperatorSourceNamespace,
-			csvName,
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			lightweightOperatorName)
-
-		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix,
-			randomTargetingNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
-			" is not ready")
-
-		By("Label operator")
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				lightweightOp.CSVPrefix,
+			By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
+			err = tshelper.DeployOperatorSubscription(
+				lightweightOperatorName+"-targeting",
+				lightweightOperatorName,
+				channel,
 				randomTargetingNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+lightweightOperatorName)
+				lwCatalogSource,
+				tsparams.OperatorSourceNamespace,
+				csvName,
+				v1alpha1.ApprovalAutomatic,
+			)
+			Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+				lightweightOperatorName)
 
-		Eventually(func() error {
-			return tshelper.AddLabelToInstalledCSV(
-				"grafana-operator",
+			err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix,
+				randomTargetingNamespace)
+			Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
+				" is not ready")
+
+			By("Label operator")
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					lightweightOp.CSVPrefix,
+					randomTargetingNamespace,
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+lightweightOperatorName)
+
+			Eventually(func() error {
+				return tshelper.AddLabelToInstalledCSV(
+					"grafana-operator",
+					randomNamespace,
+					tsparams.OperatorLabel)
+			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
+				ErrorLabelingOperatorStr+"grafana-operator")
+
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCaseFailed, randomReportDir)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		// negative
+		It("operator namespace contains single namespaced operator with operators not labelled", func() {
+			// Note: This test uses grafana-operator and a lightweight operator that varies by OCP version
+			// See issue #1283 and operatorversions package for operator catalog availability
+
+			createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
+			installAndLabelOperator(randomNamespace)
+
+			// Get the lightweight operator based on OCP version
+			ocpVersion := "4.19"
+			if !globalhelper.IsKindCluster() {
+				var verr error
+				ocpVersion, verr = globalhelper.GetClusterVersion()
+				Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
+			}
+			lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
+
+			By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
+			lightweightOperatorName, lwCatalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
+				lightweightOp.PackageName, randomNamespace)
+			Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
+			Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
+			Expect(lwCatalogSource).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
+
+			By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
+			channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
+				lightweightOperatorName, randomNamespace)
+			Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
+			Expect(channel).ToNot(Equal("not found"), "Channel not found")
+			Expect(version).ToNot(Equal("not found"), "Version not found")
+			Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
+
+			By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
+			err = tshelper.DeployOperatorSubscription(
+				lightweightOperatorName,
+				lightweightOperatorName,
+				channel,
 				randomNamespace,
-				tsparams.OperatorLabel)
-		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+"grafana-operator")
+				lwCatalogSource,
+				tsparams.OperatorSourceNamespace,
+				csvName,
+				v1alpha1.ApprovalAutomatic,
+			)
+			Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
+				lightweightOperatorName)
 
-		By("Start test")
-		err = globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred())
+			err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix, randomNamespace)
+			Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
+				" is not ready")
 
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+			// NOTE: Intentionally NOT labeling the lightweight operator - this should cause the test to fail
+
+			By("Start test")
+			err = globalhelper.LaunchTests(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+				randomReportDir,
+				randomCertsuiteConfigDir)
+
+			Expect(err).ToNot(HaveOccurred())
+
+			By("Verify test case status in Claim report")
+			err = globalhelper.ValidateIfReportsAreValid(
+				tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
+				globalparameters.TestCaseFailed, randomReportDir)
+
+			Expect(err).ToNot(HaveOccurred())
+		})
 	})
-
-	// negative
-	It("operator namespace contains single namespaced operator with operators not labelled", func() {
-		// Note: This test uses grafana-operator and a lightweight operator that varies by OCP version
-		// See issue #1283 and operatorversions package for operator catalog availability
-
-		createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
-		installAndLabelOperator(randomNamespace)
-
-		// Get the lightweight operator based on OCP version
-		ocpVersion := "4.19"
-		if !globalhelper.IsKindCluster() {
-			var verr error
-			ocpVersion, verr = globalhelper.GetClusterVersion()
-			Expect(verr).ToNot(HaveOccurred(), "Error getting cluster version")
-		}
-		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
-
-		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
-		lightweightOperatorName, lwCatalogSource, err := globalhelper.QueryPackageManifestForOperatorNameAndCatalogSource(
-			lightweightOp.PackageName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOp.PackageName+" operator")
-		Expect(lightweightOperatorName).ToNot(Equal("not found"), lightweightOp.PackageName+" operator package not found")
-		Expect(lwCatalogSource).ToNot(Equal("not found"), lightweightOp.PackageName+" operator catalog source not found")
-
-		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
-		channel, version, csvName, err := globalhelper.QueryPackageManifestForAvailableChannelVersionAndCSV(
-			lightweightOperatorName, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+lightweightOperatorName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-		Expect(csvName).ToNot(Equal("not found"), "CSV name not found")
-
-		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
-		err = tshelper.DeployOperatorSubscription(
-			lightweightOperatorName,
-			lightweightOperatorName,
-			channel,
-			randomNamespace,
-			lwCatalogSource,
-			tsparams.OperatorSourceNamespace,
-			csvName,
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			lightweightOperatorName)
-
-		err = tshelper.WaitUntilOperatorIsReady(lightweightOp.CSVPrefix, randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
-			" is not ready")
-
-		// NOTE: Intentionally NOT labeling the lightweight operator - this should cause the test to fail
-
-		By("Start test")
-		err = globalhelper.LaunchTests(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir,
-			randomCertsuiteConfigDir)
-
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteOperatorSingleOrMultiNamespacedAllowedInTenantNamespaces,
-			globalparameters.TestCaseFailed, randomReportDir)
-
-		Expect(err).ToNot(HaveOccurred())
-	})
-})
 
 func installClusterWideOperator() {
 	const (

@@ -10,7 +10,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
 )
 
-var _ = Describe("Networking network-policy-deny-all,", func() {
+var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networking1"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

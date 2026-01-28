@@ -12,7 +12,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("Access-control net-raw-capability-check,", func() {
+var _ = Describe("Access-control net-raw-capability-check,", Label("accesscontrol5"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

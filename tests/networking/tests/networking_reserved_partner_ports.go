@@ -11,7 +11,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
 )
 
-var _ = Describe("Networking reserved-partner-ports,", func() {
+var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking3"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

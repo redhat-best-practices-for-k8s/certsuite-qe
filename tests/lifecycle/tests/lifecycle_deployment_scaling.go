@@ -14,7 +14,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-deployment-scaling", Serial, func() {
+var _ = Describe("lifecycle-deployment-scaling", Serial, Label("lifecycle2"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

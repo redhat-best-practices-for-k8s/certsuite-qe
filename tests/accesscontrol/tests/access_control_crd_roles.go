@@ -13,7 +13,7 @@ import (
 	crdutils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
 )
 
-var _ = Describe("access-control-crd-roles", Serial, func() {
+var _ = Describe("access-control-crd-roles", Serial, Label("accesscontrol2", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

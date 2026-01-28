@@ -18,7 +18,7 @@ const (
 	DeletingRTC = "Deleting RTC: "
 )
 
-var _ = Describe("lifecycle-cpu-isolation", Serial, func() {
+var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

@@ -11,7 +11,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
 )
 
-var _ = Describe("Networking ocp-reserved-ports-usage,", func() {
+var _ = Describe("Networking ocp-reserved-ports-usage,", Serial, Label("networking", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

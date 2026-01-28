@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("platform-alteration-hugepages-2m-only", Serial, func() {
+var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platformalteration2", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

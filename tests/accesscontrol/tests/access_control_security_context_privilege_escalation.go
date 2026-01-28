@@ -11,7 +11,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("Access-control security-context-privilege-escalation,", func() {
+var _ = Describe("Access-control security-context-privilege-escalation,", Label("accesscontrol11"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

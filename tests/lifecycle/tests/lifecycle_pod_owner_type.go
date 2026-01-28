@@ -12,7 +12,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/lifecycle/parameters"
 )
 
-var _ = Describe("lifecycle-pod-owner-type", func() {
+var _ = Describe("lifecycle-pod-owner-type", Label("lifecycle6"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

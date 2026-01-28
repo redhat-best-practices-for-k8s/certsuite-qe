@@ -26,7 +26,7 @@ func setupInitialRbacConfiguration(namespace string) {
 	Expect(err).ToNot(HaveOccurred())
 }
 
-var _ = Describe("Access-control pod-role-bindings,", func() {
+var _ = Describe("Access-control pod-role-bindings,", Label("accesscontrol9"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

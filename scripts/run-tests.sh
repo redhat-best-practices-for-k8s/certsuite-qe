@@ -47,6 +47,7 @@ function run_tests {
 			echo "No tests found"
 			exit 1
 		fi
+
 		echo "Running tests in the following folders: ${all_default_suites}"
 		# shellcheck disable=SC2086
 		ginkgo -timeout=24h -v ${PFLAG} ${FFLAG} --keep-going "${GINKGO_SEED_FLAG}" --show-node-events --require-suite -r $all_default_suites
@@ -57,12 +58,43 @@ function run_tests {
 			exit 1
 		fi
 		echo "#### Run feature tests: ${FEATURES} ####"
+
+		LABEL_FILTER=""
+		OCP_FILTER=""
 		for feature in ${FEATURES}; do
-			for dir in tests/*; do
-				if [[ $dir != *"util"* ]] && [[ $dir == *"${feature}"* ]]; then
-					command+=" "$dir
-				fi
-			done
+			# Check for -ocp or -k8s suffix to filter by cluster type
+			# Examples:
+			#   platformalteration1-ocp -> only run ocp-required tests from platformalteration1
+			#   accesscontrol1-k8s -> only run non-ocp-required tests from accesscontrol1
+			#   accesscontrol1 -> run all tests from accesscontrol1 (no filter)
+			if [[ $feature =~ ^(.+)-ocp$ ]]; then
+				feature="${BASH_REMATCH[1]}"
+				OCP_FILTER=" && ocp-required"
+				echo "Filtering to OCP-required tests only"
+			elif [[ $feature =~ ^(.+)-k8s$ ]]; then
+				feature="${BASH_REMATCH[1]}"
+				OCP_FILTER=" && !ocp-required"
+				echo "Filtering to K8S-compatible tests only (excluding OCP-required)"
+			fi
+
+			# Check if feature ends with a number (e.g., accesscontrol1)
+			if [[ $feature =~ ^([a-z]+)([0-9]+)$ ]]; then
+				base_feature="${BASH_REMATCH[1]}"
+				# Find the base directory (e.g., accesscontrol for accesscontrol1)
+				for dir in tests/*; do
+					if [[ $dir != *"util"* ]] && [[ $dir == *"${base_feature}"* ]]; then
+						command+=" "$dir
+						LABEL_FILTER="${feature}"
+					fi
+				done
+			else
+				# Original behavior for non-numbered features
+				for dir in tests/*; do
+					if [[ $dir != *"util"* ]] && [[ $dir == *"${feature}"* ]]; then
+						command+=" "$dir
+					fi
+				done
+			fi
 		done
 
 		# strip any spaces from the command variable
@@ -73,8 +105,21 @@ function run_tests {
 			exit 1
 		fi
 
+		# Add label filter flag if set, combined with OCP filter
+		# Note: Label filter must be quoted to handle && operators properly
+		LFLAG=""
+		if [[ -n "$LABEL_FILTER" ]]; then
+			LFLAG="--label-filter=${LABEL_FILTER}${OCP_FILTER}"
+		elif [[ -n "$OCP_FILTER" ]]; then
+			# If no label filter but OCP filter is set, use "true" as base
+			# Strip leading " && " from OCP_FILTER since we don't have a base filter
+			OCP_FILTER_CLEAN="${OCP_FILTER# && }"
+			LFLAG="--label-filter=${OCP_FILTER_CLEAN}"
+		fi
+
 		# shellcheck disable=SC2086
-		ginkgo -v ${PFLAG} ${FFLAG} --keep-going ${GINKGO_SEED_FLAG} --output-interceptor-mode=none --timeout=24h --show-node-events --require-suite $command
+		# Use ${LFLAG:+"$LFLAG"} to only include the flag when non-empty
+		ginkgo -v ${PFLAG} ${FFLAG} ${LFLAG:+"$LFLAG"} --keep-going ${GINKGO_SEED_FLAG} --output-interceptor-mode=none --timeout=24h --show-node-events --require-suite $command
 		;;
 	*)
 		echo "Unknown case"

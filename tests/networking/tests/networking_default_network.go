@@ -13,7 +13,7 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/networking/parameters"
 )
 
-var _ = Describe("Networking custom namespace, custom deployment,", func() {
+var _ = Describe("Networking custom namespace, custom deployment,", Serial, Label("networking1"), func() {
 	configSuite, err := config.NewConfig()
 	if err != nil {
 		klog.Fatalf("can not load config file: %v", err)

@@ -16,7 +16,7 @@ import (
 	crdutils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
 )
 
-var _ = Describe("lifecycle-crd-scaling", Serial, func() {
+var _ = Describe("lifecycle-crd-scaling", Serial, Label("lifecycle2", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

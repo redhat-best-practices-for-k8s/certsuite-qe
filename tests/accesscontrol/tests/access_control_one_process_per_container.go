@@ -18,7 +18,7 @@ const (
 	sampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
 )
 
-var _ = Describe("Access-control one-process-per-container,", func() {
+var _ = Describe("Access-control one-process-per-container,", Label("accesscontrol7"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

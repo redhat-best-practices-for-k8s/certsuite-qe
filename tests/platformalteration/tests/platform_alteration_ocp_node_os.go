@@ -9,7 +9,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
-var _ = Describe("platform-alteration-ocp-node-os", func() {
+var _ = Describe("platform-alteration-ocp-node-os", Label("platformalteration4", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

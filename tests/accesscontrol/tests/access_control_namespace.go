@@ -15,7 +15,7 @@ const (
 	CreateInstallPlanInNamespaceStr = "Create Install Plan in Namespace: "
 )
 
-var _ = Describe("Access-control namespace, ", Serial, func() {
+var _ = Describe("Access-control namespace, ", Serial, Label("accesscontrol4"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

@@ -13,7 +13,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/statefulset"
 )
 
-var _ = Describe("lifecycle-container-poststart", func() {
+var _ = Describe("lifecycle-container-poststart", Label("lifecycle2"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string

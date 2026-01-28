@@ -12,7 +12,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/deployment"
 )
 
-var _ = Describe("Access-control security-context,", func() {
+var _ = Describe("Access-control security-context,", Label("accesscontrol12", "ocp-required"), func() {
 	var randomNamespace string
 	var randomReportDir string
 	var randomCertsuiteConfigDir string
