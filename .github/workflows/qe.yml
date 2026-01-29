@@ -149,7 +149,7 @@ jobs:
         with:
           disableDefaultCni: true
           numControlPlaneNodes: 1
-          numWorkerNodes: 2
+          numWorkerNodes: 1
           installOLM: true
           removeDefaultStorageClass: true
           removeControlPlaneTaint: true
