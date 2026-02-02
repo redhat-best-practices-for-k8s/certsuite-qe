@@ -99,7 +99,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		GinkgoWriter.Printf("Memory request: %d, Memory limit: %d\n", memRequest, memLimit)
 
 		Expect(cpuRequest).To(Equal(cpuLimit), "CPU request should equal CPU limit for exclusive pool")
-		Expect(cpuRequest % 1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
+		Expect(cpuRequest%1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
 		Expect(memRequest).To(Equal(memLimit), "Memory request should equal memory limit for guaranteed QoS")
 
 		By("Assert all containers are ready")
@@ -166,7 +166,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		GinkgoWriter.Printf("Memory request: %d, Memory limit: %d\n", memRequest, memLimit)
 
 		Expect(cpuRequest).To(Equal(cpuLimit), "CPU request should equal CPU limit for exclusive pool")
-		Expect(cpuRequest % 1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
+		Expect(cpuRequest%1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
 		Expect(memRequest).To(Equal(memLimit), "Memory request should equal memory limit for guaranteed QoS")
 
 		By("Assert all containers are ready")

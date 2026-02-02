@@ -129,7 +129,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		cpuLimit := runningPod.Spec.Containers[0].Resources.Limits.Cpu().MilliValue()
 		GinkgoWriter.Printf("CPU request: %dm, CPU limit: %dm\n", cpuRequest, cpuLimit)
 		Expect(cpuRequest).To(Equal(cpuLimit), "CPU request should equal CPU limit for exclusive pool")
-		Expect(cpuRequest % 1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
+		Expect(cpuRequest%1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
 
 		By("Assert all containers are ready")
 		for _, cs := range runningPod.Status.ContainerStatuses {
