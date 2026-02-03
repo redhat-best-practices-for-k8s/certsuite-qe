@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -51,6 +52,10 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment is ready")
@@ -93,6 +98,10 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
+		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert daemonSet has ready pods on nodes")
@@ -138,6 +147,10 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment is ready")
@@ -177,6 +190,10 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		By("Create and wait until statefulSet is ready")
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert statefulSet has ready replicas")

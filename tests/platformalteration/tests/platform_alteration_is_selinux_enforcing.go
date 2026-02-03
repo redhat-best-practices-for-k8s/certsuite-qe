@@ -17,9 +17,9 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalte
 	var randomCertsuiteConfigDir string
 
 	BeforeEach(func() {
-		// Create random namespace and keep original report and certsuite config directories
+		// Create random namespace with privileged Pod Security Standards for privileged containers
 		randomNamespace, randomReportDir, randomCertsuiteConfigDir =
-			globalhelper.BeforeEachSetupWithRandomNamespace(
+			globalhelper.BeforeEachSetupWithRandomPrivilegedNamespace(
 				tsparams.PlatformAlterationNamespace)
 
 		By("Define certsuite config file")
@@ -51,7 +51,20 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalte
 
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
+		}
+
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert daemonSet has ready pods on nodes")
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		Expect(err).ToNot(HaveOccurred())
+		GinkgoWriter.Printf("DaemonSet status: NumberReady=%d, DesiredNumberScheduled=%d, CurrentNumberScheduled=%d\n",
+			runningDaemonSet.Status.NumberReady,
+			runningDaemonSet.Status.DesiredNumberScheduled,
+			runningDaemonSet.Status.CurrentNumberScheduled)
+		Expect(runningDaemonSet.Status.NumberReady).To(BeNumerically(">", 0), "DaemonSet should have ready pods")
 
 		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())

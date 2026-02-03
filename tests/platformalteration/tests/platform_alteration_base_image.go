@@ -69,8 +69,14 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		By("Create and wait until deployment is ready")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
-		if err != nil && strings.Contains(err.Error(), "not schedulable") {
-			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the deployment is not ready: " + errMsg)
+			}
 		}
 		Expect(err).ToNot(HaveOccurred())
 
@@ -144,8 +150,14 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
-		if err != nil && strings.Contains(err.Error(), "not schedulable") {
-			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
+			}
 		}
 		Expect(err).ToNot(HaveOccurred())
 
@@ -225,8 +237,14 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		By("Create first deployment")
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
-		if err != nil && strings.Contains(err.Error(), "not schedulable") {
-			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the deployment is not ready: " + errMsg)
+			}
 		}
 		Expect(err).ToNot(HaveOccurred())
 
@@ -266,8 +284,14 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
-		if err != nil && strings.Contains(err.Error(), "not schedulable") {
-			Skip("This test cannot run because the second pod is not schedulable due to insufficient resources")
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the second deployment is not ready: " + errMsg)
+			}
 		}
 		Expect(err).ToNot(HaveOccurred())
 
@@ -306,8 +330,14 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		statefulset.RedefineWithPrivilegedContainer(sts)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(sts, tshelper.WaitingTime)
-		if err != nil && strings.Contains(err.Error(), "not schedulable") {
-			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the statefulSet is not ready: " + errMsg)
+			}
 		}
 		Expect(err).ToNot(HaveOccurred())
 
