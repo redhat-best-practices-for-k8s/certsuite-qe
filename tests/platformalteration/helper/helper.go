@@ -153,3 +153,101 @@ func DefineStatefulSetWithNonUBIContainer(namespace string) *appsv1.StatefulSet 
 
 	return sts
 }
+
+// HasMachineConfigKernelArguments checks if any MachineConfig in the cluster has custom kernel arguments.
+// Returns true if custom kernel arguments are found, along with a description of what was found.
+func HasMachineConfigKernelArguments() (bool, string, error) {
+	machineConfigList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false, "", fmt.Errorf("failed to list MachineConfigs: %w", err)
+	}
+
+	for _, mc := range machineConfigList.Items {
+		if len(mc.Spec.KernelArguments) > 0 {
+			return true, fmt.Sprintf("MachineConfig %s has kernelArguments: %v", mc.Name, mc.Spec.KernelArguments), nil
+		}
+	}
+
+	return false, "No MachineConfigs with custom kernelArguments found", nil
+}
+
+// DetectBootParamsAlteration checks if the actual kernel cmdline contains parameters
+// that indicate the boot configuration has been altered from defaults.
+// It checks for common performance tuning parameters that wouldn't be in a default RHCOS config.
+func DetectBootParamsAlteration(kernelCmdline string) (bool, string) {
+	// Common parameters that indicate intentional boot param customization
+	customParams := []string{
+		"nohz=",
+		"nohz_full=",
+		"rcu_nocbs=",
+		"isolcpus=",
+		"intel_pstate=",
+		"processor.max_cstate=",
+		"intel_idle.max_cstate=",
+		"skew_tick=",
+		"nosoftlockup",
+		"tsc=",
+		"cgroup_no_v1=",
+		"psi=",
+		"hugepagesz=",
+		"hugepages=",
+		"default_hugepagesz=",
+	}
+
+	var foundParams []string
+
+	for _, param := range customParams {
+		if strings.Contains(kernelCmdline, param) {
+			// Extract the full parameter
+			for _, part := range strings.Fields(kernelCmdline) {
+				if strings.HasPrefix(part, strings.TrimSuffix(param, "=")) {
+					foundParams = append(foundParams, part)
+				}
+			}
+		}
+	}
+
+	if len(foundParams) > 0 {
+		return true, fmt.Sprintf("Detected custom boot parameters: %v", foundParams)
+	}
+
+	return false, "No custom boot parameters detected"
+}
+
+// IsNodeControlPlane checks if a node is a control plane node based on its name or labels.
+func IsNodeControlPlane(nodeName string) bool {
+	// Check common control plane naming patterns
+	controlPlanePatterns := []string{
+		"master",
+		"control-plane",
+		"ctlplane",
+		"controlplane",
+	}
+
+	nodeNameLower := strings.ToLower(nodeName)
+	for _, pattern := range controlPlanePatterns {
+		if strings.Contains(nodeNameLower, pattern) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// CheckPodsOnControlPlaneNodes checks if any pods in the list are running on control plane nodes.
+// Returns true if any pod is on a control plane node, along with details.
+func CheckPodsOnControlPlaneNodes(pods []corev1.Pod) (bool, string) {
+	var controlPlanePods []string
+
+	for _, pod := range pods {
+		if IsNodeControlPlane(pod.Spec.NodeName) {
+			controlPlanePods = append(controlPlanePods, fmt.Sprintf("%s (node: %s)", pod.Name, pod.Spec.NodeName))
+		}
+	}
+
+	if len(controlPlanePods) > 0 {
+		return true, fmt.Sprintf("Pods running on control plane nodes: %v", controlPlanePods)
+	}
+
+	return false, "No pods running on control plane nodes"
+}

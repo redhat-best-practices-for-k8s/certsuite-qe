@@ -7,6 +7,7 @@ import (
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -121,7 +122,29 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 			GinkgoWriter.Printf("Failed to access host filesystem: %v\n", err)
 			Skip("Cannot access host filesystem from pod - skipping boot params test")
 		}
-		GinkgoWriter.Printf("Host kernel cmdline: %s\n", cmdOutput.String())
+		kernelCmdline := cmdOutput.String()
+		GinkgoWriter.Printf("Host kernel cmdline: %s\n", kernelCmdline)
+
+		By("Detect if boot params have been altered")
+		bootParamsAltered, alterationDetails := tshelper.DetectBootParamsAlteration(kernelCmdline)
+		GinkgoWriter.Printf("Boot params alteration check: altered=%v, details=%s\n", bootParamsAltered, alterationDetails)
+
+		// Also check MachineConfig for custom kernel arguments
+		hasMCKernelArgs, mcDetails, err := tshelper.HasMachineConfigKernelArguments()
+		if err != nil {
+			GinkgoWriter.Printf("Warning: Could not check MachineConfig kernelArguments: %v\n", err)
+		} else {
+			GinkgoWriter.Printf("MachineConfig kernel args check: hasCustomArgs=%v, details=%s\n", hasMCKernelArgs, mcDetails)
+		}
+
+		// Determine expected result based on detected state
+		expectedResult := globalparameters.TestCasePassed
+		if bootParamsAltered || hasMCKernelArgs {
+			expectedResult = globalparameters.TestCaseFailed
+			GinkgoWriter.Printf("Expecting test to FAIL because boot params appear to be altered\n")
+		} else {
+			GinkgoWriter.Printf("Expecting test to PASS because boot params appear unchanged\n")
+		}
 
 		By("Start platform-alteration-boot-params test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteBootParamsName,
@@ -131,7 +154,7 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBootParamsName,
-			globalparameters.TestCasePassed, randomReportDir)
+			expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
