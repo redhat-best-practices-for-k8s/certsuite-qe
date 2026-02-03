@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -62,18 +63,25 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 	// 51302
 	It("unchanged boot params", func() {
 		By("Create daemonSet")
-		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
+		testDaemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
-		daemonset.RedefineWithPrivilegedContainer(daemonSet)
-		daemonset.RedefineWithVolumeMount(daemonSet)
+		daemonset.RedefineWithPrivilegedContainer(testDaemonSet)
+		daemonset.RedefineWithVolumeMount(testDaemonSet)
 
 		By("Create and wait until daemonSet is ready")
-		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
+		}
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert daemonSet has ready pods on nodes")
-		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
+		runningDaemonSet, err := globalhelper.GetRunningDaemonset(testDaemonSet)
 		Expect(err).ToNot(HaveOccurred())
+		GinkgoWriter.Printf("DaemonSet status: NumberReady=%d, DesiredNumberScheduled=%d, CurrentNumberScheduled=%d\n",
+			runningDaemonSet.Status.NumberReady,
+			runningDaemonSet.Status.DesiredNumberScheduled,
+			runningDaemonSet.Status.CurrentNumberScheduled)
 		Expect(runningDaemonSet.Status.NumberReady).To(BeNumerically(">", 0), "DaemonSet should have ready pods")
 		Expect(runningDaemonSet.Status.NumberReady).To(Equal(runningDaemonSet.Status.DesiredNumberScheduled),
 			"All scheduled pods should be ready")
@@ -83,25 +91,44 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		Expect(err).ToNot(HaveOccurred())
 		Expect(len(podsList.Items)).To(BeNumerically(">", 0), "Expected at least one pod")
 
+		// Log pod and node details for debugging
+		GinkgoWriter.Printf("Found %d pods in namespace %s\n", len(podsList.Items), randomNamespace)
+		for i, pod := range podsList.Items {
+			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s, node: %s\n",
+				i, pod.Name, pod.Status.Phase, pod.Spec.NodeName)
+			for j, container := range pod.Spec.Containers {
+				GinkgoWriter.Printf("  Container[%d] name: %s, image: %s\n",
+					j, container.Name, container.Image)
+			}
+			// Log volume mounts
+			for _, vm := range pod.Spec.Containers[0].VolumeMounts {
+				GinkgoWriter.Printf("  VolumeMount: %s -> %s\n", vm.Name, vm.MountPath)
+			}
+		}
+
 		By("Assert pods are running with ready containers")
 		for _, pod := range podsList.Items {
 			Expect(pod.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", pod.Name))
 			for _, cs := range pod.Status.ContainerStatuses {
+				GinkgoWriter.Printf("Container %s in pod %s: ready=%v\n", cs.Name, pod.Name, cs.Ready)
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, pod.Name))
 			}
 		}
 
 		By("Verify pod can access host filesystem")
-		_, err = globalhelper.ExecCommand(podsList.Items[0], []string{"cat", "/host/proc/cmdline"})
+		cmdOutput, err := globalhelper.ExecCommand(podsList.Items[0], []string{"cat", "/host/proc/cmdline"})
 		if err != nil {
+			GinkgoWriter.Printf("Failed to access host filesystem: %v\n", err)
 			Skip("Cannot access host filesystem from pod - skipping boot params test")
 		}
+		GinkgoWriter.Printf("Host kernel cmdline: %s\n", cmdOutput.String())
 
 		By("Start platform-alteration-boot-params test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteBootParamsName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBootParamsName,
 			globalparameters.TestCasePassed, randomReportDir)
@@ -117,9 +144,18 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 			metav1.ListOptions{})
 		Expect(err).ToNot(HaveOccurred())
 
+		// Log available MCPs for debugging
+		GinkgoWriter.Printf("Found %d MachineConfigPools\n", len(machineConfigPoolList.Items))
+		for i, mcp := range machineConfigPoolList.Items {
+			GinkgoWriter.Printf("MCP[%d] name: %s, config: %s\n", i, mcp.Name, mcp.Spec.Configuration.Name)
+		}
+
+		foundWorkerCNF := false
 		for _, machineConfig := range machineConfigList.Items {
 			for _, mcp := range machineConfigPoolList.Items {
 				if machineConfig.Name == mcp.Spec.Configuration.Name && mcp.Name == "worker-cnf" {
+					foundWorkerCNF = true
+					GinkgoWriter.Printf("Found worker-cnf MCP with machineConfig: %s\n", machineConfig.Name)
 					machineConfig.Spec.KernelArguments = []string{"skew_tick=1", "nohz=off"}
 
 					By("Update the current machineConfig")
@@ -131,8 +167,14 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 						machineConfig.Name, metav1.GetOptions{})
 					Expect(err).ToNot(HaveOccurred())
 					Expect(updatedMachineConfig.Spec.KernelArguments).To(Equal([]string{"skew_tick=1", "nohz=off"}))
+					GinkgoWriter.Printf("Updated machineConfig %s with kernel arguments: %v\n",
+						machineConfig.Name, updatedMachineConfig.Spec.KernelArguments)
 				}
 			}
+		}
+
+		if !foundWorkerCNF {
+			GinkgoWriter.Printf("No worker-cnf MachineConfigPool found - test will run without modifying boot params\n")
 		}
 
 		By("Start platform-alteration-boot-params test")
@@ -140,6 +182,7 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBootParamsName,
 			globalparameters.TestCaseSkipped, randomReportDir)
