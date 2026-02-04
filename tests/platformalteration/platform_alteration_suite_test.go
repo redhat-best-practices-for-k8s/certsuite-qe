@@ -53,4 +53,8 @@ var _ = SynchronizedBeforeSuite(func() {
 	By("Ensure all nodes are labeled with 'worker-cnf' label")
 	err = nodes.EnsureAllNodesAreLabeled(configSuite.General.CnfNodeLabel)
 	Expect(err).ToNot(HaveOccurred())
+
+	By("Set rbac policy which allows authenticated users to run privileged containers")
+	err = globalhelper.AllowAuthenticatedUsersRunPrivilegedContainers()
+	Expect(err).ToNot(HaveOccurred())
 }, func() {})

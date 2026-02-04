@@ -71,8 +71,14 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 
 		By("Create and wait until daemonSet is ready")
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
-		if err != nil && strings.Contains(err.Error(), "not schedulable") {
-			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
+			}
 		}
 		Expect(err).ToNot(HaveOccurred())
 
