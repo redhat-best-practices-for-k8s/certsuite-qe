@@ -69,11 +69,18 @@ func IsRealOCPCluster() (bool, string) {
 
 // DetectBaseImageAlterations checks if the cluster has conditions that would cause
 // the certsuite base-image test to fail. This includes checking for:
-// - Custom RPM packages installed on nodes
-// - MachineConfig extensions that modify the base OS
+// - Custom RPM packages installed on nodes via MachineConfig extensions
+// - Real OCP clusters (not CRC/SNO) which often have customizations
+// Note: Kernel arguments are NOT checked here as they don't affect base image tests.
 // Returns true if alterations are detected, along with details.
 func DetectBaseImageAlterations() (bool, string) {
-	// Check for MachineConfigs with extensions or custom packages
+	// First check if this is a real OCP cluster - these often have custom packages
+	isReal, realDetails := IsRealOCPCluster()
+	if isReal {
+		return true, "running on real OCP cluster: " + realDetails
+	}
+
+	// Check for MachineConfigs with extensions (custom RPMs)
 	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return false, fmt.Sprintf("cannot access MachineConfigs: %v", err)
@@ -82,23 +89,12 @@ func DetectBaseImageAlterations() (bool, string) {
 	var alterationDetails []string
 
 	for _, machineConfig := range mcList.Items {
-		// Check for extensions (custom RPMs)
+		// Only check for extensions (custom RPMs) - these indicate base image modifications
+		// Kernel arguments are standard OCP configuration and don't affect base image tests
 		if len(machineConfig.Spec.Extensions) > 0 {
 			alterationDetails = append(alterationDetails,
 				fmt.Sprintf("MachineConfig %s has extensions: %v", machineConfig.Name, machineConfig.Spec.Extensions))
 		}
-
-		// Check for kernel arguments (indicates customization)
-		if len(machineConfig.Spec.KernelArguments) > 0 {
-			alterationDetails = append(alterationDetails,
-				fmt.Sprintf("MachineConfig %s has kernel arguments: %v", machineConfig.Name, machineConfig.Spec.KernelArguments))
-		}
-	}
-
-	// Also check if this is a real cluster which often has customizations
-	isReal, realDetails := IsRealOCPCluster()
-	if isReal {
-		alterationDetails = append(alterationDetails, "running on real OCP cluster: "+realDetails)
 	}
 
 	if len(alterationDetails) > 0 {
