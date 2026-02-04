@@ -7,7 +7,6 @@ import (
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
-	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -131,36 +130,19 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		kernelCmdline := cmdOutput.String()
 		GinkgoWriter.Printf("Host kernel cmdline: %s\n", kernelCmdline)
 
-		By("Detect if boot params have been altered")
-		bootParamsAltered, alterationDetails := tshelper.DetectBootParamsAlteration(kernelCmdline)
-		GinkgoWriter.Printf("Boot params alteration check: altered=%v, details=%s\n", bootParamsAltered, alterationDetails)
-
-		// Also check MachineConfig for custom kernel arguments
-		hasMCKernelArgs, mcDetails, err := tshelper.HasMachineConfigKernelArguments()
-		if err != nil {
-			GinkgoWriter.Printf("Warning: Could not check MachineConfig kernelArguments: %v\n", err)
-		} else {
-			GinkgoWriter.Printf("MachineConfig kernel args check: hasCustomArgs=%v, details=%s\n", hasMCKernelArgs, mcDetails)
-		}
-
-		// Determine expected result based on detected state
-		expectedResult := globalparameters.TestCasePassed
-		if bootParamsAltered || hasMCKernelArgs {
-			expectedResult = globalparameters.TestCaseFailed
-			GinkgoWriter.Printf("Expecting test to FAIL because boot params appear to be altered\n")
-		} else {
-			GinkgoWriter.Printf("Expecting test to PASS because boot params appear unchanged\n")
-		}
-
 		By("Start platform-alteration-boot-params test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteBootParamsName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
+		// This test does not alter boot params, so the certsuite test should pass.
+		// The certsuite platform-alteration-boot-params test checks if kernel cmdline
+		// matches what's configured in MachineConfig. If they match (as expected when
+		// we don't alter anything), the test passes.
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBootParamsName,
-			expectedResult, randomReportDir)
+			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
