@@ -110,6 +110,20 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
 
+		By("Detect cluster alterations that may affect test result")
+		hasAlterations, alterationDetails := tshelper.DetectBaseImageAlterations()
+		GinkgoWriter.Printf("Base image alteration detection: hasAlterations=%v, details=%s\n",
+			hasAlterations, alterationDetails)
+
+		// Determine expected result based on cluster state
+		expectedResult := globalparameters.TestCasePassed
+		if hasAlterations {
+			expectedResult = globalparameters.TestCaseFailed
+			GinkgoWriter.Printf("Expecting FAIL because cluster has alterations\n")
+		} else {
+			GinkgoWriter.Printf("Expecting PASS because cluster appears unmodified\n")
+		}
+
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteBaseImageName,
@@ -117,12 +131,9 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		// This test deploys unmodified containers, so the base image check should pass.
-		// The certsuite platform-alteration-base-image test checks if container filesystem
-		// was modified (files added/removed), not cluster-level MachineConfig settings.
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBaseImageName,
-			globalparameters.TestCasePassed, randomReportDir)
+			expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
@@ -181,6 +192,20 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			}
 		}
 
+		By("Detect cluster alterations that may affect test result")
+		hasAlterations, alterationDetails := tshelper.DetectBaseImageAlterations()
+		GinkgoWriter.Printf("Base image alteration detection: hasAlterations=%v, details=%s\n",
+			hasAlterations, alterationDetails)
+
+		// Determine expected result based on cluster state
+		expectedResult := globalparameters.TestCasePassed
+		if hasAlterations {
+			expectedResult = globalparameters.TestCaseFailed
+			GinkgoWriter.Printf("Expecting FAIL because cluster has alterations\n")
+		} else {
+			GinkgoWriter.Printf("Expecting PASS because cluster appears unmodified\n")
+		}
+
 		By("Start platform-alteration-base-image test")
 		err = globalhelper.LaunchTests(
 			tsparams.CertsuiteBaseImageName,
@@ -188,12 +213,9 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		// This test deploys unmodified containers, so the base image check should pass.
-		// The certsuite platform-alteration-base-image test checks if container filesystem
-		// was modified (files added/removed), not cluster-level MachineConfig settings.
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBaseImageName,
-			globalparameters.TestCasePassed, randomReportDir)
+			expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

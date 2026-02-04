@@ -7,6 +7,7 @@ import (
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -130,19 +131,29 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		kernelCmdline := cmdOutput.String()
 		GinkgoWriter.Printf("Host kernel cmdline: %s\n", kernelCmdline)
 
+		By("Detect cluster alterations that may affect test result")
+		hasAlterations, alterationDetails := tshelper.DetectBootParamsAlterations()
+		GinkgoWriter.Printf("Boot params alteration detection: hasAlterations=%v, details=%s\n",
+			hasAlterations, alterationDetails)
+
+		// Determine expected result based on cluster state
+		expectedResult := globalparameters.TestCasePassed
+		if hasAlterations {
+			expectedResult = globalparameters.TestCaseFailed
+			GinkgoWriter.Printf("Expecting FAIL because cluster has boot params alterations\n")
+		} else {
+			GinkgoWriter.Printf("Expecting PASS because cluster boot params appear unmodified\n")
+		}
+
 		By("Start platform-alteration-boot-params test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteBootParamsName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		// This test does not alter boot params, so the certsuite test should pass.
-		// The certsuite platform-alteration-boot-params test checks if kernel cmdline
-		// matches what's configured in MachineConfig. If they match (as expected when
-		// we don't alter anything), the test passes.
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteBootParamsName,
-			globalparameters.TestCasePassed, randomReportDir)
+			expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

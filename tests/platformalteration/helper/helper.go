@@ -23,6 +23,140 @@ import (
 
 const WaitingTime = 5 * time.Minute
 
+// IsRealOCPCluster checks if the cluster is a real OCP cluster (not CRC/SNO development cluster).
+// Real clusters typically have multiple nodes or specific configurations that indicate
+// they are production-like environments.
+func IsRealOCPCluster() (bool, string) {
+	// Check if MCO is available
+	mcpList, err := globalhelper.GetAPIClient().MachineConfigPools().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false, fmt.Sprintf("cannot access MachineConfigPools: %v", err)
+	}
+
+	// Check for worker-cnf pool which indicates a real telco/CNF cluster
+	for _, mcp := range mcpList.Items {
+		if mcp.Name == "worker-cnf" {
+			return true, "found worker-cnf MachineConfigPool"
+		}
+	}
+
+	// Check number of nodes - CRC typically has only 1 node
+	nodesList, err := globalhelper.GetAPIClient().K8sClient.CoreV1().Nodes().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false, fmt.Sprintf("cannot list nodes: %v", err)
+	}
+
+	if len(nodesList.Items) > 1 {
+		// Check if we have dedicated worker nodes (not just control-plane nodes)
+		workerCount := 0
+
+		for _, node := range nodesList.Items {
+			_, isControlPlane := node.Labels["node-role.kubernetes.io/control-plane"]
+
+			_, isMaster := node.Labels["node-role.kubernetes.io/master"]
+			if !isControlPlane && !isMaster {
+				workerCount++
+			}
+		}
+
+		if workerCount > 0 {
+			return true, fmt.Sprintf("cluster has %d worker nodes", workerCount)
+		}
+	}
+
+	return false, "appears to be a CRC/SNO development cluster"
+}
+
+// DetectBaseImageAlterations checks if the cluster has conditions that would cause
+// the certsuite base-image test to fail. This includes checking for:
+// - Custom RPM packages installed on nodes
+// - MachineConfig extensions that modify the base OS
+// Returns true if alterations are detected, along with details.
+func DetectBaseImageAlterations() (bool, string) {
+	// Check for MachineConfigs with extensions or custom packages
+	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false, fmt.Sprintf("cannot access MachineConfigs: %v", err)
+	}
+
+	var alterationDetails []string
+
+	for _, machineConfig := range mcList.Items {
+		// Check for extensions (custom RPMs)
+		if len(machineConfig.Spec.Extensions) > 0 {
+			alterationDetails = append(alterationDetails,
+				fmt.Sprintf("MachineConfig %s has extensions: %v", machineConfig.Name, machineConfig.Spec.Extensions))
+		}
+
+		// Check for kernel arguments (indicates customization)
+		if len(machineConfig.Spec.KernelArguments) > 0 {
+			alterationDetails = append(alterationDetails,
+				fmt.Sprintf("MachineConfig %s has kernel arguments: %v", machineConfig.Name, machineConfig.Spec.KernelArguments))
+		}
+	}
+
+	// Also check if this is a real cluster which often has customizations
+	isReal, realDetails := IsRealOCPCluster()
+	if isReal {
+		alterationDetails = append(alterationDetails, "running on real OCP cluster: "+realDetails)
+	}
+
+	if len(alterationDetails) > 0 {
+		return true, strings.Join(alterationDetails, "; ")
+	}
+
+	return false, "no base image alterations detected"
+}
+
+// DetectBootParamsAlterations checks if the cluster has conditions that would cause
+// the certsuite boot-params test to fail. This includes checking for:
+// - Custom kernel arguments in MachineConfigs
+// - Performance profiles with custom isolcpus, nohz, etc.
+// Returns true if alterations are detected, along with details.
+func DetectBootParamsAlterations() (bool, string) {
+	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return false, fmt.Sprintf("cannot access MachineConfigs: %v", err)
+	}
+
+	var alterationDetails []string
+
+	// Known kernel arguments that indicate boot params customization
+	customKernelArgs := []string{
+		"isolcpus", "nohz", "nohz_full", "rcu_nocbs", "kthread_cpus",
+		"irqaffinity", "skew_tick", "intel_pstate", "nosmt", "hugepages",
+		"default_hugepagesz", "tsc", "clocksource", "processor.max_cstate",
+		"intel_idle.max_cstate", "mce", "audit", "systemd.cpu_affinity",
+	}
+
+	for _, machineConfig := range mcList.Items {
+		if len(machineConfig.Spec.KernelArguments) > 0 {
+			for _, arg := range machineConfig.Spec.KernelArguments {
+				for _, customArg := range customKernelArgs {
+					if strings.HasPrefix(arg, customArg) {
+						alterationDetails = append(alterationDetails,
+							fmt.Sprintf("MachineConfig %s has custom kernel arg: %s", machineConfig.Name, arg))
+
+						break
+					}
+				}
+			}
+		}
+	}
+
+	// Check if this is a real cluster
+	isReal, realDetails := IsRealOCPCluster()
+	if isReal {
+		alterationDetails = append(alterationDetails, "running on real OCP cluster: "+realDetails)
+	}
+
+	if len(alterationDetails) > 0 {
+		return true, strings.Join(alterationDetails, "; ")
+	}
+
+	return false, "no boot params alterations detected"
+}
+
 // WaitForSpecificNodeCondition waits for a given node to become ready or not.
 func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval time.Duration, nodeName string,
 	ready bool) error {
