@@ -78,16 +78,9 @@ func IsRealOCPCluster() (bool, string) {
 // DetectBaseImageAlterations checks if the cluster has conditions that would cause
 // the certsuite base-image test to fail. This includes checking for:
 // - Custom RPM packages installed on nodes via MachineConfig extensions
-// - Real OCP clusters (not CRC/SNO) which often have customizations
-// Note: Kernel arguments are NOT checked here as they don't affect base image tests.
+// Note: Only returns true if actual extensions are found, not just because it's a real cluster.
 // Returns true if alterations are detected, along with details.
 func DetectBaseImageAlterations() (bool, string) {
-	// First check if this is a real OCP cluster - these often have custom packages
-	isReal, realDetails := IsRealOCPCluster()
-	if isReal {
-		return true, "running on real OCP cluster: " + realDetails
-	}
-
 	// Check for MachineConfigs with extensions (custom RPMs)
 	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
@@ -98,7 +91,6 @@ func DetectBaseImageAlterations() (bool, string) {
 
 	for _, machineConfig := range mcList.Items {
 		// Only check for extensions (custom RPMs) - these indicate base image modifications
-		// Kernel arguments are standard OCP configuration and don't affect base image tests
 		if len(machineConfig.Spec.Extensions) > 0 {
 			alterationDetails = append(alterationDetails,
 				fmt.Sprintf("MachineConfig %s has extensions: %v", machineConfig.Name, machineConfig.Spec.Extensions))
@@ -114,8 +106,8 @@ func DetectBaseImageAlterations() (bool, string) {
 
 // DetectBootParamsAlterations checks if the cluster has conditions that would cause
 // the certsuite boot-params test to fail. This includes checking for:
-// - Custom kernel arguments in MachineConfigs
-// - Performance profiles with custom isolcpus, nohz, etc.
+// - Custom kernel arguments in MachineConfigs (isolcpus, nohz, hugepages, etc.)
+// Note: Only returns true if actual custom kernel args are found, not just because it's a real cluster.
 // Returns true if alterations are detected, along with details.
 func DetectBootParamsAlterations() (bool, string) {
 	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
@@ -146,12 +138,6 @@ func DetectBootParamsAlterations() (bool, string) {
 				}
 			}
 		}
-	}
-
-	// Check if this is a real cluster
-	isReal, realDetails := IsRealOCPCluster()
-	if isReal {
-		alterationDetails = append(alterationDetails, "running on real OCP cluster: "+realDetails)
 	}
 
 	if len(alterationDetails) > 0 {
