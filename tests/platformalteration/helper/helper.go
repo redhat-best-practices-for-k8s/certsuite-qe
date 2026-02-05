@@ -46,21 +46,29 @@ func IsRealOCPCluster() (bool, string) {
 		return false, fmt.Sprintf("cannot list nodes: %v", err)
 	}
 
+	// Multi-node clusters are real clusters (even compact clusters with control-plane+worker roles)
 	if len(nodesList.Items) > 1 {
-		// Check if we have dedicated worker nodes (not just control-plane nodes)
-		workerCount := 0
+		return true, fmt.Sprintf("cluster has %d nodes", len(nodesList.Items))
+	}
 
-		for _, node := range nodesList.Items {
-			_, isControlPlane := node.Labels["node-role.kubernetes.io/control-plane"]
+	// Single node: check if it's CRC (has crc in hostname) or a real SNO
+	if len(nodesList.Items) == 1 {
+		nodeName := nodesList.Items[0].Name
+		if strings.Contains(strings.ToLower(nodeName), "crc") {
+			return false, "appears to be a CRC development cluster"
+		}
+		// Single node without "crc" in name could be a real SNO cluster
+		// Check for worker label to distinguish from development environments
+		_, hasWorkerLabel := nodesList.Items[0].Labels["node-role.kubernetes.io/worker"]
+		_, hasWorkerCNFLabel := nodesList.Items[0].Labels["node-role.kubernetes.io/worker-cnf"]
 
-			_, isMaster := node.Labels["node-role.kubernetes.io/master"]
-			if !isControlPlane && !isMaster {
-				workerCount++
-			}
+		if hasWorkerCNFLabel {
+			return true, "SNO cluster with worker-cnf role"
 		}
 
-		if workerCount > 0 {
-			return true, fmt.Sprintf("cluster has %d worker nodes", workerCount)
+		if hasWorkerLabel {
+			// Could be real SNO or development - default to development to be safe
+			return false, "appears to be a single-node development cluster"
 		}
 	}
 
