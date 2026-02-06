@@ -91,6 +91,13 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 	})
 
 	It("One pod with container running in exclusive cpu pool", func() {
+		By("Verify cluster is configured for exclusive CPU pools")
+		configured, reason, err := globalhelper.IsClusterConfiguredForExclusiveCPUs()
+		Expect(err).ToNot(HaveOccurred())
+		if !configured {
+			Skip("Cluster not configured for exclusive CPU pools: " + reason)
+		}
+
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
@@ -98,7 +105,7 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		pod.RedefineWithCPUResources(testPod, "1", "1")
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")
 
-		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}

@@ -10,7 +10,6 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/performance/parameters"
-	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/crd"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/pod"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -26,16 +25,11 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 			Skip("Exclusive CPU pool tests are not supported on Kind cluster")
 		}
 
-		By("Verify cluster has worker nodes")
-		if !globalhelper.HasWorkerNodes() {
-			Skip("Cluster has no worker nodes - skipping exclusive CPU pool tests")
-		}
-
-		By("Verify PerformanceProfile CRD exists")
-		crdExists, err := crd.EnsureCrdExists(tsparams.PerformanceProfileCrd)
+		By("Verify cluster is configured for exclusive CPU pools")
+		configured, reason, err := globalhelper.IsClusterConfiguredForExclusiveCPUs()
 		Expect(err).ToNot(HaveOccurred())
-		if !crdExists {
-			Skip("PerformanceProfile CRD does not exist - exclusive CPU pool tests require a performance profile")
+		if !configured {
+			Skip("Cluster not configured for exclusive CPU pools: " + reason)
 		}
 
 		// Create random namespace and keep original report and certsuite config directories
