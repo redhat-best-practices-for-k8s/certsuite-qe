@@ -70,7 +70,7 @@ func HasPerformanceProfiles() (bool, error) {
 	return len(result.Items) > 0, nil
 }
 
-// CPUManagerState represents the CPU manager state from kubelet
+// CPUManagerState represents the CPU manager state from kubelet.
 type CPUManagerState struct {
 	PolicyName string `json:"policyName"`
 }
@@ -85,6 +85,7 @@ func HasStaticCPUManagerPolicy() (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("failed to list worker nodes: %w", err)
 	}
+
 	if len(nodes.Items) == 0 {
 		return false, fmt.Errorf("no worker nodes found")
 	}
@@ -99,7 +100,7 @@ func HasStaticCPUManagerPolicy() (bool, error) {
 // to support exclusive CPU pool tests. This includes:
 // 1. Worker nodes exist
 // 2. PerformanceProfile resources exist (not just the CRD)
-// 3. Implicitly, CPU Manager policy is 'static' (configured via PerformanceProfile)
+// 3. Implicitly, CPU Manager policy is 'static' (configured via PerformanceProfile).
 func IsClusterConfiguredForExclusiveCPUs() (bool, string, error) {
 	// Check for worker nodes
 	if !HasWorkerNodes() {
