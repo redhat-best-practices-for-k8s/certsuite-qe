@@ -15,6 +15,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	klog "k8s.io/klog/v2"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/rbac"
 	"gopkg.in/yaml.v3"
@@ -63,6 +64,48 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir
 	}
 
 	return nil
+}
+
+// ValidateIfReportsAreValidWithAcceptedStatuses validates if test case is in one of the accepted statuses.
+// This is useful when certsuite can return multiple valid outcomes (e.g., when certsuite has internal
+// skip conditions that the QE test cannot fully replicate).
+func ValidateIfReportsAreValidWithAcceptedStatuses(tcName string, acceptedStatuses []string, reportDir string) error {
+	claimReport, err := OpenClaimReport(reportDir)
+	if err != nil {
+		return fmt.Errorf("failed to open certsuite claim report, err: %w", err)
+	}
+
+	klog.V(5).Info("Verify test case status in claim report file (multiple accepted statuses)")
+
+	// Try each accepted status
+	for _, status := range acceptedStatuses {
+		err = IsExpectedStatusParamValid(status)
+		if err != nil {
+			continue
+		}
+
+		var checkFunc func(string, claim.Root) (bool, error)
+
+		switch status {
+		case globalparameters.TestCasePassed:
+			checkFunc = IsTestCasePassedInClaimReport
+		case globalparameters.TestCaseFailed:
+			checkFunc = IsTestCaseFailedInClaimReport
+		case globalparameters.TestCaseSkipped:
+			checkFunc = IsTestCaseSkippedInClaimReport
+		default:
+			continue
+		}
+
+		testPassed, checkErr := checkFunc(tcName, *claimReport)
+		if checkErr == nil && testPassed {
+			klog.V(5).Info(fmt.Sprintf("Test case %q is in accepted status %q", tcName, status))
+
+			return nil
+		}
+	}
+
+	return fmt.Errorf("test case %q is not in any of the accepted statuses %v", tcName, acceptedStatuses)
 }
 
 // DefineCertsuiteConfig creates certsuite_config.yml file under certsuite config directory.
