@@ -54,7 +54,22 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 }
 
 // RemoveContentsFromReportDir removes all files from report dir.
+// Returns nil if the directory is empty or doesn't exist (graceful cleanup).
 func RemoveContentsFromReportDir(reportDir string) error {
+	// Handle empty path gracefully (e.g., when test skips before directory creation).
+	if reportDir == "" {
+		klog.V(5).Info("report directory path is empty, skipping cleanup")
+
+		return nil
+	}
+
+	// Check if directory exists before attempting cleanup.
+	if _, err := os.Stat(reportDir); os.IsNotExist(err) {
+		klog.V(5).Info(fmt.Sprintf("report directory %s does not exist, skipping cleanup", reportDir))
+
+		return nil
+	}
+
 	klog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
 
 	certsuiteReportDir, err := os.Open(reportDir)
@@ -89,7 +104,23 @@ func RemoveContentsFromReportDir(reportDir string) error {
 	return nil
 }
 
+// RemoveContentsFromConfigDir removes all files from config dir.
+// Returns nil if the directory is empty or doesn't exist (graceful cleanup).
 func RemoveContentsFromConfigDir(configDir string) error {
+	// Handle empty path gracefully (e.g., when test skips before directory creation).
+	if configDir == "" {
+		klog.V(5).Info("config directory path is empty, skipping cleanup")
+
+		return nil
+	}
+
+	// Check if directory exists before attempting cleanup.
+	if _, err := os.Stat(configDir); os.IsNotExist(err) {
+		klog.V(5).Info(fmt.Sprintf("config directory %s does not exist, skipping cleanup", configDir))
+
+		return nil
+	}
+
 	certsuiteConfigDir, err := os.Open(configDir)
 	if err != nil {
 		return fmt.Errorf("failed to open config directory: %w", err)

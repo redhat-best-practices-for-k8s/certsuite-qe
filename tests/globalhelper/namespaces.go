@@ -84,7 +84,13 @@ func createPrivilegedNamespace(namespace string, client *egiClients.Settings) er
 }
 
 // DeleteAndWait deletes a namespace and waits until delete.
+// Returns nil if the namespace is empty (graceful cleanup when test skips early).
 func DeleteNamespaceAndWait(namespace string, timeout time.Duration) error {
+	// Handle empty namespace gracefully (e.g., when test skips before namespace creation).
+	if namespace == "" {
+		return nil
+	}
+
 	return deleteNamespaceAndWait(egiClients.New(""), namespace, timeout)
 }
 
