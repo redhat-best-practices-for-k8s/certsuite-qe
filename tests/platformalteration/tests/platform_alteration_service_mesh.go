@@ -26,9 +26,11 @@ const (
 )
 
 var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, Label("platformalteration4", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
@@ -92,6 +94,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -121,6 +124,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -158,6 +162,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -175,9 +180,11 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 })
 
 var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, Label("platformalteration4"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -210,6 +217,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, L
 
 		if err == nil {
 			By("Uninstall istio")
+
 			if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 				cmd := exec.Command("/bin/bash", "-c", "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.24.1 sh - "+
 					"&& istio-1.24.1/bin/istioctl uninstall -y --purge")
@@ -232,6 +240,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, L
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}

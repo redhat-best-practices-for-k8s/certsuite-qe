@@ -12,9 +12,11 @@ import (
 )
 
 var _ = Describe("Networking dual-stack-service,", Serial, Label("networking1"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -38,7 +40,6 @@ var _ = Describe("Networking dual-stack-service,", Serial, Label("networking1"),
 
 	// 62506
 	It("service with ipFamilyPolicy SingleStack and ip version ipv4 [negative]", func() {
-
 		By("Define and create service")
 		err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3022, 3022, false, false,
 			[]corev1.IPFamily{"IPv4"}, "SingleStack")
@@ -59,7 +60,6 @@ var _ = Describe("Networking dual-stack-service,", Serial, Label("networking1"),
 
 	// 62507
 	It("service with ipFamilyPolicy PreferDualStack and zero ClusterIPs [negative]", func() {
-
 		By("Define and create service")
 		err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3023, 3023,
 			false, true, []corev1.IPFamily{"IPv4"}, "PreferDualStack")
@@ -76,13 +76,11 @@ var _ = Describe("Networking dual-stack-service,", Serial, Label("networking1"),
 			tsparams.CertsuiteDualStackServiceTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 62508
 	It("service with no ipFamilyPolicy configured [negative]",
 		func() {
-
 			By("Define and create service")
 			err := tshelper.DefineAndCreateServiceOnCluster("testservice", randomNamespace, 3024,
 				3024, false, false, []corev1.IPFamily{"IPv4"}, "")

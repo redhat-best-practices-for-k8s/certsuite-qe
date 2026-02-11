@@ -12,9 +12,11 @@ import (
 )
 
 var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -98,7 +100,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 	// Positive #3.
 	It("One daemonset with two containers, both with terminationMessagePolicy "+
 		"set to FallbackToLogsOnError", func() {
-
 		By("Define daemonset")
 		daemonSet := tshelper.DefineDaemonSetWithTerminationMsgPolicies(tsparams.TestDaemonSetBaseName,
 			randomNamespace,
@@ -114,6 +115,7 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 		By("Assert daemonset has terminationMessagePolicy set to FallbackToLogsOnError in both containers")
 		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, container := range runningDaemonSet.Spec.Template.Spec.Containers {
 			Expect(container.TerminationMessagePolicy).To(Equal(corev1.TerminationMessageFallbackToLogsOnError))
 		}
@@ -132,7 +134,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 	// Positive #4
 	It("One deployment and one statefulset, both with one pod with one container, "+
 		"all with terminationMessagePolicy set to FallbackToLogsOnError", func() {
-
 		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
@@ -176,7 +177,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 
 	// Negative #1.
 	It("One deployment one pod one container without terminationMessagePolicy [negative]", func() {
-
 		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
@@ -200,7 +200,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 	// Negative #2.
 	It("One deployment one pod two containers, only one container with terminationMessagePolicy "+
 		"set to FallbackToLogsOnError [negative]", func() {
-
 		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
@@ -232,7 +231,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 
 	// Negative #3.
 	It("One deployment with two pods with one container each without terminationMessagePolicy set [negative]", func() {
-
 		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 2,
@@ -258,7 +256,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 	// Negative #4.
 	It("One deployment and one statefulset, both with one pod with one container, "+
 		"only the deployment has terminationMessagePolicy set to FallbackToLogsOnError [negative]", func() {
-
 		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
@@ -297,7 +294,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 	// Negative #5.
 	It("One deployment and one daemonset, both with one pod with one container, "+
 		"only the deployment has terminationMessagePolicy set to FallbackToLogsOnError [negative]", func() {
-
 		By("Define deployment")
 		deployment := tshelper.DefineDeploymentWithTerminationMsgPolicies(tsparams.TestDeploymentBaseName,
 			randomNamespace, 1,
@@ -329,7 +325,6 @@ var _ = Describe(tsparams.CertsuiteTerminationMsgPolicyTcName, func() {
 
 	// Skip #1.
 	It("One deployment with one pod and one container without Certsuite target labels [skip]", func() {
-
 		By("Define deployment without Certsuite target labels in the cluster")
 		deployment := tshelper.DefineDeploymentWithoutTargetLabels(tsparams.TestDeploymentBaseName, randomNamespace)
 

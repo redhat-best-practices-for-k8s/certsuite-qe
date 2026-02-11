@@ -14,9 +14,11 @@ import (
 )
 
 var _ = Describe("access-control-crd-roles", Serial, Label("accesscontrol2", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {
@@ -43,6 +45,7 @@ var _ = Describe("access-control-crd-roles", Serial, Label("accesscontrol2", "oc
 		By("Check if cr-scale-operator is installed")
 		exists, err := globalhelper.NamespaceExists(tsparams.CertsuiteTargetOperatorNamespace)
 		Expect(err).ToNot(HaveOccurred(), "error checking if cr-scale-operator is installed")
+
 		if !exists {
 			// Skip the test if cr-scaling-operator is not installed
 			Skip("cr-scale-operator is not installed, skipping test")

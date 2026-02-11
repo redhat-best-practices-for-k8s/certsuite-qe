@@ -13,9 +13,11 @@ import (
 )
 
 var _ = Describe("Access-control security-context,", Label("accesscontrol12", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories

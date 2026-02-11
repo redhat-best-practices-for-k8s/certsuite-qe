@@ -13,9 +13,11 @@ import (
 
 var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 	Label("affiliatedcertification", "ocp-required"), func() {
-		var randomNamespace string
-		var randomReportDir string
-		var randomCertsuiteConfigDir string
+		var (
+			randomNamespace          string
+			randomReportDir          string
+			randomCertsuiteConfigDir string
+		)
 
 		BeforeEach(func() {
 			if globalhelper.IsKindCluster() {
@@ -46,6 +48,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			By("Check if helm is installed")
 			cmd := exec.Command("/bin/bash", "-c",
 				"helm version")
+
 			err := cmd.Run()
 			if err != nil {
 				Skip("helm does not exist please install it to run the test.")
@@ -54,6 +57,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			By("Check that helm version is v3")
 			cmd = exec.Command("/bin/bash", "-c",
 				"helm version --short | grep v3")
+
 			err = cmd.Run()
 			if err != nil {
 				Fail("Helm version is not v3")
@@ -111,6 +115,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			By("Check if helm is installed")
 			cmd := exec.Command("/bin/bash", "-c",
 				"helm version")
+
 			out, err := cmd.CombinedOutput()
 			if err != nil {
 				Skip("helm does not exist please install it to run the test. Output: " + string(out))
@@ -119,6 +124,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			By("Check that helm version is v3")
 			cmd = exec.Command("/bin/bash", "-c",
 				"helm version --short | grep v3")
+
 			out, err = cmd.CombinedOutput()
 			if err != nil {
 				Fail("Helm version is not v3. Output: " + string(out))

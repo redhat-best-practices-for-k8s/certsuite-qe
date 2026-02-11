@@ -16,9 +16,11 @@ import (
 )
 
 var _ = Describe("lifecycle-pod-scheduling", Label("lifecycle7"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	configSuite, err := config.NewConfig()
 	if err != nil {
@@ -154,7 +156,6 @@ var _ = Describe("lifecycle-pod-scheduling", Label("lifecycle7"), func() {
 
 	// 48471
 	It("Two deployments, one pod each, one pod with nodeAffinity [negative]", func() {
-
 		By("Define Deployment without nodeAffinity")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -204,7 +205,6 @@ var _ = Describe("lifecycle-pod-scheduling", Label("lifecycle7"), func() {
 
 	// 48472
 	It("One deployment, one daemonSet [negative]", func() {
-
 		By("Define Deployment without nodeAffinity/ nodeSelector")
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())

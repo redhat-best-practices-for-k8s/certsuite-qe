@@ -17,9 +17,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -37,6 +39,7 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
+
 		if globalhelper.IsKindCluster() {
 			Skip("Kind cluster does not support MCO")
 		}
@@ -49,7 +52,6 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 
 	// 51302
 	It("unchanged sysctl config", func() {
-
 		By("Create daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
@@ -116,7 +118,6 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 				mcKernelArgs = []string{"net.ipv4.ip_forward", "1"}
 			} else {
 				mcKernelArgs = []string{"net.ipv4.ip_forward", "0"}
-
 			}
 		}
 		mcObj.Spec.KernelArguments = mcKernelArgs

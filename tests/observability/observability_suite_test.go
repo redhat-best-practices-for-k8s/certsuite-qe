@@ -29,7 +29,6 @@ func TestObservability(t *testing.T) {
 }
 
 var _ = SynchronizedBeforeSuite(func() {
-
 	By(fmt.Sprintf("Create %s namespace", tsparams.TestNamespace))
 	err := globalhelper.CreateNamespace(tsparams.TestNamespace)
 	Expect(err).ToNot(HaveOccurred())

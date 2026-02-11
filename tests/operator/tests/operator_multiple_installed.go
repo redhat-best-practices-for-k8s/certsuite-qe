@@ -13,10 +13,12 @@ import (
 )
 
 var _ = Describe("Operator multiple installed,", Serial, func() {
-	var randomNamespace string
-	var secondNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		secondNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		if globalhelper.IsCRCCluster() {
@@ -50,7 +52,6 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 	It("Deploy the same operator (and version) twice in the different namespaces", func() {
 		// This is a positive test case to verify that the same operator can be deployed
 		// in different namespaces.  This is a valid use case.
-
 		By("Deploy operator group for namespace " + randomNamespace)
 		err := tshelper.DeployTestOperatorGroup(randomNamespace, false)
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
@@ -150,7 +151,6 @@ var _ = Describe("Operator multiple installed,", Serial, func() {
 		// We want to create a custom catalog source for this test.
 		// This means we will have access to a "new" and "old" channel for the operator.
 		// We will deploy the "new" channel in the first namespace and the "old" channel in the second namespace.
-
 		By("Create custom-operator catalog source")
 		err := globalhelper.DeployCustomOperatorSource("quay.io/redhat-best-practices-for-k8s/qe-custom-catalog")
 		Expect(err).ToNot(HaveOccurred())

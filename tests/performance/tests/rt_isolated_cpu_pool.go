@@ -14,9 +14,11 @@ import (
 )
 
 var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, Label("performance", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -43,7 +45,6 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, L
 	})
 
 	It("One pod running in isolated cpu pool and rt cpu scheduling policy", func() {
-
 		By("Define runtime class")
 		rtc := runtimeclass.DefineRunTimeClass(tsparams.CertsuiteRunTimeClass)
 		Expect(rtc).ToNot(BeNil())
@@ -66,6 +67,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, L
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Change to rt scheduling policy")
@@ -109,6 +111,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, L
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")
@@ -133,6 +136,7 @@ var _ = Describe("performance-isolated-cpu-pool-rt-scheduling-policy", Serial, L
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Start isolated-cpu-pool-rt-scheduling-policy test")

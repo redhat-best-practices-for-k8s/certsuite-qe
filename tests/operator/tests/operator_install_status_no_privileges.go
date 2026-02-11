@@ -15,12 +15,14 @@ import (
 )
 
 var _ = Describe("Operator install-status-no-privileges,", Serial, Label("operator", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
-	var operatorName string
-	var catalogSource string
-	var lightweightOpCSVPrefix string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+		operatorName             string
+		catalogSource            string
+		lightweightOpCSVPrefix   string
+	)
 
 	BeforeEach(func() {
 		// Get OCP version to determine which lightweight operator to use
@@ -200,5 +202,4 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, Label("operat
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

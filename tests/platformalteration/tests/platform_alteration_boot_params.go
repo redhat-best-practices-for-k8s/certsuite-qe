@@ -19,9 +19,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-boot-params", Label("platformalteration1", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -39,17 +41,20 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
+
 		if globalhelper.IsKindCluster() {
 			Skip("Kind cluster does not support MCO")
 		}
 
 		By("Verify MCO is healthy and accessible")
+
 		mcoHealthy, err := globalhelper.IsMCOHealthy()
 		if err != nil || !mcoHealthy {
 			Skip("MCO is not healthy or accessible on this cluster - skipping boot params tests")
 		}
 
 		By("Verify MachineConfigPools exist")
+
 		mcpList, err := globalhelper.GetAPIClient().MachineConfigPools().List(context.TODO(), metav1.ListOptions{})
 		if err != nil || len(mcpList.Items) == 0 {
 			Skip("No MachineConfigPools found - skipping boot params tests")
@@ -70,6 +75,7 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		daemonset.RedefineWithVolumeMount(testDaemonSet)
 
 		By("Create and wait until daemonSet is ready")
+
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
 		if err != nil {
 			errMsg := err.Error()
@@ -80,6 +86,7 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
 			}
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert daemonSet has ready pods on nodes")
@@ -100,9 +107,11 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 
 		// Log pod and node details for debugging
 		GinkgoWriter.Printf("Found %d pods in namespace %s\n", len(podsList.Items), randomNamespace)
+
 		for i, pod := range podsList.Items {
 			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s, node: %s\n",
 				i, pod.Name, pod.Status.Phase, pod.Spec.NodeName)
+
 			for j, container := range pod.Spec.Containers {
 				GinkgoWriter.Printf("  Container[%d] name: %s, image: %s\n",
 					j, container.Name, container.Image)
@@ -114,8 +123,10 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		}
 
 		By("Assert pods are running with ready containers")
+
 		for _, pod := range podsList.Items {
 			Expect(pod.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", pod.Name))
+
 			for _, cs := range pod.Status.ContainerStatuses {
 				GinkgoWriter.Printf("Container %s in pod %s: ready=%v\n", cs.Name, pod.Name, cs.Ready)
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, pod.Name))
@@ -123,6 +134,7 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		}
 
 		By("Verify pod can access host filesystem")
+
 		cmdOutput, err := globalhelper.ExecCommand(podsList.Items[0], []string{"cat", "/host/proc/cmdline"})
 		if err != nil {
 			GinkgoWriter.Printf("Failed to access host filesystem: %v\n", err)
@@ -140,6 +152,7 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		expectedResult := globalparameters.TestCasePassed
 		if hasAlterations {
 			expectedResult = globalparameters.TestCaseFailed
+
 			GinkgoWriter.Printf("Expecting FAIL because cluster has boot params alterations\n")
 		} else {
 			GinkgoWriter.Printf("Expecting PASS because cluster boot params appear unmodified\n")
@@ -168,15 +181,18 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 
 		// Log available MCPs for debugging
 		GinkgoWriter.Printf("Found %d MachineConfigPools\n", len(machineConfigPoolList.Items))
+
 		for i, mcp := range machineConfigPoolList.Items {
 			GinkgoWriter.Printf("MCP[%d] name: %s, config: %s\n", i, mcp.Name, mcp.Spec.Configuration.Name)
 		}
 
 		foundWorkerCNF := false
+
 		for _, machineConfig := range machineConfigList.Items {
 			for _, mcp := range machineConfigPoolList.Items {
 				if machineConfig.Name == mcp.Spec.Configuration.Name && mcp.Name == "worker-cnf" {
 					foundWorkerCNF = true
+
 					GinkgoWriter.Printf("Found worker-cnf MCP with machineConfig: %s\n", machineConfig.Name)
 					machineConfig.Spec.KernelArguments = []string{"skew_tick=1", "nohz=off"}
 

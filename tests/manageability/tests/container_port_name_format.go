@@ -10,9 +10,11 @@ import (
 )
 
 var _ = Describe("manageability-container-port-name", func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -35,7 +37,6 @@ var _ = Describe("manageability-container-port-name", func() {
 	})
 
 	It("One pod with valid port name", func() {
-
 		By("Define pod")
 		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, randomNamespace,
 			tsparams.TestImageWithValidTag, tsparams.CertsuiteTargetPodLabels)
@@ -61,7 +62,6 @@ var _ = Describe("manageability-container-port-name", func() {
 	})
 
 	It("One pod with invalid port name", func() {
-
 		By("Define pod")
 		testPod := tshelper.DefineManageabilityPod(tsparams.TestPodName, randomNamespace,
 			tsparams.TestImageWithValidTag, tsparams.CertsuiteTargetPodLabels)

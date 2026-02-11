@@ -17,9 +17,11 @@ const (
 )
 
 var _ = Describe("manageability-containers-image-tag", func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -58,6 +60,7 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		Expect(runningPod.Spec.Containers[0].Image).To(ContainSubstring(":"))
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -74,7 +77,6 @@ var _ = Describe("manageability-containers-image-tag", func() {
 	})
 
 	It("One pod with invalid image tag", func() {
-
 		By("Define pod")
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			sampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
@@ -89,6 +91,7 @@ var _ = Describe("manageability-containers-image-tag", func() {
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}

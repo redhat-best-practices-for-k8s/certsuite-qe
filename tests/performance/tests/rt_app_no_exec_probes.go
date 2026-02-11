@@ -13,9 +13,11 @@ import (
 )
 
 var _ = Describe("performance-rt-apps-no-exec-probes", Label("performance", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -42,7 +44,6 @@ var _ = Describe("performance-rt-apps-no-exec-probes", Label("performance", "ocp
 	})
 
 	It("Rt app pod with no exec probes", func() {
-
 		By("Define pod")
 		testPod := tshelper.DefineRtPod(tsparams.TestPodName, randomNamespace,
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
@@ -51,6 +52,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", Label("performance", "ocp
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		command := "chrt -f -p 50 1" // To change the scheduling policy of the container start process to FIFO scheduling
@@ -79,6 +81,7 @@ var _ = Describe("performance-rt-apps-no-exec-probes", Label("performance", "ocp
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		command := "chrt -f -p 50 1" // To change the scheduling policy of the container start process to FIFO scheduling
@@ -105,10 +108,12 @@ var _ = Describe("performance-rt-apps-no-exec-probes", Label("performance", "ocp
 		pod.RedefineWithMemoryResources(testPod, "512Mi", "512Mi")
 
 		By("Create and wait until pod is ready")
+
 		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod has modified resources")

@@ -15,9 +15,11 @@ import (
 )
 
 var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -61,6 +63,7 @@ var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-req
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is ready with exclusive CPU configuration")
@@ -70,6 +73,7 @@ var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-req
 
 		// Log container count and resources for debugging
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
@@ -100,6 +104,7 @@ var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-req
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is ready with mixed CPU configuration")
@@ -109,6 +114,7 @@ var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-req
 
 		// Log container count and resources for debugging
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
@@ -140,6 +146,7 @@ var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-req
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is ready with shared CPU configuration")
@@ -149,6 +156,7 @@ var _ = Describe("performance-exclusive-cpu-pool", Label("performance", "ocp-req
 
 		// Log container count and resources for debugging
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())

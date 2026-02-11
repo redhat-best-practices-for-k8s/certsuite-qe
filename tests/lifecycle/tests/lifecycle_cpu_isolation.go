@@ -19,9 +19,11 @@ const (
 )
 
 var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -97,6 +99,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-req
 		// are concerned. If so, skip the test.
 		overcommitted, err := globalhelper.IsClusterOvercommitted()
 		Expect(err).ToNot(HaveOccurred())
+
 		if overcommitted {
 			Skip("This test requires nodes to be undercommitted")
 		}
@@ -142,7 +145,6 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-req
 
 	// 54732
 	It("One deployment one pod with conditions met", func() {
-
 		annotationsMap := make(map[string]string)
 
 		By("Define deployment with resources and runTimeClass")
@@ -188,7 +190,6 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-req
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54733
@@ -277,7 +278,6 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-req
 
 	// 54735
 	It("One deployment no runTimeClass [negative]", func() {
-
 		annotationsMap := make(map[string]string)
 
 		By("Define deployment with resources and no runTimeClass")
@@ -308,7 +308,6 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-req
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteCPUIsolationTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54737
@@ -319,6 +318,7 @@ var _ = Describe("lifecycle-cpu-isolation", Serial, Label("lifecycle3", "ocp-req
 		// are concerned. If so, skip the test.
 		overcommitted, err := globalhelper.IsClusterOvercommitted()
 		Expect(err).ToNot(HaveOccurred())
+
 		if overcommitted {
 			Skip("This test requires nodes to be undercommitted")
 		}

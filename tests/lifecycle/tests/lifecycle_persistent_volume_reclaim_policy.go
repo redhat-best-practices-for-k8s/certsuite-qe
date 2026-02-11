@@ -16,10 +16,12 @@ import (
 )
 
 var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, Label("lifecycle6"), func() {
-	var randomNamespace string
-	var randomPV string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomPV                 string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		randomPV = tsparams.TestPVName + "-" + globalhelper.GenerateRandomString(10)
@@ -131,7 +133,6 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, Label("li
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54203
@@ -173,7 +174,6 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, Label("li
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCasePassed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54204
@@ -222,7 +222,6 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, Label("li
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54206
@@ -264,12 +263,10 @@ var _ = Describe("lifecycle-persistent-volume-reclaim-policy", Serial, Label("li
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePersistentVolumeReclaimPolicyTcName, globalparameters.TestCaseFailed,
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 54207
 	It("Two deployments, one with reclaim policy of delete, other with recycle [negative]", func() {
-
 		By("Define and create first pv")
 		pvca := persistentvolumeclaim.DefinePersistentVolumeClaim(tsparams.TestPVCName, randomNamespace)
 		persistentVolumea := persistentvolume.DefinePersistentVolume(randomPV, pvca.Name, pvca.Namespace)

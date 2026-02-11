@@ -12,9 +12,11 @@ import (
 )
 
 var _ = Describe("Access-control no-1337-uid,", Label("accesscontrol6"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories

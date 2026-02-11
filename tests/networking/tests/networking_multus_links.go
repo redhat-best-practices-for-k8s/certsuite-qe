@@ -11,9 +11,11 @@ import (
 )
 
 var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -65,7 +67,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 		// The NetworkAttachmentDefinition (mcvlan) created for this TC uses the default interface that is connecting
 		// all worker/master nodes so that pods have connectivity irrespective of the node they are scheduled on
 		// see https://github.com/redhat-best-practices-for-k8s/certsuite-qe/pull/263
-
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -154,7 +155,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 
 	// 48338
 	It("custom deployments 3 pods and 1 pod, standalone IP, connectivity via Multus secondary interface[skip]", func() {
-
 		By("Define and create Network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -189,7 +189,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 	// 48343
 	It("custom deployment and daemonset 3 pods, daemonset missing ip, 2 NADs, connectivity via Multus "+
 		"secondary interface", func() {
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -223,7 +222,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 
 	// 48580
 	It("custom daemonset 3 pods with skip label [skip]", func() {
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -248,7 +246,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 
 	// 48582
 	It("custom deployment and daemonset 3 pods with skip label[skip]", func() {
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -278,7 +275,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 
 	// 48582
 	It("custom deployment and daemonSet 3 pods, daemonSet has skip label", func() {
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -308,7 +304,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 
 	// 48582
 	It("custom deployment 3 pods, 2 NADs, multiple Multus interfaces on deployment", func() {
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -334,12 +329,10 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 			tsparams.CertsuiteMultusIpv4TcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 48346
 	It("custom deployment 3 pods,1 NAD,no connectivity via Multus secondary interface[negative]", func() {
-
 		By("Define and create Network-attachment-definition")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -370,7 +363,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 	// 48347
 	It("custom deployment and daemonset 3 pods, 2 NADs, No connectivity on daemonset via Multus secondary "+
 		"interface[negative]", func() {
-
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
 		Expect(err).ToNot(HaveOccurred())
@@ -408,7 +400,6 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 	// 48590
 	It("custom deployment and daemonset 3 pods, 2 NADs, multiple Multus interfaces on deployment no "+
 		"connectivity via secondary interface[negative]", func() {
-
 		By("Define and create network-attachment-definitions")
 		err := tshelper.DefineAndCreateNadOnCluster(
 			tsparams.TestNadNameA, randomNamespace, tsparams.TestIPamIPNetworkA)
@@ -443,5 +434,4 @@ var _ = Describe("Networking custom namespace,", Serial, Label("networking2"), f
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

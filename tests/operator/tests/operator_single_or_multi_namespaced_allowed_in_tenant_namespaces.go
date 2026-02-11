@@ -17,10 +17,12 @@ import (
 
 var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespaces", Serial,
 	Label("operator", "ocp-required"), func() {
-		var randomNamespace string
-		var randomReportDir string
-		var randomCertsuiteConfigDir string
-		var randomTargetingNamespace string
+		var (
+			randomNamespace          string
+			randomReportDir          string
+			randomCertsuiteConfigDir string
+			randomTargetingNamespace string
+		)
 
 		BeforeEach(func() {
 			// Create random namespace and keep original report and certsuite config directories
@@ -183,6 +185,7 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 
 			// Get the lightweight operator based on OCP version
 			ocpVersion := "4.19"
+
 			if !globalhelper.IsKindCluster() {
 				var verr error
 				ocpVersion, verr = globalhelper.GetClusterVersion()
@@ -260,12 +263,12 @@ var _ = Describe("Operator single-or-multi-namespaced-allowed-in-tenant-namespac
 		It("operator namespace contains single namespaced operator with operators not labelled", func() {
 			// Note: This test uses grafana-operator and a lightweight operator that varies by OCP version
 			// See issue #1283 and operatorversions package for operator catalog availability
-
 			createTestOperatorGroup(randomNamespace, tsparams.SingleOrMultiNamespacedOperatorGroup, []string{randomNamespace + "-one"})
 			installAndLabelOperator(randomNamespace)
 
 			// Get the lightweight operator based on OCP version
 			ocpVersion := "4.19"
+
 			if !globalhelper.IsKindCluster() {
 				var verr error
 				ocpVersion, verr = globalhelper.GetClusterVersion()

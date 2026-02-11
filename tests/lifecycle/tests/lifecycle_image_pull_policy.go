@@ -14,9 +14,11 @@ import (
 )
 
 var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -40,7 +42,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48473
 	It("One deployment with ifNotPresent as ImagePullPolicy", func() {
-
 		By("Define deployment with ifNotPresent as ImagePullPolicy")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -69,7 +70,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48474
 	It("Several deployments with ifNotPresent as ImagePullPolicy", func() {
-
 		By("Define deployments with ifNotPresent as ImagePullPolicy")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -126,7 +126,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48478
 	It("One DaemonSet with ifNotPresent as ImagePullPolicy", func() {
-
 		By("Define DaemonSet with ifNotPresent as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, tsparams.SampleWorkloadImage, corev1.PullIfNotPresent)
@@ -153,7 +152,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48479
 	It("Several DaemonSets with ifNotPresent as ImagePullPolicy", func() {
-
 		By("Define DaemonSets with ifNotPresent as ImagePullPolicy")
 		daemonSeta := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, tsparams.SampleWorkloadImage, corev1.PullIfNotPresent)
@@ -259,7 +257,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48482
 	It("One deployment with Always as ImagePullPolicy [negative]", func() {
-
 		By("Define deployment with 'Always' as ImagePullPolicy")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -288,7 +285,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48484
 	It("Two deployments one with Never other with ifNotPresent as ImagePullPolicy [negative]", func() {
-
 		By("Define deployment with Never as ImagePullPolicy")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -332,7 +328,6 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 
 	// 48485
 	It("One DaemonSet with Never one deployment with ifNotPresent as ImagePullPolicy [negative]", func() {
-
 		By("Define DaemonSet with Never as ImagePullPolicy")
 		daemonSet := tshelper.DefineDaemonSetWithImagePullPolicy(tsparams.TestDaemonSetName,
 			randomNamespace, tsparams.SampleWorkloadImage, corev1.PullNever)
@@ -371,5 +366,4 @@ var _ = Describe("lifecycle-image-pull-policy", Label("lifecycle4"), func() {
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

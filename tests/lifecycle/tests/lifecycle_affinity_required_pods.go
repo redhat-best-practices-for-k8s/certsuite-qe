@@ -15,9 +15,11 @@ import (
 )
 
 var _ = Describe("lifecycle-affinity-required-pods", Label("lifecycle1"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	configSuite, err := config.NewConfig()
 	if err != nil {

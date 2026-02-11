@@ -23,9 +23,11 @@ const (
 )
 
 var _ = Describe(tsparams.CertsuiteCrdStatusTcName, Serial, func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -44,6 +46,7 @@ var _ = Describe(tsparams.CertsuiteCrdStatusTcName, Serial, func() {
 
 	AfterEach(func() {
 		By("Removing all CRDs created by previous test case.")
+
 		for _, crd := range crdNames {
 			By("Removing CRD " + crd)
 			tshelper.DeleteCrdAndWaitUntilIsRemoved(crd, 10*time.Second)

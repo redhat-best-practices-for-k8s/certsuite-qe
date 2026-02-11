@@ -11,9 +11,11 @@ import (
 )
 
 var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networking1"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -37,7 +39,6 @@ var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networkin
 
 	// 59740
 	It("one deployment, one pod in a namespace with deny all ingress and egress network policy", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -63,12 +64,10 @@ var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networkin
 			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 59741
 	It("one deployment, one pod in a namespace with only deny all ingress network policy [negative]", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -94,12 +93,10 @@ var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networkin
 			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 59742
 	It("one deployment, one pod in a namespace with only deny all egress network policy [negative]", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -129,7 +126,6 @@ var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networkin
 
 	// 59743
 	It("one deployment, one pod in a namespace with neither deny all ingress or egress network policy [negative]", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -150,13 +146,11 @@ var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networkin
 			tsparams.CertsuiteNetworkPolicyDenyAllTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 59744
 	It("two deployments in different namespaces, one pod each, namespaces have deny all ingress and egress network policy",
 		func() {
-
 			By("Define first deployment and create it on cluster")
 			err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 			Expect(err).ToNot(HaveOccurred())
@@ -220,7 +214,6 @@ var _ = Describe("Networking network-policy-deny-all,", Serial, Label("networkin
 	// 59745
 	It("two deployments in different namespaces, one pod each, one namespace has only deny all egress network policy [negative]",
 		func() {
-
 			By("Define first deployment and create it on cluster")
 			err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 			Expect(err).ToNot(HaveOccurred())

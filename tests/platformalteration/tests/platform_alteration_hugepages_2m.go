@@ -15,9 +15,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platformalteration2", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -39,6 +41,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		}
 
 		By("Check if nodes have hugepages enabled")
+
 		if !globalhelper.NodesHaveHugePagesEnabled("2Mi") {
 			Skip("Hugepages configuration is not enabled on the cluster")
 		}
@@ -51,7 +54,6 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 
 	// 55865
 	It("One deployment, one pod with 2Mi hugepages", func() {
-
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
@@ -74,6 +76,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -87,12 +90,10 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 55866
 	It("One pod with 2Mi hugepages", func() {
-
 		By("Define pod with 2Mi hugepages")
 		puta := pod.DefinePod(tsparams.TestPodName, randomNamespace, tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels)
@@ -109,6 +110,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -125,7 +127,6 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 
 	// 55867
 	It("One deployment, one pod, two containers, only one with 2Mi hugepages", func() {
-
 		By("Define deployment")
 		dep := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
@@ -149,6 +150,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -162,12 +164,10 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteHugePages2mOnlyName, globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 55868
 	It("One pod, two containers, one with 2Mi hugepages, other with 1Gi [negative]", func() {
-
 		By("Define pod")
 		put := pod.DefinePod(tsparams.TestDeploymentName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
@@ -190,6 +190,7 @@ var _ = Describe("platform-alteration-hugepages-2m-only", Serial, Label("platfor
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
