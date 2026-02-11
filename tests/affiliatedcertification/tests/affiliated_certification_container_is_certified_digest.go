@@ -15,9 +15,11 @@ import (
 
 var _ = Describe("Affiliated-certification container-is-certified-digest,", Serial,
 	Label("affiliatedcertification", "ocp-required"), func() {
-		var randomNamespace string
-		var randomReportDir string
-		var randomCertsuiteConfigDir string
+		var (
+			randomNamespace          string
+			randomReportDir          string
+			randomCertsuiteConfigDir string
+		)
 
 		BeforeEach(func() {
 			if globalhelper.IsKindCluster() {
@@ -146,7 +148,6 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 		It("two containers to test, one is certified, one is not digest [negative]", func() {
 			// Note: This test uses container images, not operators, so it's not affected by
 			// the OCP 4.20 certified-operators catalog issue (see issue #1283)
-
 			By("Define deployments with different container certification statuses")
 			dep := deployment.DefineDeployment("affiliated-cert-deployment", randomNamespace,
 				tsparams.UncertifiedContainerURLCnfTest, tsparams.TestDeploymentLabels)
@@ -184,5 +185,4 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		})
-
 	})

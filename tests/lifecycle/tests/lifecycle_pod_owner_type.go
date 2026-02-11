@@ -13,9 +13,11 @@ import (
 )
 
 var _ = Describe("lifecycle-pod-owner-type", Label("lifecycle6"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -39,7 +41,6 @@ var _ = Describe("lifecycle-pod-owner-type", Label("lifecycle6"), func() {
 
 	// 47409
 	It("One ReplicaSet, several pods", func() {
-
 		By("Define ReplicaSet with replica number")
 		replicaSet := tshelper.DefineReplicaSet(tsparams.TestReplicaSetName, randomNamespace)
 		replicaset.RedefineWithReplicaNumber(replicaSet, 3)
@@ -64,7 +65,6 @@ var _ = Describe("lifecycle-pod-owner-type", Label("lifecycle6"), func() {
 
 	// 47424
 	It("Two deployments, several pods", func() {
-
 		By("Define deployments")
 		deploymenta, err := tshelper.DefineDeployment(2, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -120,7 +120,6 @@ var _ = Describe("lifecycle-pod-owner-type", Label("lifecycle6"), func() {
 
 	// 47429
 	It("One pod, not part of any workload resource [negative]", func() {
-
 		By("Define pod")
 		put := tshelper.DefinePod(tsparams.TestPodName, randomNamespace)
 
@@ -175,5 +174,4 @@ var _ = Describe("lifecycle-pod-owner-type", Label("lifecycle6"), func() {
 		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuitePodOwnerTypeTcName, globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

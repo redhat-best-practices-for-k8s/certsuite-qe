@@ -12,9 +12,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalteration3", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace with privileged Pod Security Standards for privileged containers
@@ -32,6 +34,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalte
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
+
 		if globalhelper.IsKindCluster() {
 			Skip("Kind cluster does not support SELinux")
 		}
@@ -50,6 +53,7 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalte
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		By("Create and wait until daemonSet is ready")
+
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
@@ -70,8 +74,8 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalte
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify that all nodes are running with selinux on enforcing mode")
-		for _, pod := range podList.Items {
 
+		for _, pod := range podList.Items {
 			buf, err := globalhelper.ExecCommand(pod, []string{"/bin/bash", "-c", tsparams.Getenforce})
 			Expect(err).ToNot(HaveOccurred())
 
@@ -131,6 +135,5 @@ var _ = Describe("platform-alteration-is-selinux-enforcing", Label("platformalte
 		By("Verifying SELinux is enforcing on the node")
 		_, err = globalhelper.ExecCommand(podList.Items[0], []string{"/bin/bash", "-c", tsparams.SetEnforce})
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })

@@ -26,7 +26,6 @@ func TestOperator(t *testing.T) {
 }
 
 var _ = SynchronizedBeforeSuite(func() {
-
 	if globalhelper.IsKindCluster() {
 		Skip("Skipping operator tests on kind cluster")
 	}

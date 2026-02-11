@@ -19,9 +19,11 @@ const (
 )
 
 var _ = Describe("Access-control one-process-per-container,", Label("accesscontrol7"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -163,5 +165,4 @@ var _ = Describe("Access-control one-process-per-container,", Label("accesscontr
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

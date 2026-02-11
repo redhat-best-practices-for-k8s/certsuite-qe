@@ -14,9 +14,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platformalteration4", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -92,6 +94,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platf
 
 		for _, p := range podList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -125,6 +128,5 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platf
 		err = tshelper.WaitForSpecificNodeCondition(globalhelper.GetAPIClient(),
 			tsparams.RebootWaitingTime, tsparams.RetryInterval, podList.Items[0].Spec.NodeName, true)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 })

@@ -13,9 +13,11 @@ import (
 )
 
 var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -39,7 +41,6 @@ var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
 
 	// 47311
 	It("One deployment, one pod with preStop field configured", func() {
-
 		By("Define deployment with preStop field configured")
 		deploymenta, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -68,7 +69,6 @@ var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
 
 	// 47315
 	It("One deployment, one pod without preStop field configured [negative]", func() {
-
 		By("Define deployment without prestop field configured")
 		deployment, err := tshelper.DefineDeployment(1, 1, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -95,7 +95,6 @@ var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
 
 	// 47382
 	It("One deployment, several pods, several containers that have preStop field configured", func() {
-
 		By("Define deployment with preStop field configured")
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -124,7 +123,6 @@ var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
 
 	// 47383
 	It("Two deployments, several pods, several containers that have preStop field configured", func() {
-
 		By("Define first deployment with preStop field configured")
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -168,7 +166,6 @@ var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
 
 	// 47384
 	It("One deployment, several pods, several containers one without preStop field configured [negative]", func() {
-
 		By("Define deployment with preStop field configured")
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -193,7 +190,6 @@ var _ = Describe("lifecycle-container-prestop", Label("lifecycle1"), func() {
 
 	// 50761
 	It("Two deployments, several pods, several containers that do not have preStop field configured [negative]", func() {
-
 		By("Define and create first deployment")
 		deploymenta, err := tshelper.DefineDeployment(3, 2, tsparams.TestDeploymentName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())

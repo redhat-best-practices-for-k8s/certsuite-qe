@@ -14,9 +14,11 @@ import (
 )
 
 var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -46,15 +48,18 @@ var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Create deployment")
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment does not have hostPath set")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, volume := range runningDeployment.Spec.Template.Spec.Volumes {
 			Expect(volume.HostPath).To(BeNil())
 		}
@@ -81,15 +86,18 @@ var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func
 		deployment.RedefineWithHostPath(dep, "volume", "mnt/data")
 
 		By("Create deployment")
+
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment has hostPath set")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, volume := range runningDeployment.Spec.Template.Spec.Volumes {
 			if volume.Name == "volume" {
 				Expect(volume.HostPath).ToNot(BeNil())
@@ -122,6 +130,7 @@ var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func
 		By("Assert deployment1 does not have hostPath set")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, volume := range runningDeployment.Spec.Template.Spec.Volumes {
 			Expect(volume.HostPath).To(BeNil())
 		}
@@ -136,6 +145,7 @@ var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func
 		By("Assert deployment2 does not have hostPath set")
 		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, volume := range runningDeployment2.Spec.Template.Spec.Volumes {
 			Expect(volume.HostPath).To(BeNil())
 		}
@@ -166,6 +176,7 @@ var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func
 		By("Assert deployment1 does not have hostPath set")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, volume := range runningDeployment.Spec.Template.Spec.Volumes {
 			Expect(volume.HostPath).To(BeNil())
 		}
@@ -182,6 +193,7 @@ var _ = Describe("Access-control pod-host-path, ", Label("accesscontrol9"), func
 		By("Assert deployment2 has hostPath set")
 		runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, volume := range runningDeployment2.Spec.Template.Spec.Volumes {
 			if volume.Name == "volume" {
 				Expect(volume.HostPath).ToNot(BeNil())

@@ -21,11 +21,13 @@ const (
 )
 
 var _ = Describe("Affiliated-certification operator certification,", Serial, Label("affiliatedcertification", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
-	var grafanaOperatorName string
-	var certifiedOperator operatorversions.OperatorInfo
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+		grafanaOperatorName      string
+		certifiedOperator        operatorversions.OperatorInfo
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -101,10 +103,12 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 			" is not ready")
 
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
+
 		var catalogSource string
 		grafanaOperatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
+
 		var csvName string
 		channel, version, csvName = globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
 
@@ -303,5 +307,4 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
-
 })

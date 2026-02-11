@@ -21,9 +21,11 @@ const (
 )
 
 var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -175,6 +177,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		// Note: This test uses a lightweight operator that varies by OCP version
 		// See issue #1283 and operatorversions package for operator catalog availability
 		ocpVersion := "4.19"
+
 		if !globalhelper.IsKindCluster() {
 			var verr error
 			ocpVersion, verr = globalhelper.GetClusterVersion()
@@ -256,6 +259,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		// Note: This test uses grafana-operator and a lightweight operator that varies by OCP version
 		// See issue #1283 and operatorversions package for operator catalog availability
 		ocpVersion := "4.19"
+
 		if !globalhelper.IsKindCluster() {
 			var verr error
 			ocpVersion, verr = globalhelper.GetClusterVersion()
@@ -353,6 +357,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		// Note: This test uses a lightweight operator that varies by OCP version
 		// See issue #1283 and operatorversions package for operator catalog availability
 		ocpVersion := "4.19"
+
 		if !globalhelper.IsKindCluster() {
 			var verr error
 			ocpVersion, verr = globalhelper.GetClusterVersion()

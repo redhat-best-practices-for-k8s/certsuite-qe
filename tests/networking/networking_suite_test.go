@@ -33,7 +33,6 @@ func TestNetworking(t *testing.T) {
 }
 
 var _ = SynchronizedBeforeSuite(func() {
-
 	configSuite, err := config.NewConfig()
 	if err != nil {
 		klog.Fatalf("can not load config file: %v", err)

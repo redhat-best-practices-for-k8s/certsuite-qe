@@ -36,7 +36,6 @@ func TestAffiliatedCertification(t *testing.T) {
 var isCloudCasaAlreadyLabeled bool
 
 var _ = SynchronizedBeforeSuite(func() {
-
 	if !globalhelper.IsKindCluster() {
 		// Always install Helm v3 right before running the suite
 		By("Install helm v3")
@@ -80,6 +79,7 @@ var _ = SynchronizedBeforeSuite(func() {
 	}
 
 	By("Un-label operator used in other suites if labeled")
+
 	if isCloudCasaAlreadyLabeled {
 		err = tshelper.DeleteLabelFromInstalledCSV(
 			tsparams.UnrelatedOperatorPrefixCloudcasa,

@@ -10,9 +10,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-cluster-operator-health", Label("platformalteration1", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -30,6 +32,7 @@ var _ = Describe("platform-alteration-cluster-operator-health", Label("platforma
 		Expect(err).ToNot(HaveOccurred())
 
 		By("If Kind cluster, skip")
+
 		if globalhelper.IsKindCluster() {
 			Skip("Kind cluster does not have cluster operators")
 		}

@@ -14,9 +14,11 @@ import (
 )
 
 var _ = Describe("lifecycle-pod-high-availability", Serial, Label("lifecycle5", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		if globalhelper.IsKindCluster() {

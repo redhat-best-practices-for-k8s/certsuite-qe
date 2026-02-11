@@ -28,15 +28,19 @@ import (
 
 var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 	Label("rt-kernel"), Label("accesscontrol13", "ocp-required"), func() {
-		var randomNamespace string
-		var randomReportDir string
-		var randomCertsuiteConfigDir string
+		var (
+			randomNamespace          string
+			randomReportDir          string
+			randomCertsuiteConfigDir string
+		)
 
 		// Save the MCP name that manages worker nodes, so:
 		// - re-check the kernel type of the first node on every test case.
 		// - calculate the dynamic timeout to be used to wait for the nodes to be rebooted.
-		var mcpName string
-		var mcpWorkerNames []string
+		var (
+			mcpName        string
+			mcpWorkerNames []string
+		)
 
 		// This flag is needed to avoid the AfterAll/AfterEach blocks if the whole test suite was skipped in BeforeAll.
 		skipTestSuite := false
@@ -44,12 +48,14 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 		BeforeAll(func() {
 			if globalhelper.GetConfiguration().General.DisableIntrusiveTests == strings.ToLower("true") {
 				skipTestSuite = true
+
 				Skip("Intrusive tests are disabled via config")
 			}
 
 			// Skip all if running in a kind cluster
 			if globalhelper.IsKindCluster() {
 				skipTestSuite = true
+
 				Skip("Kind cluster detected")
 			}
 
@@ -61,6 +67,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 			// This test suite does not support more than one workers MCP.
 			if len(mcpNodes) > 1 {
 				skipTestSuite = true
+
 				Skip(fmt.Sprintf("more than one workers MCP found: %v", mcpNodes))
 			}
 
@@ -190,7 +197,9 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 			Expect(err).ToNot(HaveOccurred(), "failed to deploy statefulset")
 
 			By("Ensure all the statefulset's pods exist in namespace " + randomNamespace)
+
 			var podList *corev1.PodList
+
 			Eventually(func() bool {
 				podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 				if err != nil {
@@ -200,7 +209,6 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 				}
 
 				if len(podList.Items) == 2 {
-
 					return true
 				}
 
@@ -290,7 +298,9 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 			Expect(err).ToNot(HaveOccurred(), "failed to deploy statefulset")
 
 			By("Ensure all the statefulset's pods exist in namespace " + randomNamespace)
+
 			var podList *corev1.PodList
+
 			Eventually(func() bool {
 				podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 				if err != nil {
@@ -300,7 +310,6 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 				}
 
 				if len(podList.Items) == 2 {
-
 					return true
 				}
 
@@ -332,7 +341,6 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 				globalparameters.TestCaseFailed, randomReportDir)
 			Expect(err).ToNot(HaveOccurred())
 		})
-
 	})
 
 //
@@ -341,9 +349,11 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 //
 
 var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel", Label("accesscontrol13"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -428,7 +438,9 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Ensure all the statefulset's pods exist in namespace " + randomNamespace)
+
 		var podList *corev1.PodList
+
 		Eventually(func() bool {
 			podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 			if err != nil {
@@ -450,6 +462,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 
 		pod := &podList.Items[0]
 		By("Ensure pod " + pod.Name + " has not added SYS_NICE cap")
+
 		if globalhelper.IsKindCluster() {
 			Expect(pod.Spec.Containers[0].SecurityContext).To(BeNil())
 			Expect(pod.Spec.Containers[1].SecurityContext).To(BeNil())
@@ -460,6 +473,7 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 
 		pod = &podList.Items[1]
 		By("Ensure pod " + pod.Name + " has not added SYS_NICE cap")
+
 		if globalhelper.IsKindCluster() {
 			Expect(pod.Spec.Containers[0].SecurityContext).To(BeNil())
 			Expect(pod.Spec.Containers[1].SecurityContext).To(BeNil())

@@ -15,11 +15,13 @@ import (
 )
 
 var _ = Describe("Operator install-status,", Serial, Label("operator", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
-	var operatorName string
-	var catalogSource string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+		operatorName             string
+		catalogSource            string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -150,6 +152,7 @@ var _ = Describe("Operator install-status,", Serial, Label("operator", "ocp-requ
 
 				return false
 			}
+
 			fmt.Printf("%s operator %s CSV status is not Succeeded: %t\n", lightweightOp.PackageName, lightweightOp.CSVPrefix, isNotSucceeded)
 
 			return isNotSucceeded
@@ -257,6 +260,7 @@ var _ = Describe("Operator install-status,", Serial, Label("operator", "ocp-requ
 
 				return false
 			}
+
 			fmt.Printf("%s operator %s CSV status is not Succeeded: %t\n", lightweightOp.PackageName, lightweightOp.CSVPrefix, isNotSucceeded)
 
 			return isNotSucceeded

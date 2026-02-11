@@ -16,9 +16,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-is-redhat-release", Label("platformalteration3"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -43,7 +45,6 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 	// 51319
 	It("One deployment, one pod, several containers, all running Red Hat release", func() {
-
 		By("Define deployment")
 		deployment := deployment.DefineDeployment(tsparams.TestDeploymentName, randomNamespace,
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
@@ -51,6 +52,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 		globalhelper.AppendContainersToDeployment(deployment, 3, tsparams.SampleWorkloadImage)
 
 		By("Create and wait until deployment is ready")
+
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deployment, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
@@ -70,6 +72,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -90,13 +93,13 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 	// 51320
 	It("One daemonSet that is running Red Hat release", func() {
-
 		By("Define daemonSet")
 		daemonSet := daemonset.DefineDaemonSet(randomNamespace,
 			tsparams.SampleWorkloadImage,
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 
 		By("Create and wait until daemonSet is ready")
+
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the daemonSet pods are not schedulable due to insufficient resources")
@@ -118,6 +121,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -138,7 +142,6 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 	// 51321
 	It("One deployment, one pod, 2 containers, one running Red Hat release, other is not [negative]", func() {
-
 		By("Define deployment")
 		dep := tshelper.DefineDeploymentWithNonUBIContainer(randomNamespace)
 
@@ -146,6 +149,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 		globalhelper.AppendContainersToDeployment(dep, 1, tsparams.SampleWorkloadImage)
 
 		By("Create and wait until deployment is ready")
+
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
@@ -165,6 +169,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}
@@ -189,6 +194,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 		statefulSet := tshelper.DefineStatefulSetWithNonUBIContainer(randomNamespace)
 
 		By("Create and wait until statefulSet is ready")
+
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(statefulSet, tsparams.WaitingTime)
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
@@ -208,6 +214,7 @@ var _ = Describe("platform-alteration-is-redhat-release", Label("platformalterat
 
 		for _, p := range podsList.Items {
 			Expect(p.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", p.Name))
+
 			for _, cs := range p.Status.ContainerStatuses {
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, p.Name))
 			}

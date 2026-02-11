@@ -18,9 +18,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-base-image", Label("platformalteration1", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -43,12 +45,14 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		}
 
 		By("Verify MCO is healthy and accessible")
+
 		mcoHealthy, err := globalhelper.IsMCOHealthy()
 		if err != nil || !mcoHealthy {
 			Skip("MCO is not healthy or accessible on this cluster - skipping base image tests")
 		}
 
 		By("Verify cluster has worker nodes")
+
 		if !globalhelper.HasWorkerNodes() {
 			Skip("Cluster has no worker nodes - skipping base image tests")
 		}
@@ -68,6 +72,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			tsparams.CertsuiteTargetPodLabels)
 
 		By("Create and wait until deployment is ready")
+
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
 		if err != nil {
 			errMsg := err.Error()
@@ -78,6 +83,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 				Skip("This test cannot run because the deployment is not ready: " + errMsg)
 			}
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert deployment is ready")
@@ -92,9 +98,11 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		// Log pod and container details for debugging
 		GinkgoWriter.Printf("Found %d pods in namespace %s\n", len(podsList.Items), randomNamespace)
+
 		for i, pod := range podsList.Items {
 			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s, node: %s\n",
 				i, pod.Name, pod.Status.Phase, pod.Spec.NodeName)
+
 			for j, container := range pod.Spec.Containers {
 				GinkgoWriter.Printf("  Container[%d] name: %s, image: %s\n",
 					j, container.Name, container.Image)
@@ -105,6 +113,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		Expect(len(podsList.Items[0].Status.ContainerStatuses)).To(BeNumerically(">", 0), "Pod should have containers")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range podsList.Items[0].Status.ContainerStatuses {
 			GinkgoWriter.Printf("Container %s: ready=%v, image=%s\n", cs.Name, cs.Ready, cs.Image)
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
@@ -119,6 +128,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		expectedResult := globalparameters.TestCasePassed
 		if hasAlterations {
 			expectedResult = globalparameters.TestCaseFailed
+
 			GinkgoWriter.Printf("Expecting FAIL because cluster has alterations\n")
 		} else {
 			GinkgoWriter.Printf("Expecting PASS because cluster appears unmodified\n")
@@ -147,6 +157,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			tsparams.CertsuiteTargetPodLabels, tsparams.TestDaemonSetName)
 
 		By("Create and wait until daemonSet is ready")
+
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
 		if err != nil {
 			errMsg := err.Error()
@@ -157,6 +168,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
 			}
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert daemonSet is ready")
@@ -180,14 +192,18 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		// Log pod and container details for debugging
 		GinkgoWriter.Printf("Found %d pods in namespace %s\n", len(podsList.Items), randomNamespace)
+
 		for i, pod := range podsList.Items {
 			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s, node: %s\n",
 				i, pod.Name, pod.Status.Phase, pod.Spec.NodeName)
+
 			for j, container := range pod.Spec.Containers {
 				GinkgoWriter.Printf("  Container[%d] name: %s, image: %s\n",
 					j, container.Name, container.Image)
 			}
+
 			Expect(pod.Status.Phase).To(Equal(corev1.PodRunning), fmt.Sprintf("Pod %s should be running", pod.Name))
+
 			for _, cs := range pod.Status.ContainerStatuses {
 				GinkgoWriter.Printf("  Container status %s: ready=%v, image=%s\n", cs.Name, cs.Ready, cs.Image)
 				Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s in pod %s should be ready", cs.Name, pod.Name))
@@ -203,6 +219,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		expectedResult := globalparameters.TestCasePassed
 		if hasAlterations {
 			expectedResult = globalparameters.TestCaseFailed
+
 			GinkgoWriter.Printf("Expecting FAIL because cluster has alterations\n")
 		} else {
 			GinkgoWriter.Printf("Expecting PASS because cluster appears unmodified\n")
@@ -232,6 +249,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		deployment.RedefineWithPrivilegedContainer(deploymenta)
 
 		By("Create first deployment")
+
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
 		if err != nil {
 			errMsg := err.Error()
@@ -242,6 +260,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 				Skip("This test cannot run because the deployment is not ready: " + errMsg)
 			}
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		podsList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
@@ -252,9 +271,11 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		// Log pod details for debugging
 		GinkgoWriter.Printf("Found %d pods in namespace %s\n", len(podsList.Items), randomNamespace)
+
 		for i, pod := range podsList.Items {
 			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s, node: %s\n",
 				i, pod.Name, pod.Status.Phase, pod.Spec.NodeName)
+
 			for j, container := range pod.Spec.Containers {
 				GinkgoWriter.Printf("  Container[%d] name: %s, image: %s, privileged: %v\n",
 					j, container.Name, container.Image,
@@ -289,6 +310,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 				Skip("This test cannot run because the second deployment is not ready: " + errMsg)
 			}
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert second deployment is ready")
@@ -300,6 +322,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		podsList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 		GinkgoWriter.Printf("Total pods after creating both deployments: %d\n", len(podsList.Items))
+
 		for i, pod := range podsList.Items {
 			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s\n", i, pod.Name, pod.Status.Phase)
 		}
@@ -337,6 +360,7 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 				Skip("This test cannot run because the statefulSet is not ready: " + errMsg)
 			}
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert statefulSet is ready")
@@ -351,9 +375,11 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 
 		// Log pod details for debugging
 		GinkgoWriter.Printf("Found %d pods in namespace %s\n", len(podsList.Items), randomNamespace)
+
 		for i, pod := range podsList.Items {
 			GinkgoWriter.Printf("Pod[%d] name: %s, phase: %s, node: %s\n",
 				i, pod.Name, pod.Status.Phase, pod.Spec.NodeName)
+
 			for j, container := range pod.Spec.Containers {
 				GinkgoWriter.Printf("  Container[%d] name: %s, image: %s, privileged: %v\n",
 					j, container.Name, container.Image,

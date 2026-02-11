@@ -15,9 +15,11 @@ import (
 )
 
 var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platformalteration3", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -39,6 +41,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platform
 		}
 
 		By("Verify MCO is healthy and accessible")
+
 		mcoHealthy, err := globalhelper.IsMCOHealthy()
 		if err != nil || !mcoHealthy {
 			Skip("MCO is not healthy or accessible on this cluster - skipping hugepages config tests")
@@ -52,7 +55,6 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platform
 
 	// 51308
 	It("unchanged configuration", func() {
-
 		crdExists, err := crd.EnsureCrdExists(tsparams.PerformanceProfileCrd)
 		Expect(err).ToNot(HaveOccurred())
 

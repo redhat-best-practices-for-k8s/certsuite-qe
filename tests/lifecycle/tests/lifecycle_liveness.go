@@ -16,9 +16,11 @@ import (
 )
 
 var _ = Describe("lifecycle-liveness", Label("lifecycle5"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -82,6 +84,7 @@ var _ = Describe("lifecycle-liveness", Label("lifecycle5"), func() {
 		By("Assert all containers have liveness probe configured")
 		runningDeployment, err := globalhelper.GetRunningDeployment(deploymenta.Namespace, deploymenta.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
 			Expect(container.LivenessProbe).ToNot(BeNil())
 		}
@@ -99,6 +102,7 @@ var _ = Describe("lifecycle-liveness", Label("lifecycle5"), func() {
 		By("Assert all containers have liveness probe configured")
 		runningDeployment, err = globalhelper.GetRunningDeployment(deploymentb.Namespace, deploymentb.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
 			Expect(container.LivenessProbe).ToNot(BeNil())
 		}

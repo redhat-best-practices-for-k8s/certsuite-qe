@@ -15,12 +15,15 @@ import (
 )
 
 var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("performance", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		By("Check if running on Kind cluster")
+
 		if globalhelper.IsKindCluster() {
 			Skip("Exclusive CPU pool tests are not supported on Kind cluster")
 		}
@@ -28,6 +31,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		By("Verify cluster is configured for exclusive CPU pools")
 		configured, reason, err := globalhelper.IsClusterConfiguredForExclusiveCPUs()
 		Expect(err).ToNot(HaveOccurred())
+
 		if !configured {
 			Skip("Cluster not configured for exclusive CPU pools: " + reason)
 		}
@@ -64,6 +68,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is running and has containers")
@@ -74,6 +79,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 
 		// Log container resources for debugging exclusive CPU pool classification
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
@@ -97,6 +103,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		Expect(memRequest).To(Equal(memLimit), "Memory request should equal memory limit for guaranteed QoS")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -132,6 +139,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is running and has containers")
@@ -142,6 +150,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 
 		// Log container resources for debugging exclusive CPU pool classification
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
@@ -164,6 +173,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		Expect(memRequest).To(Equal(memLimit), "Memory request should equal memory limit for guaranteed QoS")
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -203,6 +213,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is running and has containers")
@@ -212,6 +223,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 
 		// Log container resources for debugging
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
@@ -219,6 +231,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		}
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
@@ -258,6 +271,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		if err != nil && strings.Contains(err.Error(), "not schedulable") {
 			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
 		}
+
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Assert pod is running in shared CPU pool configuration")
@@ -267,6 +281,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 
 		// Log container resources for debugging - should NOT have exclusive CPU pool config
 		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+
 		for i, container := range runningPod.Spec.Containers {
 			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
 			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
@@ -274,6 +289,7 @@ var _ = Describe("performance-exclusive-cpu-pool-rt-scheduling-policy", Label("p
 		}
 
 		By("Assert all containers are ready")
+
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}

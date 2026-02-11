@@ -12,9 +12,11 @@ import (
 )
 
 var _ = Describe(tsparams.CertsuiteContainerLoggingTcName, Label("observability", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories

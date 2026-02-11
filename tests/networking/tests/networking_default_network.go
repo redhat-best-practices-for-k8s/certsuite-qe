@@ -19,9 +19,11 @@ var _ = Describe("Networking custom namespace, custom deployment,", Serial, Labe
 		klog.Fatalf("can not load config file: %v", err)
 	}
 
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -118,6 +120,7 @@ var _ = Describe("Networking custom namespace, custom deployment,", Serial, Labe
 		Expect(len(podsList.Items)).To(BeNumerically(">=", 2))
 
 		By("Close communication between deployment pods")
+
 		for index := range podsList.Items {
 			_, err := globalhelper.ExecCommand(
 				podsList.Items[0],

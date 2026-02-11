@@ -13,9 +13,11 @@ import (
 )
 
 var _ = Describe("Access-control container-host-port,", Label("accesscontrol1"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -113,6 +115,7 @@ var _ = Describe("Access-control container-host-port,", Label("accesscontrol1"),
 		By("Assert deployment does not have host port configured")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
 			for _, port := range container.Ports {
 				Expect(port.HostPort).To(BeZero())
@@ -148,6 +151,7 @@ var _ = Describe("Access-control container-host-port,", Label("accesscontrol1"),
 		By("Assert deployment has container/host port configured")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
+
 		for _, container := range runningDeployment.Spec.Template.Spec.Containers {
 			for _, port := range container.Ports {
 				switch port.ContainerPort {
@@ -171,5 +175,4 @@ var _ = Describe("Access-control container-host-port,", Label("accesscontrol1"),
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
-
 })

@@ -17,9 +17,11 @@ import (
 */
 
 var _ = Describe("performance-cpu-pinning-no-exec-probes", Label("performance", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -43,6 +45,7 @@ var _ = Describe("performance-cpu-pinning-no-exec-probes", Label("performance", 
 		By("Check if openshift-sriov-network-operator is installed")
 		exists, err := globalhelper.NamespaceExists("openshift-sriov-network-operator")
 		Expect(err).ToNot(HaveOccurred())
+
 		if !exists {
 			Skip("openshift-sriov-network-operator is not installed, skipping test")
 		}
@@ -56,6 +59,7 @@ var _ = Describe("performance-cpu-pinning-no-exec-probes", Label("performance", 
 	It("one dpdk pod with no probe", func() {
 		By("Deploy dpdk pod")
 		dpdkPod := tshelper.DefineDpdkPod(tsparams.DpdkPodName, randomNamespace)
+
 		err := globalhelper.CreateAndWaitUntilPodIsReady(dpdkPod, tsparams.WaitingTime)
 		if err != nil {
 			Skip("DPDK is not deployed. There may be some problems in setup. Hence, skipping.")

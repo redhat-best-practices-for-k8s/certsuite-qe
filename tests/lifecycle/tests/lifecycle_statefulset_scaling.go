@@ -16,9 +16,11 @@ import (
 )
 
 var _ = Describe("lifecycle-statefulset-scaling", Serial, Label("lifecycle3", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		By("Enable intrusive tests")

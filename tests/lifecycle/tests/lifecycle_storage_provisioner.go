@@ -16,11 +16,13 @@ import (
 )
 
 var _ = Describe("lifecycle-storage-provisioner", Label("lifecycle3"), func() {
-	var randomNamespace string
-	var randomStorageClassName string
-	var randomPV string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomStorageClassName   string
+		randomPV                 string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		randomStorageClassName = tsparams.TestLocalStorageClassName + "-" + globalhelper.GenerateRandomString(10)

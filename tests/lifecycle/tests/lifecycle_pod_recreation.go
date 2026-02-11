@@ -17,9 +17,11 @@ import (
 )
 
 var _ = Describe("lifecycle-pod-recreation", Serial, Label("lifecycle7", "ocp-required"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		By("Enable intrusive tests")

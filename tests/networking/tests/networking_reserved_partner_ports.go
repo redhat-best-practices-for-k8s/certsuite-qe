@@ -12,9 +12,11 @@ import (
 )
 
 var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking3"), func() {
-	var randomNamespace string
-	var randomReportDir string
-	var randomCertsuiteConfigDir string
+	var (
+		randomNamespace          string
+		randomReportDir          string
+		randomCertsuiteConfigDir string
+	)
 
 	BeforeEach(func() {
 		// Create random namespace and keep original report and certsuite config directories
@@ -38,7 +40,6 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 
 	// 61487
 	It("one deployment, one pod, one container not declaring reserved ports (Partner Ports)", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(1, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -54,12 +55,10 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 			tsparams.CertsuiteReservedPartnerPortsTcName,
 			globalparameters.TestCasePassed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 61505
 	It("one deployment, one pod, one container declaring reserved ports (Partner Ports) [negative]", func() {
-
 		By("Define and create deployment with container declaring reserved port")
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 15443}}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -80,12 +79,10 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 			tsparams.CertsuiteReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 61506
 	It("one deployment, one pod, two containers, neither declaring reserved ports 15002 and 15007 (Partner Ports)", func() {
-
 		By("Define deployment with two containers")
 		ports := []corev1.ContainerPort{{ContainerPort: 15002}, {ContainerPort: 15007}}
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(2, ports, randomNamespace)
@@ -123,12 +120,10 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 			tsparams.CertsuiteReservedPartnerPortsTcName,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-
 	})
 
 	// 61508
 	It("one deployment, one pod not listening on reserved ports (Partner Ports)", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(3, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -148,7 +143,6 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 
 	// 61509
 	It("one deployment, one pod listening on reserved ports (Partner Ports) [negative]", func() {
-
 		By("Define deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentWithContainerPorts(1, []corev1.ContainerPort{{ContainerPort: 15021}}, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -173,7 +167,6 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 
 	// 61510
 	It("two deployments, one pod each not listening on reserved ports (Partner Ports)", func() {
-
 		By("Define first deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeploymentOnCluster(3, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
@@ -197,7 +190,6 @@ var _ = Describe("Networking reserved-partner-ports,", Serial, Label("networking
 
 	// 61517
 	It("two deployments, one pod each, one listening on reserved ports (Partner Ports) [negative]", func() {
-
 		By("Define first deployment and create it on cluster")
 		err := tshelper.DefineAndCreateDeployment(tsparams.TestDeploymentBName, randomNamespace, 3)
 		Expect(err).ToNot(HaveOccurred())
