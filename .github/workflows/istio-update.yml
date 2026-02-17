@@ -1,0 +1,138 @@
+---
+name: Update Istio Version
+
+on:
+  schedule:
+    # Run weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      istio_version:
+        description: 'Istio version to update to (e.g., 1.29.0)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-istio:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Get latest Istio version
+        id: istio
+        run: |
+          # Function to get version with retries
+          get_version() {
+            local retries=3
+            local delay=5
+
+            for ((i=1; i<=retries; i++)); do
+              echo "Attempt $i to fetch Istio version..." >&2
+
+              response=$(curl -s --max-time 30 https://api.github.com/repos/istio/istio/releases/latest)
+
+              if [ $? -eq 0 ] && [ -n "$response" ]; then
+                version=$(echo "$response" | jq -r '.tag_name // empty')
+
+                # Istio uses version format without 'v' prefix (e.g., 1.29.0)
+                if [ -n "$version" ] && [ "$version" != "null" ] && [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                  echo "Successfully fetched Istio version: $version" >&2
+                  echo "$version"
+                  return 0
+                else
+                  echo "Invalid version format: '$version'" >&2
+                fi
+              else
+                echo "API call failed or returned empty response" >&2
+              fi
+
+              if [ $i -lt $retries ]; then
+                echo "Retrying in $delay seconds..." >&2
+                sleep $delay
+              fi
+            done
+
+            echo "Failed to fetch valid Istio version after $retries attempts" >&2
+            return 1
+          }
+
+          if [ -n "${{ github.event.inputs.istio_version }}" ]; then
+            LATEST_VERSION="${{ github.event.inputs.istio_version }}"
+            # Validate manually provided version
+            if ! [[ "$LATEST_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: Invalid version format '$LATEST_VERSION' - expected format: X.Y.Z"
+              exit 1
+            fi
+          else
+            LATEST_VERSION=$(get_version)
+            if [ $? -ne 0 ] || [ -z "$LATEST_VERSION" ]; then
+              echo "Error: Failed to fetch valid Istio version"
+              exit 1
+            fi
+          fi
+
+          echo "Latest Istio version: $LATEST_VERSION"
+          echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+
+          # Get current version from parameters.go
+          CURRENT_VERSION=$(grep -oP 'IstioVersion = "\K[0-9]+\.[0-9]+\.[0-9]+' tests/platformalteration/parameters/parameters.go | head -1)
+          echo "Current version: $CURRENT_VERSION"
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          if [ "${{ steps.istio.outputs.version }}" == "${{ steps.istio.outputs.current }}" ]; then
+            echo "No update needed. Already at ${{ steps.istio.outputs.version }}"
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "Update needed: ${{ steps.istio.outputs.current }} -> ${{ steps.istio.outputs.version }}"
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Istio version in files
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          NEW_VERSION="${{ steps.istio.outputs.version }}"
+          OLD_VERSION="${{ steps.istio.outputs.current }}"
+
+          echo "Updating from $OLD_VERSION to $NEW_VERSION"
+
+          # Update tests/platformalteration/parameters/parameters.go
+          sed -i "s|IstioVersion = \"$OLD_VERSION\"|IstioVersion = \"$NEW_VERSION\"|g" tests/platformalteration/parameters/parameters.go
+
+          echo "Files updated successfully"
+          git diff
+
+      - name: Create Pull Request
+        if: steps.check.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update Istio to ${{ steps.istio.outputs.version }}"
+          committer: GitHub Actions Bot <actions@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "Update Istio to ${{ steps.istio.outputs.version }}"
+          body: |
+            ## Update Istio Version
+
+            This PR updates Istio from ${{ steps.istio.outputs.current }} to ${{ steps.istio.outputs.version }}.
+
+            ### Files Updated:
+            - `tests/platformalteration/parameters/parameters.go`
+
+            ### Istio Release Notes
+            https://github.com/istio/istio/releases/tag/${{ steps.istio.outputs.version }}
+
+            ---
+            *This PR was automatically created by the Istio update workflow*
+          branch: update-istio-${{ steps.istio.outputs.version }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automation
