@@ -56,4 +56,6 @@ const (
 	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
 
 	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+
+	IstioVersion = "1.29.0"
 )
