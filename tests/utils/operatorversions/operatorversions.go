@@ -103,7 +103,7 @@ var DefaultOperatorConfig = OCPOperatorConfig{
 	},
 }
 
-// OCP420OperatorConfig is the configuration for OCP 4.20+
+// OCP420OperatorConfig is the configuration for OCP 4.20.
 // Several operators are NOT available in 4.20 catalogs:
 //   - cockroachdb-certified: Missing from certified-operators
 //
@@ -149,6 +149,42 @@ var OCP420OperatorConfig = OCPOperatorConfig{
 	},
 }
 
+// OCP421OperatorConfig is the configuration for OCP 4.21.
+// cockroachdb-certified remains unavailable in 4.21 catalogs, same as 4.20.
+var OCP421OperatorConfig = OCPOperatorConfig{
+	OCPVersion: "4.21",
+	CertifiedOperator: OperatorInfo{
+		PackageName:   "mongodb-enterprise",
+		CatalogSource: CatalogCertifiedOperators,
+		CSVPrefix:     "mongodb-enterprise",
+		Description:   "MongoDB Enterprise operator (replacement for cockroachdb-certified in 4.21)",
+	},
+	CommunityOperator: OperatorInfo{
+		PackageName:   "grafana-operator",
+		CatalogSource: CatalogCommunityOperators,
+		CSVPrefix:     "grafana-operator",
+		Description:   "Grafana operator for community operator tests",
+	},
+	LightweightOperator: OperatorInfo{
+		PackageName:   "prometheus-exporter-operator",
+		CatalogSource: CatalogCommunityOperators,
+		CSVPrefix:     "prometheus-exporter-operator",
+		Description:   "Prometheus Exporter operator as lightweight operator for various tests",
+	},
+	ClusterLoggingOperator: OperatorInfo{
+		PackageName:   "cluster-logging",
+		CatalogSource: CatalogRedHatOperators,
+		CSVPrefix:     "cluster-logging",
+		Description:   "Cluster logging operator for cluster-wide operator tests",
+	},
+	UncertifiedOperator: OperatorInfo{
+		PackageName:   "cockroachdb",
+		CatalogSource: CatalogCommunityOperators,
+		CSVPrefix:     "cockroachdb",
+		Description:   "Uncertified CockroachDB operator for negative certification tests",
+	},
+}
+
 // operatorConfigMap maps OCP version prefixes to their operator configurations.
 var operatorConfigMap = map[string]*OCPOperatorConfig{
 	"4.14": &DefaultOperatorConfig,
@@ -158,12 +194,14 @@ var operatorConfigMap = map[string]*OCPOperatorConfig{
 	"4.18": &DefaultOperatorConfig,
 	"4.19": &DefaultOperatorConfig,
 	"4.20": &OCP420OperatorConfig,
+	"4.21": &OCP421OperatorConfig,
 }
 
 // GetOperatorConfig returns the operator configuration for the given OCP version.
 // The version can be a full version string (e.g., "4.20.0-0.nightly-2024-12-16")
 // or a short version (e.g., "4.20"). If no specific config exists for the version,
-// the default config is returned.
+// versions 4.20+ fall back to the latest known 4.20+ config (since cockroachdb-certified
+// is unavailable in 4.20+ catalogs), while older versions fall back to the default config.
 func GetOperatorConfig(ocpVersion string) *OCPOperatorConfig {
 	// Extract major.minor version (e.g., "4.20" from "4.20.0-0.nightly-2024-12-16")
 	shortVersion := extractShortVersion(ocpVersion)
@@ -172,7 +210,12 @@ func GetOperatorConfig(ocpVersion string) *OCPOperatorConfig {
 		return config
 	}
 
-	// Return default config for unknown versions
+	// For unknown versions >= 4.20, use the latest known 4.20+ config since
+	// cockroachdb-certified is not available in 4.20+ catalogs
+	if IsVersion420OrLater(ocpVersion) {
+		return &OCP421OperatorConfig
+	}
+
 	return &DefaultOperatorConfig
 }
 

@@ -81,9 +81,17 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedUncertifiedPkg: "cockroachdb",
 		},
 		{
-			name:                   "Unknown version falls back to default",
+			name:                   "OCP 4.21 uses 4.21-specific config",
+			ocpVersion:             "4.21.0",
+			expectedCertifiedPkg:   "mongodb-enterprise",
+			expectedCommunityPkg:   "grafana-operator",
+			expectedLightweightPkg: "prometheus-exporter-operator",
+			expectedUncertifiedPkg: "cockroachdb",
+		},
+		{
+			name:                   "Unknown future version falls back to latest 4.20+ config",
 			ocpVersion:             "4.99",
-			expectedCertifiedPkg:   "cockroachdb-certified",
+			expectedCertifiedPkg:   "mongodb-enterprise",
 			expectedCommunityPkg:   "grafana-operator",
 			expectedLightweightPkg: "prometheus-exporter-operator",
 			expectedUncertifiedPkg: "cockroachdb",
@@ -110,6 +118,11 @@ func TestGetCertifiedOperator(t *testing.T) {
 
 	// 4.20 should use alternative certified operator (mongodb-enterprise)
 	certifiedOp = GetCertifiedOperator("4.20")
+	assert.Equal(t, "mongodb-enterprise", certifiedOp.PackageName)
+	assert.Equal(t, CatalogCertifiedOperators, certifiedOp.CatalogSource)
+
+	// 4.21 should use mongodb-enterprise
+	certifiedOp = GetCertifiedOperator("4.21.0")
 	assert.Equal(t, "mongodb-enterprise", certifiedOp.PackageName)
 	assert.Equal(t, CatalogCertifiedOperators, certifiedOp.CatalogSource)
 }
@@ -161,7 +174,8 @@ func TestListSupportedVersions(t *testing.T) {
 	versions := ListSupportedVersions()
 	assert.Contains(t, versions, "4.14")
 	assert.Contains(t, versions, "4.20")
-	assert.True(t, len(versions) >= 6, "Should have at least 6 supported versions")
+	assert.Contains(t, versions, "4.21")
+	assert.True(t, len(versions) >= 7, "Should have at least 7 supported versions")
 }
 
 func TestOperatorInfoString(t *testing.T) {
