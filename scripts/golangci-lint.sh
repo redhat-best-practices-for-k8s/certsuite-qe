@@ -13,7 +13,7 @@ else
 	else
 		DEPLOY_PATH=${GOPATH}/bin
 	fi
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${DEPLOY_PATH}" v2.5.0
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/2691aacde61559ce53cfda05513ee7c70677ea31/install.sh | sh -s -- -b "${DEPLOY_PATH}" v2.5.0
 fi
 
 PATH=${PATH}:${DEPLOY_PATH} golangci-lint run -v

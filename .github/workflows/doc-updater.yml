@@ -15,15 +15,15 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Fix outdated documentation URLs
-        uses: sebrandon1/ocp-doc-checker@v1
+        uses: sebrandon1/ocp-doc-checker@c65a2d44824cbdc9ac18a404ed17fe2e0f5e5501 # v1
         with:
           fix: true
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'docs: Update outdated OpenShift documentation URLs'
