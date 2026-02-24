@@ -12,13 +12,14 @@ on:
         required: false
         type: string
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: read-all
 
 jobs:
   update-istio:
     runs-on: ubuntu-slim
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6.0.2

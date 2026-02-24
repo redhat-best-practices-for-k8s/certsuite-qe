@@ -12,6 +12,8 @@ on:
         required: false
         default: '4.14,4.16,4.17,4.18,4.19,4.20'
 
+permissions: read-all
+
 env:
   # Operators we depend on for QE tests
   # Format: catalog_type:operator_package_name
@@ -31,6 +33,9 @@ env:
 jobs:
   check-catalogs:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Check out code
         uses: actions/checkout@v6.0.2
