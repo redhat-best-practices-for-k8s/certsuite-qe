@@ -110,6 +110,92 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
 			acceptedStatuses, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify CheckDetails report completeness")
+		checkDetails, err := globalhelper.GetTestCaseCheckDetails(
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		totalObjects := len(checkDetails.CompliantObjectsOut) + len(checkDetails.NonCompliantObjectsOut)
+		GinkgoWriter.Printf("CheckDetails: %d compliant, %d non-compliant objects\n",
+			len(checkDetails.CompliantObjectsOut), len(checkDetails.NonCompliantObjectsOut))
+		Expect(totalObjects).To(BeNumerically(">=", 1),
+			"At least one report object expected (no early abort)")
+
+		for i, obj := range checkDetails.CompliantObjectsOut {
+			GinkgoWriter.Printf("Compliant[%d]: type=%s reason=%s\n",
+				i, obj.ObjectType, globalhelper.GetReportObjectFieldValue(obj, "Reason"))
+		}
+
+		for i, obj := range checkDetails.NonCompliantObjectsOut {
+			reason := globalhelper.GetReportObjectFieldValue(obj, "Reason")
+			GinkgoWriter.Printf("NonCompliant[%d]: type=%s reason=%s\n", i, obj.ObjectType, reason)
+			Expect(reason).ToNot(ContainSubstring("could not determine scheduling policy"),
+				"Unhandled scheduling policy error found in non-compliant objects")
+		}
+	})
+
+	It("One pod with ephemeral subprocesses in shared cpu pool", func() {
+		By("Define pod with ephemeral subprocesses")
+		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
+			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
+
+		// Spawn short-lived background subprocesses to create transient PIDs that may
+		// disappear between PID enumeration and scheduling policy check.
+		spawnCmd := []string{"/bin/bash", "-c",
+			"while true; do for i in $(seq 1 5); do sleep 0.05 & done; wait; done"}
+		err := pod.RedefineWithContainerExecCommand(testPod, spawnCmd, 0)
+		Expect(err).ToNot(HaveOccurred())
+
+		err = globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.WaitingTime)
+		if err != nil && strings.Contains(err.Error(), "not schedulable") {
+			Skip("This test cannot run because the pod is not schedulable due to insufficient resources")
+		}
+
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
+		err = globalhelper.LaunchTests(
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
+			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
+			randomReportDir, randomCertsuiteConfigDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify test case completed (any terminal status accepted)")
+		err = globalhelper.ValidateIfReportsAreValidWithAcceptedStatuses(
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
+			[]string{globalparameters.TestCasePassed, globalparameters.TestCaseFailed,
+				globalparameters.TestCaseSkipped}, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		By("Verify CheckDetails for process disappearance handling")
+		checkDetails, err := globalhelper.GetTestCaseCheckDetails(
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy, randomReportDir)
+		Expect(err).ToNot(HaveOccurred())
+
+		totalObjects := len(checkDetails.CompliantObjectsOut) + len(checkDetails.NonCompliantObjectsOut)
+		GinkgoWriter.Printf("CheckDetails: %d compliant, %d non-compliant objects\n",
+			len(checkDetails.CompliantObjectsOut), len(checkDetails.NonCompliantObjectsOut))
+		Expect(totalObjects).To(BeNumerically(">=", 1),
+			"At least one report object expected (no early abort)")
+
+		// Verify that any "process disappeared" entries are in the compliant list, never non-compliant
+		disappearedCount := 0
+
+		for _, obj := range checkDetails.CompliantObjectsOut {
+			reason := globalhelper.GetReportObjectFieldValue(obj, "Reason")
+			if strings.Contains(reason, "process disappeared") {
+				disappearedCount++
+			}
+		}
+
+		for _, obj := range checkDetails.NonCompliantObjectsOut {
+			reason := globalhelper.GetReportObjectFieldValue(obj, "Reason")
+			Expect(reason).ToNot(ContainSubstring("process disappeared"),
+				"Process disappeared entries must not appear in non-compliant list")
+		}
+
+		GinkgoWriter.Printf("Process disappeared entries in compliant list: %d\n", disappearedCount)
 	})
 
 	It("One pod with container running in exclusive cpu pool", func() {
