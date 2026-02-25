@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents when working with code in this repository.
 
 ## Repository Overview
 
@@ -161,6 +161,9 @@ Available test features (set via `FEATURES` env var):
 - `performance` - CPU pinning and scheduling
 - `platformalteration` - Node and kernel configuration
 - `preflight` - Red Hat preflight certification checks
+
+### Go Version
+This project uses Go 1.26.0.
 
 ### Kind Cluster Limitations
 The following tests are known to fail on local Kind clusters:
