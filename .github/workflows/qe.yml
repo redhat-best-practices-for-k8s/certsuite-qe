@@ -15,6 +15,8 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+permissions: read-all
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -204,7 +206,7 @@ jobs:
           sudo apt-get install -y python3-pip
 
       - name: Setup up k8s cluster
-        uses: palmsoftware/quick-k8s@v0.0.50
+        uses: palmsoftware/quick-k8s@bf2b7deaf3ac1bc6e857c9fa1ebaa6ccfc23b86b # v0.0.51
         with:
           disableDefaultCni: true
           numControlPlaneNodes: 1
@@ -214,7 +216,7 @@ jobs:
           removeControlPlaneTaint: true
 
       - name: Install partner resources
-        run: python3 -m venv .venv; source .venv/bin/activate; pip install --upgrade pip; pip install jinjanator; cp .venv/bin/jinjanate .venv/bin/j2; make install-for-qe
+        run: python3 -m venv .venv; source .venv/bin/activate; pip install pip==26.0.1; pip install jinjanator==25.3.1; cp .venv/bin/jinjanate .venv/bin/j2; make install-for-qe
         working-directory: certsuite-sample-workload
 
       - name: Show pods

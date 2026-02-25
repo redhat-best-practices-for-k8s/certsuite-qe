@@ -163,39 +163,46 @@ func ConvertSpecNameToFileName(specName string) string {
 	return strings.ToLower(removeCharactersFromString(formatString, []string{","}))
 }
 
-func isTestCaseInExpectedStatusInClaimReport(
-	testCaseName string,
-	claimReport claim.Root,
-	expectedStatus string) (bool, error) {
+func getTestCaseResult(testCaseName string, claimReport claim.Root) (*claim.Result, error) {
 	for testCaseClaim := range claimReport.Claim.Results {
 		if formatTestCaseName(testCaseClaim) == formatTestCaseName(testCaseName) {
 			var testCaseResult *claim.Result
 
 			encodedTestResult, err := json.Marshal(claimReport.Claim.Results[testCaseClaim])
-
 			if err != nil {
-				return false, err
+				return nil, err
 			}
 
 			err = json.Unmarshal(encodedTestResult, &testCaseResult)
-
 			if err != nil {
-				return false, err
+				return nil, err
 			}
 
-			if testCaseResult.State == expectedStatus {
-				klog.V(5).Info("claim report test case status passed")
-
-				return true, nil
-			}
-
-			return false, fmt.Errorf("invalid test status %s instead expected %s",
-				testCaseResult.State,
-				expectedStatus)
+			return testCaseResult, nil
 		}
 	}
 
-	return false, fmt.Errorf("test case is not found in the claim report")
+	return nil, fmt.Errorf("test case is not found in the claim report")
+}
+
+func isTestCaseInExpectedStatusInClaimReport(
+	testCaseName string,
+	claimReport claim.Root,
+	expectedStatus string) (bool, error) {
+	testCaseResult, err := getTestCaseResult(testCaseName, claimReport)
+	if err != nil {
+		return false, err
+	}
+
+	if testCaseResult.State == expectedStatus {
+		klog.V(5).Info("claim report test case status passed")
+
+		return true, nil
+	}
+
+	return false, fmt.Errorf("invalid test status %s instead expected %s",
+		testCaseResult.State,
+		expectedStatus)
 }
 
 func removeCharactersFromString(stringToFormat string, charactersToRemove []string) string {

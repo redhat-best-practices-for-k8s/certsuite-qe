@@ -15,6 +15,8 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+permissions: read-all
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -124,7 +126,7 @@ jobs:
 
       - name: Setup up OCP cluster
         if: steps.check-secret.outputs.has-secret == 'true'
-        uses: palmsoftware/quick-ocp@v0.0.25
+        uses: palmsoftware/quick-ocp@8be2b2ca321e0827467e1acc0a79084f66fc69e5 # v0.0.25
         with:
           ocpPullSecret: $OCP_PULL_SECRET
           bundleCache: true
