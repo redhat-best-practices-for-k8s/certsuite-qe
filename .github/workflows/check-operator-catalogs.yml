@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       ocp_versions:
-        description: 'Comma-separated list of OCP versions to check (e.g., 4.14,4.17,4.18,4.19,4.20)'
+        description: 'Comma-separated list of OCP versions to check (e.g., 4.14,4.17,4.18,4.19,4.20,4.21)'
         required: false
-        default: '4.14,4.16,4.17,4.18,4.19,4.20'
+        default: '4.14,4.16,4.17,4.18,4.19,4.20,4.21'
 
 permissions: read-all
 
@@ -47,7 +47,7 @@ jobs:
             VERSIONS="${{ github.event.inputs.ocp_versions }}"
           else
             # Default versions for scheduled runs
-            VERSIONS="4.14,4.16,4.17,4.18,4.19,4.20"
+            VERSIONS="4.14,4.16,4.17,4.18,4.19,4.20,4.21"
           fi
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
           echo "Checking OCP versions: $VERSIONS"
