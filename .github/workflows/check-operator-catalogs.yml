@@ -53,9 +53,11 @@ jobs:
           echo "Checking OCP versions: $VERSIONS"
 
       - name: Install opm (Operator Package Manager)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          # Retry function for flaky GitHub API calls
-          retry_curl() {
+          # Retry function for flaky API/download calls
+          retry() {
             local max_attempts=5
             local delay=5
             local attempt=1
@@ -72,15 +74,15 @@ jobs:
             return 1
           }
 
-          # Get latest opm version from GitHub API
-          OPM_VERSION=$(retry_curl curl -sL "https://api.github.com/repos/operator-framework/operator-registry/releases/latest" | grep '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+          # Get latest opm version using gh api (authenticated, no rate limiting)
+          OPM_VERSION=$(retry gh api repos/operator-framework/operator-registry/releases/latest --jq '.tag_name')
           if [[ -z "$OPM_VERSION" ]]; then
             echo "❌ Failed to get opm version from GitHub API"
             exit 1
           fi
           echo "Installing opm version: $OPM_VERSION"
-          
-          retry_curl curl -sLO "https://github.com/operator-framework/operator-registry/releases/download/${OPM_VERSION}/linux-amd64-opm"
+
+          retry curl --fail -sLO "https://github.com/operator-framework/operator-registry/releases/download/${OPM_VERSION}/linux-amd64-opm"
           chmod +x linux-amd64-opm
           sudo mv linux-amd64-opm /usr/local/bin/opm
           opm version
