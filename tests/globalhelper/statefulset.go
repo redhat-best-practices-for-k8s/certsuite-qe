@@ -17,7 +17,7 @@ import (
 
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *appsv1.StatefulSet, timeout time.Duration) error {
-	return createAndWaitUntilStatefulSetIsReady(egiClients.New(""), statefulSet, timeout)
+	return createAndWaitUntilStatefulSetIsReady(GetEcoGoinfraClient(), statefulSet, timeout)
 }
 
 func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulSet *appsv1.StatefulSet, timeout time.Duration) error {
@@ -58,7 +58,7 @@ func isStatefulSetReady(client *egiClients.Settings, namespace, statefulSetName 
 }
 
 func GetRunningStatefulSet(namespace, statefulSetName string) (*appsv1.StatefulSet, error) {
-	return getRunningStatefulSet(egiClients.New(""), namespace, statefulSetName)
+	return getRunningStatefulSet(GetEcoGoinfraClient(), namespace, statefulSetName)
 }
 
 func getRunningStatefulSet(client *egiClients.Settings, namespace, statefulSetName string) (*appsv1.StatefulSet, error) {
