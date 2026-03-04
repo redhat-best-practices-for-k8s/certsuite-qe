@@ -61,7 +61,6 @@ func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.No
 
 func NodesHaveHugePagesEnabled(resourceName string) bool {
 	// check if the node has hugepages enabled
-	hugepagesEnabled := false
 	nodes, err := GetAPIClient().Nodes().List(context.TODO(), metav1.ListOptions{
 		LabelSelector: "node-role.kubernetes.io/worker-cnf",
 	})
@@ -72,11 +71,11 @@ func NodesHaveHugePagesEnabled(resourceName string) bool {
 
 	for _, node := range nodes.Items {
 		if NodeHasHugePagesEnabled(&node, resourceName) {
-			hugepagesEnabled = true
+			return true
 		}
 	}
 
-	return hugepagesEnabled
+	return false
 }
 
 func NodeHasHugePagesEnabled(node *corev1.Node, resourceName string) bool {
