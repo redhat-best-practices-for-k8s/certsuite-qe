@@ -49,98 +49,59 @@ func IsTestCaseSkippedInClaimReport(testCaseName string, claimReport claim.Root)
 // RemoveContentsFromReportDir removes all files from report dir.
 // Returns nil if the directory is empty or doesn't exist (graceful cleanup).
 func RemoveContentsFromReportDir(reportDir string) error {
-	// Handle empty path gracefully (e.g., when test skips before directory creation).
-	if reportDir == "" {
-		klog.V(5).Info("report directory path is empty, skipping cleanup")
-
-		return nil
-	}
-
-	// Check if directory exists before attempting cleanup.
-	if _, err := os.Stat(reportDir); os.IsNotExist(err) {
-		klog.V(5).Info(fmt.Sprintf("report directory %s does not exist, skipping cleanup", reportDir))
-
-		return nil
-	}
-
-	klog.V(5).Info(fmt.Sprintf("removing all files from %s directory", reportDir))
-
-	certsuiteReportDir, err := os.Open(reportDir)
-	if err != nil {
-		return fmt.Errorf("failed to open report directory: %w", err)
-	}
-
-	defer certsuiteReportDir.Close()
-
-	names, err := certsuiteReportDir.Readdirnames(-1)
-	if err != nil {
-		return err
-	}
-
-	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(reportDir, name))
-		if err != nil {
-			return fmt.Errorf("failed to remove content from report directory: %w", err)
-		}
-
-		klog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
-			name,
-			reportDir))
-	}
-
-	// Delete the report directory
-	err = os.Remove(reportDir)
-	if err != nil {
-		return fmt.Errorf("failed to remove report directory: %w", err)
-	}
-
-	return nil
+	return removeContentsFromDir(reportDir, "report")
 }
 
 // RemoveContentsFromConfigDir removes all files from config dir.
 // Returns nil if the directory is empty or doesn't exist (graceful cleanup).
 func RemoveContentsFromConfigDir(configDir string) error {
+	return removeContentsFromDir(configDir, "config")
+}
+
+func removeContentsFromDir(dirPath, dirType string) error {
 	// Handle empty path gracefully (e.g., when test skips before directory creation).
-	if configDir == "" {
-		klog.V(5).Info("config directory path is empty, skipping cleanup")
+	if dirPath == "" {
+		klog.V(5).Info(dirType + " directory path is empty, skipping cleanup")
 
 		return nil
 	}
 
 	// Check if directory exists before attempting cleanup.
-	if _, err := os.Stat(configDir); os.IsNotExist(err) {
-		klog.V(5).Info(fmt.Sprintf("config directory %s does not exist, skipping cleanup", configDir))
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		klog.V(5).Info(fmt.Sprintf("%s directory %s does not exist, skipping cleanup", dirType, dirPath))
 
 		return nil
 	}
 
-	certsuiteConfigDir, err := os.Open(configDir)
+	klog.V(5).Info(fmt.Sprintf("removing all files from %s directory", dirPath))
+
+	dir, err := os.Open(dirPath)
 	if err != nil {
-		return fmt.Errorf("failed to open config directory: %w", err)
+		return fmt.Errorf("failed to open %s directory: %w", dirType, err)
 	}
 
-	defer certsuiteConfigDir.Close()
+	defer dir.Close()
 
-	names, err := certsuiteConfigDir.Readdirnames(-1)
+	names, err := dir.Readdirnames(-1)
 	if err != nil {
 		return err
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(configDir, name))
+		err = os.RemoveAll(filepath.Join(dirPath, name))
 		if err != nil {
-			return fmt.Errorf("failed to remove content from config directory: %w", err)
+			return fmt.Errorf("failed to remove content from %s directory: %w", dirType, err)
 		}
 
 		klog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
 			name,
-			configDir))
+			dirPath))
 	}
 
-	// Delete the config directory
-	err = os.Remove(configDir)
+	// Delete the directory
+	err = os.Remove(dirPath)
 	if err != nil {
-		return fmt.Errorf("failed to remove config directory: %w", err)
+		return fmt.Errorf("failed to remove %s directory: %w", dirType, err)
 	}
 
 	return nil
