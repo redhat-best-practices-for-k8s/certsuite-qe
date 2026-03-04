@@ -199,13 +199,9 @@ func isTestCaseInExpectedStatusInClaimReport(
 }
 
 func removeCharactersFromString(stringToFormat string, charactersToRemove []string) string {
-	var formattedString string
+	formattedString := stringToFormat
 
-	for index, element := range charactersToRemove {
-		if index == 0 {
-			formattedString = strings.ReplaceAll(stringToFormat, element, "")
-		}
-
+	for _, element := range charactersToRemove {
 		formattedString = strings.ReplaceAll(formattedString, element, "")
 	}
 
