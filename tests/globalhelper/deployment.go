@@ -29,7 +29,7 @@ func IsDeploymentReady(client *egiClients.Settings, namespace, deploymentName st
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
 func CreateAndWaitUntilDeploymentIsReady(deployment *appsv1.Deployment,
 	timeout time.Duration) error {
-	return createAndWaitUntilDeploymentIsReady(egiClients.New(""), deployment, timeout)
+	return createAndWaitUntilDeploymentIsReady(GetEcoGoinfraClient(), deployment, timeout)
 }
 
 // createAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
@@ -105,7 +105,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 // GetRunningDeployment returns a running deployment.
 func GetRunningDeployment(namespace, deploymentName string) (*appsv1.Deployment, error) {
-	return getRunningDeployment(egiClients.New(""), namespace, deploymentName)
+	return getRunningDeployment(GetEcoGoinfraClient(), namespace, deploymentName)
 }
 
 func getRunningDeployment(client *egiClients.Settings, namespace, deploymentName string) (*appsv1.Deployment, error) {
@@ -118,7 +118,7 @@ func getRunningDeployment(client *egiClients.Settings, namespace, deploymentName
 }
 
 func DeleteDeployment(name, namespace string) error {
-	return deleteDeployment(egiClients.New(""), name, namespace)
+	return deleteDeployment(GetEcoGoinfraClient(), name, namespace)
 }
 
 func deleteDeployment(client *egiClients.Settings, name, namespace string) error {

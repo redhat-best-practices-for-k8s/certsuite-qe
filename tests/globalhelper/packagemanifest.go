@@ -5,14 +5,13 @@ import (
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
-	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiOLM "github.com/openshift-kni/eco-goinfra/pkg/olm"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // QueryPackageManifest queries the package manifest for the operator.
 func QueryPackageManifestForVersion(operatorName, operatorNamespace, channel string) (string, error) {
-	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
 	if err != nil {
 		return "", err
@@ -44,7 +43,7 @@ func QueryPackageManifestForVersion(operatorName, operatorNamespace, channel str
 }
 
 func QueryPackageManifestForDefaultChannel(operatorName, operatorNamespace string) (string, error) {
-	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
 	if err != nil {
 		return "", err
@@ -66,7 +65,7 @@ func QueryPackageManifestForDefaultChannel(operatorName, operatorNamespace strin
 // and returns the first matching package name. This is useful for finding operators whose
 // package names may vary between OCP versions (e.g., "cloudbees-ci" vs "cloudbees-ci-rhmp").
 func QueryPackageManifestForOperatorName(searchString, operatorNamespace string) (string, error) {
-	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
 	if err != nil {
 		return "", err
@@ -88,7 +87,7 @@ func QueryPackageManifestForOperatorName(searchString, operatorNamespace string)
 // package names and catalog sources may vary between OCP versions (e.g., "ovms-operator" in "certified-operators"
 // vs "ovms-operator-rhmp" in "redhat-marketplace").
 func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorNamespace string) (string, string, error) {
-	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
 	if err != nil {
 		return "", "", err
@@ -110,7 +109,7 @@ func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorN
 // QueryPackageManifestForAvailableChannelAndVersion searches for an operator and returns the first available channel
 // that has versions, along with a version from that channel. This is more robust than requiring a specific channel.
 func QueryPackageManifestForAvailableChannelAndVersion(operatorName, operatorNamespace string) (string, string, error) {
-	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
 	if err != nil {
 		return "", "", err
@@ -144,7 +143,7 @@ func QueryPackageManifestForAvailableChannelAndVersion(operatorName, operatorNam
 // that has versions, along with the version and the actual CSV name from that channel. This handles cases where
 // the CSV name doesn't match the package name pattern (e.g., package "ovms-operator-rhmp" has CSV "openvino-operator.v1.2.0").
 func QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operatorNamespace string) (string, string, string, error) {
-	pkgManifest, err := egiOLM.ListPackageManifest(egiClients.New(""), operatorNamespace, client.ListOptions{})
+	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
 	if err != nil {
 		return "", "", "", err

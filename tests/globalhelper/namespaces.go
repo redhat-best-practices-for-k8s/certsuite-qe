@@ -45,13 +45,13 @@ func WaitForNamespaceDeletion(cs corev1Typed.CoreV1Interface, nsName string, tim
 }
 
 func CreateNamespace(namespace string) error {
-	return createNamespace(namespace, egiClients.New(""))
+	return createNamespace(namespace, GetEcoGoinfraClient())
 }
 
 // CreatePrivilegedNamespace creates a namespace with Pod Security Standards set to privileged mode.
 // This allows hostIPC, hostPID, and other privileged operations needed for access control tests.
 func CreatePrivilegedNamespace(namespace string) error {
-	return createPrivilegedNamespace(namespace, egiClients.New(""))
+	return createPrivilegedNamespace(namespace, GetEcoGoinfraClient())
 }
 
 // Create creates a new namespace with the given name.
@@ -91,7 +91,7 @@ func DeleteNamespaceAndWait(namespace string, timeout time.Duration) error {
 		return nil
 	}
 
-	return deleteNamespaceAndWait(egiClients.New(""), namespace, timeout)
+	return deleteNamespaceAndWait(GetEcoGoinfraClient(), namespace, timeout)
 }
 
 func deleteNamespaceAndWait(client *egiClients.Settings, namespace string, timeout time.Duration) error {
@@ -108,7 +108,7 @@ func deleteNamespaceAndWait(client *egiClients.Settings, namespace string, timeo
 }
 
 func NamespaceExists(namespace string) (bool, error) {
-	return namespaceExists(namespace, egiClients.New(""))
+	return namespaceExists(namespace, GetEcoGoinfraClient())
 }
 
 func namespaceExists(namespace string, client *egiClients.Settings) (bool, error) {
@@ -266,7 +266,7 @@ func cleanPodDisruptionBudget(namespace string, client *egiClients.Settings) err
 }
 
 func CleanNamespace(namespace string) error {
-	return cleanNamespace(namespace, GetAPIClient(), egiClients.New(""))
+	return cleanNamespace(namespace, GetAPIClient(), GetEcoGoinfraClient())
 }
 
 // Clean cleans all dangling objects from the given namespace.

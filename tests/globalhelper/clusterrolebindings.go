@@ -8,7 +8,7 @@ import (
 
 // CreateClusterRoleBinding creates a cluster role binding.
 func CreateClusterRoleBinding(clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
-	return createClusterRoleBinding(egiClients.New(""), clusterRoleBinding)
+	return createClusterRoleBinding(GetEcoGoinfraClient(), clusterRoleBinding)
 }
 
 func createClusterRoleBinding(client *egiClients.Settings, clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
@@ -25,7 +25,7 @@ func createClusterRoleBinding(client *egiClients.Settings, clusterRoleBinding *r
 
 // DeleteClusterRoleBinding deletes a cluster role binding.
 func DeleteClusterRoleBinding(clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
-	return deleteClusterRoleBinding(egiClients.New(""), clusterRoleBinding)
+	return deleteClusterRoleBinding(GetEcoGoinfraClient(), clusterRoleBinding)
 }
 
 func deleteClusterRoleBinding(client *egiClients.Settings, clusterRoleBinding *rbacv1.ClusterRoleBinding) error {
@@ -39,7 +39,7 @@ func deleteClusterRoleBinding(client *egiClients.Settings, clusterRoleBinding *r
 }
 
 func DeleteClusterRoleBindingByName(name string) error {
-	return deleteClusterRoleBindingByName(egiClients.New(""), name)
+	return deleteClusterRoleBindingByName(GetEcoGoinfraClient(), name)
 }
 
 func deleteClusterRoleBindingByName(client *egiClients.Settings, name string) error {

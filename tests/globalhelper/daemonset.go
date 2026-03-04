@@ -17,7 +17,7 @@ import (
 )
 
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
-	return createAndWaitUntilDaemonSetIsReady(egiClients.New(""), daemonSet, timeout)
+	return createAndWaitUntilDaemonSetIsReady(GetEcoGoinfraClient(), daemonSet, timeout)
 }
 
 // CreateAndWaitUntilDaemonSetIsReady creates daemonSet and waits until all pods are up and running.
@@ -70,7 +70,7 @@ func isDaemonSetReady(client *egiClients.Settings, namespace string, name string
 }
 
 func GetDaemonSetPullPolicy(ds *appsv1.DaemonSet) (corev1.PullPolicy, error) {
-	return getDaemonSetPullPolicy(ds, egiClients.New(""))
+	return getDaemonSetPullPolicy(ds, GetEcoGoinfraClient())
 }
 
 func getDaemonSetPullPolicy(daemonset *appsv1.DaemonSet, client *egiClients.Settings) (corev1.PullPolicy, error) {
@@ -83,7 +83,7 @@ func getDaemonSetPullPolicy(daemonset *appsv1.DaemonSet, client *egiClients.Sett
 }
 
 func GetRunningDaemonset(ds *appsv1.DaemonSet) (*appsv1.DaemonSet, error) {
-	return getRunningDaemonset(ds, egiClients.New(""))
+	return getRunningDaemonset(ds, GetEcoGoinfraClient())
 }
 
 func getRunningDaemonset(daemonset *appsv1.DaemonSet, client *egiClients.Settings) (*appsv1.DaemonSet, error) {
