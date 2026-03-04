@@ -3,7 +3,6 @@ package globalhelper
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -17,13 +16,7 @@ import (
 
 // OpenClaimReport opens claim.json file and returns struct.
 func OpenClaimReport(reportDir string) (*claim.Root, error) {
-	dataClaim, err := os.Open(path.Join(reportDir, globalparameters.DefaultClaimFileName))
-	if err != nil {
-		return nil, fmt.Errorf("error opening %s report file: %w", globalparameters.DefaultClaimFileName, err)
-	}
-
-	byteValueClaim, err := io.ReadAll(dataClaim)
-
+	byteValueClaim, err := os.ReadFile(path.Join(reportDir, globalparameters.DefaultClaimFileName))
 	if err != nil {
 		return nil, fmt.Errorf("error reading %s report file: %w", globalparameters.DefaultClaimFileName, err)
 	}
