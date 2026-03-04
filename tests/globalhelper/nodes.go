@@ -40,12 +40,15 @@ func addControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node)
 
 func removeControlPlaneTaint(client corev1Typed.CoreV1Interface, node *corev1.Node) error {
 	// remove the control-plane:NoSchedule taint from the master
-	// remove the control-plane:NoSchedule taint from the master
-	for i, taint := range node.Spec.Taints {
-		if taint.Key == masterTaintKey || taint.Key == controlPlaneTaintKey {
-			node.Spec.Taints = append(node.Spec.Taints[:i], node.Spec.Taints[i+1:]...)
+	filteredTaints := make([]corev1.Taint, 0, len(node.Spec.Taints))
+
+	for _, taint := range node.Spec.Taints {
+		if taint.Key != masterTaintKey && taint.Key != controlPlaneTaintKey {
+			filteredTaints = append(filteredTaints, taint)
 		}
 	}
+
+	node.Spec.Taints = filteredTaints
 
 	_, err := client.Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
 
