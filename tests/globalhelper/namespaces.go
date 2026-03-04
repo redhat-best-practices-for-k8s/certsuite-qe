@@ -117,19 +117,10 @@ func namespaceExists(namespace string, client *egiClients.Settings) (bool, error
 	return builder.Exists(), nil
 }
 
-func cleanNetworkAttachmentDefinition(namespace string, client *egiClients.Settings, rtc runtimeclient.Client) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
+func cleanNetworkAttachmentDefinition(rtc runtimeclient.Client) error {
 	nadList := &v1.NetworkAttachmentDefinitionList{}
 
-	err = rtc.List(context.TODO(), nadList)
+	err := rtc.List(context.TODO(), nadList)
 	if err != nil {
 		return err
 	}
@@ -148,17 +139,8 @@ func cleanNetworkAttachmentDefinition(namespace string, client *egiClients.Setti
 	return nil
 }
 
-func cleanSubscriptions(namespace string, client *egiClients.Settings, subclient v1alpha1typed.OperatorsV1alpha1Interface) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	err = subclient.Subscriptions(namespace).DeleteCollection(context.TODO(),
+func cleanSubscriptions(namespace string, subclient v1alpha1typed.OperatorsV1alpha1Interface) error {
+	err := subclient.Subscriptions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		},
@@ -171,17 +153,8 @@ func cleanSubscriptions(namespace string, client *egiClients.Settings, subclient
 	return nil
 }
 
-func cleanCSVs(namespace string, client *egiClients.Settings, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	err = opclient.ClusterServiceVersions(namespace).DeleteCollection(context.TODO(),
+func cleanCSVs(namespace string, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
+	err := opclient.ClusterServiceVersions(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		},
@@ -194,17 +167,8 @@ func cleanCSVs(namespace string, client *egiClients.Settings, opclient v1alpha1t
 	return nil
 }
 
-func cleanInstallPlans(namespace string, client *egiClients.Settings, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	err = opclient.InstallPlans(namespace).DeleteCollection(context.TODO(),
+func cleanInstallPlans(namespace string, opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
+	err := opclient.InstallPlans(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		},
@@ -218,15 +182,6 @@ func cleanInstallPlans(namespace string, client *egiClients.Settings, opclient v
 }
 
 func cleanPVCs(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
 	pvcBuilder, err := egiStorage.ListPVC(client, namespace, metav1.ListOptions{})
 	if err != nil {
 		return err
@@ -243,16 +198,7 @@ func cleanPVCs(namespace string, client *egiClients.Settings) error {
 }
 
 func cleanPodDisruptionBudget(namespace string, client *egiClients.Settings) error {
-	nsExist, err := namespaceExists(namespace, client)
-	if err != nil {
-		return err
-	}
-
-	if !nsExist {
-		return nil
-	}
-
-	err = client.K8sClient.PolicyV1().PodDisruptionBudgets(namespace).DeleteCollection(context.TODO(),
+	err := client.K8sClient.PolicyV1().PodDisruptionBudgets(namespace).DeleteCollection(context.TODO(),
 		metav1.DeleteOptions{
 			GracePeriodSeconds: ptr.To[int64](0),
 		},
@@ -299,17 +245,17 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 		return err
 	}
 
-	err = cleanNetworkAttachmentDefinition(namespace, egiClient, clientSet.Client)
+	err = cleanNetworkAttachmentDefinition(clientSet.Client)
 	if err != nil {
 		return err
 	}
 
-	err = cleanSubscriptions(namespace, egiClient, clientSet.OperatorsV1alpha1Interface)
+	err = cleanSubscriptions(namespace, clientSet.OperatorsV1alpha1Interface)
 	if err != nil {
 		return err
 	}
 
-	err = cleanCSVs(namespace, egiClient, clientSet.OperatorsV1alpha1Interface)
+	err = cleanCSVs(namespace, clientSet.OperatorsV1alpha1Interface)
 	if err != nil {
 		return err
 	}
@@ -319,5 +265,5 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 		return err
 	}
 
-	return cleanInstallPlans(namespace, egiClient, clientSet.OperatorsV1alpha1Interface)
+	return cleanInstallPlans(namespace, clientSet.OperatorsV1alpha1Interface)
 }
