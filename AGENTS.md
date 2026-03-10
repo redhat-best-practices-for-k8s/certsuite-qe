@@ -163,7 +163,7 @@ Available test features (set via `FEATURES` env var):
 - `preflight` - Red Hat preflight certification checks
 
 ### Go Version
-This project uses Go 1.26.0.
+This project uses Go 1.26.1.
 
 ### Kind Cluster Limitations
 The following tests are known to fail on local Kind clusters:
