@@ -33,20 +33,18 @@ var (
 		testPodLabelPrefixName: testPodLabelValue,
 		"app":                  "test",
 	}
-	CertsuiteTargetOperatorLabels             = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
-	CertsuiteTargetCrdFilters                 = []string{"grafanadashboards.grafana.integreatly.org"}
-	OperatorGroupName                         = "operator-test-operator-group"
-	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
-	CertifiedOperatorGroup                    = "certified-operators"
-	RedhatOperatorGroup                       = "redhat-operators"
-	CommunityOperatorGroup                    = "community-operators"
-	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorPrefixLightweight                 = "prometheus-exporter-operator"
-	OperatorPrefixKiali                       = "kiali-operator"
-	CertifiedOperatorPrefix                   = "grafana-operator"
-	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
-	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
-	SingleOrMultiNamespacedOperatorGroup      = "single-or-multi-og"
+	CertsuiteTargetOperatorLabels        = fmt.Sprintf("%s: %s", "redhat-best-practices-for-k8s.com/operator", "target")
+	CertsuiteTargetCrdFilters            = []string{"grafanadashboards.grafana.integreatly.org"}
+	OperatorGroupName                    = "operator-test-operator-group"
+	OperatorLabel                        = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
+	CertifiedOperatorGroup               = "certified-operators"
+	RedhatOperatorGroup                  = "redhat-operators"
+	CommunityOperatorGroup               = "community-operators"
+	OperatorSourceNamespace              = "openshift-marketplace"
+	OperatorPrefixLightweight            = "prometheus-exporter-operator"
+	OperatorPrefixKiali                  = "kiali-operator"
+	CertifiedOperatorPrefix              = "grafana-operator"
+	SingleOrMultiNamespacedOperatorGroup = "single-or-multi-og"
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,

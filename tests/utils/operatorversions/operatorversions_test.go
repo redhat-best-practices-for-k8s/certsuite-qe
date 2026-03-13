@@ -62,7 +62,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedCertifiedPkg:   "cockroachdb-certified",
 			expectedCommunityPkg:   "grafana-operator",
 			expectedLightweightPkg: "prometheus-exporter-operator",
-			expectedUncertifiedPkg: "cockroachdb",
+			expectedUncertifiedPkg: "redis-operator",
 		},
 		{
 			name:                   "OCP 4.19 uses default config",
@@ -70,7 +70,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedCertifiedPkg:   "cockroachdb-certified",
 			expectedCommunityPkg:   "grafana-operator",
 			expectedLightweightPkg: "prometheus-exporter-operator",
-			expectedUncertifiedPkg: "cockroachdb",
+			expectedUncertifiedPkg: "redis-operator",
 		},
 		{
 			name:                   "OCP 4.20 uses 4.20-specific config",
@@ -78,7 +78,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedCertifiedPkg:   "mongodb-enterprise",
 			expectedCommunityPkg:   "grafana-operator",
 			expectedLightweightPkg: "prometheus-exporter-operator",
-			expectedUncertifiedPkg: "cockroachdb",
+			expectedUncertifiedPkg: "redis-operator",
 		},
 		{
 			name:                   "OCP 4.21 uses 4.21-specific config",
@@ -86,7 +86,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedCertifiedPkg:   "mongodb-enterprise",
 			expectedCommunityPkg:   "grafana-operator",
 			expectedLightweightPkg: "prometheus-exporter-operator",
-			expectedUncertifiedPkg: "cockroachdb",
+			expectedUncertifiedPkg: "redis-operator",
 		},
 		{
 			name:                   "Unknown future version falls back to latest 4.20+ config",
@@ -94,7 +94,7 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedCertifiedPkg:   "mongodb-enterprise",
 			expectedCommunityPkg:   "grafana-operator",
 			expectedLightweightPkg: "prometheus-exporter-operator",
-			expectedUncertifiedPkg: "cockroachdb",
+			expectedUncertifiedPkg: "redis-operator",
 		},
 	}
 
