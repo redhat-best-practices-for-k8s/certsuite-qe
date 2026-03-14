@@ -27,6 +27,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 		randomCertsuiteConfigDir string
 		grafanaOperatorName      string
 		certifiedOperator        operatorversions.OperatorInfo
+		uncertifiedOperator      operatorversions.OperatorInfo
 	)
 
 	BeforeEach(func() {
@@ -46,28 +47,30 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 		ocpVersion, err := globalhelper.GetClusterVersion()
 		Expect(err).ToNot(HaveOccurred(), "Error getting cluster version")
 		certifiedOperator = operatorversions.GetCertifiedOperator(ocpVersion)
+		uncertifiedOperator = operatorversions.GetUncertifiedOperator(ocpVersion)
 		By(fmt.Sprintf("Using certified operator for OCP %s: %s", ocpVersion, certifiedOperator.String()))
+		By(fmt.Sprintf("Using uncertified operator for OCP %s: %s", ocpVersion, uncertifiedOperator.String()))
 
 		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomCertsuiteConfigDir)
 
-		By("Deploy cockroachdb for testing")
-		// cockroachdb: not in certified-operators group in catalog, for negative test cases
+		By("Deploy uncertified operator for testing: " + uncertifiedOperator.PackageName)
+		// uncertified operator: not in certified-operators group in catalog, for negative test cases
 		err = tshelper.DeployOperatorSubscription(
-			"cockroachdb",
-			"cockroachdb",
-			"stable-v6.x",
+			uncertifiedOperator.PackageName,
+			uncertifiedOperator.PackageName,
+			uncertifiedOperator.Channel,
 			randomNamespace,
-			tsparams.CommunityOperatorGroup,
+			uncertifiedOperator.CatalogSource,
 			tsparams.OperatorSourceNamespace,
 			"",
 			v1alpha1.ApprovalAutomatic,
 		)
 		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			tsparams.UncertifiedOperatorPrefixCockroach)
+			uncertifiedOperator.PackageName)
 
-		err = tshelper.WaitUntilOperatorIsReady(tsparams.UncertifiedOperatorPrefixCockroach,
+		err = tshelper.WaitUntilOperatorIsReady(uncertifiedOperator.CSVPrefix,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+tsparams.UncertifiedOperatorPrefixCockroach+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+uncertifiedOperator.PackageName+
 			" is not ready")
 
 		By("Query the packagemanifest for the certified operator: " + certifiedOperator.PackageName)
@@ -144,14 +147,14 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 			By("Label operator to be certified")
 			Eventually(func() error {
 				return tshelper.AddLabelToInstalledCSV(
-					tsparams.UncertifiedOperatorPrefixCockroach,
+					uncertifiedOperator.CSVPrefix,
 					randomNamespace,
 					tsparams.OperatorLabel)
 			}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-				ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
+				ErrorLabelingOperatorStr+uncertifiedOperator.CSVPrefix)
 
 			By("Assert operator CSV is ready")
-			csv, err := tshelper.GetCsvByPrefix(tsparams.UncertifiedOperatorPrefixCockroach, randomNamespace)
+			csv, err := tshelper.GetCsvByPrefix(uncertifiedOperator.CSVPrefix, randomNamespace)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(csv).ToNot(BeNil())
 
@@ -190,17 +193,17 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
-				tsparams.UncertifiedOperatorPrefixCockroach,
+				uncertifiedOperator.CSVPrefix,
 				randomNamespace,
 				tsparams.OperatorLabel)
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Not(HaveOccurred()),
-			ErrorLabelingOperatorStr+tsparams.UncertifiedOperatorPrefixCockroach)
+			ErrorLabelingOperatorStr+uncertifiedOperator.CSVPrefix)
 
 		By("Assert both operator CSVs are ready")
 		certifiedCSV, err := tshelper.GetCsvByPrefix(certifiedOperator.CSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(certifiedCSV).ToNot(BeNil())
-		uncertifiedCSV, err := tshelper.GetCsvByPrefix(tsparams.UncertifiedOperatorPrefixCockroach, randomNamespace)
+		uncertifiedCSV, err := tshelper.GetCsvByPrefix(uncertifiedOperator.CSVPrefix, randomNamespace)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(uncertifiedCSV).ToNot(BeNil())
 

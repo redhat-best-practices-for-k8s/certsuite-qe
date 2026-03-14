@@ -48,18 +48,16 @@ var (
 	CertifiedContainerURLCockroachDB    = "registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17" // 'latest' tag is not available
 	UncertifiedContainerURLCnfTest      = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
 
-	TestCaseOperatorAffiliatedCertName        = "affiliated-certification-operator-is-certified"
-	TestHelmChartCertified                    = "affiliated-certification-helmchart-is-certified"
-	TestHelmVersion                           = "affiliated-certification-helm-version"
-	OperatorGroupName                         = "affiliatedcert-test-operator-group"
-	CertifiedOperatorGroup                    = "certified-operators"
-	CertifiedOperatorDisplayName              = "Certified Operators"
-	CommunityOperatorGroup                    = "community-operators"
-	OperatorSourceNamespace                   = "openshift-marketplace"
-	OperatorLabel                             = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
-	UncertifiedOperatorPrefixCockroach        = "cockroachdb"
-	CertifiedOperatorPrefixCockroachCertified = "cockroach-operator"
-	CertifiedOperatorPrefix                   = "grafana-operator"
-	UncertifiedOperatorPrefixSriov            = "sriov-fec"
-	UncertifiedOperatorFullSriov              = "sriov-fec.v1.2.1"
+	TestCaseOperatorAffiliatedCertName = "affiliated-certification-operator-is-certified"
+	TestHelmChartCertified             = "affiliated-certification-helmchart-is-certified"
+	TestHelmVersion                    = "affiliated-certification-helm-version"
+	OperatorGroupName                  = "affiliatedcert-test-operator-group"
+	CertifiedOperatorGroup             = "certified-operators"
+	CertifiedOperatorDisplayName       = "Certified Operators"
+	CommunityOperatorGroup             = "community-operators"
+	OperatorSourceNamespace            = "openshift-marketplace"
+	OperatorLabel                      = map[string]string{"redhat-best-practices-for-k8s.com/operator": "target"}
+	CertifiedOperatorPrefix            = "grafana-operator"
+	UncertifiedOperatorPrefixSriov     = "sriov-fec"
+	UncertifiedOperatorFullSriov       = "sriov-fec.v1.2.1"
 )

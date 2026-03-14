@@ -24,15 +24,18 @@ const (
 
 // OperatorInfo contains the configuration for a specific operator.
 type OperatorInfo struct {
-	// PackageName is the name of the operator package in the catalog (e.g., "cockroachdb-certified")
+	// PackageName is the name of the operator package in the catalog (e.g., "redis-operator")
 	PackageName string
 
 	// CatalogSource is the catalog containing this operator (e.g., "certified-operators")
 	CatalogSource string
 
-	// CSVPrefix is the prefix used in the ClusterServiceVersion name (e.g., "cockroach-operator")
+	// CSVPrefix is the prefix used in the ClusterServiceVersion name (e.g., "redis-operator")
 	// This is used when labeling or waiting for the operator to be ready
 	CSVPrefix string
+
+	// Channel is the subscription channel to use (e.g., "stable"). If empty, the default channel is used.
+	Channel string
 
 	// Description provides context about what this operator is used for in tests
 	Description string
@@ -60,7 +63,7 @@ type OCPOperatorConfig struct {
 	ClusterLoggingOperator OperatorInfo
 
 	// UncertifiedOperator is an uncertified operator used for negative tests
-	// This is typically cockroachdb (not cockroachdb-certified) from community-operators
+	// This is an operator from community-operators that is NOT in certified-operators
 	UncertifiedOperator OperatorInfo
 }
 
@@ -96,10 +99,11 @@ var DefaultOperatorConfig = OCPOperatorConfig{
 		Description:   "Cluster logging operator for cluster-wide operator tests",
 	},
 	UncertifiedOperator: OperatorInfo{
-		PackageName:   "cockroachdb",
+		PackageName:   "redis-operator",
 		CatalogSource: CatalogCommunityOperators,
-		CSVPrefix:     "cockroachdb",
-		Description:   "Uncertified CockroachDB operator for negative certification tests",
+		CSVPrefix:     "redis-operator",
+		Channel:       "stable",
+		Description:   "Redis operator for negative certification tests (not in certified-operators)",
 	},
 }
 
@@ -142,15 +146,17 @@ var OCP420OperatorConfig = OCPOperatorConfig{
 		Description:   "Cluster logging operator for cluster-wide operator tests",
 	},
 	UncertifiedOperator: OperatorInfo{
-		PackageName:   "cockroachdb",
+		PackageName:   "redis-operator",
 		CatalogSource: CatalogCommunityOperators,
-		CSVPrefix:     "cockroachdb",
-		Description:   "Uncertified CockroachDB operator for negative certification tests",
+		CSVPrefix:     "redis-operator",
+		Channel:       "stable",
+		Description:   "Redis operator for negative certification tests (not in certified-operators)",
 	},
 }
 
 // OCP421OperatorConfig is the configuration for OCP 4.21.
 // cockroachdb-certified remains unavailable in 4.21 catalogs, same as 4.20.
+// cockroachdb (community) is also broken due to deprecated gcr.io image dependency.
 var OCP421OperatorConfig = OCPOperatorConfig{
 	OCPVersion: "4.21",
 	CertifiedOperator: OperatorInfo{
@@ -178,10 +184,11 @@ var OCP421OperatorConfig = OCPOperatorConfig{
 		Description:   "Cluster logging operator for cluster-wide operator tests",
 	},
 	UncertifiedOperator: OperatorInfo{
-		PackageName:   "cockroachdb",
+		PackageName:   "redis-operator",
 		CatalogSource: CatalogCommunityOperators,
-		CSVPrefix:     "cockroachdb",
-		Description:   "Uncertified CockroachDB operator for negative certification tests",
+		CSVPrefix:     "redis-operator",
+		Channel:       "stable",
+		Description:   "Redis operator for negative certification tests (not in certified-operators)",
 	},
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"time"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiClusterVersion "github.com/openshift-kni/eco-goinfra/pkg/clusterversion"
@@ -11,6 +12,7 @@ import (
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	klog "k8s.io/klog/v2"
 )
 
 const (
@@ -22,31 +24,61 @@ func ValidateCatalogSources() error {
 }
 
 func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
-	validCatalogSources := []string{"certified-operators", "community-operators"}
+	requiredCatalogSources := []string{"certified-operators", "community-operators"}
 
-	catalogSources, err := opclient.CatalogSources(
-		CatalogSourceNamespace).List(context.TODO(),
-		metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
+	const (
+		timeout  = 5 * time.Minute
+		interval = 10 * time.Second
+	)
 
-	if len(catalogSources.Items) == 0 {
-		return fmt.Errorf("no catalog sources found")
-	}
+	deadline := time.Now().Add(timeout)
 
-	var foundCatalogSources []string
-	for _, catalogSource := range catalogSources.Items {
-		foundCatalogSources = append(foundCatalogSources, catalogSource.Name)
-	}
-
-	for _, validCatalogSource := range validCatalogSources {
-		if !slices.Contains(foundCatalogSources, validCatalogSource) {
-			return fmt.Errorf("catalog source %s not found", validCatalogSource)
+	for time.Now().Before(deadline) {
+		catalogSources, err := opclient.CatalogSources(
+			CatalogSourceNamespace).List(context.TODO(),
+			metav1.ListOptions{})
+		if err != nil {
+			return err
 		}
+
+		allReady := true
+
+		for _, name := range requiredCatalogSources {
+			idx := slices.IndexFunc(catalogSources.Items, func(cs v1alpha1.CatalogSource) bool {
+				return cs.Name == name
+			})
+
+			if idx == -1 {
+				klog.Infof("Catalog source %s not found yet, waiting...", name)
+				allReady = false
+
+				break
+			}
+
+			cs := catalogSources.Items[idx]
+			if cs.Status.GRPCConnectionState == nil || cs.Status.GRPCConnectionState.LastObservedState != "READY" {
+				state := "nil"
+				if cs.Status.GRPCConnectionState != nil {
+					state = cs.Status.GRPCConnectionState.LastObservedState
+				}
+
+				klog.Infof("Catalog source %s exists but is not READY (state: %s), waiting...", name, state)
+				allReady = false
+
+				break
+			}
+
+			klog.Infof("Catalog source %s is READY", name)
+		}
+
+		if allReady {
+			return nil
+		}
+
+		time.Sleep(interval)
 	}
 
-	return nil
+	return fmt.Errorf("timed out after %s waiting for catalog sources %v to be READY", timeout, requiredCatalogSources)
 }
 
 func createCatalogSource(name, url string) error {
