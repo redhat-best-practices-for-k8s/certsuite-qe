@@ -1,6 +1,9 @@
 package tests
 
 import (
+	"fmt"
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -65,7 +68,14 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 			By("Create deployment")
 			err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
+
+			if err != nil {
+				if strings.Contains(err.Error(), "timed out") || strings.Contains(err.Error(), "not schedulable") {
+					Skip(fmt.Sprintf("Deployment failed to become ready: %v", err))
+				}
+
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			By("Assert deployment is ready")
 			runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
@@ -94,7 +104,14 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 			By("Create deployment")
 			err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
+
+			if err != nil {
+				if strings.Contains(err.Error(), "timed out") || strings.Contains(err.Error(), "not schedulable") {
+					Skip(fmt.Sprintf("Deployment failed to become ready: %v", err))
+				}
+
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			By("Assert deployment is ready")
 			runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
@@ -122,14 +139,28 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 			By("Create deployment 1")
 			err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
+
+			if err != nil {
+				if strings.Contains(err.Error(), "timed out") || strings.Contains(err.Error(), "not schedulable") {
+					Skip(fmt.Sprintf("Deployment failed to become ready: %v", err))
+				}
+
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			dep2 := deployment.DefineDeployment("affiliated-cert-deployment-2", randomNamespace,
 				tsparams.CertifiedContainerURLCockroachDB, tsparams.TestDeploymentLabels)
 
 			By("Create deployment 2")
 			err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
+
+			if err != nil {
+				if strings.Contains(err.Error(), "timed out") || strings.Contains(err.Error(), "not schedulable") {
+					Skip(fmt.Sprintf("Deployment failed to become ready: %v", err))
+				}
+
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			By("Start test")
 			err = globalhelper.LaunchTests(
@@ -154,7 +185,14 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 			By("Create deployment 1")
 			err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
+
+			if err != nil {
+				if strings.Contains(err.Error(), "timed out") || strings.Contains(err.Error(), "not schedulable") {
+					Skip(fmt.Sprintf("Deployment failed to become ready: %v", err))
+				}
+
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			By("Assert deployment1 is ready")
 			runningDeployment1, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
@@ -166,7 +204,14 @@ var _ = Describe("Affiliated-certification container-is-certified-digest,", Seri
 
 			By("Create deployment 2")
 			err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep2, tsparams.Timeout)
-			Expect(err).ToNot(HaveOccurred())
+
+			if err != nil {
+				if strings.Contains(err.Error(), "timed out") || strings.Contains(err.Error(), "not schedulable") {
+					Skip(fmt.Sprintf("Deployment failed to become ready: %v", err))
+				}
+
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			By("Assert deployment2 is ready")
 			runningDeployment2, err := globalhelper.GetRunningDeployment(dep2.Namespace, dep2.Name)

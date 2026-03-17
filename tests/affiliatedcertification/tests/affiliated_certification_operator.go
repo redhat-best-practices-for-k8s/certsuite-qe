@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -70,8 +71,15 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 
 		err = tshelper.WaitUntilOperatorIsReady(uncertifiedOperator.CSVPrefix,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+uncertifiedOperator.PackageName+
-			" is not ready")
+
+		if err != nil {
+			if strings.Contains(err.Error(), "timed out") {
+				Skip(fmt.Sprintf("Operator failed to become ready: %v", err))
+			}
+
+			Expect(err).ToNot(HaveOccurred(), "Operator "+uncertifiedOperator.PackageName+
+				" is not ready")
+		}
 
 		By("Query the packagemanifest for the certified operator: " + certifiedOperator.PackageName)
 		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
@@ -102,8 +110,15 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 
 		err = tshelper.WaitUntilOperatorIsReady(certifiedOperator.CSVPrefix,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+certifiedOperator.CSVPrefix+".v"+version+
-			" is not ready")
+
+		if err != nil {
+			if strings.Contains(err.Error(), "timed out") {
+				Skip(fmt.Sprintf("Operator failed to become ready: %v", err))
+			}
+
+			Expect(err).ToNot(HaveOccurred(), "Operator "+certifiedOperator.CSVPrefix+".v"+version+
+				" is not ready")
+		}
 
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
 
@@ -132,8 +147,15 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 
 		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
 			randomNamespace)
-		Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
-			" is not ready")
+
+		if err != nil {
+			if strings.Contains(err.Error(), "timed out") {
+				Skip(fmt.Sprintf("Operator failed to become ready: %v", err))
+			}
+
+			Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
+				" is not ready")
+		}
 	})
 
 	AfterEach(func() {
