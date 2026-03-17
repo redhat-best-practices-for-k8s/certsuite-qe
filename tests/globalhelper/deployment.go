@@ -12,8 +12,6 @@ import (
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	klog "k8s.io/klog/v2"
-
-	. "github.com/onsi/gomega"
 )
 
 // IsDeploymentReady checks if a deployment is ready.
@@ -51,54 +49,79 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 	// Check if all pods in the deployment are schedulable
 	deploymentUnschedulable := false
 
-	Eventually(func() bool {
-		testDeployment, err := client.Deployments(deployment.Namespace).Get(
-			context.TODO(), deployment.Name, metav1.GetOptions{})
+	timeoutChan := time.After(timeout)
 
-		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not running, retry in 1 second", testDeployment.Name))
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
-			return false
-		}
+	running := false
+	for !running && !deploymentUnschedulable {
+		select {
+		case <-timeoutChan:
+			return fmt.Errorf("deployment %s timed out after %v waiting to become running", deployment.Name, timeout)
+		case <-ticker.C:
+			testDeployment, err := client.Deployments(deployment.Namespace).Get(
+				context.TODO(), deployment.Name, metav1.GetOptions{})
 
-		// If it is running, we can break the loop
-		if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
-			klog.V(5).Info(fmt.Sprintf("deployment %s is running", testDeployment.Name))
-			klog.V(5).Info(fmt.Sprintf("deployment %s status: %v", testDeployment.Name, testDeployment.Status))
+			if err != nil {
+				klog.V(5).Info(fmt.Sprintf(
+					"deployment %s is not running, retry in 1 second", deployment.Name))
 
-			return true
-		}
+				continue
+			}
 
-		// print the conditions
-		fmt.Printf("Deployment %s conditions: %v\n", testDeployment.Name, testDeployment.Status.Conditions)
-
-		for _, condition := range testDeployment.Status.Conditions {
-			if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
-				deploymentUnschedulable = true
+			// If it is running, we can break the loop
+			if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
+				klog.V(5).Info(fmt.Sprintf("deployment %s is running", testDeployment.Name))
+				klog.V(5).Info(fmt.Sprintf("deployment %s status: %v", testDeployment.Name, testDeployment.Status))
+				running = true
 
 				break
 			}
-		}
 
-		return deploymentUnschedulable
-	}, timeout, 1*time.Second).Should(Equal(true), "Deployment is not running")
+			// print the conditions
+			fmt.Printf("Deployment %s conditions: %v\n", testDeployment.Name, testDeployment.Status.Conditions)
+
+			for _, condition := range testDeployment.Status.Conditions {
+				if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
+					deploymentUnschedulable = true
+
+					break
+				}
+			}
+		}
+	}
 
 	if deploymentUnschedulable {
 		return fmt.Errorf("deployment %s is not schedulable", runningDeployment.Name)
 	}
 
-	Eventually(func() bool {
-		status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
-		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"deployment %s is not ready, retry in 1 second", runningDeployment.Name))
+	timeoutChan = time.After(timeout)
 
-			return false
+	ticker = time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	ready := false
+	for !ready {
+		select {
+		case <-timeoutChan:
+			return fmt.Errorf("deployment %s timed out after %v waiting to become ready", runningDeployment.Name, timeout)
+		case <-ticker.C:
+			status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
+			if err != nil {
+				klog.V(5).Info(fmt.Sprintf(
+					"deployment %s is not ready, retry in 1 second", runningDeployment.Name))
+
+				continue
+			}
+
+			if status {
+				ready = true
+
+				break
+			}
 		}
-
-		return status
-	}, timeout, 1*time.Second).Should(Equal(true), "Deployment is not ready")
+	}
 
 	return nil
 }
