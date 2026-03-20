@@ -206,7 +206,7 @@ jobs:
           sudo apt-get install -y python3-pip
 
       - name: Setup up k8s cluster
-        uses: palmsoftware/quick-k8s@669a4383b994a3bb932832fda8c28aa41e301b2d # v0.0.59
+        uses: palmsoftware/quick-k8s@bf2b7deaf3ac1bc6e857c9fa1ebaa6ccfc23b86b # v0.0.51
         with:
           disableDefaultCni: true
           numControlPlaneNodes: 1
@@ -241,7 +241,7 @@ jobs:
           extra-dirs: certsuite-sample-workload certsuite
 
       - name: Download pre-built certsuite binary
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: certsuite-binary
           path: certsuite/
@@ -250,7 +250,7 @@ jobs:
         run: chmod +x certsuite/certsuite
 
       - name: Download pre-built image
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: testimage
           path: /tmp

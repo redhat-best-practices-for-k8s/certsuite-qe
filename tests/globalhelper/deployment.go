@@ -51,7 +51,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 	timeoutChan := time.After(timeout)
 
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
 	running := false
@@ -80,7 +80,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 			}
 
 			// print the conditions
-			fmt.Printf("Deployment %s conditions: %v\n", testDeployment.Name, testDeployment.Status.Conditions)
+			klog.V(5).Infof("Deployment %s conditions: %v", testDeployment.Name, testDeployment.Status.Conditions)
 
 			for _, condition := range testDeployment.Status.Conditions {
 				if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
@@ -98,32 +98,26 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 	timeoutChan = time.After(timeout)
 
-	ticker = time.NewTicker(1 * time.Second)
+	ticker = time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
-	ready := false
-	for !ready {
+	for {
 		select {
 		case <-timeoutChan:
 			return fmt.Errorf("deployment %s timed out after %v waiting to become ready", runningDeployment.Name, timeout)
 		case <-ticker.C:
 			status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
 			if err != nil {
-				klog.V(5).Info(fmt.Sprintf(
-					"deployment %s is not ready, retry in 1 second", runningDeployment.Name))
+				klog.V(5).Infof("deployment %s is not ready, retrying in 10 seconds", runningDeployment.Name)
 
 				continue
 			}
 
 			if status {
-				ready = true
-
-				break
+				return nil
 			}
 		}
 	}
-
-	return nil
 }
 
 // GetRunningDeployment returns a running deployment.

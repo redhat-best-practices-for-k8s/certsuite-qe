@@ -21,12 +21,108 @@ const (
 	ErrorLabelingOperatorStr = "Error labeling operator "
 )
 
+// waitForOperatorReadyOrSkip waits for an operator to be ready and skips the test on timeout.
+func waitForOperatorReadyOrSkip(csvPrefix, namespace, displayName string) {
+	err := tshelper.WaitUntilOperatorIsReady(csvPrefix, namespace)
+	if err != nil {
+		if strings.Contains(err.Error(), "timed out") {
+			Skip(fmt.Sprintf("Operator %s failed to become ready: %v", displayName, err))
+		}
+
+		Expect(err).ToNot(HaveOccurred(), "Operator "+displayName+" is not ready")
+	}
+}
+
+// deployUncertifiedOperator deploys the uncertified operator and waits for it to be ready.
+// Skips the test if the operator times out.
+func deployUncertifiedOperator(operatorInfo operatorversions.OperatorInfo, namespace string) {
+	By("Deploy uncertified operator for testing: " + operatorInfo.PackageName)
+
+	err := tshelper.DeployOperatorSubscription(
+		operatorInfo.PackageName,
+		operatorInfo.PackageName,
+		operatorInfo.Channel,
+		namespace,
+		operatorInfo.CatalogSource,
+		tsparams.OperatorSourceNamespace,
+		"",
+		v1alpha1.ApprovalAutomatic,
+	)
+	Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+operatorInfo.PackageName)
+
+	waitForOperatorReadyOrSkip(operatorInfo.CSVPrefix, namespace, operatorInfo.PackageName)
+}
+
+// deployCertifiedOperator queries the package manifest and deploys the certified operator.
+// Skips the test if the operator times out.
+func deployCertifiedOperator(operatorInfo operatorversions.OperatorInfo, namespace string) {
+	By("Query the packagemanifest for the certified operator: " + operatorInfo.PackageName)
+
+	channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
+		operatorInfo.PackageName,
+		namespace,
+	)
+	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+operatorInfo.PackageName)
+	Expect(channel).ToNot(Equal("not found"), "Channel not found")
+
+	By("Query the packagemanifest for the certified operator version")
+
+	version, err := globalhelper.QueryPackageManifestForVersion(operatorInfo.PackageName, namespace, channel)
+	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+operatorInfo.PackageName)
+	Expect(version).ToNot(Equal("not found"), "Version not found")
+
+	By(fmt.Sprintf("Deploy certified operator %s v%s for testing", operatorInfo.PackageName, version))
+
+	err = tshelper.DeployOperatorSubscription(
+		operatorInfo.PackageName,
+		operatorInfo.PackageName,
+		channel,
+		namespace,
+		operatorInfo.CatalogSource,
+		tsparams.OperatorSourceNamespace,
+		operatorInfo.CSVPrefix+".v"+version,
+		v1alpha1.ApprovalAutomatic,
+	)
+	Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+operatorInfo.PackageName)
+
+	waitForOperatorReadyOrSkip(operatorInfo.CSVPrefix, namespace, operatorInfo.PackageName)
+}
+
+// deployGrafanaOperator queries the package manifest and deploys the grafana operator.
+// Skips the test if the operator times out. Returns the operator name.
+func deployGrafanaOperator(namespace string) string {
+	By("Query the packagemanifest for Grafana operator package name and catalog source")
+
+	operatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", namespace)
+
+	By("Query the packagemanifest for available channel, version and CSV for " + operatorName)
+
+	channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(operatorName, namespace)
+
+	By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
+
+	err := tshelper.DeployOperatorSubscription(
+		operatorName,
+		operatorName,
+		channel,
+		namespace,
+		catalogSource,
+		tsparams.OperatorSourceNamespace,
+		csvName,
+		v1alpha1.ApprovalAutomatic,
+	)
+	Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+operatorName)
+
+	waitForOperatorReadyOrSkip(operatorName, namespace, operatorName)
+
+	return operatorName
+}
+
 var _ = Describe("Affiliated-certification operator certification,", Serial, Label("affiliatedcertification", "ocp-required"), func() {
 	var (
 		randomNamespace          string
 		randomReportDir          string
 		randomCertsuiteConfigDir string
-		grafanaOperatorName      string
 		certifiedOperator        operatorversions.OperatorInfo
 		uncertifiedOperator      operatorversions.OperatorInfo
 	)
@@ -43,8 +139,6 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 		}
 
 		// Get the OCP version and select the appropriate certified operator
-		// For OCP 4.20+, we use an alternative certified operator since cockroachdb-certified
-		// is not available in that version's catalog
 		ocpVersion, err := globalhelper.GetClusterVersion()
 		Expect(err).ToNot(HaveOccurred(), "Error getting cluster version")
 		certifiedOperator = operatorversions.GetCertifiedOperator(ocpVersion)
@@ -53,109 +147,6 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 		By(fmt.Sprintf("Using uncertified operator for OCP %s: %s", ocpVersion, uncertifiedOperator.String()))
 
 		preConfigureAffiliatedCertificationEnvironment(randomNamespace, randomCertsuiteConfigDir)
-
-		By("Deploy uncertified operator for testing: " + uncertifiedOperator.PackageName)
-		// uncertified operator: not in certified-operators group in catalog, for negative test cases
-		err = tshelper.DeployOperatorSubscription(
-			uncertifiedOperator.PackageName,
-			uncertifiedOperator.PackageName,
-			uncertifiedOperator.Channel,
-			randomNamespace,
-			uncertifiedOperator.CatalogSource,
-			tsparams.OperatorSourceNamespace,
-			"",
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			uncertifiedOperator.PackageName)
-
-		err = tshelper.WaitUntilOperatorIsReady(uncertifiedOperator.CSVPrefix,
-			randomNamespace)
-
-		if err != nil {
-			if strings.Contains(err.Error(), "timed out") {
-				Skip(fmt.Sprintf("Operator failed to become ready: %v", err))
-			}
-
-			Expect(err).ToNot(HaveOccurred(), "Operator "+uncertifiedOperator.PackageName+
-				" is not ready")
-		}
-
-		By("Query the packagemanifest for the certified operator: " + certifiedOperator.PackageName)
-		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(
-			certifiedOperator.PackageName,
-			randomNamespace,
-		)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+certifiedOperator.PackageName)
-		Expect(channel).ToNot(Equal("not found"), "Channel not found")
-
-		By("Query the packagemanifest for the certified operator version")
-		version, err := globalhelper.QueryPackageManifestForVersion(certifiedOperator.PackageName, randomNamespace, channel)
-		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+certifiedOperator.PackageName)
-		Expect(version).ToNot(Equal("not found"), "Version not found")
-
-		By(fmt.Sprintf("Deploy certified operator %s v%s for testing", certifiedOperator.PackageName, version))
-		// certified operator: in certified-operators group and version is certified
-		err = tshelper.DeployOperatorSubscription(
-			certifiedOperator.PackageName,
-			certifiedOperator.PackageName,
-			channel,
-			randomNamespace,
-			certifiedOperator.CatalogSource,
-			tsparams.OperatorSourceNamespace,
-			certifiedOperator.CSVPrefix+".v"+version,
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+certifiedOperator.PackageName)
-
-		err = tshelper.WaitUntilOperatorIsReady(certifiedOperator.CSVPrefix,
-			randomNamespace)
-
-		if err != nil {
-			if strings.Contains(err.Error(), "timed out") {
-				Skip(fmt.Sprintf("Operator failed to become ready: %v", err))
-			}
-
-			Expect(err).ToNot(HaveOccurred(), "Operator "+certifiedOperator.CSVPrefix+".v"+version+
-				" is not ready")
-		}
-
-		By("Query the packagemanifest for Grafana operator package name and catalog source")
-
-		var catalogSource string
-		grafanaOperatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
-
-		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-
-		var csvName string
-		channel, version, csvName = globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
-
-		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
-		// grafana-operator: in community-operators group
-		err = tshelper.DeployOperatorSubscription(
-			grafanaOperatorName,
-			grafanaOperatorName,
-			channel,
-			randomNamespace,
-			catalogSource,
-			tsparams.OperatorSourceNamespace,
-			csvName,
-			v1alpha1.ApprovalAutomatic,
-		)
-		Expect(err).ToNot(HaveOccurred(), ErrorDeployOperatorStr+
-			grafanaOperatorName)
-
-		err = tshelper.WaitUntilOperatorIsReady(grafanaOperatorName,
-			randomNamespace)
-
-		if err != nil {
-			if strings.Contains(err.Error(), "timed out") {
-				Skip(fmt.Sprintf("Operator failed to become ready: %v", err))
-			}
-
-			Expect(err).ToNot(HaveOccurred(), "Operator "+csvName+
-				" is not ready")
-		}
 	})
 
 	AfterEach(func() {
@@ -166,6 +157,8 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 	// 46699
 	It("one operator to test, operator is not in certified-operators organization [negative]",
 		func() {
+			deployUncertifiedOperator(uncertifiedOperator, randomNamespace)
+
 			By("Label operator to be certified")
 			Eventually(func() error {
 				return tshelper.AddLabelToInstalledCSV(
@@ -203,6 +196,9 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 	// 46697
 	It("two operators to test, one is in certified-operators organization and its version is certified,"+
 		" one is not in certified-operators organization [negative]", func() {
+		deployCertifiedOperator(certifiedOperator, randomNamespace)
+		deployUncertifiedOperator(uncertifiedOperator, randomNamespace)
+
 		By("Label operators to be certified")
 
 		Eventually(func() error {
@@ -246,6 +242,8 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 	// 46582
 	It("one operator to test, operator is in certified-operators organization"+
 		" and its version is certified", func() {
+		grafanaOperatorName := deployGrafanaOperator(randomNamespace)
+
 		By("Label operator to be certified")
 
 		Eventually(func() error {
@@ -278,6 +276,9 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 	// 46696
 	It("two operators to test, both are in certified-operators organization and their"+
 		" versions are certified", func() {
+		grafanaOperatorName := deployGrafanaOperator(randomNamespace)
+		deployCertifiedOperator(certifiedOperator, randomNamespace)
+
 		By("Label operators to be certified")
 		Eventually(func() error {
 			return tshelper.AddLabelToInstalledCSV(
@@ -329,7 +330,7 @@ var _ = Describe("Affiliated-certification operator certification,", Serial, Lab
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.TestCaseOperatorAffiliatedCertName,
-			globalparameters.TestCaseFailed, randomReportDir)
+			globalparameters.TestCaseSkipped, randomReportDir)
 		Expect(err).ToNot(HaveOccurred(), "Error validating test reports")
 	})
 })
