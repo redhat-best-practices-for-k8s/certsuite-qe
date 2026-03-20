@@ -17,7 +17,7 @@ import (
 
 const (
 	// MaxRetries is the maximum number of retries for test execution.
-	MaxRetries = 3
+	MaxRetries = 2
 	// TestTimeout is the timeout duration for test execution.
 	TestTimeout = 30 * time.Minute
 	// MemoryLimitMB is the default soft cap for Go-managed memory when enabled.
