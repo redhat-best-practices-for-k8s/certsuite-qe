@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"strings"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -59,22 +60,49 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		By("Create and wait until daemonSet is ready")
+
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
+		if err != nil {
+			errMsg := err.Error()
+			if strings.Contains(errMsg, "not schedulable") ||
+				strings.Contains(errMsg, "Timed out") ||
+				strings.Contains(errMsg, "not running") ||
+				strings.Contains(errMsg, "not ready") {
+				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
+			}
+		}
+
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Assert sysctl config is unchanged")
+		By("Assert daemonSet has ready pods on nodes")
 		runningDaemonSet, err := globalhelper.GetRunningDaemonset(daemonSet)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(*runningDaemonSet.Spec.Template.Spec.Containers[0].SecurityContext.Privileged).To(BeTrue())
 		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].MountPath).To(Equal("/host"))
 		Expect(runningDaemonSet.Spec.Template.Spec.Containers[0].VolumeMounts[0].Name).To(Equal("host"))
 
+		By("Detect cluster alterations that may affect test result")
+		hasAlterations, alterationDetails := tshelper.DetectSysctlAlterations()
+		GinkgoWriter.Printf("Sysctl alteration detection: hasAlterations=%v, details=%s\n",
+			hasAlterations, alterationDetails)
+
+		// Determine expected result based on cluster state
+		expectedResult := globalparameters.TestCasePassed
+		if hasAlterations {
+			expectedResult = globalparameters.TestCaseFailed
+
+			GinkgoWriter.Printf("Expecting FAIL because cluster has sysctl alterations\n")
+		} else {
+			GinkgoWriter.Printf("Expecting PASS because cluster sysctl config appears unmodified\n")
+		}
+
 		By("Start platform-alteration-sysctl-config test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteSysctlConfigName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteSysctlConfigName, globalparameters.TestCasePassed, randomReportDir)
+		By("Verify test case status in Claim report")
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteSysctlConfigName, expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 

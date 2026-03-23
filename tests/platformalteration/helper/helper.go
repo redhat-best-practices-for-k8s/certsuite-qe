@@ -104,12 +104,9 @@ func DetectBaseImageAlterations() (bool, string) {
 	return false, "no base image alterations detected"
 }
 
-// DetectBootParamsAlterations checks if the cluster has conditions that would cause
-// the certsuite boot-params test to fail. This includes checking for:
-// - Custom kernel arguments in MachineConfigs (isolcpus, nohz, hugepages, etc.)
-// Note: Only returns true if actual custom kernel args are found, not just because it's a real cluster.
-// Returns true if alterations are detected, along with details.
-func DetectBootParamsAlterations() (bool, string) {
+// detectKernelArgAlterations checks MachineConfig kernel arguments against a
+// list of known prefixes. Returns true if any matching args are found.
+func detectKernelArgAlterations(prefixes []string) (bool, string) {
 	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return false, fmt.Sprintf("cannot access MachineConfigs: %v", err)
@@ -117,24 +114,14 @@ func DetectBootParamsAlterations() (bool, string) {
 
 	var alterationDetails []string
 
-	// Known kernel arguments that indicate boot params customization
-	customKernelArgs := []string{
-		"isolcpus", "nohz", "nohz_full", "rcu_nocbs", "kthread_cpus",
-		"irqaffinity", "skew_tick", "intel_pstate", "nosmt", "hugepages",
-		"default_hugepagesz", "tsc", "clocksource", "processor.max_cstate",
-		"intel_idle.max_cstate", "mce", "audit", "systemd.cpu_affinity",
-	}
-
 	for _, machineConfig := range mcList.Items {
-		if len(machineConfig.Spec.KernelArguments) > 0 {
-			for _, arg := range machineConfig.Spec.KernelArguments {
-				for _, customArg := range customKernelArgs {
-					if strings.HasPrefix(arg, customArg) {
-						alterationDetails = append(alterationDetails,
-							fmt.Sprintf("MachineConfig %s has custom kernel arg: %s", machineConfig.Name, arg))
+		for _, arg := range machineConfig.Spec.KernelArguments {
+			for _, prefix := range prefixes {
+				if strings.HasPrefix(arg, prefix) {
+					alterationDetails = append(alterationDetails,
+						fmt.Sprintf("MachineConfig %s has kernel arg: %s", machineConfig.Name, arg))
 
-						break
-					}
+					break
 				}
 			}
 		}
@@ -144,7 +131,28 @@ func DetectBootParamsAlterations() (bool, string) {
 		return true, strings.Join(alterationDetails, "; ")
 	}
 
-	return false, "no boot params alterations detected"
+	return false, "no kernel arg alterations detected"
+}
+
+// DetectBootParamsAlterations checks if any MachineConfig has custom kernel
+// arguments (isolcpus, nohz, hugepages, etc.) that would cause the certsuite
+// boot-params test to fail.
+func DetectBootParamsAlterations() (bool, string) {
+	return detectKernelArgAlterations([]string{
+		"isolcpus", "nohz", "nohz_full", "rcu_nocbs", "kthread_cpus",
+		"irqaffinity", "skew_tick", "intel_pstate", "nosmt", "hugepages",
+		"default_hugepagesz", "tsc", "clocksource", "processor.max_cstate",
+		"intel_idle.max_cstate", "mce", "audit", "systemd.cpu_affinity",
+	})
+}
+
+// DetectSysctlAlterations checks if any MachineConfig has sysctl-related kernel
+// arguments that could cause a mismatch between live sysctl values and what
+// MachineConfig declares, causing the certsuite sysctl-config test to fail.
+func DetectSysctlAlterations() (bool, string) {
+	return detectKernelArgAlterations([]string{
+		"net.", "kernel.", "vm.", "fs.", "dev.",
+	})
 }
 
 // WaitForSpecificNodeCondition waits for a given node to become ready or not.
