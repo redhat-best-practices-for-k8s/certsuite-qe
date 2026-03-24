@@ -117,15 +117,6 @@ func DetectBootParamsAlterations() (bool, string) {
 	})
 }
 
-// DetectSysctlAlterations checks if any MachineConfig has sysctl-related kernel
-// arguments that could cause a mismatch between live sysctl values and what
-// MachineConfig declares, causing the certsuite sysctl-config test to fail.
-func DetectSysctlAlterations() (bool, string) {
-	return detectKernelArgAlterations([]string{
-		"net.", "kernel.", "vm.", "fs.", "dev.",
-	})
-}
-
 // WaitForSpecificNodeCondition waits for a given node to become ready or not.
 func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval time.Duration, nodeName string,
 	ready bool) error {
