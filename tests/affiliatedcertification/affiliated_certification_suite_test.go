@@ -4,16 +4,15 @@ package affiliatedcertification
 
 import (
 	"flag"
+	"fmt"
+	"os"
 	"os/exec"
+	"runtime"
+	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	klog "k8s.io/klog/v2"
-
-	"fmt"
-
-	"runtime"
-	"testing"
 
 	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/tests"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -33,18 +32,30 @@ func TestAffiliatedCertification(t *testing.T) {
 	RunSpecs(t, "CNFCert affiliated-certification tests", reporterConfig)
 }
 
-var isCloudCasaAlreadyLabeled bool
+var (
+	isCloudCasaAlreadyLabeled bool
+	helmDir                   string
+)
 
 var _ = SynchronizedBeforeSuite(func() {
 	if !globalhelper.IsKindCluster() {
-		// Always install Helm v3 right before running the suite
-		By("Install helm v3")
+		By("Create temp directory for isolated helm installation")
+
+		var err error
+		helmDir, err = os.MkdirTemp("", "helm-")
+		Expect(err).ToNot(HaveOccurred(), "Error creating temp dir for helm")
+
+		By("Install helm v3 to isolated temp directory")
 		cmd := exec.Command("/bin/bash", "-c",
 			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
 				" && chmod +x get_helm.sh"+
-				" && ./get_helm.sh")
+				" && HELM_INSTALL_DIR="+helmDir+" USE_SUDO=false ./get_helm.sh")
 		out, err := cmd.CombinedOutput()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3: "+string(out))
+
+		By("Prepend helm temp directory to PATH")
+		err = os.Setenv("PATH", helmDir+":"+os.Getenv("PATH"))
+		Expect(err).ToNot(HaveOccurred(), "Error setting PATH")
 	}
 
 	By("Preemptively delete tiller-deploy pod if its installed")
@@ -118,6 +129,12 @@ var _ = SynchronizedAfterSuite(func() {}, func() {
 			tsparams.UnrelatedOperatorPrefixCloudcasa,
 			tsparams.UnrelatedNamespace,
 			tsparams.OperatorLabel)
+		Expect(err).ToNot(HaveOccurred())
+	}
+
+	if helmDir != "" {
+		By("Clean up isolated helm directory")
+		err = os.RemoveAll(helmDir)
 		Expect(err).ToNot(HaveOccurred())
 	}
 })
