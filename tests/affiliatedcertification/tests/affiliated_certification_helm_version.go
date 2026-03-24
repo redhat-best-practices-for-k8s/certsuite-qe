@@ -1,7 +1,9 @@
 package tests
 
 import (
+	"os"
 	"os/exec"
+	"path/filepath"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -78,16 +80,18 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, Label("affili
 
 	// 68121
 	It("installed helm version is not certified", func() {
-		By("Remove helm")
-		cmd := exec.Command("sudo", "rm", "-rf", "/usr/local/bin/helm")
-		err := cmd.Run()
-		Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm")
+		By("Find and remove current helm binary")
+		helmPath, err := exec.LookPath("helm")
+		Expect(err).ToNot(HaveOccurred(), "helm not found in PATH")
+		helmInstallDir := filepath.Dir(helmPath)
+		err = os.Remove(helmPath)
+		Expect(err).ToNot(HaveOccurred(), "Error removing helm binary")
 
 		By("Install helm v2")
-		cmd = exec.Command("/bin/bash", "-c",
+		cmd := exec.Command("/bin/bash", "-c",
 			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get"+
 				" && chmod +x get_helm.sh"+
-				" && ./get_helm.sh --version v2.17.0"+
+				" && HELM_INSTALL_DIR="+helmInstallDir+" USE_SUDO=false ./get_helm.sh --version v2.17.0"+
 				" && helm init")
 		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm v2")
@@ -101,7 +105,7 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, Label("affili
 			cmd = exec.Command("/bin/bash", "-c",
 				"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
 					" && chmod +x get_helm.sh"+
-					" && ./get_helm.sh")
+					" && HELM_INSTALL_DIR="+helmInstallDir+" USE_SUDO=false ./get_helm.sh")
 			err = cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
 		})
