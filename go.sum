@@ -420,8 +420,8 @@ github.com/prometheus/procfs v0.16.1 h1:hZ15bTNuirocR6u0JZ6BAHHmwS1p8B4P6MRqxtzM
 github.com/prometheus/procfs v0.16.1/go.mod h1:teAbpZRB1iIAJYREa1LsoWUXykVXA1KlTmWl8x/U+Is=
 github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df h1:vVue8Ytv9xEMIC15PPh2FiL8k8YAZvtUd6E6r1xRyJk=
 github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df/go.mod h1:Qgmgk+Wa61zuvR9mRQEOjD6tcUezT7aU5GXaBup6eXM=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.63 h1:Ew2ZQymqa9UddgTScIKWzXyEiWIpv/mP7Zkrd8VquWc=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.63/go.mod h1:KTb5w7CO88AlnCQSrelIyLyARj7KhipFzgqtt+D3jLg=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.64 h1:A9Hy4sIrgDnxGp5jmj0R3LzqVElxher8b80thjay0Tw=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.64/go.mod h1:sQ8HGTrW0g2fPKUzhA75ExR87FX4ZKzPL1bvqy+dl7U=
 github.com/redhat-best-practices-for-k8s/oct v0.0.55 h1:t8OlJ0WUEe8/YSWIeFR69fMGKOyHhz8E4hr4AE3XaHI=
 github.com/redhat-best-practices-for-k8s/oct v0.0.55/go.mod h1:RWDZcGnupFNxH7E2D1w7e5olAdoPaV7shFTDVdCRPXU=
 github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
