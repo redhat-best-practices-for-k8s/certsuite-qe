@@ -75,35 +75,6 @@ func IsRealOCPCluster() (bool, string) {
 	return false, "appears to be a CRC/SNO development cluster"
 }
 
-// DetectBaseImageAlterations checks if the cluster has conditions that would cause
-// the certsuite base-image test to fail. This includes checking for:
-// - Custom RPM packages installed on nodes via MachineConfig extensions
-// Note: Only returns true if actual extensions are found, not just because it's a real cluster.
-// Returns true if alterations are detected, along with details.
-func DetectBaseImageAlterations() (bool, string) {
-	// Check for MachineConfigs with extensions (custom RPMs)
-	mcList, err := globalhelper.GetAPIClient().MachineConfigs().List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		return false, fmt.Sprintf("cannot access MachineConfigs: %v", err)
-	}
-
-	var alterationDetails []string
-
-	for _, machineConfig := range mcList.Items {
-		// Only check for extensions (custom RPMs) - these indicate base image modifications
-		if len(machineConfig.Spec.Extensions) > 0 {
-			alterationDetails = append(alterationDetails,
-				fmt.Sprintf("MachineConfig %s has extensions: %v", machineConfig.Name, machineConfig.Spec.Extensions))
-		}
-	}
-
-	if len(alterationDetails) > 0 {
-		return true, strings.Join(alterationDetails, "; ")
-	}
-
-	return false, "no base image alterations detected"
-}
-
 // detectKernelArgAlterations checks MachineConfig kernel arguments against a
 // list of known prefixes. Returns true if any matching args are found.
 func detectKernelArgAlterations(prefixes []string) (bool, string) {
