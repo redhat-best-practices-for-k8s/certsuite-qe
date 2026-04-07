@@ -87,6 +87,13 @@ jobs:
       ENABLE_INFRASTRUCTURE_TOLERATIONS: true
 
     steps:
+      - name: Check Red Hat Status
+        uses: palmsoftware/redhat-status@v0
+        with:
+          components: |
+            api.openshift.com
+            developers.redhat.com
+
       - name: Write temporary docker file
         run: |
           mkdir -p /home/runner/.docker
