@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -59,12 +60,26 @@ var _ = Describe("platform-alteration-ocp-lifecycle", Label("platformalteration4
 		err := verifyRHCOSVersionsInCertsuite()
 		Expect(err).ToNot(HaveOccurred(), "RHCOS version validation failed")
 
+		By("Determine expected certsuite outcome from OCP lifecycle status")
+		ocpVersion, vErr := globalhelper.GetClusterVersion()
+		Expect(vErr).ToNot(HaveOccurred(), "Failed to get OCP cluster version")
+
+		isEOL := isOCPEndOfLife(ocpVersion)
+		GinkgoWriter.Printf("OCP version %s end-of-life: %v\n", ocpVersion, isEOL)
+
+		expectedResult := globalparameters.TestCasePassed
+
+		if isEOL {
+			GinkgoWriter.Printf("OCP %s is past end-of-life — expecting certsuite to return FAILED\n", ocpVersion)
+			expectedResult = globalparameters.TestCaseFailed
+		}
+
 		By("Start platform-alteration-ocp-lifecycle test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteOCPLifecycleName,
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
-		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteOCPLifecycleName, globalparameters.TestCasePassed, randomReportDir)
+		err = globalhelper.ValidateIfReportsAreValid(tsparams.CertsuiteOCPLifecycleName, expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
@@ -146,4 +161,34 @@ func verifyRHCOSVersions(nodes []corev1.Node, rhcosVersionMapContent string) err
 	}
 
 	return nil
+}
+
+// Kept in sync with certsuite's pkg/compatibility/compatibility.go.
+var ocpMaintenanceSupportEndDates = map[string]time.Time{
+	"4.12": time.Date(2026, 1, 17, 0, 0, 0, 0, time.UTC),
+	"4.13": time.Date(2024, 11, 17, 0, 0, 0, 0, time.UTC),
+	"4.14": time.Date(2026, 10, 31, 0, 0, 0, 0, time.UTC),
+	"4.15": time.Date(2025, 8, 27, 0, 0, 0, 0, time.UTC),
+	"4.16": time.Date(2027, 6, 27, 0, 0, 0, 0, time.UTC),
+	"4.17": time.Date(2026, 4, 1, 0, 0, 0, 0, time.UTC),
+	"4.18": time.Date(2028, 2, 25, 0, 0, 0, 0, time.UTC),
+	"4.19": time.Date(2026, 12, 17, 0, 0, 0, 0, time.UTC),
+	"4.20": time.Date(2028, 10, 21, 0, 0, 0, 0, time.UTC),
+	"4.21": time.Date(2027, 8, 3, 0, 0, 0, 0, time.UTC),
+}
+
+func isOCPEndOfLife(version string) bool {
+	parts := strings.Split(version, ".")
+	if len(parts) < 2 {
+		return false
+	}
+
+	majorMinor := parts[0] + "." + parts[1]
+
+	mseDate, ok := ocpMaintenanceSupportEndDates[majorMinor]
+	if !ok {
+		return false
+	}
+
+	return !time.Now().Before(mseDate)
 }
