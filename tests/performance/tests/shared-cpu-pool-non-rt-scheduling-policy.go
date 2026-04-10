@@ -78,17 +78,20 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
 		}
 
-		// Check if PerformanceProfiles are configured - this affects scheduling policy
-		hasPerformanceProfiles, _ := globalhelper.HasPerformanceProfiles()
-		GinkgoWriter.Printf("Cluster has PerformanceProfiles: %v\n", hasPerformanceProfiles)
+		By("Detect scheduling policy on the test pod to determine expected certsuite outcome")
+		// If PID 1 uses SCHED_FIFO or SCHED_RR, RT scheduling is active and certsuite
+		// will return FAILED. If SCHED_OTHER/SCHED_BATCH/SCHED_IDLE, certsuite should PASS.
+		chrtOutput, chrtErr := globalhelper.ExecCommand(*runningPod, []string{"chrt", "-p", "1"})
+		Expect(chrtErr).ToNot(HaveOccurred(), "chrt -p 1 must succeed to determine expected certsuite outcome")
 
-		// Determine expected result based on cluster configuration
-		// If PerformanceProfiles exist, containers may have RT scheduling policies
-		// causing the test to FAIL instead of PASS
+		chrtStr := chrtOutput.String()
+		GinkgoWriter.Printf("chrt -p 1 output: %s\n", chrtStr)
+
 		expectedResult := globalparameters.TestCasePassed
 
-		if hasPerformanceProfiles {
-			GinkgoWriter.Printf("Cluster has PerformanceProfiles - test may FAIL due to RT scheduling\n")
+		if strings.Contains(chrtStr, "SCHED_FIFO") || strings.Contains(chrtStr, "SCHED_RR") {
+			GinkgoWriter.Printf("RT scheduling detected on PID 1 — expecting certsuite to return FAILED\n")
+			expectedResult = globalparameters.TestCaseFailed
 		}
 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
@@ -98,17 +101,9 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify test case status in Claim report")
-		// Accept PASSED (expected for non-RT clusters), FAILED (when RT scheduling is enabled),
-		// or SKIPPED (when certsuite decides to skip for internal reasons)
-		acceptedStatuses := []string{expectedResult, globalparameters.TestCaseSkipped}
-		if hasPerformanceProfiles {
-			// On clusters with PerformanceProfiles, RT scheduling may be enabled
-			// causing containers to have RT scheduling policies
-			acceptedStatuses = append(acceptedStatuses, globalparameters.TestCaseFailed)
-		}
-		err = globalhelper.ValidateIfReportsAreValidWithAcceptedStatuses(
+		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
-			acceptedStatuses, randomReportDir)
+			expectedResult, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify CheckDetails report completeness")
