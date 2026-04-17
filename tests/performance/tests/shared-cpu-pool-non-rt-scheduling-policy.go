@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -63,13 +64,15 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 		Expect(len(runningPod.Spec.Containers)).To(BeNumerically(">", 0), "Pod should have containers")
 
-		// Log container resources for debugging
-		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		By("Assert pod matches certsuite preconditions: non-guaranteed QoS, no HostPID")
+		Expect(runningPod.Status.QOSClass).ToNot(Equal(corev1.PodQOSGuaranteed),
+			"Pod must not be Guaranteed QoS — certsuite skips guaranteed pods for shared CPU pool checks")
+		Expect(runningPod.Spec.HostPID).To(BeFalse(),
+			"Pod must not use HostPID — certsuite skips pods with HostPID")
 
 		for i, container := range runningPod.Spec.Containers {
-			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
-			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
-			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
+			GinkgoWriter.Printf("Container[%d] name=%s CPU req=%v lim=%v\n",
+				i, container.Name, container.Resources.Requests.Cpu(), container.Resources.Limits.Cpu())
 		}
 
 		By("Assert all containers are ready")
@@ -79,8 +82,6 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		}
 
 		By("Detect scheduling policy on the test pod to determine expected certsuite outcome")
-		// If PID 1 uses SCHED_FIFO or SCHED_RR, RT scheduling is active and certsuite
-		// will return FAILED. If SCHED_OTHER/SCHED_BATCH/SCHED_IDLE, certsuite should PASS.
 		chrtOutput, chrtErr := globalhelper.ExecCommand(*runningPod, []string{"chrt", "-p", "1"})
 		Expect(chrtErr).ToNot(HaveOccurred(), "chrt -p 1 must succeed to determine expected certsuite outcome")
 
@@ -135,8 +136,6 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
-		// Spawn short-lived background subprocesses to create transient PIDs that may
-		// disappear between PID enumeration and scheduling policy check.
 		spawnCmd := []string{"/bin/bash", "-c",
 			"while true; do for i in $(seq 1 5); do sleep 0.05 & done; wait; done"}
 		err := pod.RedefineWithContainerExecCommand(testPod, spawnCmd, 0)
@@ -148,6 +147,20 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		}
 
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod matches certsuite preconditions: non-guaranteed QoS, no HostPID")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.QOSClass).ToNot(Equal(corev1.PodQOSGuaranteed),
+			"Pod must not be Guaranteed QoS — certsuite skips guaranteed pods for shared CPU pool checks")
+		Expect(runningPod.Spec.HostPID).To(BeFalse(),
+			"Pod must not use HostPID — certsuite skips pods with HostPID")
+
+		By("Verify ephemeral subprocesses are running")
+		psOutput, psErr := globalhelper.ExecCommand(*runningPod, []string{"pgrep", "-c", "sleep"})
+		Expect(psErr).ToNot(HaveOccurred(), "pgrep must succeed to verify subprocesses are running")
+
+		GinkgoWriter.Printf("Active sleep subprocesses: %s\n", strings.TrimSpace(psOutput.String()))
 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
@@ -222,28 +235,55 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 		Expect(len(runningPod.Spec.Containers)).To(BeNumerically(">", 0), "Pod should have containers")
 
-		// Log container resources for debugging
-		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		By("Assert pod is not using HostPID")
+		Expect(runningPod.Spec.HostPID).To(BeFalse(),
+			"Pod must not use HostPID — certsuite skips pods with HostPID")
 
-		for i, container := range runningPod.Spec.Containers {
-			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
-			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
-			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
-			GinkgoWriter.Printf("Container[%d] Memory requests: %v\n", i, container.Resources.Requests.Memory())
-			GinkgoWriter.Printf("Container[%d] Memory limits: %v\n", i, container.Resources.Limits.Memory())
-		}
+		By("Assert pod has Guaranteed QoS with whole-unit exclusive CPUs")
+		Expect(runningPod.Status.QOSClass).To(Equal(corev1.PodQOSGuaranteed),
+			"Pod must be Guaranteed QoS for exclusive CPU pool")
 
-		// Verify exclusive CPU pool requirements (whole unit CPUs, limits=requests)
-		cpuRequest := runningPod.Spec.Containers[0].Resources.Requests.Cpu().MilliValue()
-		cpuLimit := runningPod.Spec.Containers[0].Resources.Limits.Cpu().MilliValue()
+		container := runningPod.Spec.Containers[0]
+		cpuRequest := container.Resources.Requests.Cpu().MilliValue()
+		cpuLimit := container.Resources.Limits.Cpu().MilliValue()
+		memRequest := container.Resources.Requests.Memory().Value()
+		memLimit := container.Resources.Limits.Memory().Value()
+
 		GinkgoWriter.Printf("CPU request: %dm, CPU limit: %dm\n", cpuRequest, cpuLimit)
-		Expect(cpuRequest).To(Equal(cpuLimit), "CPU request should equal CPU limit for exclusive pool")
-		Expect(cpuRequest%1000).To(Equal(int64(0)), "CPU should be a whole unit for exclusive pool")
+		GinkgoWriter.Printf("Memory request: %d, Memory limit: %d\n", memRequest, memLimit)
+		Expect(cpuRequest).To(Equal(cpuLimit), "CPU request must equal limit for exclusive pool")
+		Expect(cpuRequest%1000).To(Equal(int64(0)), "CPU must be a whole unit for exclusive pool")
+		Expect(memRequest).To(Equal(memLimit), "Memory request must equal limit for Guaranteed QoS")
 
 		By("Assert all containers are ready")
 
 		for _, cs := range runningPod.Status.ContainerStatuses {
 			Expect(cs.Ready).To(BeTrue(), fmt.Sprintf("Container %s should be ready", cs.Name))
+		}
+
+		By("Verify container has pinned CPUs (not shared pool)")
+		// On cgroup v2 (OCP 4.x default), the effective cpuset is at /sys/fs/cgroup/cpuset.cpus.effective.
+		// On cgroup v1, it's at /sys/fs/cgroup/cpuset/cpuset.cpus.
+		// A pinned container gets specific CPUs (e.g. "2-3"), while the shared pool gets the full range.
+		cpusetOutput, cpusetErr := globalhelper.ExecCommand(*runningPod, []string{"cat",
+			"/sys/fs/cgroup/cpuset.cpus.effective"})
+
+		if cpusetErr != nil {
+			// Fall back to cgroup v1 path
+			cpusetOutput, cpusetErr = globalhelper.ExecCommand(*runningPod, []string{"cat",
+				"/sys/fs/cgroup/cpuset/cpuset.cpus"})
+		}
+
+		if cpusetErr == nil {
+			cpuset := strings.TrimSpace(cpusetOutput.String())
+			GinkgoWriter.Printf("Container cpuset: %s\n", cpuset)
+
+			pinnedCPUCount := countCPUsInSet(cpuset)
+			GinkgoWriter.Printf("Pinned CPU count: %d, requested: %d\n", pinnedCPUCount, cpuRequest/1000)
+			Expect(int64(pinnedCPUCount)).To(Equal(cpuRequest/1000),
+				"Pinned CPU count should match the number of requested exclusive CPUs")
+		} else {
+			GinkgoWriter.Printf("Could not read cpuset (skipping pinning verification): %v\n", cpusetErr)
 		}
 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
@@ -259,3 +299,31 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(err).ToNot(HaveOccurred())
 	})
 })
+
+// countCPUsInSet parses a cpuset string like "0-3,5,7-9" and returns the total CPU count.
+func countCPUsInSet(cpuset string) int {
+	count := 0
+
+	for _, part := range strings.Split(cpuset, ",") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+
+		bounds := strings.SplitN(part, "-", 2)
+		if len(bounds) == 1 {
+			count++
+		} else {
+			low, errLow := strconv.Atoi(bounds[0])
+			high, errHigh := strconv.Atoi(bounds[1])
+
+			if errLow != nil || errHigh != nil {
+				continue
+			}
+
+			count += high - low + 1
+		}
+	}
+
+	return count
+}
