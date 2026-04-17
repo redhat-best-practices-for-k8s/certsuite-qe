@@ -63,13 +63,15 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 		Expect(len(runningPod.Spec.Containers)).To(BeNumerically(">", 0), "Pod should have containers")
 
-		// Log container resources for debugging
-		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		By("Assert pod matches certsuite preconditions: non-guaranteed QoS, no HostPID")
+		Expect(runningPod.Status.QOSClass).ToNot(Equal(corev1.PodQOSGuaranteed),
+			"Pod must not be Guaranteed QoS — certsuite skips guaranteed pods for shared CPU pool checks")
+		Expect(runningPod.Spec.HostPID).To(BeFalse(),
+			"Pod must not use HostPID — certsuite skips pods with HostPID")
 
 		for i, container := range runningPod.Spec.Containers {
-			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
-			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
-			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
+			GinkgoWriter.Printf("Container[%d] name=%s CPU req=%v lim=%v\n",
+				i, container.Name, container.Resources.Requests.Cpu(), container.Resources.Limits.Cpu())
 		}
 
 		By("Assert all containers are ready")
@@ -79,8 +81,6 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		}
 
 		By("Detect scheduling policy on the test pod to determine expected certsuite outcome")
-		// If PID 1 uses SCHED_FIFO or SCHED_RR, RT scheduling is active and certsuite
-		// will return FAILED. If SCHED_OTHER/SCHED_BATCH/SCHED_IDLE, certsuite should PASS.
 		chrtOutput, chrtErr := globalhelper.ExecCommand(*runningPod, []string{"chrt", "-p", "1"})
 		Expect(chrtErr).ToNot(HaveOccurred(), "chrt -p 1 must succeed to determine expected certsuite outcome")
 
@@ -135,8 +135,6 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
 			tsparams.RtImageName, tsparams.CertsuiteTargetPodLabels)
 
-		// Spawn short-lived background subprocesses to create transient PIDs that may
-		// disappear between PID enumeration and scheduling policy check.
 		spawnCmd := []string{"/bin/bash", "-c",
 			"while true; do for i in $(seq 1 5); do sleep 0.05 & done; wait; done"}
 		err := pod.RedefineWithContainerExecCommand(testPod, spawnCmd, 0)
@@ -148,6 +146,20 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		}
 
 		Expect(err).ToNot(HaveOccurred())
+
+		By("Assert pod matches certsuite preconditions: non-guaranteed QoS, no HostPID")
+		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(runningPod.Status.QOSClass).ToNot(Equal(corev1.PodQOSGuaranteed),
+			"Pod must not be Guaranteed QoS — certsuite skips guaranteed pods for shared CPU pool checks")
+		Expect(runningPod.Spec.HostPID).To(BeFalse(),
+			"Pod must not use HostPID — certsuite skips pods with HostPID")
+
+		By("Verify ephemeral subprocesses are running")
+		psOutput, psErr := globalhelper.ExecCommand(*runningPod, []string{"pgrep", "-c", "sleep"})
+		Expect(psErr).ToNot(HaveOccurred(), "pgrep must succeed to verify subprocesses are running")
+
+		GinkgoWriter.Printf("Active sleep subprocesses: %s\n", strings.TrimSpace(psOutput.String()))
 
 		By("Start shared-cpu-pool-non-rt-scheduling-policy test")
 		err = globalhelper.LaunchTests(
@@ -222,18 +234,12 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(runningPod.Status.Phase).To(Equal(corev1.PodRunning), "Pod should be running")
 		Expect(len(runningPod.Spec.Containers)).To(BeNumerically(">", 0), "Pod should have containers")
 
-		// Log container resources for debugging
-		GinkgoWriter.Printf("Pod has %d containers\n", len(runningPod.Spec.Containers))
+		By("Assert pod matches certsuite preconditions for exclusive CPU pool")
+		Expect(runningPod.Spec.HostPID).To(BeFalse(),
+			"Pod must not use HostPID — certsuite skips pods with HostPID")
+		Expect(runningPod.Status.QOSClass).To(Equal(corev1.PodQOSGuaranteed),
+			"Pod must be Guaranteed QoS for exclusive CPU pool")
 
-		for i, container := range runningPod.Spec.Containers {
-			GinkgoWriter.Printf("Container[%d] name: %s\n", i, container.Name)
-			GinkgoWriter.Printf("Container[%d] CPU requests: %v\n", i, container.Resources.Requests.Cpu())
-			GinkgoWriter.Printf("Container[%d] CPU limits: %v\n", i, container.Resources.Limits.Cpu())
-			GinkgoWriter.Printf("Container[%d] Memory requests: %v\n", i, container.Resources.Requests.Memory())
-			GinkgoWriter.Printf("Container[%d] Memory limits: %v\n", i, container.Resources.Limits.Memory())
-		}
-
-		// Verify exclusive CPU pool requirements (whole unit CPUs, limits=requests)
 		cpuRequest := runningPod.Spec.Containers[0].Resources.Requests.Cpu().MilliValue()
 		cpuLimit := runningPod.Spec.Containers[0].Resources.Limits.Cpu().MilliValue()
 		GinkgoWriter.Printf("CPU request: %dm, CPU limit: %dm\n", cpuRequest, cpuLimit)
