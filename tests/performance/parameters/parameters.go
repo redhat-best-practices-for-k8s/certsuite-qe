@@ -43,5 +43,5 @@ const (
 
 	DisableStr = "disable"
 
-	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload:latest"
 )
