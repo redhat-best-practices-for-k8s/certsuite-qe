@@ -57,5 +57,5 @@ const (
 
 	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
 
-	IstioVersion = "1.29.1"
+	IstioVersion = "1.29.2"
 )

@@ -421,8 +421,8 @@ github.com/prometheus/procfs v0.16.1 h1:hZ15bTNuirocR6u0JZ6BAHHmwS1p8B4P6MRqxtzM
 github.com/prometheus/procfs v0.16.1/go.mod h1:teAbpZRB1iIAJYREa1LsoWUXykVXA1KlTmWl8x/U+Is=
 github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df h1:vVue8Ytv9xEMIC15PPh2FiL8k8YAZvtUd6E6r1xRyJk=
 github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df/go.mod h1:Qgmgk+Wa61zuvR9mRQEOjD6tcUezT7aU5GXaBup6eXM=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.64 h1:A9Hy4sIrgDnxGp5jmj0R3LzqVElxher8b80thjay0Tw=
-github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.64/go.mod h1:sQ8HGTrW0g2fPKUzhA75ExR87FX4ZKzPL1bvqy+dl7U=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.65 h1:8G+HlPxNDiSwvs8pJn68Qfd/Der79TQU5A5hwVKpC3E=
+github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.65/go.mod h1:fd5QTDcH6fDOP72sB6cBV0pLV+iHrB78SjnG60OrvQo=
 github.com/redhat-best-practices-for-k8s/oct v0.0.55 h1:t8OlJ0WUEe8/YSWIeFR69fMGKOyHhz8E4hr4AE3XaHI=
 github.com/redhat-best-practices-for-k8s/oct v0.0.55/go.mod h1:RWDZcGnupFNxH7E2D1w7e5olAdoPaV7shFTDVdCRPXU=
 github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
@@ -857,8 +857,8 @@ k8s.io/apimachinery v0.22.7/go.mod h1:ZvVLP5iLhwVFg2Yx9Gh5W0um0DUauExbRhe+2Z8I1E
 k8s.io/apimachinery v0.23.3/go.mod h1:BEuFMMBaIbcOqVIJqNZJXGFTP4W6AycEpb5+m/97hrM=
 k8s.io/apimachinery v0.23.5/go.mod h1:BEuFMMBaIbcOqVIJqNZJXGFTP4W6AycEpb5+m/97hrM=
 k8s.io/apimachinery v0.34.1/go.mod h1:/GwIlEcWuTX9zKIg2mbw0LRFIsXwrfoVxn+ef0X13lw=
-k8s.io/apimachinery v0.35.3 h1:MeaUwQCV3tjKP4bcwWGgZ/cp/vpsRnQzqO6J6tJyoF8=
-k8s.io/apimachinery v0.35.3/go.mod h1:jQCgFZFR1F4Ik7hvr2g84RTJSZegBc8yHgFWKn//hns=
+k8s.io/apimachinery v0.35.4 h1:xtdom9RG7e+yDp71uoXoJDWEE2eOiHgeO4GdBzwWpds=
+k8s.io/apimachinery v0.35.4/go.mod h1:NNi1taPOpep0jOj+oRha3mBJPqvi0hGdaV8TCqGQ+cc=
 k8s.io/cli-runtime v0.34.2 h1:cct1GEuWc3IyVT8MSCoIWzRGw9HJ/C5rgP32H60H6aE=
 k8s.io/cli-runtime v0.34.2/go.mod h1:X13tsrYexYUCIq8MarCBy8lrm0k0weFPTpcaNo7lms4=
 k8s.io/client-go v0.34.1 h1:ZUPJKgXsnKwVwmKKdPfw4tB58+7/Ik3CrjOEhsiZ7mY=
