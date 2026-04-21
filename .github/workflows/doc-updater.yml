@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Fix outdated documentation URLs
-        uses: sebrandon1/ocp-doc-checker@64fd2cfa051ce9ffdc4f007f06a78813428fa78d # v1
+        uses: sebrandon1/ocp-doc-checker@297e920558ba5f7443f62ba457f34895cd0a87b8 # v1
         with:
           fix: true
 
