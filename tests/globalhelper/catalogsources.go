@@ -81,6 +81,58 @@ func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) e
 	return fmt.Errorf("timed out after %s waiting for catalog sources %v to be READY", timeout, requiredCatalogSources)
 }
 
+func deleteCatalogSourceByName(name string) error {
+	err := GetAPIClient().OperatorsV1alpha1Interface.CatalogSources(CatalogSourceNamespace).Delete(
+		context.TODO(), name, metav1.DeleteOptions{})
+	if err != nil && !k8serrors.IsNotFound(err) {
+		return fmt.Errorf("failed to delete catalog source %s: %w", name, err)
+	}
+
+	return nil
+}
+
+func CreateAndValidateCatalogSources(includeRedHat bool) error {
+	const maxAttempts = 3
+
+	sources := map[string]func() error{
+		"community-operators": CreateCommunityOperatorsCatalogSource,
+		"certified-operators": func() error { return DeployRHCertifiedOperatorSource("") },
+	}
+
+	if includeRedHat {
+		sources["redhat-operators"] = func() error { return DeployRHOperatorSource("") }
+	}
+
+	var lastErr error
+
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		for name, create := range sources {
+			if err := create(); err != nil {
+				return fmt.Errorf("failed to create catalog source %s: %w", name, err)
+			}
+		}
+
+		lastErr = ValidateCatalogSources()
+		if lastErr == nil {
+			return nil
+		}
+
+		klog.Infof("Catalog source validation failed (attempt %d/%d): %v", attempt, maxAttempts, lastErr)
+
+		if attempt == maxAttempts {
+			break
+		}
+
+		for name := range sources {
+			if delErr := deleteCatalogSourceByName(name); delErr != nil {
+				klog.Infof("Warning: failed to delete catalog source %s: %v", name, delErr)
+			}
+		}
+	}
+
+	return fmt.Errorf("catalog sources not ready after %d attempts: %w", maxAttempts, lastErr)
+}
+
 func createCatalogSource(name, url string) error {
 	return createCatalogSourceWithClient(GetAPIClient().OperatorsV1alpha1Interface, name, url)
 }

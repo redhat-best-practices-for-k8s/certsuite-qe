@@ -104,16 +104,8 @@ var _ = SynchronizedBeforeSuite(func() {
 		err = globalhelper.CreateNamespace("openshift-marketplace")
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Create community-operators catalog source")
-		err = globalhelper.CreateCommunityOperatorsCatalogSource()
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Create certified-operators catalog source")
-		err = globalhelper.DeployRHCertifiedOperatorSource("")
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Check if catalog sources are available")
-		err = globalhelper.ValidateCatalogSources()
+		By("Create catalog sources and wait for them to become ready")
+		err = globalhelper.CreateAndValidateCatalogSources(false)
 		Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
 	}
 }, func() {})
