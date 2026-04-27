@@ -32,20 +32,8 @@ var _ = SynchronizedBeforeSuite(func() {
 
 	// Safeguard against running the operator tests on a cluster without catalog sources
 	if !globalhelper.IsKindCluster() {
-		By("Create community-operators catalog source")
-		err := globalhelper.CreateCommunityOperatorsCatalogSource()
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Create certified-operators catalog source")
-		err = globalhelper.DeployRHCertifiedOperatorSource("")
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Create redhat-operators catalog source")
-		err = globalhelper.DeployRHOperatorSource("")
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Check if catalog sources are available")
-		err = globalhelper.ValidateCatalogSources()
+		By("Create catalog sources and wait for them to become ready")
+		err := globalhelper.CreateAndValidateCatalogSources(true)
 		Expect(err).ToNot(HaveOccurred(), "All necessary catalog sources are not available")
 	}
 }, func() {})
