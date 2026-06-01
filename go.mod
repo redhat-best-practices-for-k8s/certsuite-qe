@@ -2,7 +2,7 @@ module github.com/redhat-best-practices-for-k8s/certsuite-qe
 
 go 1.26.1
 
-toolchain go1.26.2
+toolchain go1.26.3
 
 require (
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.7
