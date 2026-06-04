@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v5.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5.0.0
         with:
           ref: ${{ github.sha }}
 
@@ -41,7 +41,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Clone the certsuite repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v5.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5.0.0
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
@@ -101,7 +101,7 @@ jobs:
           echo '{ "auths": {} }' >> ${PFLT_DOCKERCONFIG}
 
       - name: Check out code
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v5.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5.0.0
         with:
           ref: ${{ github.sha }}
 
@@ -142,7 +142,7 @@ jobs:
           OCP_PULL_SECRET: ${{ secrets.CRC_PULL_SECRET }}
 
       - name: Clone the certsuite repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v5.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5.0.0
         with:
           repository: ${{ env.TEST_REPO }}
           path: certsuite
