@@ -101,6 +101,12 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()), randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Inspect CheckDetails from Claim report for diagnostics")
+
+		checkDetails, checkDetailsErr := globalhelper.GetTestCaseCheckDetails(
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy, randomReportDir)
+		globalhelper.LogCheckDetails(checkDetails, checkDetailsErr)
+
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValid(
 			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
@@ -108,24 +114,14 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify CheckDetails report completeness")
-		checkDetails, err := globalhelper.GetTestCaseCheckDetails(
-			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(checkDetailsErr).ToNot(HaveOccurred())
 
 		totalObjects := len(checkDetails.CompliantObjectsOut) + len(checkDetails.NonCompliantObjectsOut)
-		GinkgoWriter.Printf("CheckDetails: %d compliant, %d non-compliant objects\n",
-			len(checkDetails.CompliantObjectsOut), len(checkDetails.NonCompliantObjectsOut))
 		Expect(totalObjects).To(BeNumerically(">=", 1),
 			"At least one report object expected (no early abort)")
 
-		for i, obj := range checkDetails.CompliantObjectsOut {
-			GinkgoWriter.Printf("Compliant[%d]: type=%s reason=%s\n",
-				i, obj.ObjectType, globalhelper.GetReportObjectFieldValue(obj, "Reason"))
-		}
-
-		for i, obj := range checkDetails.NonCompliantObjectsOut {
+		for _, obj := range checkDetails.NonCompliantObjectsOut {
 			reason := globalhelper.GetReportObjectFieldValue(obj, "Reason")
-			GinkgoWriter.Printf("NonCompliant[%d]: type=%s reason=%s\n", i, obj.ObjectType, reason)
 			Expect(reason).ToNot(ContainSubstring("could not determine scheduling policy"),
 				"Unhandled scheduling policy error found in non-compliant objects")
 		}
@@ -169,6 +165,12 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 			randomReportDir, randomCertsuiteConfigDir)
 		Expect(err).ToNot(HaveOccurred())
 
+		By("Inspect CheckDetails from Claim report for diagnostics")
+
+		checkDetails, checkDetailsErr := globalhelper.GetTestCaseCheckDetails(
+			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy, randomReportDir)
+		globalhelper.LogCheckDetails(checkDetails, checkDetailsErr)
+
 		By("Verify test case completed (any terminal status accepted)")
 		err = globalhelper.ValidateIfReportsAreValidWithAcceptedStatuses(
 			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy,
@@ -177,17 +179,12 @@ var _ = Describe("performance-shared-cpu-pool-non-rt-scheduling-policy", Label("
 		Expect(err).ToNot(HaveOccurred())
 
 		By("Verify CheckDetails for process disappearance handling")
-		checkDetails, err := globalhelper.GetTestCaseCheckDetails(
-			tsparams.CertsuiteSharedCPUPoolSchedulingPolicy, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
+		Expect(checkDetailsErr).ToNot(HaveOccurred())
 
 		totalObjects := len(checkDetails.CompliantObjectsOut) + len(checkDetails.NonCompliantObjectsOut)
-		GinkgoWriter.Printf("CheckDetails: %d compliant, %d non-compliant objects\n",
-			len(checkDetails.CompliantObjectsOut), len(checkDetails.NonCompliantObjectsOut))
 		Expect(totalObjects).To(BeNumerically(">=", 1),
 			"At least one report object expected (no early abort)")
 
-		// Verify that any "process disappeared" entries are in the compliant list, never non-compliant
 		disappearedCount := 0
 
 		for _, obj := range checkDetails.CompliantObjectsOut {
