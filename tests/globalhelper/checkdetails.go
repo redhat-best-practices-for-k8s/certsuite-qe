@@ -3,6 +3,8 @@ package globalhelper
 import (
 	"encoding/json"
 	"fmt"
+
+	. "github.com/onsi/ginkgo/v2"
 )
 
 // ReportObject mirrors the certsuite's testhelper.ReportObject structure.
@@ -53,6 +55,27 @@ func GetTestCaseCheckDetails(tcName, reportDir string) (*CheckDetails, error) {
 	}
 
 	return details, nil
+}
+
+// LogCheckDetails writes CheckDetails summary and per-object reasons to GinkgoWriter.
+// Safe to call when checkDetailsErr is non-nil (logs nothing).
+func LogCheckDetails(checkDetails *CheckDetails, checkDetailsErr error) {
+	if checkDetailsErr != nil {
+		return
+	}
+
+	GinkgoWriter.Printf("CheckDetails: %d compliant, %d non-compliant objects\n",
+		len(checkDetails.CompliantObjectsOut), len(checkDetails.NonCompliantObjectsOut))
+
+	for i, obj := range checkDetails.CompliantObjectsOut {
+		GinkgoWriter.Printf("Compliant[%d]: type=%s reason=%s\n",
+			i, obj.ObjectType, GetReportObjectFieldValue(obj, "Reason"))
+	}
+
+	for i, obj := range checkDetails.NonCompliantObjectsOut {
+		GinkgoWriter.Printf("NonCompliant[%d]: type=%s reason=%s\n",
+			i, obj.ObjectType, GetReportObjectFieldValue(obj, "Reason"))
+	}
 }
 
 // GetReportObjectFieldValue returns the value for a given key from a ReportObject's parallel arrays.
