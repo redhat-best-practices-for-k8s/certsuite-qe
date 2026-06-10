@@ -206,7 +206,7 @@ jobs:
           sudo apt-get install -y python3-pip
 
       - name: Setup up k8s cluster
-        uses: palmsoftware/quick-k8s@b166773bf917e23d252c4c9fb919d33d2deaaa91 # v0.0.67
+        uses: palmsoftware/quick-k8s@087bf3e05602acfed0f41a881656509669783e53 # v0.0.70
         with:
           disableDefaultCni: true
           numControlPlaneNodes: 1
