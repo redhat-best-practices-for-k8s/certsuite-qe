@@ -79,12 +79,6 @@ jobs:
           path: certsuite
           ref: ${{ env.CERTSUITE_REF }}
 
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@826c144163ac67bf08347590a5f81afd45da63ca # main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: certsuite
-
       - name: Build the certsuite binary
         run: make build-certsuite-tool
         working-directory: certsuite
@@ -234,12 +228,6 @@ jobs:
           path: certsuite
           ref: ${{ env.CERTSUITE_REF }}
 
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@826c144163ac67bf08347590a5f81afd45da63ca # main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: certsuite-sample-workload certsuite
-
       - name: Download pre-built certsuite binary
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -272,15 +260,5 @@ jobs:
           timeout_minutes: 150
           max_attempts: 3
           command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite USE_BINARY=true DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
-
-  check-all-dependencies-are-merged:
-    runs-on: ubuntu-24.04
-    steps:
-
-      - name: Extract dependent PR
-        uses: depends-on/depends-on-action@826c144163ac67bf08347590a5f81afd45da63ca # main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          check-unmerged-pr: true
 
 ...
