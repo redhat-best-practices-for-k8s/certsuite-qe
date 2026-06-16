@@ -47,12 +47,6 @@ jobs:
           path: certsuite
           ref: ${{ env.CERTSUITE_REF }}
 
-      - name: Extract dependent Pull Requests
-        uses: depends-on/depends-on-action@826c144163ac67bf08347590a5f81afd45da63ca # main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          extra-dirs: certsuite
-
       - name: Build the certsuite binary
         run: make build-certsuite-tool
         working-directory: certsuite
