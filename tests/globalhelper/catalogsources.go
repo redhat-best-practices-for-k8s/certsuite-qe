@@ -12,6 +12,7 @@ import (
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 	klog "k8s.io/klog/v2"
 )
 
@@ -31,54 +32,42 @@ func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) e
 		interval = 10 * time.Second
 	)
 
-	deadline := time.Now().Add(timeout)
-
-	for time.Now().Before(deadline) {
-		catalogSources, err := opclient.CatalogSources(
-			CatalogSourceNamespace).List(context.TODO(),
-			metav1.ListOptions{})
-		if err != nil {
-			return err
-		}
-
-		allReady := true
-
-		for _, name := range requiredCatalogSources {
-			idx := slices.IndexFunc(catalogSources.Items, func(cs v1alpha1.CatalogSource) bool {
-				return cs.Name == name
-			})
-
-			if idx == -1 {
-				klog.Infof("Catalog source %s not found yet, waiting...", name)
-				allReady = false
-
-				break
+	return wait.PollUntilContextTimeout(context.TODO(), interval, timeout, true,
+		func(ctx context.Context) (bool, error) {
+			catalogSources, err := opclient.CatalogSources(
+				CatalogSourceNamespace).List(ctx, metav1.ListOptions{})
+			if err != nil {
+				return false, err
 			}
 
-			cs := catalogSources.Items[idx]
-			if cs.Status.GRPCConnectionState == nil || cs.Status.GRPCConnectionState.LastObservedState != "READY" {
-				state := "nil"
-				if cs.Status.GRPCConnectionState != nil {
-					state = cs.Status.GRPCConnectionState.LastObservedState
+			for _, name := range requiredCatalogSources {
+				idx := slices.IndexFunc(catalogSources.Items, func(cs v1alpha1.CatalogSource) bool {
+					return cs.Name == name
+				})
+
+				if idx == -1 {
+					klog.Infof("Catalog source %s not found yet, waiting...", name)
+
+					return false, nil
 				}
 
-				klog.Infof("Catalog source %s exists but is not READY (state: %s), waiting...", name, state)
-				allReady = false
+				cs := catalogSources.Items[idx]
+				if cs.Status.GRPCConnectionState == nil || cs.Status.GRPCConnectionState.LastObservedState != "READY" {
+					state := "nil"
+					if cs.Status.GRPCConnectionState != nil {
+						state = cs.Status.GRPCConnectionState.LastObservedState
+					}
 
-				break
+					klog.Infof("Catalog source %s exists but is not READY (state: %s), waiting...", name, state)
+
+					return false, nil
+				}
+
+				klog.Infof("Catalog source %s is READY", name)
 			}
 
-			klog.Infof("Catalog source %s is READY", name)
-		}
-
-		if allReady {
-			return nil
-		}
-
-		time.Sleep(interval)
-	}
-
-	return fmt.Errorf("timed out after %s waiting for catalog sources %v to be READY", timeout, requiredCatalogSources)
+			return true, nil
+		})
 }
 
 func deleteCatalogSourceByName(name string) error {
