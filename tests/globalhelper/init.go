@@ -7,6 +7,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	testclient "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/config"
 	"k8s.io/client-go/kubernetes"
@@ -70,14 +71,14 @@ func GenerateDirectories(randomStr string) (reportDir, configDir string) {
 	reportDir = GetConfiguration().General.CertsuiteReportDir + "/" + randomStr
 	configDir = GetConfiguration().General.CertsuiteConfigDir + "/" + randomStr
 
-	err := os.MkdirAll(reportDir, os.ModePerm)
+	err := os.MkdirAll(reportDir, globalparameters.DirPermissions)
 	if err != nil {
 		klog.ErrorS(err, "could not create dest directory", "dir", reportDir)
 	}
 
-	err = os.MkdirAll(configDir, os.ModePerm)
+	err = os.MkdirAll(configDir, globalparameters.DirPermissions)
 	if err != nil {
-		klog.ErrorS(err, "could not create dest directory", "dir", reportDir)
+		klog.ErrorS(err, "could not create dest directory", "dir", configDir)
 	}
 
 	return reportDir, configDir
