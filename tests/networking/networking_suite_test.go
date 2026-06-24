@@ -3,8 +3,6 @@
 package networking
 
 import (
-	"flag"
-	"runtime"
 	"testing"
 	"time"
 
@@ -22,14 +20,7 @@ import (
 )
 
 func TestNetworking(t *testing.T) {
-	_, currentFile, _, _ := runtime.Caller(0)
-	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.GetConfiguration().General.VerificationLogLevel)
-	_, reporterConfig := GinkgoConfiguration()
-	reporterConfig.JUnitReport = globalhelper.GetConfiguration().GetReportPath(currentFile)
-
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "CNFCert networking tests", reporterConfig)
+	globalhelper.RunSuite(t, "CNFCert networking tests")
 }
 
 var _ = SynchronizedBeforeSuite(func() {
