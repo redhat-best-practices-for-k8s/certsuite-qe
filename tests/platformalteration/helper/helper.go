@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/platformalteration/parameters"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
@@ -21,7 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
-const WaitingTime = 5 * time.Minute
+const WaitingTime = globalparameters.DefaultTimeout
 
 // IsRealOCPCluster checks if the cluster is a real OCP cluster (not CRC/SNO development cluster).
 // Real clusters typically have multiple nodes or specific configurations that indicate

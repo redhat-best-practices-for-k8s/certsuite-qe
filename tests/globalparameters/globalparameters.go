@@ -3,10 +3,13 @@ package globalparameters
 import (
 	"encoding/xml"
 	"io/fs"
+	"time"
 )
 
 const (
-	DirPermissions fs.FileMode = 0750
+	DirPermissions      fs.FileMode = 0750
+	DefaultTimeout                  = 5 * time.Minute
+	DefaultPollInterval             = 5 * time.Second
 )
 
 type (

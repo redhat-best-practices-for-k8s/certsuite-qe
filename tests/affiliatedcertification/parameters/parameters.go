@@ -3,6 +3,8 @@ package parameters
 import (
 	"fmt"
 	"time"
+
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
 type (
@@ -19,7 +21,7 @@ type (
 )
 
 const (
-	Timeout         = 5 * time.Minute
+	Timeout         = globalparameters.DefaultTimeout
 	TimeoutLabelCsv = 2 * time.Minute
 	PollingInterval = 5 * time.Second
 
