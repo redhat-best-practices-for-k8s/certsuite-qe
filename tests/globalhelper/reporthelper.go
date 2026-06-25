@@ -181,12 +181,15 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
 	_, err := os.Stat(srcClaim)
 	if err != nil {
 		klog.Error("file does not exist ", srcClaim)
+
+		return
 	}
 
-	// create destination folder
 	err = os.MkdirAll(dstDir, globalparameters.DirPermissions)
 	if err != nil {
 		klog.ErrorS(err, "could not create dest directory", "dir", dstDir)
+
+		return
 	}
 
 	err = CopyFiles(srcClaim, dstClaim)
