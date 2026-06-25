@@ -148,26 +148,15 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 		return fmt.Errorf("failed to execute command %s: %w", cmd, err)
 	}
 
-	// loop to wait until the file has been actually updated.
-	timeout := time.Now().Add(5 * time.Minute)
+	return wait.PollUntilContextTimeout(context.TODO(), tsparams.RetryInterval*time.Second, WaitingTime, true,
+		func(ctx context.Context) (bool, error) {
+			currentHugepagesNumber, err := GetHugePagesConfigNumber(filePath, pod)
+			if err != nil {
+				return false, fmt.Errorf("failed to get hugepages number: %w", err)
+			}
 
-	for {
-		currentHugepagesNumber, err := GetHugePagesConfigNumber(filePath, pod)
-		if err != nil {
-			return fmt.Errorf("failed to get hugepages number: %w", err)
-		}
-
-		if updatedHugePagesNumber == currentHugepagesNumber {
-			return nil
-		}
-
-		if time.Now().After(timeout) {
-			return fmt.Errorf("timedout waiting for hugepages to be updated, currently: %d, expected: %d",
-				currentHugepagesNumber, updatedHugePagesNumber)
-		}
-
-		time.Sleep(tsparams.RetryInterval * time.Second)
-	}
+			return updatedHugePagesNumber == currentHugepagesNumber, nil
+		})
 }
 
 // GetHugePagesConfigNumber returns hugepages config number from a given file.

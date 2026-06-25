@@ -12,6 +12,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	klog "k8s.io/klog/v2"
 
@@ -180,40 +181,36 @@ func getRunningPod(client typedcorev1.CoreV1Interface, namespace, name string) (
 }
 
 func GetControllerPodFromOperator(namespace, operatorName string) (*corev1.Pod, error) {
-	// Wait for the controller manager pod to come up
-	podsFound := false
-
-	var (
-		pods *corev1.PodList
-		err  error
+	const (
+		podDiscoveryTimeout  = 50 * time.Second
+		podDiscoveryInterval = 5 * time.Second
 	)
 
-	// Try 10 times to find the pod
-	for i := 0; i < 10; i++ {
-		pods, err = GetListOfPodsInNamespace(namespace)
-		if err != nil {
-			return nil, err
-		}
+	var pods *corev1.PodList
 
-		if len(pods.Items) == 0 {
-			fmt.Println("No pods found, retrying in 5 seconds...")
-			time.Sleep(5 * time.Second)
+	err := wait.PollUntilContextTimeout(context.TODO(), podDiscoveryInterval, podDiscoveryTimeout, true,
+		func(ctx context.Context) (bool, error) {
+			var listErr error
+			//nolint:contextcheck // GetListOfPodsInNamespace does not accept a context yet
+			pods, listErr = GetListOfPodsInNamespace(namespace)
 
-			continue
-		} else {
-			podsFound = true
+			if listErr != nil {
+				return false, listErr
+			}
 
-			break
-		}
-	}
+			if len(pods.Items) == 0 {
+				klog.Infof("No pods found in namespace %s, retrying...", namespace)
 
-	if !podsFound {
-		return nil, fmt.Errorf("no pods found in namespace %s", namespace)
+				return false, nil
+			}
+
+			return true, nil
+		})
+	if err != nil {
+		return nil, fmt.Errorf("no pods found in namespace %s: %w", namespace, err)
 	}
 
 	for _, pod := range pods.Items {
-		fmt.Printf("Checking pod %s\n", pod.Name)
-
 		if strings.Contains(pod.Name, operatorName) {
 			return &pod, nil
 		}
