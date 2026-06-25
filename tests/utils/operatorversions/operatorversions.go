@@ -19,7 +19,6 @@ const (
 	CatalogCertifiedOperators = "certified-operators"
 	CatalogCommunityOperators = "community-operators"
 	CatalogRedHatOperators    = "redhat-operators"
-	CatalogSourceNamespace    = "openshift-marketplace"
 )
 
 // OperatorInfo contains the configuration for a specific operator.

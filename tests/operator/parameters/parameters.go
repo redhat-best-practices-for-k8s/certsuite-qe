@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
@@ -42,7 +43,7 @@ var (
 	CertifiedOperatorGroup               = "certified-operators"
 	RedhatOperatorGroup                  = "redhat-operators"
 	CommunityOperatorGroup               = "community-operators"
-	OperatorSourceNamespace              = "openshift-marketplace"
+	OperatorSourceNamespace              = globalhelper.CatalogSourceNamespace
 	OperatorPrefixLightweight            = "prometheus-exporter-operator"
 	OperatorPrefixKiali                  = "kiali-operator"
 	CertifiedOperatorPrefix              = "grafana-operator"

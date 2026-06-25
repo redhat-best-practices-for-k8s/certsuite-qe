@@ -122,7 +122,7 @@ func deployRHCatalogSource(name, imagePath, displayName, ocpVersion string) erro
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      name,
-				Namespace: "openshift-marketplace",
+				Namespace: CatalogSourceNamespace,
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
@@ -149,7 +149,7 @@ func deployRHCatalogSource(name, imagePath, displayName, ocpVersion string) erro
 }
 
 func DeleteCustomOperatorSource() error {
-	return DeleteCatalogSource("custom-catalog", "openshift-marketplace", "Custom Index")
+	return DeleteCatalogSource("custom-catalog", CatalogSourceNamespace, "Custom Index")
 }
 
 func DeployCustomOperatorSource(image string) error {
@@ -157,7 +157,7 @@ func DeployCustomOperatorSource(image string) error {
 		&v1alpha1.CatalogSource{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "custom-catalog",
-				Namespace: "openshift-marketplace",
+				Namespace: CatalogSourceNamespace,
 			},
 			Spec: v1alpha1.CatalogSourceSpec{
 				SourceType:  "grpc",
