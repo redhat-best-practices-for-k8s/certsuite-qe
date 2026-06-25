@@ -1,6 +1,10 @@
 package parameters
 
-import "time"
+import (
+	"time"
+
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
+)
 
 const (
 	CertsuiteTestSuiteName = "observability"
@@ -12,7 +16,7 @@ const (
 	CertsuiteTerminationMsgPolicyTcName = "observability-termination-policy"
 	CertsuitePodDisruptionBudgetTcName  = "observability-pod-disruption-budget"
 
-	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage = globalparameters.UBIMicroImage
 
 	TestNamespace = "observability-ns"
 

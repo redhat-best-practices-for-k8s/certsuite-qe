@@ -66,5 +66,5 @@ const (
 	CertsuitePodTolerationBypassTcName           = "lifecycle-pod-toleration-bypass"
 	CertsuiteStorageProvisioner                  = "lifecycle-storage-provisioner"
 
-	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage = globalparameters.UBIMicroImage
 )

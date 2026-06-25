@@ -25,7 +25,7 @@ const (
 	TimeoutLabelCsv = 2 * time.Minute
 	PollingInterval = 5 * time.Second
 
-	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage = globalparameters.UBIMicroImage
 )
 
 var (
@@ -48,7 +48,7 @@ var (
 	ContainerRepoOnlyRedHatRegistry     = ";registry.connect.redhat.com;;"
 	CertifiedContainerURLNodeJs         = "registry.access.redhat.com/ubi8/nodejs-12:latest"
 	CertifiedContainerURLCockroachDB    = "registry.connect.redhat.com/cockroachdb/cockroach:v23.1.17" // 'latest' tag is not available
-	UncertifiedContainerURLCnfTest      = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
+	UncertifiedContainerURLCnfTest      = globalparameters.DebugImage
 
 	TestCaseOperatorAffiliatedCertName = "affiliated-certification-operator-is-certified"
 	TestHelmChartCertified             = "affiliated-certification-helmchart-is-certified"

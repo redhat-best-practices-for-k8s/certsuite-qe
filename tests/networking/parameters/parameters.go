@@ -75,5 +75,5 @@ const (
 	CertsuiteNetworkingMultusIpamTcName           = "networking-multus-ipam"
 	CertsuiteNetworkingMultusNodeSelectorTcName   = "networking-multus-node-selector"
 
-	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage = globalparameters.UBIMicroImage
 )

@@ -3,6 +3,8 @@ package parameters
 import (
 	"fmt"
 	"time"
+
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
 type (
@@ -77,7 +79,7 @@ const (
 	TestOperatorHubSubscriptionValidChannel = "operator-hub-subscription-is-valid-channel"
 	TestOperatorSingleCrdOwner              = "operator-single-crd-owner"
 
-	SampleWorkloadImage = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage = globalparameters.UBIMicroImage
 )
 
 const (
