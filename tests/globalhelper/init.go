@@ -134,14 +134,6 @@ func RunSuite(t *testing.T, suiteName string) {
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {
-	// logfile := "certsuite.log"
-	// By("Print logs")
-	// myFile, err := os.ReadFile(randomReportDir + "/" + logfile)
-	// if err != nil {
-	// 	klog.Errorf("can not read file %s - %s", logfile, err)
-	// }
-	// fmt.Println(string(myFile))
-	// By(fmt.Sprintf("Remove reports from report directory: %s", randomReportDir))
 	err := RemoveContentsFromReportDir(randomReportDir)
 	Expect(err).ToNot(HaveOccurred())
 
