@@ -37,7 +37,7 @@ func createAndWaitUntilDaemonSetIsReady(client *egiClients.Settings,
 		status, err := isDaemonSetReady(client, runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
 			klog.Errorf(
-				"daemonset %s is not ready, retry in 1 second", runningDaemonSet.Name)
+				"daemonset %s is not ready, retry in 1 second: %v", runningDaemonSet.Name, err)
 
 			return false
 		}
