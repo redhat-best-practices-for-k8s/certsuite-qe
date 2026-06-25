@@ -70,21 +70,19 @@ func GetConfiguration() *config.Config {
 	return conf
 }
 
-func GenerateDirectories(randomStr string) (reportDir, configDir string) {
-	reportDir = GetConfiguration().General.CertsuiteReportDir + "/" + randomStr
-	configDir = GetConfiguration().General.CertsuiteConfigDir + "/" + randomStr
+func GenerateDirectories(randomStr string) (string, string, error) {
+	reportDir := GetConfiguration().General.CertsuiteReportDir + "/" + randomStr
+	configDir := GetConfiguration().General.CertsuiteConfigDir + "/" + randomStr
 
-	err := os.MkdirAll(reportDir, globalparameters.DirPermissions)
-	if err != nil {
-		klog.ErrorS(err, "could not create dest directory", "dir", reportDir)
+	if err := os.MkdirAll(reportDir, globalparameters.DirPermissions); err != nil {
+		return "", "", fmt.Errorf("could not create report directory %s: %w", reportDir, err)
 	}
 
-	err = os.MkdirAll(configDir, globalparameters.DirPermissions)
-	if err != nil {
-		klog.ErrorS(err, "could not create dest directory", "dir", configDir)
+	if err := os.MkdirAll(configDir, globalparameters.DirPermissions); err != nil {
+		return "", "", fmt.Errorf("could not create config directory %s: %w", configDir, err)
 	}
 
-	return reportDir, configDir
+	return reportDir, configDir, nil
 }
 
 func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespace, randomReportDir, randomConfigDir string) {
@@ -96,7 +94,8 @@ func BeforeEachSetupWithRandomNamespace(incomingNamespace string) (randomNamespa
 
 	By("Generate directories")
 
-	randomReportDir, randomConfigDir = GenerateDirectories(randomNamespace)
+	randomReportDir, randomConfigDir, err = GenerateDirectories(randomNamespace)
+	Expect(err).ToNot(HaveOccurred())
 
 	return randomNamespace, randomReportDir, randomConfigDir
 }
@@ -113,7 +112,8 @@ func BeforeEachSetupWithRandomPrivilegedNamespace(incomingNamespace string) (ran
 
 	By("Generate directories")
 
-	randomReportDir, randomConfigDir = GenerateDirectories(randomNamespace)
+	randomReportDir, randomConfigDir, err = GenerateDirectories(randomNamespace)
+	Expect(err).ToNot(HaveOccurred())
 
 	return randomNamespace, randomReportDir, randomConfigDir
 }
