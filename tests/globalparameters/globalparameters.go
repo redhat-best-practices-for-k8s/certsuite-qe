@@ -1,6 +1,13 @@
 package globalparameters
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"io/fs"
+)
+
+const (
+	DirPermissions fs.FileMode = 0750
+)
 
 type (
 	CertsuiteConfig struct {

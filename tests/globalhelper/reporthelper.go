@@ -184,7 +184,7 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
 	}
 
 	// create destination folder
-	err = os.MkdirAll(dstDir, os.ModePerm)
+	err = os.MkdirAll(dstDir, globalparameters.DirPermissions)
 	if err != nil {
 		klog.ErrorS(err, "could not create dest directory", "dir", dstDir)
 	}

@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 	testclient "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/client"
 
 	"github.com/kelseyhightower/envconfig"
@@ -121,7 +122,7 @@ func (c *Config) DebugCertsuite() (bool, error) {
 func (c *Config) CreateLogFile(testSuite string, tcName string) *os.File {
 	folderPath := filepath.Join(c.General.ReportDirAbsPath, "Debug", testSuite, tcName)
 
-	err := os.MkdirAll(folderPath, 0755)
+	err := os.MkdirAll(folderPath, globalparameters.DirPermissions)
 	if err != nil && !os.IsExist(err) {
 		// we only panic in case the error is different than "folder already exists".
 		panic(err)
@@ -230,7 +231,7 @@ func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, env
 
 	klog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
 
-	err = os.MkdirAll(dirName, 0777)
+	err = os.MkdirAll(dirName, globalparameters.DirPermissions)
 	if err != nil {
 		return fmt.Errorf("failed to create dir %v: %w", dirName, err)
 	}
@@ -241,7 +242,7 @@ func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, env
 func (c *Config) makeDockerConfig() error {
 	var configFile *os.File
 
-	err := os.MkdirAll(c.General.DockerConfigDir, 0777)
+	err := os.MkdirAll(c.General.DockerConfigDir, globalparameters.DirPermissions)
 	if err != nil {
 		return fmt.Errorf("failed to create dir %v: %w", c.General.DockerConfigDir, err)
 	}
