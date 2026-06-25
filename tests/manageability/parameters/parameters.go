@@ -2,11 +2,12 @@ package parameters
 
 import (
 	"fmt"
-	"time"
+
+	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
 const (
-	WaitingTime = 5 * time.Minute
+	WaitingTime = globalparameters.DefaultTimeout
 )
 
 var (
