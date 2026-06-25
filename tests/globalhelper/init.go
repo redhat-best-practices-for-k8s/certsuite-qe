@@ -1,8 +1,11 @@
 package globalhelper
 
 import (
+	"flag"
 	"fmt"
 	"os"
+	"runtime"
+	"testing"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -113,6 +116,21 @@ func BeforeEachSetupWithRandomPrivilegedNamespace(incomingNamespace string) (ran
 	randomReportDir, randomConfigDir = GenerateDirectories(randomNamespace)
 
 	return randomNamespace, randomReportDir, randomConfigDir
+}
+
+func RunSuite(t *testing.T, suiteName string) {
+	t.Helper()
+
+	_, callerFile, _, _ := runtime.Caller(1)
+
+	_ = flag.Lookup("logtostderr").Value.Set("true")
+	_ = flag.Lookup("v").Value.Set(GetConfiguration().General.VerificationLogLevel)
+
+	_, reporterConfig := GinkgoConfiguration()
+	reporterConfig.JUnitReport = GetConfiguration().GetReportPath(callerFile)
+
+	RegisterFailHandler(Fail)
+	RunSpecs(t, suiteName, reporterConfig)
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {

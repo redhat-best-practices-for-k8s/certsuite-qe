@@ -3,27 +3,17 @@
 package accesscontrol
 
 import (
-	"flag"
+	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"runtime"
-	"testing"
 
 	_ "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/tests"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 )
 
 func TestAccessControl(t *testing.T) {
-	_, currentFile, _, _ := runtime.Caller(0)
-	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.GetConfiguration().General.VerificationLogLevel)
-	_, reporterConfig := GinkgoConfiguration()
-	reporterConfig.JUnitReport = globalhelper.GetConfiguration().GetReportPath(currentFile)
-
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "CNFCert access-control tests", reporterConfig)
+	globalhelper.RunSuite(t, "CNFCert access-control tests")
 }
 
 var _ = SynchronizedBeforeSuite(func() {

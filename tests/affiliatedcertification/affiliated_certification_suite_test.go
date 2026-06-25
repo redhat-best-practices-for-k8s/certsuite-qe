@@ -3,11 +3,9 @@
 package affiliatedcertification
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
-	"runtime"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -22,14 +20,7 @@ import (
 )
 
 func TestAffiliatedCertification(t *testing.T) {
-	_, currentFile, _, _ := runtime.Caller(0)
-	_ = flag.Lookup("logtostderr").Value.Set("true")
-	_ = flag.Lookup("v").Value.Set(globalhelper.GetConfiguration().General.VerificationLogLevel)
-	_, reporterConfig := GinkgoConfiguration()
-	reporterConfig.JUnitReport = globalhelper.GetConfiguration().GetReportPath(currentFile)
-
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "CNFCert affiliated-certification tests", reporterConfig)
+	globalhelper.RunSuite(t, "CNFCert affiliated-certification tests")
 }
 
 var (
