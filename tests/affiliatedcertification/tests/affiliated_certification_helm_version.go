@@ -47,19 +47,15 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, Label("affili
 	// 68120
 	It("installed helm version is certified", func() {
 		By("Check if helm is installed")
-		cmd := exec.Command("/bin/bash", "-c",
-			"helm version")
+		_, err := globalhelper.RunShellCommand("helm version")
 
-		err := cmd.Run()
 		if err != nil {
 			Skip("helm does not exist please install it to run the test.")
 		}
 
 		By("Check that helm version is v3")
-		cmd = exec.Command("/bin/bash", "-c",
-			"helm version --short | grep v3")
+		_, err = globalhelper.RunShellCommand("helm version --short | grep v3")
 
-		err = cmd.Run()
 		if err != nil {
 			Fail("Helm version is not v3")
 		}
@@ -88,12 +84,11 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, Label("affili
 		Expect(err).ToNot(HaveOccurred(), "Error removing helm binary")
 
 		By("Install helm v2")
-		cmd := exec.Command("/bin/bash", "-c",
-			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get"+
-				" && chmod +x get_helm.sh"+
-				" && HELM_INSTALL_DIR="+helmInstallDir+" USE_SUDO=false ./get_helm.sh --version v2.17.0"+
+		_, err = globalhelper.RunShellCommand(
+			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get" +
+				" && chmod +x get_helm.sh" +
+				" && HELM_INSTALL_DIR=" + helmInstallDir + " USE_SUDO=false ./get_helm.sh --version v2.17.0" +
 				" && helm init")
-		err = cmd.Run()
 		Expect(err).ToNot(HaveOccurred(), "Error installing helm v2")
 
 		DeferCleanup(func() {
@@ -102,11 +97,10 @@ var _ = Describe("Affiliated-certification helm-version,", Serial, Label("affili
 			Expect(err).ToNot(HaveOccurred(), "Error deleting tiller deployment")
 
 			By("Re-install helm v3")
-			cmd = exec.Command("/bin/bash", "-c",
-				"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
-					" && chmod +x get_helm.sh"+
-					" && HELM_INSTALL_DIR="+helmInstallDir+" USE_SUDO=false ./get_helm.sh")
-			err = cmd.Run()
+			_, err = globalhelper.RunShellCommand(
+				"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3" +
+					" && chmod +x get_helm.sh" +
+					" && HELM_INSTALL_DIR=" + helmInstallDir + " USE_SUDO=false ./get_helm.sh")
 			Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
 		})
 

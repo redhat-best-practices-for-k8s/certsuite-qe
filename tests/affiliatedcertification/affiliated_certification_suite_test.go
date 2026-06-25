@@ -5,7 +5,6 @@ package affiliatedcertification
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -37,12 +36,11 @@ var _ = SynchronizedBeforeSuite(func() {
 		Expect(err).ToNot(HaveOccurred(), "Error creating temp dir for helm")
 
 		By("Install helm v3 to isolated temp directory")
-		cmd := exec.Command("/bin/bash", "-c",
-			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"+
-				" && chmod +x get_helm.sh"+
-				" && HELM_INSTALL_DIR="+helmDir+" USE_SUDO=false ./get_helm.sh")
-		out, err := cmd.CombinedOutput()
-		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3: "+string(out))
+		_, err = globalhelper.RunShellCommand(
+			"curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3" +
+				" && chmod +x get_helm.sh" +
+				" && HELM_INSTALL_DIR=" + helmDir + " USE_SUDO=false ./get_helm.sh")
+		Expect(err).ToNot(HaveOccurred(), "Error installing helm v3")
 
 		By("Prepend helm temp directory to PATH")
 		err = os.Setenv("PATH", helmDir+":"+os.Getenv("PATH"))
