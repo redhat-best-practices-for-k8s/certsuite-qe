@@ -19,7 +19,7 @@ var (
 	InvalidNamespace                     = "openshift-test"
 	AdditionalValidNamespace             = "ac-test"
 	AdditionalNamespaceForResourceQuotas = "ac-rq-test"
-	SampleWorkloadImage                  = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	SampleWorkloadImage                  = globalparameters.UBIMicroImage
 
 	TestDeploymentLabels = map[string]string{
 		testPodLabelPrefixName: testPodLabelValue,
@@ -77,7 +77,7 @@ const (
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
-	SSHDaemonImageName = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
+	SSHDaemonImageName = globalparameters.DebugImage
 
 	ServiceAccountName = "automount-test-sa"
 	MemoryLimit        = "112Mi"

@@ -10,6 +10,10 @@ const (
 	DirPermissions      fs.FileMode = 0750
 	DefaultTimeout                  = 5 * time.Minute
 	DefaultPollInterval             = 5 * time.Second
+
+	UBIMicroImage                = "registry.access.redhat.com/ubi8/ubi-micro:latest"
+	CertsuiteSampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
+	DebugImage                   = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
 )
 
 type (

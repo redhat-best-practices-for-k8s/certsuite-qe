@@ -26,7 +26,7 @@ const (
 	CertsuiteTestSuiteName = "performance"
 	PerformanceNamespace   = "performance-ns"
 
-	RtImageName = "quay.io/testnetworkfunction/k8s-best-practices-debug:latest"
+	RtImageName = globalparameters.DebugImage
 
 	// CRD names for prerequisite checks.
 	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
