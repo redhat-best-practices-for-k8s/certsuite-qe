@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"os/exec"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/affiliatedcertification/helper"
@@ -46,41 +44,34 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 
 		It("One helm to test, are certified", func() {
 			By("Check if helm is installed")
-			cmd := exec.Command("/bin/bash", "-c",
-				"helm version")
+			_, err := globalhelper.RunShellCommand("helm version")
 
-			err := cmd.Run()
 			if err != nil {
 				Skip("helm does not exist please install it to run the test.")
 			}
 
 			By("Check that helm version is v3")
-			cmd = exec.Command("/bin/bash", "-c",
-				"helm version --short | grep v3")
+			_, err = globalhelper.RunShellCommand("helm version --short | grep v3")
 
-			err = cmd.Run()
 			if err != nil {
 				Fail("Helm version is not v3")
 			}
 
 			By("Add openshift-helm-charts repo")
-			cmd = exec.Command("/bin/bash", "-c",
-				"helm repo add hashicorp https://helm.releases.hashicorp.com --force-update "+
-					"&& helm repo update")
-			err = cmd.Run()
+			_, err = globalhelper.RunShellCommand(
+				"helm repo add hashicorp https://helm.releases.hashicorp.com --force-update" +
+					" && helm repo update")
 			Expect(err).ToNot(HaveOccurred(), "Error adding openshift-helm-carts repo")
 
 			By("Install helm chart")
-			cmd = exec.Command("/bin/bash", "-c",
-				"helm install example-vault1 hashicorp/vault -n "+randomNamespace)
-			err = cmd.Run()
+			_, err = globalhelper.RunShellCommand(
+				"helm install example-vault1 hashicorp/vault -n " + randomNamespace)
 			Expect(err).ToNot(HaveOccurred(), "Error installing hashicorp-vault helm chart")
 
 			DeferCleanup(func() {
 				By("Remove the example-vault1 helm chart")
-				cmd = exec.Command("/bin/bash", "-c", // uninstall the chart
-					"helm uninstall example-vault1 --ignore-not-found -n "+randomNamespace)
-				err = cmd.Run()
+				_, err = globalhelper.RunShellCommand(
+					"helm uninstall example-vault1 --ignore-not-found -n " + randomNamespace)
 				Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm chart")
 
 				By("Delete clusterrole and clusterrolebinding")
@@ -113,21 +104,17 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 
 		It("One helm to test, chart not certified", func() {
 			By("Check if helm is installed")
-			cmd := exec.Command("/bin/bash", "-c",
-				"helm version")
+			_, err := globalhelper.RunShellCommand("helm version")
 
-			out, err := cmd.CombinedOutput()
 			if err != nil {
-				Skip("helm does not exist please install it to run the test. Output: " + string(out))
+				Skip("helm does not exist please install it to run the test.")
 			}
 
 			By("Check that helm version is v3")
-			cmd = exec.Command("/bin/bash", "-c",
-				"helm version --short | grep v3")
+			_, err = globalhelper.RunShellCommand("helm version --short | grep v3")
 
-			out, err = cmd.CombinedOutput()
 			if err != nil {
-				Fail("Helm version is not v3. Output: " + string(out))
+				Fail("Helm version is not v3")
 			}
 
 			By("Delete istio-system namespace")
@@ -139,18 +126,16 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			Expect(err).ToNot(HaveOccurred(), "Error creating istio-system namespace")
 
 			By("Add istio helm chart repo")
-			cmd = exec.Command("/bin/bash", "-c",
-				"helm repo add istio https://istio-release.storage.googleapis.com/charts --force-update "+
-					"&& helm repo update")
-			out, err = cmd.CombinedOutput()
-			Expect(err).ToNot(HaveOccurred(), "Error adding istio charts repo. Output: %s", string(out))
+			_, err = globalhelper.RunShellCommand(
+				"helm repo add istio https://istio-release.storage.googleapis.com/charts --force-update" +
+					" && helm repo update")
+			Expect(err).ToNot(HaveOccurred(), "Error adding istio charts repo")
 
 			DeferCleanup(func() {
 				By("Remove istio-base helm chart")
-				cmd = exec.Command("/bin/bash", "-c", // uninstall the chart
-					"helm uninstall istio-base --ignore-not-found -n "+randomNamespace)
-				out, err := cmd.CombinedOutput()
-				Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm chart. Output: %s", string(out))
+				_, err := globalhelper.RunShellCommand(
+					"helm uninstall istio-base --ignore-not-found -n " + randomNamespace)
+				Expect(err).ToNot(HaveOccurred(), "Error uninstalling helm chart")
 
 				By("Delete istio-system namespace")
 				err = globalhelper.DeleteNamespaceAndWait("istio-system", tsparams.Timeout)
@@ -168,11 +153,10 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			})
 
 			By("Install istio-base helm chart")
-			cmd = exec.Command("/bin/bash", "-c",
-				"helm install istio-base istio/base --set defaultRevision=default -n "+randomNamespace+
+			_, err = globalhelper.RunShellCommand(
+				"helm install istio-base istio/base --set defaultRevision=default -n " + randomNamespace +
 					" --set hub=gcr.io/istio-release")
-			out, err = cmd.CombinedOutput()
-			Expect(err).ToNot(HaveOccurred(), "Error installing istio-base helm chart. Output: %s", string(out))
+			Expect(err).ToNot(HaveOccurred(), "Error installing istio-base helm chart")
 
 			By("Start test")
 			err = globalhelper.LaunchTests(

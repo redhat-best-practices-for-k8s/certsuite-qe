@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -35,11 +34,10 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 	BeforeAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Install istio")
-			cmd := exec.Command("/bin/bash", "-c",
+			_, err := globalhelper.RunShellCommand(
 				fmt.Sprintf("curl -L https://istio.io/downloadIstio | ISTIO_VERSION=%s sh - "+
 					"&& istio-%s/bin/istioctl install --set profile=demo -y --set hub=gcr.io/istio-release",
 					tsparams.IstioVersion, tsparams.IstioVersion))
-			err := cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error installing istio")
 		}
 	})
@@ -47,11 +45,10 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 	AfterAll(func() {
 		if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
 			By("Uninstall istio")
-			cmd := exec.Command("/bin/bash", "-c",
+			_, err := globalhelper.RunShellCommand(
 				fmt.Sprintf("curl -L https://istio.io/downloadIstio | ISTIO_VERSION=%s sh - "+
 					"&& istio-%s/bin/istioctl uninstall -y --purge",
 					tsparams.IstioVersion, tsparams.IstioVersion))
-			err := cmd.Run()
 			Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
 		}
 	})
@@ -222,11 +219,10 @@ var _ = Describe("platform-alteration-service-mesh-usage-uninstalled", Serial, L
 			By("Uninstall istio")
 
 			if _, exists := os.LookupEnv("NON_LINUX_ENV"); !exists {
-				cmd := exec.Command("/bin/bash", "-c",
+				_, err := globalhelper.RunShellCommand(
 					fmt.Sprintf("curl -L https://istio.io/downloadIstio | ISTIO_VERSION=%s sh - "+
 						"&& istio-%s/bin/istioctl uninstall -y --purge",
 						tsparams.IstioVersion, tsparams.IstioVersion))
-				err := cmd.Run()
 				Expect(err).ToNot(HaveOccurred(), "Error uninstalling istio")
 			}
 		}

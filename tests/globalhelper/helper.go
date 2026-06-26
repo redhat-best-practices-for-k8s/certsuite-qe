@@ -454,3 +454,14 @@ func IsCRCCluster() bool {
 
 	return false
 }
+
+func RunShellCommand(script string) (string, error) {
+	klog.V(5).Infof("Running shell command: %s", script)
+
+	output, err := exec.CommandContext(context.TODO(), "/bin/bash", "-c", script).CombinedOutput()
+	if err != nil {
+		return string(output), fmt.Errorf("shell command failed: %w\nCommand: %s\nOutput: %s", err, script, string(output))
+	}
+
+	return string(output), nil
+}
