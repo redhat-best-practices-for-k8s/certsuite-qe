@@ -21,7 +21,7 @@ func deleteMutatingWebhookConfiguration(client admissionregistrationtypedv1.Admi
 		metav1.DeleteOptions{},
 	)
 	if k8serrors.IsNotFound(err) {
-		klog.V(5).Info(fmt.Sprintf("mutating webhook configuration %s is not found", name))
+		klog.V(5).Infof("mutating webhook configuration %s is not found", name)
 
 		return nil
 	} else if err != nil {

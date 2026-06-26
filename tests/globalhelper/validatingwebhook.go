@@ -21,7 +21,7 @@ func deleteValidatingWebhookConfiguration(client admissionregistrationtypedv1.Ad
 		metav1.DeleteOptions{},
 	)
 	if k8serrors.IsNotFound(err) {
-		klog.V(5).Info(fmt.Sprintf("validating webhook configuration %s is not found", name))
+		klog.V(5).Infof("validating webhook configuration %s is not found", name)
 
 		return nil
 	} else if err != nil {

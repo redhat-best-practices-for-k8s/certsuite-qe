@@ -51,7 +51,7 @@ func GetListOfPodsInNamespace(namespace string) (*corev1.PodList, error) {
 func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error {
 	createdPod, err := GetAPIClient().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("pod %s already exists", pod.Name))
+		klog.V(5).Infof("pod %s already exists", pod.Name)
 	} else if err != nil {
 		return fmt.Errorf("failed to create pod %q (ns %s): %w", pod.Name, pod.Namespace, err)
 	}
@@ -66,8 +66,8 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 			context.TODO(), pod.Name, metav1.GetOptions{})
 
 		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"Pod %s is not running, retry in 1 second", createdPod.Name))
+			klog.V(5).Infof(
+				"Pod %s is not running, retry in 1 second", createdPod.Name)
 
 			return false
 		}
@@ -78,7 +78,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		}
 
 		// print the conditions
-		fmt.Printf("Pod %s conditions: %v\n", runningPod.Name, runningPod.Status.Conditions)
+		klog.Infof("Pod %s conditions: %v", runningPod.Name, runningPod.Status.Conditions)
 
 		for _, condition := range runningPod.Status.Conditions {
 			if condition.Type == corev1.PodScheduled && condition.Status == corev1.ConditionFalse && condition.Reason == "Unschedulable" {
@@ -98,8 +98,8 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 	Eventually(func() bool {
 		status, err := isPodReady(createdPod.Namespace, createdPod.Name)
 		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"Pod %s is not ready, retry in 1 second", createdPod.Name))
+			klog.V(5).Infof(
+				"Pod %s is not ready, retry in 1 second", createdPod.Name)
 
 			return false
 		}

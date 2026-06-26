@@ -6,6 +6,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	egiOLM "github.com/openshift-kni/eco-goinfra/pkg/olm"
+	klog "k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -19,7 +20,7 @@ func QueryPackageManifestForVersion(operatorName, operatorNamespace, channel str
 
 	for _, item := range pkgManifest {
 		if item.Object.GetName() == operatorName {
-			fmt.Printf("Comparing %s with %s\n", item.Object.Status.DefaultChannel, channel)
+			klog.Infof("Comparing %s with %s", item.Object.Status.DefaultChannel, channel)
 
 			// skip if the default channel is not the one we are looking for
 			if item.Object.Status.DefaultChannel != channel {
@@ -27,7 +28,7 @@ func QueryPackageManifestForVersion(operatorName, operatorNamespace, channel str
 			}
 
 			for _, chanObj := range item.Object.Status.Channels {
-				fmt.Printf("Comparing name %s with channel %s\n", chanObj.Name, channel)
+				klog.Infof("Comparing name %s with channel %s", chanObj.Name, channel)
 
 				// skip if the name of the channel is not the one we are looking for
 				if chanObj.Name != channel {
@@ -73,7 +74,7 @@ func QueryPackageManifestForOperatorName(searchString, operatorNamespace string)
 
 	for _, item := range pkgManifest {
 		if strings.Contains(item.Object.GetName(), searchString) {
-			fmt.Printf("Found package: %s matching search string: %s\n", item.Object.GetName(), searchString)
+			klog.Infof("Found package: %s matching search string: %s", item.Object.GetName(), searchString)
 
 			return item.Object.GetName(), nil
 		}
@@ -97,7 +98,7 @@ func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorN
 		if strings.HasPrefix(item.Object.GetName(), searchString) {
 			packageName := item.Object.GetName()
 			catalogSource := item.Object.Status.CatalogSource
-			fmt.Printf("Found package: %s in catalog source: %s matching search string: %s\n", packageName, catalogSource, searchString)
+			klog.Infof("Found package: %s in catalog source: %s matching search string: %s", packageName, catalogSource, searchString)
 
 			return packageName, catalogSource, nil
 		}
@@ -119,16 +120,16 @@ func QueryPackageManifestForAvailableChannelAndVersion(operatorName, operatorNam
 		if item.Object.GetName() == operatorName {
 			// Try the default channel first
 			defaultChannel := item.Object.Status.DefaultChannel
-			fmt.Printf("Default channel for %s: %s\n", operatorName, defaultChannel)
+			klog.Infof("Default channel for %s: %s", operatorName, defaultChannel)
 
 			for _, chanObj := range item.Object.Status.Channels {
-				fmt.Printf("Checking channel %s for %s\n", chanObj.Name, operatorName)
+				klog.Infof("Checking channel %s for %s", chanObj.Name, operatorName)
 
 				// Check if this channel has a version available
 				if chanObj.CurrentCSVDesc.Version.String() != "" {
 					channelName := chanObj.Name
 					version := chanObj.CurrentCSVDesc.Version.String()
-					fmt.Printf("Found available channel: %s with version: %s for %s\n", channelName, version, operatorName)
+					klog.Infof("Found available channel: %s with version: %s for %s", channelName, version, operatorName)
 
 					return channelName, version, nil
 				}
@@ -153,17 +154,17 @@ func QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operator
 		if item.Object.GetName() == operatorName {
 			// Try the default channel first
 			defaultChannel := item.Object.Status.DefaultChannel
-			fmt.Printf("Default channel for %s: %s\n", operatorName, defaultChannel)
+			klog.Infof("Default channel for %s: %s", operatorName, defaultChannel)
 
 			for _, chanObj := range item.Object.Status.Channels {
-				fmt.Printf("Checking channel %s for %s\n", chanObj.Name, operatorName)
+				klog.Infof("Checking channel %s for %s", chanObj.Name, operatorName)
 
 				// Check if this channel has a version available
 				if chanObj.CurrentCSVDesc.Version.String() != "" && chanObj.CurrentCSV != "" {
 					channelName := chanObj.Name
 					version := chanObj.CurrentCSVDesc.Version.String()
 					csvName := chanObj.CurrentCSV
-					fmt.Printf("Found available channel: %s with version: %s and CSV: %s for %s\n", channelName, version, csvName, operatorName)
+					klog.Infof("Found available channel: %s with version: %s and CSV: %s for %s", channelName, version, csvName, operatorName)
 
 					return channelName, version, csvName, nil
 				}
@@ -187,7 +188,7 @@ func CheckOperatorExistsOrFail(searchString, operatorNamespace string) (string, 
 		Fail(fmt.Sprintf("Operator %s not found in cluster packagemanifests. This indicates a problem with catalog sources.", searchString))
 	}
 
-	fmt.Printf("Operator %s found as package %s in catalog source %s\n", searchString, operatorName, catalogSource)
+	klog.Infof("Operator %s found as package %s in catalog source %s", searchString, operatorName, catalogSource)
 
 	return operatorName, catalogSource
 }
@@ -206,7 +207,7 @@ func CheckOperatorChannelAndVersionOrFail(operatorName, operatorNamespace string
 			"This indicates a problem with catalog sources.", operatorName))
 	}
 
-	fmt.Printf("Operator %s has available channel %s, version %s, CSV %s\n", operatorName, channel, version, csvName)
+	klog.Infof("Operator %s has available channel %s, version %s, CSV %s", operatorName, channel, version, csvName)
 
 	return channel, version, csvName
 }

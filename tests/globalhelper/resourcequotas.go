@@ -2,7 +2,6 @@ package globalhelper
 
 import (
 	"context"
-	"fmt"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	corev1 "k8s.io/api/core/v1"
@@ -28,7 +27,7 @@ func createResourceQuota(client *egiClients.Settings, quota *corev1.ResourceQuot
 	_, err = client.ResourceQuotas(quota.Namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("resource quota %s already exists", quota.Name))
+		klog.V(5).Infof("resource quota %s already exists", quota.Name)
 
 		return nil
 	}

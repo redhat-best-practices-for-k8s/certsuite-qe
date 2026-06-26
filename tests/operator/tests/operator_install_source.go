@@ -3,6 +3,8 @@ package operator
 import (
 	"fmt"
 
+	klog "k8s.io/klog/v2"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -71,13 +73,13 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		channel, err := globalhelper.QueryPackageManifestForDefaultChannel(clusterLoggingOperatorName, randomNamespace)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+clusterLoggingOperatorName)
 
-		fmt.Printf("CHANNEL FOUND: %s\n", channel)
+		klog.Infof("CHANNEL FOUND: %s", channel)
 
 		By("Query the packagemanifest for the " + clusterLoggingOperatorName)
 		version, err := globalhelper.QueryPackageManifestForVersion(clusterLoggingOperatorName, randomNamespace, channel)
 		Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+clusterLoggingOperatorName)
 
-		fmt.Printf("VERSION FOUND: %s\n", version)
+		klog.Infof("VERSION FOUND: %s", version)
 
 		By("Deploy cluster-logging operator for testing")
 		err = tshelper.DeployOperatorSubscription(

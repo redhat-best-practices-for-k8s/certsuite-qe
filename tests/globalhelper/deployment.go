@@ -39,7 +39,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("deployment %s already exists", deployment.Name))
+		klog.V(5).Infof("deployment %s already exists", deployment.Name)
 
 		return nil
 	} else if err != nil {
@@ -64,16 +64,16 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 				context.TODO(), deployment.Name, metav1.GetOptions{})
 
 			if err != nil {
-				klog.V(5).Info(fmt.Sprintf(
-					"deployment %s is not running, retry in 1 second", deployment.Name))
+				klog.V(5).Infof(
+					"deployment %s is not running, retry in 1 second", deployment.Name)
 
 				continue
 			}
 
 			// If it is running, we can break the loop
 			if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
-				klog.V(5).Info(fmt.Sprintf("deployment %s is running", testDeployment.Name))
-				klog.V(5).Info(fmt.Sprintf("deployment %s status: %v", testDeployment.Name, testDeployment.Status))
+				klog.V(5).Infof("deployment %s is running", testDeployment.Name)
+				klog.V(5).Infof("deployment %s status: %v", testDeployment.Name, testDeployment.Status)
 				running = true
 
 				break

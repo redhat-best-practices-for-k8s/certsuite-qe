@@ -229,7 +229,7 @@ func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, env
 				"%s env var is set", dirName, yamlTag, envVar, confFileName)
 	}
 
-	klog.V(4).Info(fmt.Sprintf("%s directory is not present. Creating directory", dirName))
+	klog.V(4).Infof("%s directory is not present. Creating directory", dirName)
 
 	err = os.MkdirAll(dirName, globalparameters.DirPermissions)
 	if err != nil {

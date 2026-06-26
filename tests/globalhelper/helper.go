@@ -99,7 +99,7 @@ func ValidateIfReportsAreValidWithAcceptedStatuses(tcName string, acceptedStatus
 
 		testPassed, checkErr := checkFunc(tcName, *claimReport)
 		if checkErr == nil && testPassed {
-			klog.V(5).Info(fmt.Sprintf("Test case %q is in accepted status %q", tcName, status))
+			klog.V(5).Infof("Test case %q is in accepted status %q", tcName, status)
 
 			return nil
 		}
@@ -165,8 +165,8 @@ func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, target
 		return fmt.Errorf("failed to encode certsuite yaml config file on %s: %w", certsuiteConfigFilePath, err)
 	}
 
-	klog.V(5).Info(fmt.Sprintf("%s deployed under %s directory",
-		globalparameters.DefaultCertsuiteConfigFileName, configDir))
+	klog.V(5).Infof("%s deployed under %s directory",
+		globalparameters.DefaultCertsuiteConfigFileName, configDir)
 
 	return nil
 }
@@ -233,7 +233,7 @@ func defineCertifiedContainersInfo(config *globalparameters.CertsuiteConfig, cer
 		tag := strings.TrimSpace(repositoryRegistryTagDigest[2])
 		digest := strings.TrimSpace(repositoryRegistryTagDigest[3])
 
-		klog.V(5).Info(fmt.Sprintf("Adding container repository:%s registry:%s to configuration", repo, registry))
+		klog.V(5).Infof("Adding container repository:%s registry:%s to configuration", repo, registry)
 
 		config.Certifiedcontainerinfo = append(config.Certifiedcontainerinfo, globalparameters.CertifiedContainerRepoInfo{
 			Repository: repo,
@@ -303,7 +303,7 @@ func defineCrdFilters(config *globalparameters.CertsuiteConfig, crdSuffixes []st
 	}
 
 	for _, crdSuffix := range crdSuffixes {
-		klog.V(5).Info(fmt.Sprintf("Adding crd suffix %s to certsuite configuration file", crdSuffix))
+		klog.V(5).Infof("Adding crd suffix %s to certsuite configuration file", crdSuffix)
 
 		config.TargetCrdFilters = append(config.TargetCrdFilters, globalparameters.TargetCrdFilter{
 			NameSuffix: crdSuffix,
