@@ -251,6 +251,7 @@ func (c *Config) makeDockerConfig() error {
 	if err != nil {
 		return fmt.Errorf("failed to create docker config file: %w", err)
 	}
+	defer configFile.Close()
 
 	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
 	if err != nil {
