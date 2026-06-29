@@ -130,7 +130,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	if debugCertsuite {
 		suiteName, suiteErr := getTestSuiteName(testCaseName)
 		if suiteErr != nil {
-			return suiteErr
+			return fmt.Errorf("failed to create debug log file: %w", suiteErr)
 		}
 
 		outfile = GetConfiguration().CreateLogFile(suiteName, tcNameForReport)
@@ -211,7 +211,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	if debugCertsuite {
 		suiteName, suiteErr := getTestSuiteName(testCaseName)
 		if suiteErr != nil {
-			return suiteErr
+			return fmt.Errorf("failed to create debug log file: %w", suiteErr)
 		}
 
 		outfile := GetConfiguration().CreateLogFile(suiteName, tcNameForReport)
@@ -267,45 +267,26 @@ func LaunchTests(testCaseName string, tcNameForReport string, reportDir string, 
 	return launchTestsViaImage(testCaseName, tcNameForReport, reportDir, configDir)
 }
 
+// suiteNames lists every known suite name for getTestSuiteName lookups.
+// Add new suites here instead of extending an if/else chain.
+var suiteNames = []string{
+	globalparameters.NetworkSuiteName,
+	globalparameters.AffiliatedCertificationSuiteName,
+	globalparameters.LifecycleSuiteName,
+	globalparameters.PlatformAlterationSuiteName,
+	globalparameters.ObservabilitySuiteName,
+	globalparameters.AccessControlSuiteName,
+	globalparameters.PerformanceSuiteName,
+	globalparameters.ManageabilitySuiteName,
+	globalparameters.OperatorSuiteName,
+	globalparameters.PreflightSuiteName,
+}
+
 func getTestSuiteName(testCaseName string) (string, error) {
-	if strings.Contains(testCaseName, globalparameters.NetworkSuiteName) {
-		return globalparameters.NetworkSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.AffiliatedCertificationSuiteName) {
-		return globalparameters.AffiliatedCertificationSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.LifecycleSuiteName) {
-		return globalparameters.LifecycleSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.PlatformAlterationSuiteName) {
-		return globalparameters.PlatformAlterationSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.ObservabilitySuiteName) {
-		return globalparameters.ObservabilitySuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.AccessControlSuiteName) {
-		return globalparameters.AccessControlSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.PerformanceSuiteName) {
-		return globalparameters.PerformanceSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.ManageabilitySuiteName) {
-		return globalparameters.ManageabilitySuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.OperatorSuiteName) {
-		return globalparameters.OperatorSuiteName, nil
-	}
-
-	if strings.Contains(testCaseName, globalparameters.PreflightSuiteName) {
-		return globalparameters.PreflightSuiteName, nil
+	for _, name := range suiteNames {
+		if strings.Contains(testCaseName, name) {
+			return name, nil
+		}
 	}
 
 	return "", fmt.Errorf("unable to retrieve test suite name from test case name %s", testCaseName)
