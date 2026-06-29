@@ -65,6 +65,7 @@ The following environment variables are used to configure the test setup.
 | ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`. |
 | FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false`. |
 | NON_LINUX_ENV | Allow the test suites to run in a non Linux environment. Default is `false`. |
+| CONTAINER_ENGINE | Container runtime to use (`docker` or `podman`). Default is `docker`. |
 
 ## Steps to run the tests
 
@@ -75,7 +76,7 @@ Make sure [docker](https://www.docker.com/) or [podman](https://podman.io/) is r
 Set your local container runtime to your environment with:
 
 ```sh
-export CERTSUITE_CONTAINER_CLIENT=docker
+export CONTAINER_ENGINE=docker
 ```
 
 #### Clone the repo and change directory to the cloned repo
