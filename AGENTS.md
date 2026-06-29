@@ -139,7 +139,7 @@ var _ = Describe("Feature", func() {
 - `USE_BINARY` - Use local binary instead of container
 - `DISABLE_INTRUSIVE_TESTS` - Skip intrusive tests
 - `NON_LINUX_ENV` - Set to any value (including empty string) for macOS development
-- `CERTSUITE_CONTAINER_CLIENT` - Container runtime (`docker` or `podman`)
+- `CONTAINER_ENGINE` - Container runtime (`docker` or `podman`)
 - `DOCKER_CONFIG_DIR` - Docker config directory (macOS: `$HOME/.docker`)
 
 ### Key Dependencies
