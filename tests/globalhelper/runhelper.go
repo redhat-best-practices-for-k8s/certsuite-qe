@@ -126,8 +126,14 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	}
 
 	var outfile *os.File
+
 	if debugCertsuite {
-		outfile = GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
+		suiteName, suiteErr := getTestSuiteName(testCaseName)
+		if suiteErr != nil {
+			return suiteErr
+		}
+
+		outfile = GetConfiguration().CreateLogFile(suiteName, tcNameForReport)
 
 		defer outfile.Close()
 
@@ -203,7 +209,12 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	}
 
 	if debugCertsuite {
-		outfile := GetConfiguration().CreateLogFile(getTestSuiteName(testCaseName), tcNameForReport)
+		suiteName, suiteErr := getTestSuiteName(testCaseName)
+		if suiteErr != nil {
+			return suiteErr
+		}
+
+		outfile := GetConfiguration().CreateLogFile(suiteName, tcNameForReport)
 
 		defer outfile.Close()
 
@@ -256,42 +267,46 @@ func LaunchTests(testCaseName string, tcNameForReport string, reportDir string, 
 	return launchTestsViaImage(testCaseName, tcNameForReport, reportDir, configDir)
 }
 
-func getTestSuiteName(testCaseName string) string {
+func getTestSuiteName(testCaseName string) (string, error) {
 	if strings.Contains(testCaseName, globalparameters.NetworkSuiteName) {
-		return globalparameters.NetworkSuiteName
+		return globalparameters.NetworkSuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.AffiliatedCertificationSuiteName) {
-		return globalparameters.AffiliatedCertificationSuiteName
+		return globalparameters.AffiliatedCertificationSuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.LifecycleSuiteName) {
-		return globalparameters.LifecycleSuiteName
+		return globalparameters.LifecycleSuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.PlatformAlterationSuiteName) {
-		return globalparameters.PlatformAlterationSuiteName
+		return globalparameters.PlatformAlterationSuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.ObservabilitySuiteName) {
-		return globalparameters.ObservabilitySuiteName
+		return globalparameters.ObservabilitySuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.AccessControlSuiteName) {
-		return globalparameters.AccessControlSuiteName
+		return globalparameters.AccessControlSuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.PerformanceSuiteName) {
-		return globalparameters.PerformanceSuiteName
+		return globalparameters.PerformanceSuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.ManageabilitySuiteName) {
-		return globalparameters.ManageabilitySuiteName
+		return globalparameters.ManageabilitySuiteName, nil
 	}
 
 	if strings.Contains(testCaseName, globalparameters.OperatorSuiteName) {
-		return globalparameters.OperatorSuiteName
+		return globalparameters.OperatorSuiteName, nil
 	}
 
-	panic(fmt.Sprintf("unable to retrieve test suite name from test case name %s", testCaseName))
+	if strings.Contains(testCaseName, globalparameters.PreflightSuiteName) {
+		return globalparameters.PreflightSuiteName, nil
+	}
+
+	return "", fmt.Errorf("unable to retrieve test suite name from test case name %s", testCaseName)
 }
