@@ -59,5 +59,5 @@ const (
 
 	SampleWorkloadImage = globalparameters.UBIMicroImage
 
-	IstioVersion = "1.30.1"
+	IstioVersion = "1.30.2"
 )
