@@ -443,9 +443,14 @@ func IsCRCCluster() bool {
 	// Method 3: Check for CRC-specific labels or annotations
 	for _, node := range nodes.Items {
 		if labels := node.Labels; labels != nil {
-			// CRC clusters often have specific labels
-			if labels["node-role.kubernetes.io/master"] == "" && labels["node-role.kubernetes.io/control-plane"] == "" {
-				if len(nodes.Items) == 1 { // Single node with master role suggests CRC
+			// CRC clusters set these role labels with empty values.
+			// Use the comma-ok idiom to distinguish "present with empty value"
+			// from "absent" — a plain map lookup returns "" for both cases.
+			_, hasMaster := labels["node-role.kubernetes.io/master"]
+			_, hasControlPlane := labels["node-role.kubernetes.io/control-plane"]
+
+			if hasMaster && hasControlPlane {
+				if len(nodes.Items) == 1 { // Single node with both roles suggests CRC
 					return true
 				}
 			}
