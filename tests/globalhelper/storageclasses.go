@@ -35,7 +35,7 @@ func createStorageClass(client storagev1typed.StorageV1Interface, storageClassNa
 		&storageClassTemplate, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("storageclass %s already installed", storageClassName))
+		klog.V(5).Infof("storageclass %s already installed", storageClassName)
 
 		return nil
 	}
@@ -52,7 +52,7 @@ func deleteStorageClass(client storagev1typed.StorageV1Interface, storageClassNa
 		storageClassName, metav1.DeleteOptions{GracePeriodSeconds: ptr.To[int64](0)})
 
 	if k8serrors.IsNotFound(err) {
-		klog.V(5).Info(fmt.Sprintf("storageclass %s already deleted", storageClassName))
+		klog.V(5).Infof("storageclass %s already deleted", storageClassName)
 
 		return nil
 	} else if err != nil {

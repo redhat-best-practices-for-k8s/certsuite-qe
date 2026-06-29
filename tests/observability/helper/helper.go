@@ -96,7 +96,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		metav1.CreateOptions{},
 	)
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("crd %s already exists", crd.Name))
+		klog.V(5).Infof("crd %s already exists", crd.Name)
 
 		return nil
 	} else if err != nil {
@@ -110,8 +110,8 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 			metav1.GetOptions{},
 		)
 		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"crd %s is not ready, retry in 5 seconds", runningCrd.Name))
+			klog.V(5).Infof(
+				"crd %s is not ready, retry in 5 seconds", runningCrd.Name)
 
 			return false
 		}

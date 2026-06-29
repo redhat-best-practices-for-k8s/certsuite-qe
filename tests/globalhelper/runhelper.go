@@ -46,7 +46,7 @@ func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout
 			cmd.Stderr = stderr
 		}
 
-		klog.V(5).Info(fmt.Sprintf("Attempt %d/%d: Running test: %s", attempt, MaxRetries, testCaseName))
+		klog.V(5).Infof("Attempt %d/%d: Running test: %s", attempt, MaxRetries, testCaseName)
 
 		err = cmd.Run()
 
@@ -59,13 +59,13 @@ func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout
 
 		// Check if it was a timeout error
 		if ctx.Err() == context.DeadlineExceeded {
-			klog.V(5).Info(fmt.Sprintf("Attempt %d/%d timed out after %v for test: %s",
-				attempt, MaxRetries, TestTimeout, testCaseName))
+			klog.V(5).Infof("Attempt %d/%d timed out after %v for test: %s",
+				attempt, MaxRetries, TestTimeout, testCaseName)
 			cancel()
 
 			// If this wasn't the last attempt, continue retrying
 			if attempt < MaxRetries {
-				klog.V(5).Info(fmt.Sprintf("Retrying test: %s", testCaseName))
+				klog.V(5).Infof("Retrying test: %s", testCaseName)
 
 				continue
 			}
@@ -87,8 +87,8 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	_, err := os.Stat(fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
 		GetConfiguration().General.CertsuiteEntryPointBinary))
 	if err != nil {
-		klog.V(5).Info(fmt.Sprintf("binary does not exist: %s. "+
-			"Please run `make build-certsuite-tool` in the certsuite repo.", err))
+		klog.V(5).Infof("binary does not exist: %s. "+
+			"Please run `make build-certsuite-tool` in the certsuite repo.", err)
 
 		return fmt.Errorf("binary does not exist: %w", err)
 	}
@@ -118,7 +118,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	cmdPath := fmt.Sprintf("%s/%s", GetConfiguration().General.CertsuiteRepoPath,
 		GetConfiguration().General.CertsuiteEntryPointBinary)
 
-	fmt.Printf("cmd: %s %s\n", cmdPath, strings.Join(testArgs, " "))
+	klog.Infof("cmd: %s %s", cmdPath, strings.Join(testArgs, " "))
 
 	debugCertsuite, err := GetConfiguration().DebugCertsuite()
 	if err != nil {
@@ -168,7 +168,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	// abandoned containers. When executeWithRetry times out, the container process may continue
 	// running even after the parent process gives up, leading to resource leaks.
 	containerEngine := GetConfiguration().General.ContainerEngine
-	klog.V(5).Info(fmt.Sprintf("Selected Container engine:%s", containerEngine))
+	klog.V(5).Infof("Selected Container engine:%s", containerEngine)
 
 	certsuiteCmdArgs := []string{
 		"run",
@@ -193,7 +193,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	}
 
 	// print the command
-	klog.V(5).Info(fmt.Sprintf("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " ")))
+	klog.V(5).Infof("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " "))
 
 	cmd := exec.CommandContext(context.TODO(), containerEngine, certsuiteCmdArgs...)
 

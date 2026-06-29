@@ -30,7 +30,7 @@ func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.D
 		pdb,
 		metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("Pod Disruption Budget %s already exists", pdb.Name))
+		klog.V(5).Infof("Pod Disruption Budget %s already exists", pdb.Name)
 	} else if err != nil {
 		return fmt.Errorf("failed to create Pod Disruption Budget %q (ns %s): %w", pdb.Name, pdb.Namespace, err)
 	}
@@ -38,8 +38,8 @@ func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.D
 	Eventually(func() bool {
 		status, err := IsPodDisruptionBudgetCreated(poddisruptionbudget.Name, poddisruptionbudget.Namespace)
 		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"Pod Disruption Budget %s is not ready, retry in 5 seconds", poddisruptionbudget.Name))
+			klog.V(5).Infof(
+				"Pod Disruption Budget %s is not ready, retry in 5 seconds", poddisruptionbudget.Name)
 
 			return false
 		}

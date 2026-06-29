@@ -25,7 +25,7 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 		context.TODO(), statefulSet, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("statefulSet %s already exists", statefulSet.Name))
+		klog.V(5).Infof("statefulSet %s already exists", statefulSet.Name)
 
 		return nil
 	} else if err != nil {
@@ -35,8 +35,8 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 	Eventually(func() bool {
 		status, err := isStatefulSetReady(client, statefulSet.Namespace, statefulSet.Name)
 		if err != nil {
-			klog.V(5).Info(fmt.Sprintf(
-				"statefulSet %s is not ready, retry in 1 second", statefulSet.Name))
+			klog.V(5).Infof(
+				"statefulSet %s is not ready, retry in 1 second", statefulSet.Name)
 
 			return false
 		}

@@ -35,7 +35,7 @@ func WaitForNamespaceDeletion(cs corev1Typed.CoreV1Interface, nsName string, tim
 		func(ctx context.Context) (bool, error) {
 			_, err := cs.Namespaces().Get(ctx, nsName, metav1.GetOptions{})
 			if k8serrors.IsNotFound(err) {
-				klog.V(5).Info(fmt.Sprintf("namespaces %s is not found", nsName))
+				klog.V(5).Infof("namespaces %s is not found", nsName)
 
 				return true, nil
 			}

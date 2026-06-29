@@ -3,6 +3,8 @@ package operator
 import (
 	"fmt"
 
+	klog "k8s.io/klog/v2"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
@@ -148,12 +150,12 @@ var _ = Describe("Operator install-status,", Serial, Label("operator", "ocp-requ
 		Eventually(func() bool {
 			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(lightweightOp.CSVPrefix, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", lightweightOp.CSVPrefix, err)
+				klog.Infof("Error checking CSV status for %s: %v", lightweightOp.CSVPrefix, err)
 
 				return false
 			}
 
-			fmt.Printf("%s operator %s CSV status is not Succeeded: %t\n", lightweightOp.PackageName, lightweightOp.CSVPrefix, isNotSucceeded)
+			klog.Infof("%s operator %s CSV status is not Succeeded: %t", lightweightOp.PackageName, lightweightOp.CSVPrefix, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),
@@ -256,12 +258,12 @@ var _ = Describe("Operator install-status,", Serial, Label("operator", "ocp-requ
 		Eventually(func() bool {
 			isNotSucceeded, err := tshelper.IsCSVNotSucceeded(lightweightOp.CSVPrefix, randomNamespace)
 			if err != nil {
-				fmt.Printf("Error checking CSV status for %s: %v\n", lightweightOp.CSVPrefix, err)
+				klog.Infof("Error checking CSV status for %s: %v", lightweightOp.CSVPrefix, err)
 
 				return false
 			}
 
-			fmt.Printf("%s operator %s CSV status is not Succeeded: %t\n", lightweightOp.PackageName, lightweightOp.CSVPrefix, isNotSucceeded)
+			klog.Infof("%s operator %s CSV status is not Succeeded: %t", lightweightOp.PackageName, lightweightOp.CSVPrefix, isNotSucceeded)
 
 			return isNotSucceeded
 		}, tsparams.TimeoutLabelCsv, tsparams.PollingInterval).Should(Equal(true),

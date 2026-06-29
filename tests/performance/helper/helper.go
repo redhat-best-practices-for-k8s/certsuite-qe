@@ -173,7 +173,7 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 	_, err := globalhelper.GetAPIClient().RbacV1Interface.Roles(namespace).Create(context.TODO(), &aRole, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// role already exists
-		klog.V(5).Info(fmt.Sprintf("role %s already exists", aRole.Name))
+		klog.V(5).Infof("role %s already exists", aRole.Name)
 	} else if err != nil {
 		return fmt.Errorf("error creating role, err=%w", err)
 	}
@@ -183,7 +183,7 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 	_, err = globalhelper.GetAPIClient().RbacV1Interface.RoleBindings(namespace).Create(context.TODO(), &aRoleBinding, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// rolebinding already exists
-		klog.V(5).Info(fmt.Sprintf("rolebinding %s already exists", aRoleBinding.Name))
+		klog.V(5).Infof("rolebinding %s already exists", aRoleBinding.Name)
 	} else if err != nil {
 		return fmt.Errorf("error creating rolebinding, err=%w", err)
 	}
@@ -193,7 +193,7 @@ func ConfigurePrivilegedServiceAccount(namespace string) error {
 		&aServiceAccount, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// service account already exists
-		klog.V(5).Info(fmt.Sprintf("service account %s already exists", aServiceAccount.Name))
+		klog.V(5).Infof("service account %s already exists", aServiceAccount.Name)
 	} else if err != nil {
 		return fmt.Errorf("error creating service account, err=%w", err)
 	}

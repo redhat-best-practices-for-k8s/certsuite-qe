@@ -203,7 +203,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 			Eventually(func() bool {
 				podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 				if err != nil {
-					klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+					klog.Infof("Failed to list pods in ns %s: %v", randomNamespace, err)
 
 					return false
 				}
@@ -304,7 +304,7 @@ var _ = Describe("Access-control sys-nice_capability", Ordered, Serial,
 			Eventually(func() bool {
 				podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 				if err != nil {
-					klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+					klog.Infof("Failed to list pods in ns %s: %v", randomNamespace, err)
 
 					return false
 				}
@@ -444,8 +444,8 @@ var _ = Describe("Access-control sys-nice_capability check, non-realtime kernel"
 		Eventually(func() bool {
 			podList, err = globalhelper.GetListOfPodsInNamespace(randomNamespace)
 			if err != nil {
-				klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
-				klog.Info(fmt.Sprintf("Failed to list pods in ns %s: %v", randomNamespace, err))
+				klog.Infof("Failed to list pods in ns %s: %v", randomNamespace, err)
+				klog.Infof("Failed to list pods in ns %s: %v", randomNamespace, err)
 
 				return false
 			}

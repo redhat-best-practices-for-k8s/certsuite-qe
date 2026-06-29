@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	klog "k8s.io/klog/v2"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -157,7 +159,7 @@ func verifyRHCOSVersions(nodes []corev1.Node, rhcosVersionMapContent string) err
 				rhcosVersion, node.Name)
 		}
 
-		fmt.Printf("✓ Node %s RHCOS version %s found in rhcos_version_map\n", node.Name, rhcosVersion)
+		klog.Infof("✓ Node %s RHCOS version %s found in rhcos_version_map", node.Name, rhcosVersion)
 	}
 
 	return nil

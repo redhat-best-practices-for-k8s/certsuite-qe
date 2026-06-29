@@ -2,7 +2,6 @@ package cluster
 
 import (
 	"context"
-	"fmt"
 
 	klog "k8s.io/klog/v2"
 
@@ -20,7 +19,7 @@ func IsClusterStable(client corev1Typed.NodeInterface) (bool, error) {
 
 	for _, node := range nodes.Items {
 		if node.Spec.Unschedulable {
-			klog.V(5).Info(fmt.Sprintf("node %s is in unschedulable state, trying to uncordon it", node.Name))
+			klog.V(5).Infof("node %s is in unschedulable state, trying to uncordon it", node.Name)
 			err := nodesutils.UnCordon(client, node.Name)
 
 			if err != nil {
@@ -36,7 +35,7 @@ func IsClusterStable(client corev1Typed.NodeInterface) (bool, error) {
 				return false, nil
 			}
 
-			klog.V(5).Info(fmt.Sprintf("node %s is in schedulable state", node.Name))
+			klog.V(5).Infof("node %s is in schedulable state", node.Name)
 		}
 	}
 

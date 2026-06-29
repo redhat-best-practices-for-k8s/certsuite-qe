@@ -26,7 +26,7 @@ func createAndWaitUntilDaemonSetIsReady(client *egiClients.Settings,
 	runningDaemonSet, err := client.AppsV1Interface.DaemonSets(daemonSet.Namespace).Create(
 		context.TODO(), daemonSet, metav1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
-		klog.V(5).Info(fmt.Sprintf("daemonset %s already exists", daemonSet.Name))
+		klog.V(5).Infof("daemonset %s already exists", daemonSet.Name)
 
 		return nil
 	} else if err != nil {

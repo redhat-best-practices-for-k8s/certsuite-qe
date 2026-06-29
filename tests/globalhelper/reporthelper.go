@@ -68,12 +68,12 @@ func removeContentsFromDir(dirPath, dirType string) error {
 
 	// Check if directory exists before attempting cleanup.
 	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-		klog.V(5).Info(fmt.Sprintf("%s directory %s does not exist, skipping cleanup", dirType, dirPath))
+		klog.V(5).Infof("%s directory %s does not exist, skipping cleanup", dirType, dirPath)
 
 		return nil
 	}
 
-	klog.V(5).Info(fmt.Sprintf("removing all files from %s directory", dirPath))
+	klog.V(5).Infof("removing all files from %s directory", dirPath)
 
 	dir, err := os.Open(dirPath)
 	if err != nil {
@@ -93,9 +93,9 @@ func removeContentsFromDir(dirPath, dirType string) error {
 			return fmt.Errorf("failed to remove content from %s directory: %w", dirType, err)
 		}
 
-		klog.V(5).Info(fmt.Sprintf("file %s removed from %s directory",
+		klog.V(5).Infof("file %s removed from %s directory",
 			name,
-			dirPath))
+			dirPath)
 	}
 
 	// Delete the directory
