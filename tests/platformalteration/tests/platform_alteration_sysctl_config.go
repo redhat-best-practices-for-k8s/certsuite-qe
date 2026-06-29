@@ -58,14 +58,8 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 		By("Create and wait until daemonSet is ready")
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
@@ -102,14 +96,8 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())

@@ -3,7 +3,6 @@ package tests
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -77,14 +76,8 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 		By("Create and wait until daemonSet is ready")
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())

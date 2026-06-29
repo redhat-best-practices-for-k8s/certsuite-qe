@@ -94,14 +94,8 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platform
 		daemonset.RedefineWithVolumeMount(daemonSet)
 
 		err = globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
@@ -116,17 +110,7 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platform
 			podList.Items[0], []string{"/bin/bash", "-c", tsparams.FindHugePagesFiles})
 		Expect(err).ToNot(HaveOccurred())
 
-		// The exec output may use \n, \r\n, or trailing whitespace. Filter empty entries.
-		var hugePagesPaths []string
-
-		for _, p := range strings.FieldsFunc(nrHugepagesFiles.String(), func(r rune) bool {
-			return r == '\n' || r == '\r'
-		}) {
-			trimmed := strings.TrimSpace(p)
-			if trimmed != "" {
-				hugePagesPaths = append(hugePagesPaths, trimmed)
-			}
-		}
+		hugePagesPaths := strings.Fields(nrHugepagesFiles.String())
 
 		if len(hugePagesPaths) == 0 {
 			Skip(fmt.Sprintf("No hugepages files found on node %s - hugepages may not be configured",
