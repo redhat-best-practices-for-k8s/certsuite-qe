@@ -125,10 +125,10 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 	// 66142
 	It("one operator installed with OLM", func() {
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
+		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrSkip("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
+		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(grafanaOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 		// grafana-operator: in community-operators group
@@ -188,7 +188,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
 		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
-		lightweightOperatorName, lwCatalogSource := globalhelper.CheckOperatorExistsOrFail(lightweightOp.PackageName,
+		lightweightOperatorName, lwCatalogSource := globalhelper.CheckOperatorExistsOrSkip(lightweightOp.PackageName,
 			randomNamespace)
 
 		// Lightweight operator can be deployed in the same namespace (OwnNamespace install mode)
@@ -197,7 +197,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for "+lightweightOp.PackageName+" operator")
 
 		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
-		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(lightweightOperatorName, randomNamespace)
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(lightweightOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
 		err = tshelper.DeployOperatorSubscription(
@@ -270,10 +270,10 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		grafanaOperatorName, gCatalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
+		grafanaOperatorName, gCatalogSource := globalhelper.CheckOperatorExistsOrSkip("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
+		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(grafanaOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 		// grafana-operator: in community-operators group
@@ -305,11 +305,11 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 			ErrorLabelingOperatorStr+grafanaOperatorName)
 
 		By(fmt.Sprintf("Query packagemanifest for %s operator (second)", lightweightOp.PackageName))
-		lightweightOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrFail(lightweightOp.PackageName,
+		lightweightOperatorName, catalogSource2 := globalhelper.CheckOperatorExistsOrSkip(lightweightOp.PackageName,
 			randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName + " for second operator")
-		channel2, version2, csvName2 := globalhelper.CheckOperatorChannelAndVersionOrFail(lightweightOperatorName, randomNamespace)
+		channel2, version2, csvName2 := globalhelper.CheckOperatorChannelAndVersionOrSkip(lightweightOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy %s operator (channel %s, version %s) for testing", lightweightOp.PackageName, channel2, version2))
 		err = tshelper.DeployOperatorSubscription(
@@ -368,7 +368,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		lightweightOp := operatorversions.GetLightweightOperator(ocpVersion)
 
 		By(fmt.Sprintf("Query the packagemanifest for %s operator package name and catalog source", lightweightOp.PackageName))
-		lightweightOperatorName, lwCatalogSource := globalhelper.CheckOperatorExistsOrFail(lightweightOp.PackageName,
+		lightweightOperatorName, lwCatalogSource := globalhelper.CheckOperatorExistsOrSkip(lightweightOp.PackageName,
 			randomNamespace)
 
 		// Lightweight operator can be deployed in the same namespace (OwnNamespace install mode)
@@ -377,7 +377,7 @@ var _ = Describe("Operator install-source,", Serial, Label("operator", "ocp-requ
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group for "+lightweightOp.PackageName+" operator")
 
 		By("Query the packagemanifest for available channel, version and CSV for " + lightweightOperatorName)
-		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(lightweightOperatorName, randomNamespace)
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(lightweightOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy %s operator for testing", lightweightOp.PackageName))
 		err = tshelper.DeployOperatorSubscription(

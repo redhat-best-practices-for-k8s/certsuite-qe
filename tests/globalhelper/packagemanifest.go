@@ -193,6 +193,26 @@ func CheckOperatorExistsOrFail(searchString, operatorNamespace string) (string, 
 	return operatorName, catalogSource
 }
 
+// CheckOperatorExistsOrSkip checks if an operator exists in cluster packagemanifests.
+// If not found, it skips the test using Ginkgo's Skip() instead of failing.
+// This is useful for operators that may not be available in all OCP versions or catalog
+// configurations. If the operator exists, it returns the package name and catalog source.
+func CheckOperatorExistsOrSkip(searchString, operatorNamespace string) (string, string) {
+	operatorName, catalogSource, err := QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorNamespace)
+	if err != nil {
+		Skip(fmt.Sprintf("Skipping: error querying package manifest for %s operator: %s", searchString, err.Error()))
+	}
+
+	if operatorName == "not found" || catalogSource == "not found" {
+		Skip(fmt.Sprintf("Skipping: operator %s not found in cluster packagemanifests."+
+			" This operator may not be available in the current OCP version catalog.", searchString))
+	}
+
+	klog.Infof("Operator %s found as package %s in catalog source %s", searchString, operatorName, catalogSource)
+
+	return operatorName, catalogSource
+}
+
 // CheckOperatorChannelAndVersionOrFail checks if an operator has available channel and version.
 // If not found, it logs the issue and fails the test using Ginkgo's Fail().
 // If found, it returns the channel, version, and CSV name for further use.
@@ -205,6 +225,27 @@ func CheckOperatorChannelAndVersionOrFail(operatorName, operatorNamespace string
 	if channel == "not found" || version == "not found" || csvName == "not found" {
 		Fail(fmt.Sprintf("Operator %s channel, version, or CSV not found in packagemanifests. "+
 			"This indicates a problem with catalog sources.", operatorName))
+	}
+
+	klog.Infof("Operator %s has available channel %s, version %s, CSV %s", operatorName, channel, version, csvName)
+
+	return channel, version, csvName
+}
+
+// CheckOperatorChannelAndVersionOrSkip checks if an operator has available channel and version.
+// If not found, it skips the test using Ginkgo's Skip() instead of failing.
+// This is useful for operators that may have catalog issues in certain OCP versions.
+// If found, it returns the channel, version, and CSV name for further use.
+func CheckOperatorChannelAndVersionOrSkip(operatorName, operatorNamespace string) (string, string, string) {
+	channel, version, csvName, err := QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operatorNamespace)
+	if err != nil {
+		Skip(fmt.Sprintf("Skipping: error querying package manifest for %s operator channel and version: %s",
+			operatorName, err.Error()))
+	}
+
+	if channel == "not found" || version == "not found" || csvName == "not found" {
+		Skip(fmt.Sprintf("Skipping: operator %s channel, version, or CSV not found in packagemanifests."+
+			" This operator may not be available in the current OCP version catalog.", operatorName))
 	}
 
 	klog.Infof("Operator %s has available channel %s, version %s, CSV %s", operatorName, channel, version, csvName)

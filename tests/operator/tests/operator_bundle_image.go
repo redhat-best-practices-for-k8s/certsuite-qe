@@ -55,7 +55,7 @@ var _ = Describe("Operator bundle count,", Serial, func() {
 		Expect(err).ToNot(HaveOccurred(), "Error deploying operator group")
 
 		By("Check if nginx-ingress-operator exists in packagemanifests")
-		_, _ = globalhelper.CheckOperatorExistsOrFail("nginx-ingress-operator", randomNamespace)
+		_, _ = globalhelper.CheckOperatorExistsOrSkip("nginx-ingress-operator", randomNamespace)
 
 		By(fmt.Sprintf("Deploy first operator (nginx-ingress-operator) for testing - channel %s", "new"))
 		err = tshelper.DeployOperatorSubscription(
