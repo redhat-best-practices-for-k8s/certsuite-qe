@@ -247,15 +247,11 @@ func (c *Config) makeDockerConfig() error {
 		return fmt.Errorf("failed to create dir %v: %w", c.General.DockerConfigDir, err)
 	}
 
-	err = os.Chdir(c.General.DockerConfigDir)
-	if err != nil {
-		return fmt.Errorf("failed to change dir to %v: %w", c.General.DockerConfigDir, err)
-	}
-
-	configFile, err = os.Create("config")
+	configFile, err = os.Create(filepath.Join(c.General.DockerConfigDir, "config"))
 	if err != nil {
 		return fmt.Errorf("failed to create docker config file: %w", err)
 	}
+	defer configFile.Close()
 
 	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
 	if err != nil {
