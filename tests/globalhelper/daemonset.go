@@ -3,6 +3,7 @@ package globalhelper
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
@@ -93,4 +94,21 @@ func getRunningDaemonset(daemonset *appsv1.DaemonSet, client *egiClients.Setting
 	}
 
 	return ds.Object, nil
+}
+
+// IsTransientDaemonSetError returns true if the error message indicates the
+// DaemonSet could not become ready due to transient scheduling or readiness
+// problems rather than a real test failure. Callers typically use this to
+// skip the test instead of failing.
+func IsTransientDaemonSetError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	msg := err.Error()
+
+	return strings.Contains(msg, "not schedulable") ||
+		strings.Contains(msg, "Timed out") ||
+		strings.Contains(msg, "not running") ||
+		strings.Contains(msg, "not ready")
 }

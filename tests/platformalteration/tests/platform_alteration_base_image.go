@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -74,14 +73,8 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		By("Create and wait until deployment is ready")
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the deployment is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
@@ -146,14 +139,8 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		By("Create and wait until daemonSet is ready")
 
 		err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonSet, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the daemonSet is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
@@ -225,14 +212,8 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		By("Create first deployment")
 
 		err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymenta, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the deployment is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
@@ -275,14 +256,8 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 			tsparams.SampleWorkloadImage, tsparams.CertsuiteTargetPodLabels)
 
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentb, tsparams.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the second deployment is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
@@ -325,14 +300,8 @@ var _ = Describe("platform-alteration-base-image", Label("platformalteration1", 
 		statefulset.RedefineWithPrivilegedContainer(sts)
 
 		err := globalhelper.CreateAndWaitUntilStatefulSetIsReady(sts, tshelper.WaitingTime)
-		if err != nil {
-			errMsg := err.Error()
-			if strings.Contains(errMsg, "not schedulable") ||
-				strings.Contains(errMsg, "Timed out") ||
-				strings.Contains(errMsg, "not running") ||
-				strings.Contains(errMsg, "not ready") {
-				Skip("This test cannot run because the statefulSet is not ready: " + errMsg)
-			}
+		if globalhelper.IsTransientDaemonSetError(err) {
+			Skip("This test cannot run because the daemonSet is not ready: " + err.Error())
 		}
 
 		Expect(err).ToNot(HaveOccurred())
