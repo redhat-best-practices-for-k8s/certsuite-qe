@@ -9,7 +9,6 @@ import (
 	"os/exec"
 	"path"
 	"strings"
-	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -381,9 +380,6 @@ func CopyFiles(src string, dst string) error {
 	return nil
 }
 
-var seededRand *rand.Rand = rand.New(
-	rand.NewSource(time.Now().UnixNano()))
-
 func GenerateRandomString(length int) string {
 	charset := "abcdefghijklmnopqrstuvwxyz"
 
@@ -391,7 +387,7 @@ func GenerateRandomString(length int) string {
 	b := make([]byte, length)
 
 	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
+		b[i] = charset[rand.Intn(len(charset))]
 	}
 
 	return string(b)
