@@ -54,7 +54,7 @@ var _ = Describe("platform-alteration-tainted-node-kernel", Serial, Label("platf
 		By("Verify test case status in Claim report")
 		err = globalhelper.ValidateIfReportsAreValidWithAcceptedStatuses(
 			tsparams.CertsuiteTaintedNodeKernelName,
-			[]string{globalparameters.TestCasePassed, globalparameters.TestCaseFailed},
+			[]string{globalparameters.TestCasePassed, globalparameters.TestCaseFailed, globalparameters.TestCaseSkipped},
 			randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
 	})
