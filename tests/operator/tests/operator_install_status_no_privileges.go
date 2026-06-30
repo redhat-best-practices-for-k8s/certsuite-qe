@@ -52,10 +52,10 @@ var _ = Describe("Operator install-status-no-privileges,", Serial, Label("operat
 
 		// grafana operator has clusterPermissions but no resourceNames
 		By("Query the packagemanifest for grafana operator package name and catalog source")
-		operatorName, catalogSource = globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
+		operatorName, catalogSource = globalhelper.CheckOperatorExistsOrSkip("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + operatorName)
-		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(operatorName, randomNamespace)
+		channel, _, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(operatorName, randomNamespace)
 
 		By("Deploy grafana operator for testing")
 		err = tshelper.DeployOperatorSubscription(

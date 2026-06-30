@@ -10,7 +10,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// QueryPackageManifest queries the package manifest for the operator.
+// QueryPackageManifestForVersion returns the version string for the given operator and channel,
+// or "not found" if no matching package/channel exists.
 func QueryPackageManifestForVersion(operatorName, operatorNamespace, channel string) (string, error) {
 	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
@@ -20,17 +21,17 @@ func QueryPackageManifestForVersion(operatorName, operatorNamespace, channel str
 
 	for _, item := range pkgManifest {
 		if item.Object.GetName() == operatorName {
-			klog.Infof("Comparing %s with %s", item.Object.Status.DefaultChannel, channel)
+			klog.InfoS("Comparing default channel with requested channel",
+				"defaultChannel", item.Object.Status.DefaultChannel, "requestedChannel", channel)
 
-			// skip if the default channel is not the one we are looking for
 			if item.Object.Status.DefaultChannel != channel {
 				continue
 			}
 
 			for _, chanObj := range item.Object.Status.Channels {
-				klog.Infof("Comparing name %s with channel %s", chanObj.Name, channel)
+				klog.InfoS("Comparing channel name with requested channel",
+					"channelName", chanObj.Name, "requestedChannel", channel)
 
-				// skip if the name of the channel is not the one we are looking for
 				if chanObj.Name != channel {
 					continue
 				}
@@ -49,9 +50,6 @@ func QueryPackageManifestForDefaultChannel(operatorName, operatorNamespace strin
 	if err != nil {
 		return "", err
 	}
-
-	// Example of how to get the default channel
-	// oc get packagemanifest cluster-logging -o json | jq .status.defaultChannel
 
 	for _, item := range pkgManifest {
 		if item.Object.GetName() == operatorName {
@@ -74,7 +72,7 @@ func QueryPackageManifestForOperatorName(searchString, operatorNamespace string)
 
 	for _, item := range pkgManifest {
 		if strings.Contains(item.Object.GetName(), searchString) {
-			klog.Infof("Found package: %s matching search string: %s", item.Object.GetName(), searchString)
+			klog.InfoS("Found matching package", "package", item.Object.GetName(), "searchString", searchString)
 
 			return item.Object.GetName(), nil
 		}
@@ -83,10 +81,9 @@ func QueryPackageManifestForOperatorName(searchString, operatorNamespace string)
 	return "not found", nil
 }
 
-// QueryPackageManifestForOperatorNameAndCatalogSource searches for packages containing the specified search string
-// and returns both the package name and the catalog source where it was found. This is useful for finding operators whose
-// package names and catalog sources may vary between OCP versions (e.g., "ovms-operator" in "certified-operators"
-// vs "ovms-operator-rhmp" in "redhat-marketplace").
+// QueryPackageManifestForOperatorNameAndCatalogSource searches for packages whose name starts with
+// the specified search string and returns both the package name and catalog source. This handles
+// operators whose names and catalog sources vary between OCP versions.
 func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorNamespace string) (string, string, error) {
 	pkgManifest, err := egiOLM.ListPackageManifest(GetEcoGoinfraClient(), operatorNamespace, client.ListOptions{})
 
@@ -98,7 +95,8 @@ func QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorN
 		if strings.HasPrefix(item.Object.GetName(), searchString) {
 			packageName := item.Object.GetName()
 			catalogSource := item.Object.Status.CatalogSource
-			klog.Infof("Found package: %s in catalog source: %s matching search string: %s", packageName, catalogSource, searchString)
+			klog.InfoS("Found package in catalog source",
+				"package", packageName, "catalogSource", catalogSource, "searchString", searchString)
 
 			return packageName, catalogSource, nil
 		}
@@ -118,18 +116,17 @@ func QueryPackageManifestForAvailableChannelAndVersion(operatorName, operatorNam
 
 	for _, item := range pkgManifest {
 		if item.Object.GetName() == operatorName {
-			// Try the default channel first
 			defaultChannel := item.Object.Status.DefaultChannel
-			klog.Infof("Default channel for %s: %s", operatorName, defaultChannel)
+			klog.InfoS("Found operator default channel", "operator", operatorName, "defaultChannel", defaultChannel)
 
 			for _, chanObj := range item.Object.Status.Channels {
-				klog.Infof("Checking channel %s for %s", chanObj.Name, operatorName)
+				klog.InfoS("Checking channel for operator", "channel", chanObj.Name, "operator", operatorName)
 
-				// Check if this channel has a version available
 				if chanObj.CurrentCSVDesc.Version.String() != "" {
 					channelName := chanObj.Name
 					version := chanObj.CurrentCSVDesc.Version.String()
-					klog.Infof("Found available channel: %s with version: %s for %s", channelName, version, operatorName)
+					klog.InfoS("Found available channel with version",
+						"channel", channelName, "version", version, "operator", operatorName)
 
 					return channelName, version, nil
 				}
@@ -152,19 +149,18 @@ func QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operator
 
 	for _, item := range pkgManifest {
 		if item.Object.GetName() == operatorName {
-			// Try the default channel first
 			defaultChannel := item.Object.Status.DefaultChannel
-			klog.Infof("Default channel for %s: %s", operatorName, defaultChannel)
+			klog.InfoS("Found operator default channel", "operator", operatorName, "defaultChannel", defaultChannel)
 
 			for _, chanObj := range item.Object.Status.Channels {
-				klog.Infof("Checking channel %s for %s", chanObj.Name, operatorName)
+				klog.InfoS("Checking channel for operator", "channel", chanObj.Name, "operator", operatorName)
 
-				// Check if this channel has a version available
 				if chanObj.CurrentCSVDesc.Version.String() != "" && chanObj.CurrentCSV != "" {
 					channelName := chanObj.Name
 					version := chanObj.CurrentCSVDesc.Version.String()
 					csvName := chanObj.CurrentCSV
-					klog.Infof("Found available channel: %s with version: %s and CSV: %s for %s", channelName, version, csvName, operatorName)
+					klog.InfoS("Found available channel with version and CSV",
+						"channel", channelName, "version", version, "csv", csvName, "operator", operatorName)
 
 					return channelName, version, csvName, nil
 				}
@@ -175,39 +171,67 @@ func QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operator
 	return "not found", "not found", "not found", nil
 }
 
-// CheckOperatorExistsOrFail checks if an operator exists in cluster packagemanifests.
-// If not found, it logs the issue and fails the test using Ginkgo's Fail().
-// If the operator exists, it returns the package name and catalog source for further use.
-func CheckOperatorExistsOrFail(searchString, operatorNamespace string) (string, string) {
+// checkOperatorExists is the shared implementation for CheckOperatorExistsOrFail and
+// CheckOperatorExistsOrSkip. The failHandler is called when the operator query fails
+// or the operator is not found (typically Ginkgo's Fail or Skip).
+func checkOperatorExists(searchString, operatorNamespace string, failHandler func(string, ...int)) (string, string) {
 	operatorName, catalogSource, err := QueryPackageManifestForOperatorNameAndCatalogSource(searchString, operatorNamespace)
 	if err != nil {
-		Fail(fmt.Sprintf("Error querying package manifest for %s operator: %s", searchString, err.Error()))
+		failHandler(fmt.Sprintf("Error querying package manifest for %s operator: %s", searchString, err.Error()))
 	}
 
 	if operatorName == "not found" || catalogSource == "not found" {
-		Fail(fmt.Sprintf("Operator %s not found in cluster packagemanifests. This indicates a problem with catalog sources.", searchString))
+		failHandler(fmt.Sprintf("Operator %s not found in cluster packagemanifests", searchString))
 	}
 
-	klog.Infof("Operator %s found as package %s in catalog source %s", searchString, operatorName, catalogSource)
+	klog.InfoS("Operator found in cluster packagemanifests",
+		"searchString", searchString, "package", operatorName, "catalogSource", catalogSource)
 
 	return operatorName, catalogSource
 }
 
-// CheckOperatorChannelAndVersionOrFail checks if an operator has available channel and version.
-// If not found, it logs the issue and fails the test using Ginkgo's Fail().
-// If found, it returns the channel, version, and CSV name for further use.
-func CheckOperatorChannelAndVersionOrFail(operatorName, operatorNamespace string) (string, string, string) {
+// CheckOperatorExistsOrFail checks if an operator exists in cluster packagemanifests.
+// If not found, it fails the test using Ginkgo's Fail().
+func CheckOperatorExistsOrFail(searchString, operatorNamespace string) (string, string) {
+	return checkOperatorExists(searchString, operatorNamespace, Fail)
+}
+
+// CheckOperatorExistsOrSkip checks if an operator exists in cluster packagemanifests.
+// If not found, it skips the test using Ginkgo's Skip(). Use this for operators that
+// may not be available in all OCP versions or catalog configurations.
+func CheckOperatorExistsOrSkip(searchString, operatorNamespace string) (string, string) {
+	return checkOperatorExists(searchString, operatorNamespace, Skip)
+}
+
+// checkOperatorChannelAndVersion is the shared implementation for
+// CheckOperatorChannelAndVersionOrFail and CheckOperatorChannelAndVersionOrSkip.
+func checkOperatorChannelAndVersion(operatorName, operatorNamespace string,
+	failHandler func(string, ...int)) (string, string, string) {
 	channel, version, csvName, err := QueryPackageManifestForAvailableChannelVersionAndCSV(operatorName, operatorNamespace)
 	if err != nil {
-		Fail(fmt.Sprintf("Error querying package manifest for %s operator channel and version: %s", operatorName, err.Error()))
+		failHandler(fmt.Sprintf("Error querying package manifest for %s operator channel and version: %s",
+			operatorName, err.Error()))
 	}
 
 	if channel == "not found" || version == "not found" || csvName == "not found" {
-		Fail(fmt.Sprintf("Operator %s channel, version, or CSV not found in packagemanifests. "+
-			"This indicates a problem with catalog sources.", operatorName))
+		failHandler(fmt.Sprintf("Operator %s channel, version, or CSV not found in packagemanifests", operatorName))
 	}
 
-	klog.Infof("Operator %s has available channel %s, version %s, CSV %s", operatorName, channel, version, csvName)
+	klog.InfoS("Operator channel and version found",
+		"operator", operatorName, "channel", channel, "version", version, "csv", csvName)
 
 	return channel, version, csvName
+}
+
+// CheckOperatorChannelAndVersionOrFail checks if an operator has an available channel and version.
+// If not found, it fails the test using Ginkgo's Fail().
+func CheckOperatorChannelAndVersionOrFail(operatorName, operatorNamespace string) (string, string, string) {
+	return checkOperatorChannelAndVersion(operatorName, operatorNamespace, Fail)
+}
+
+// CheckOperatorChannelAndVersionOrSkip checks if an operator has an available channel and version.
+// If not found, it skips the test using Ginkgo's Skip(). Use this for operators that
+// may have catalog issues in certain OCP versions.
+func CheckOperatorChannelAndVersionOrSkip(operatorName, operatorNamespace string) (string, string, string) {
+	return checkOperatorChannelAndVersion(operatorName, operatorNamespace, Skip)
 }

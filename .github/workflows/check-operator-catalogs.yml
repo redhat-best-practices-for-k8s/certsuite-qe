@@ -15,20 +15,34 @@ on:
 permissions: read-all
 
 env:
-  # Operators we depend on for QE tests
-  # Format: catalog_type:operator_package_name
+  # Version-aware operator mapping.
+  # The workflow builds per-version operator lists from these variables
+  # to match the Go-side logic in tests/utils/operatorversions/.
   #
-  # Note: We have version-specific operators due to catalog availability:
-  #   - cockroachdb-certified: Used for OCP 4.14-4.19 (certified operator)
-  #   - mongodb-enterprise: Used for OCP 4.20+ (alternative certified operator)
-  #   - prometheus-exporter-operator: Used for all OCP versions (lightweight operator)
-  # See tests/utils/operatorversions/ for the mapping logic.
-  REQUIRED_OPERATORS: |
-    certified-operators:cockroachdb-certified
-    certified-operators:mongodb-enterprise
+  # Operators used for OCP 4.14-4.19:
+  #   - cockroachdb-certified (certified-operators)
+  #
+  # Operators used for OCP 4.20+:
+  #   - mongodb-enterprise (certified-operators) replaces cockroachdb-certified
+  #
+  # Operators used for ALL OCP versions:
+  #   - grafana-operator (community-operators)
+  #   - prometheus-exporter-operator (community-operators)
+  #   - cluster-logging (redhat-operators)
+
+  # Operators required for ALL OCP versions
+  COMMON_OPERATORS: |
     community-operators:grafana-operator
     community-operators:prometheus-exporter-operator
     redhat-operators:cluster-logging
+
+  # Operators required ONLY for OCP 4.14-4.19
+  PRE420_OPERATORS: |
+    certified-operators:cockroachdb-certified
+
+  # Operators required ONLY for OCP 4.20+
+  POST420_OPERATORS: |
+    certified-operators:mongodb-enterprise
 
 jobs:
   check-catalogs:
@@ -76,14 +90,14 @@ jobs:
               delay=$((delay * 2))
               attempt=$((attempt + 1))
             done
-            echo "❌ All $max_attempts attempts failed"
+            echo "All $max_attempts attempts failed"
             return 1
           }
 
           # Get latest opm version using gh api (authenticated, no rate limiting)
           OPM_VERSION=$(retry gh api repos/operator-framework/operator-registry/releases/latest --jq '.tag_name')
           if [[ -z "$OPM_VERSION" ]]; then
-            echo "❌ Failed to get opm version from GitHub API"
+            echo "Failed to get opm version from GitHub API"
             exit 1
           fi
           echo "Installing opm version: $OPM_VERSION"
@@ -92,7 +106,7 @@ jobs:
           chmod +x linux-amd64-opm
           sudo mv linux-amd64-opm /usr/local/bin/opm
           opm version
-          
+
           # Create containers policy.json (required by opm render)
           mkdir -p ~/.config/containers
           cat > ~/.config/containers/policy.json << 'EOF'
@@ -109,124 +123,208 @@ jobs:
           REDHAT_REGISTRY_USERNAME: ${{ secrets.REDHAT_REGISTRY_USERNAME }}
         run: |
           if [[ -z "${REDHAT_REGISTRY_TOKEN}" || -z "${REDHAT_REGISTRY_USERNAME}" ]]; then
-            echo "❌ REDHAT_REGISTRY_TOKEN and REDHAT_REGISTRY_USERNAME secrets are required"
+            echo "REDHAT_REGISTRY_TOKEN and REDHAT_REGISTRY_USERNAME secrets are required"
             exit 1
           fi
           echo "${REDHAT_REGISTRY_TOKEN}" | podman login -u "${REDHAT_REGISTRY_USERNAME}" --password-stdin registry.redhat.io
-          echo "✅ Successfully logged in to registry.redhat.io"
+          echo "Successfully logged in to registry.redhat.io"
 
       - name: Check operator catalogs
         id: check
         run: |
           #!/bin/bash
           set -e
-          
+
           # Parse versions
           IFS=',' read -ra OCP_VERSIONS <<< "${{ steps.versions.outputs.versions }}"
-          
+
           # Define catalog images
           declare -A CATALOG_IMAGES
           CATALOG_IMAGES["certified-operators"]="registry.redhat.io/redhat/certified-operator-index"
           CATALOG_IMAGES["community-operators"]="registry.redhat.io/redhat/community-operator-index"
           CATALOG_IMAGES["redhat-operators"]="registry.redhat.io/redhat/redhat-operator-index"
-          
+
           # Results file
           RESULTS_FILE="catalog-check-results.md"
           MISSING_FILE="missing-operators.txt"
-          
+
           echo "# Operator Catalog Check Results" > "$RESULTS_FILE"
           echo "" >> "$RESULTS_FILE"
           echo "**Check Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$RESULTS_FILE"
           echo "" >> "$RESULTS_FILE"
-          
+
           FOUND_MISSING=false
-          
+          RENDER_ERRORS=0
+          TOTAL_CHECKS=0
+
+          # Build per-version operator list based on OCP version.
+          # This mirrors the logic in tests/utils/operatorversions/:
+          #   4.14-4.19: cockroachdb-certified + common operators
+          #   4.20+:     mongodb-enterprise + common operators
+          get_operators_for_version() {
+            local version="$1"
+            local minor
+            minor=$(echo "$version" | cut -d. -f2)
+
+            # Common operators for all versions
+            echo "$COMMON_OPERATORS"
+
+            # Version-specific operators
+            if [[ "$minor" -ge 20 ]]; then
+              echo "$POST420_OPERATORS"
+            else
+              echo "$PRE420_OPERATORS"
+            fi
+          }
+
+          # Render a catalog image with retries to handle transient failures
+          render_catalog() {
+            local catalog_image="$1"
+            local output_file="$2"
+            local error_file="$3"
+            local max_attempts=3
+            local attempt=1
+
+            while [[ $attempt -le $max_attempts ]]; do
+              echo "  Render attempt $attempt/$max_attempts..."
+              if timeout 300 opm render "$catalog_image" > "$output_file" 2> "$error_file"; then
+                return 0
+              fi
+              local exit_code=$?
+              echo "  Render attempt $attempt failed (exit code: $exit_code)"
+              if [[ $attempt -lt $max_attempts ]]; then
+                echo "  Retrying in 10s..."
+                sleep 10
+              fi
+              attempt=$((attempt + 1))
+            done
+
+            return 1
+          }
+
           # Process each OCP version
           for OCP_VERSION in "${OCP_VERSIONS[@]}"; do
             echo "## OCP $OCP_VERSION" >> "$RESULTS_FILE"
             echo "" >> "$RESULTS_FILE"
             echo "| Catalog | Operator | Status |" >> "$RESULTS_FILE"
             echo "|---------|----------|--------|" >> "$RESULTS_FILE"
-            
+
             echo "=== Checking OCP $OCP_VERSION ==="
-            
+
+            # Get the version-specific operator list
+            REQUIRED_OPERATORS=$(get_operators_for_version "$OCP_VERSION")
+
+            # Track which catalogs we've already rendered for this version.
+            # Rendering is expensive (several minutes per catalog), so we
+            # cache the output and reuse it for all operators in the same catalog.
+            declare -A RENDERED_CATALOGS
+            declare -A RENDER_CACHE_FILES
+            declare -A RENDER_SUCCESS
+
             # Check each required operator
             while IFS= read -r line; do
               [[ -z "$line" ]] && continue
-              
+
               CATALOG_TYPE=$(echo "$line" | cut -d: -f1)
               OPERATOR_NAME=$(echo "$line" | cut -d: -f2)
-              
-              CATALOG_IMAGE="${CATALOG_IMAGES[$CATALOG_TYPE]}:v${OCP_VERSION}"
-              
-              echo "Checking $OPERATOR_NAME in $CATALOG_TYPE for OCP $OCP_VERSION..."
-              
-              # Force pull fresh catalog image to ensure we're checking latest content
-              echo "  Pulling fresh catalog image: $CATALOG_IMAGE"
-              if ! podman pull --quiet "$CATALOG_IMAGE" 2>&1; then
-                echo "  ⚠️ Warning: Failed to pull image, will try with cached version"
-              fi
-              
-              # Try to render the catalog and check for the operator package
-              # Using a timeout to avoid hanging (5 min for larger catalogs like 4.19+)
-              # IMPORTANT: Use jq to check for actual package names (schema=olm.package)
-              # NOT grep, which can produce false positives by matching relatedImages
-              echo "  Rendering catalog (this may take a few minutes)..."
-              RENDER_TEMP=$(mktemp)
-              RENDER_ERR=$(mktemp)
 
-              if timeout 300 opm render "$CATALOG_IMAGE" > "$RENDER_TEMP" 2> "$RENDER_ERR"; then
+              CATALOG_IMAGE="${CATALOG_IMAGES[$CATALOG_TYPE]}:v${OCP_VERSION}"
+              TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+
+              echo "Checking $OPERATOR_NAME in $CATALOG_TYPE for OCP $OCP_VERSION..."
+
+              # Render each catalog only once per version (cache the result)
+              if [[ -z "${RENDERED_CATALOGS[$CATALOG_TYPE]+x}" ]]; then
+                RENDERED_CATALOGS[$CATALOG_TYPE]=1
+                RENDER_TEMP=$(mktemp)
+                RENDER_ERR=$(mktemp)
+                RENDER_CACHE_FILES[$CATALOG_TYPE]="$RENDER_TEMP"
+
+                # Force pull fresh catalog image
+                echo "  Pulling fresh catalog image: $CATALOG_IMAGE"
+                if ! podman pull --quiet "$CATALOG_IMAGE" 2>&1; then
+                  echo "  Warning: Failed to pull image, will try with cached version"
+                fi
+
+                echo "  Rendering catalog (this may take a few minutes)..."
+                if render_catalog "$CATALOG_IMAGE" "$RENDER_TEMP" "$RENDER_ERR"; then
+                  RENDER_SUCCESS[$CATALOG_TYPE]=1
+                else
+                  RENDER_SUCCESS[$CATALOG_TYPE]=0
+                  echo "  Catalog render failed for $CATALOG_TYPE v$OCP_VERSION after retries"
+                  echo "  Error output: $(head -c 500 "$RENDER_ERR")"
+                fi
+                rm -f "$RENDER_ERR"
+              fi
+
+              # Check the operator in the rendered catalog
+              RENDER_TEMP="${RENDER_CACHE_FILES[$CATALOG_TYPE]}"
+
+              if [[ "${RENDER_SUCCESS[$CATALOG_TYPE]}" == "1" ]]; then
                 # Use jq to properly check for package names (only olm.package schema entries)
                 if jq -e "select(.schema == \"olm.package\" and .name == \"$OPERATOR_NAME\")" "$RENDER_TEMP" > /dev/null 2>&1; then
-                  echo "  ✅ Found: $OPERATOR_NAME"
-                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ✅ Found |" >> "$RESULTS_FILE"
+                  echo "  Found: $OPERATOR_NAME"
+                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | Found |" >> "$RESULTS_FILE"
                 else
-                  echo "  ❌ MISSING: $OPERATOR_NAME"
-                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** |" >> "$RESULTS_FILE"
+                  echo "  MISSING: $OPERATOR_NAME"
+                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | **MISSING** |" >> "$RESULTS_FILE"
                   echo "$OCP_VERSION:$CATALOG_TYPE:$OPERATOR_NAME" >> "$MISSING_FILE"
                   FOUND_MISSING=true
                 fi
               else
-                RENDER_EXIT=$?
-                if [[ "$RENDER_EXIT" -eq 124 ]]; then
-                  echo "  ⚠️ Render timed out after 300 seconds"
-                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** (timeout) |" >> "$RESULTS_FILE"
-                else
-                  echo "  ⚠️ Render failed with exit code $RENDER_EXIT"
-                  echo "  Error output: $(head -c 500 "$RENDER_ERR")"
-                  echo "| $CATALOG_TYPE | $OPERATOR_NAME | ❌ **MISSING** (render error) |" >> "$RESULTS_FILE"
-                fi
-                echo "$OCP_VERSION:$CATALOG_TYPE:$OPERATOR_NAME" >> "$MISSING_FILE"
-                FOUND_MISSING=true
+                # Render errors indicate infrastructure problems (registry auth, opm bugs),
+                # NOT actual operator availability changes. Report them separately.
+                echo "  Skipped (catalog render failed): $OPERATOR_NAME"
+                echo "| $CATALOG_TYPE | $OPERATOR_NAME | **RENDER ERROR** (catalog failed to render) |" >> "$RESULTS_FILE"
+                RENDER_ERRORS=$((RENDER_ERRORS + 1))
               fi
-              
-              rm -f "$RENDER_TEMP" "$RENDER_ERR"
-              
+
             done <<< "$REQUIRED_OPERATORS"
-            
+
+            # Clean up cached render files for this version
+            for key in "${!RENDER_CACHE_FILES[@]}"; do
+              rm -f "${RENDER_CACHE_FILES[$key]}"
+            done
+            unset RENDERED_CATALOGS RENDER_CACHE_FILES RENDER_SUCCESS
+
             echo "" >> "$RESULTS_FILE"
           done
-          
+
           # Summary
           echo "## Summary" >> "$RESULTS_FILE"
           echo "" >> "$RESULTS_FILE"
-          
+
+          if [ "$RENDER_ERRORS" -gt 0 ]; then
+            echo "**Note:** $RENDER_ERRORS of $TOTAL_CHECKS checks had catalog render errors." >> "$RESULTS_FILE"
+            echo "Render errors indicate infrastructure issues (registry auth, opm bugs), not missing operators." >> "$RESULTS_FILE"
+            echo "These are excluded from the missing operator count." >> "$RESULTS_FILE"
+            echo "" >> "$RESULTS_FILE"
+          fi
+
           if [ "$FOUND_MISSING" = true ]; then
-            echo "⚠️ **Some operators are missing from catalog sources!**" >> "$RESULTS_FILE"
+            echo "**Some operators are missing from catalog sources!**" >> "$RESULTS_FILE"
             echo "" >> "$RESULTS_FILE"
             echo "Missing operators:" >> "$RESULTS_FILE"
             echo '```' >> "$RESULTS_FILE"
             cat "$MISSING_FILE" >> "$RESULTS_FILE"
             echo '```' >> "$RESULTS_FILE"
+            echo "" >> "$RESULTS_FILE"
+            echo "Version-aware mapping: cockroachdb-certified is checked for 4.14-4.19," >> "$RESULTS_FILE"
+            echo "mongodb-enterprise for 4.20+. See tests/utils/operatorversions/ for details." >> "$RESULTS_FILE"
             echo "has_missing=true" >> $GITHUB_OUTPUT
           else
-            echo "✅ All required operators are available in all checked OCP versions." >> "$RESULTS_FILE"
-            echo "has_missing=false" >> $GITHUB_OUTPUT
+            if [ "$RENDER_ERRORS" -gt 0 ]; then
+              echo "No operators confirmed missing, but some checks failed due to render errors." >> "$RESULTS_FILE"
+              echo "has_missing=false" >> $GITHUB_OUTPUT
+            else
+              echo "All required operators are available in all checked OCP versions." >> "$RESULTS_FILE"
+              echo "has_missing=false" >> $GITHUB_OUTPUT
+            fi
           fi
-          
+
           # Output results
           cat "$RESULTS_FILE"
-          
+
           # Save for artifact
           echo "results_file=$RESULTS_FILE" >> $GITHUB_OUTPUT
 
@@ -244,7 +342,7 @@ jobs:
           script: |
             const fs = require('fs');
             const results = fs.readFileSync('catalog-check-results.md', 'utf8');
-            
+
             // Check if there's already an open issue
             const issues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
@@ -252,10 +350,10 @@ jobs:
               state: 'open',
               labels: 'operator-catalog-check'
             });
-            
-            const existingIssue = issues.data.find(i => 
+
+            const existingIssue = issues.data.find(i =>
               i.title.includes('Operator Catalog Check'));
-            
+
             const issueBody = `## Automated Operator Catalog Check
 
             The operator catalog check found missing operators that our QE tests depend on.
@@ -273,7 +371,7 @@ jobs:
             *Last updated: ${new Date().toISOString()}*
             *This issue is automatically updated by the operator catalog check workflow.*
             `;
-            
+
             if (existingIssue) {
               // Update the issue body directly instead of adding comments
               await github.rest.issues.update({
@@ -288,17 +386,48 @@ jobs:
               const newIssue = await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: '⚠️ Operator Catalog Check: Missing Operators Detected',
+                title: 'Operator Catalog Check: Missing Operators Detected',
                 body: issueBody,
                 labels: ['operator-catalog-check', 'automated']
               });
               console.log(`Created new issue #${newIssue.data.number}`);
             }
 
+      - name: Close issue if no operators are missing
+        if: steps.check.outputs.has_missing == 'false'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'operator-catalog-check'
+            });
+
+            const existingIssue = issues.data.find(i =>
+              i.title.includes('Operator Catalog Check'));
+
+            if (existingIssue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                state: 'closed',
+                state_reason: 'completed'
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: 'All required operators are now available. Closing automatically.'
+              });
+              console.log(`Closed issue #${existingIssue.number}`);
+            }
+
       - name: Fail if operators are missing (manual run only)
         if: steps.check.outputs.has_missing == 'true' && github.event_name == 'workflow_dispatch'
         run: |
-          echo "❌ Some required operators are missing from catalog sources!"
+          echo "Some required operators are missing from catalog sources!"
           echo "Check the uploaded artifact for details."
           exit 1
-

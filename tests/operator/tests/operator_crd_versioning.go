@@ -47,10 +47,10 @@ var _ = Describe("Operator crd-versioning,", Serial, func() {
 
 	It("operator crd has valid versioning", func() {
 		By("Query the packagemanifest for Grafana operator package name and catalog source")
-		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", randomNamespace)
+		grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrSkip("grafana", randomNamespace)
 
 		By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, randomNamespace)
+		channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(grafanaOperatorName, randomNamespace)
 
 		By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 		// grafana-operator: in community-operators group

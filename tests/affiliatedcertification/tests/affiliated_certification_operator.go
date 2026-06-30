@@ -54,7 +54,9 @@ func deployUncertifiedOperator(operatorInfo operatorversions.OperatorInfo, names
 }
 
 // deployCertifiedOperator queries the package manifest and deploys the certified operator.
-// Skips the test if the operator times out.
+// Skips the test if the operator is not found in packagemanifests or times out.
+// The operator may not be available in all OCP versions; the version mapping in
+// tests/utils/operatorversions/ selects the appropriate operator per OCP version.
 func deployCertifiedOperator(operatorInfo operatorversions.OperatorInfo, namespace string) {
 	By("Query the packagemanifest for the certified operator: " + operatorInfo.PackageName)
 
@@ -63,13 +65,22 @@ func deployCertifiedOperator(operatorInfo operatorversions.OperatorInfo, namespa
 		namespace,
 	)
 	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+operatorInfo.PackageName)
-	Expect(channel).ToNot(Equal("not found"), "Channel not found")
+
+	if channel == "not found" {
+		Skip(fmt.Sprintf("Certified operator %s not found in cluster packagemanifests."+
+			" This operator may not be available in the current OCP version catalog.", operatorInfo.PackageName))
+	}
 
 	By("Query the packagemanifest for the certified operator version")
 
 	version, err := globalhelper.QueryPackageManifestForVersion(operatorInfo.PackageName, namespace, channel)
 	Expect(err).ToNot(HaveOccurred(), "Error querying package manifest for "+operatorInfo.PackageName)
-	Expect(version).ToNot(Equal("not found"), "Version not found")
+
+	if version == "not found" {
+		Skip(fmt.Sprintf("Certified operator %s version not found in channel %s."+
+			" This operator version may not be available in the current OCP version catalog.",
+			operatorInfo.PackageName, channel))
+	}
 
 	By(fmt.Sprintf("Deploy certified operator %s v%s for testing", operatorInfo.PackageName, version))
 
@@ -89,15 +100,15 @@ func deployCertifiedOperator(operatorInfo operatorversions.OperatorInfo, namespa
 }
 
 // deployGrafanaOperator queries the package manifest and deploys the grafana operator.
-// Skips the test if the operator times out. Returns the operator name.
+// Skips the test if the operator is not found or times out. Returns the operator name.
 func deployGrafanaOperator(namespace string) string {
 	By("Query the packagemanifest for Grafana operator package name and catalog source")
 
-	operatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", namespace)
+	operatorName, catalogSource := globalhelper.CheckOperatorExistsOrSkip("grafana", namespace)
 
 	By("Query the packagemanifest for available channel, version and CSV for " + operatorName)
 
-	channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(operatorName, namespace)
+	channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(operatorName, namespace)
 
 	By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 

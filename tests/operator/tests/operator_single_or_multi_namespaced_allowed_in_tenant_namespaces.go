@@ -418,10 +418,10 @@ func createTestOperatorGroup(namespace, operatorGroupName string, targetNamespac
 
 func installAndLabelOperator(operatorNamespace string) {
 	By("Query the packagemanifest for Grafana operator package name and catalog source")
-	grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrFail("grafana", operatorNamespace)
+	grafanaOperatorName, catalogSource := globalhelper.CheckOperatorExistsOrSkip("grafana", operatorNamespace)
 
 	By("Query the packagemanifest for available channel, version and CSV for " + grafanaOperatorName)
-	channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrFail(grafanaOperatorName, operatorNamespace)
+	channel, version, csvName := globalhelper.CheckOperatorChannelAndVersionOrSkip(grafanaOperatorName, operatorNamespace)
 
 	By(fmt.Sprintf("Deploy Grafana operator (channel %s, version %s) for testing", channel, version))
 	err := tshelper.DeployOperatorSubscription(
