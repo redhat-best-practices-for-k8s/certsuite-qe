@@ -111,4 +111,5 @@ var (
 	PerformanceSuiteName             = "performance"
 	ManageabilitySuiteName           = "manageability"
 	OperatorSuiteName                = "operator"
+	PreflightSuiteName               = "preflight"
 )

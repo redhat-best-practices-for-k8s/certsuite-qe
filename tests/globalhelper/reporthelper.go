@@ -175,7 +175,15 @@ func formatTestCaseName(tcName string) string {
 
 func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
 	srcClaim := path.Join(reportDir, globalparameters.DefaultClaimFileName)
-	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", getTestSuiteName(tcName), formattedTcName)
+
+	suiteName, suiteErr := getTestSuiteName(tcName)
+	if suiteErr != nil {
+		klog.ErrorS(suiteErr, "could not determine test suite name", "testCase", tcName)
+
+		return
+	}
+
+	dstDir := path.Join(GetConfiguration().General.ReportDirAbsPath, "Debug", suiteName, formattedTcName)
 	dstClaim := path.Join(dstDir, globalparameters.DefaultClaimFileName)
 
 	_, err := os.Stat(srcClaim)
