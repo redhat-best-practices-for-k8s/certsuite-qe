@@ -587,6 +587,15 @@ func RedefineWithContainersSecurityContextAllowPrivilegeEscalation(deployment *a
 	}
 }
 
+// RedefineWithReadOnlyRootFilesystem redefines deployment with readOnlyRootFilesystem set to the specified value.
+func RedefineWithReadOnlyRootFilesystem(deployment *appsv1.Deployment, readOnly bool) {
+	for index := range deployment.Spec.Template.Spec.Containers {
+		deployment.Spec.Template.Spec.Containers[index].SecurityContext = &corev1.SecurityContext{
+			ReadOnlyRootFilesystem: &readOnly,
+		}
+	}
+}
+
 func RedefineContainerCommand(deployment *appsv1.Deployment, index int, command []string) error {
 	if len(deployment.Spec.Template.Spec.Containers) > index {
 		deployment.Spec.Template.Spec.Containers[index].Command = command

@@ -74,6 +74,7 @@ const (
 	TestCaseNameAccessControlPodHostPath            = "access-control-pod-host-path"
 	CertsuiteSecurityContextTcName                  = "access-control-security-context"
 	TestCaseNameAccessControlOneProcessPerContainer = "access-control-one-process-per-container"
+	TestCaseNameAccessControlReadOnlyRootFileSystem = "access-control-security-context-read-only-root-file-system"
 
 	TestAccessControlNameSpace = "accesscontrol-tests"
 
