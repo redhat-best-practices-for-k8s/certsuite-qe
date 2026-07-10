@@ -10,6 +10,12 @@ The project uses Ginkgo/Gomega BDD testing framework. Tests deploy resources to 
 
 ## Commands
 
+### Getting Help
+```bash
+make                      # Show available targets with descriptions (default)
+make help                 # Same as above
+```
+
 ### Installation and Setup
 ```bash
 make install              # Install all dependencies (runs deps-update + install-ginkgo)
@@ -50,6 +56,11 @@ make lint                 # Run golangci-lint and shfmt
 make gofmt                # Check Go code formatting
 make fmt                  # Format Go code
 make vet                  # Run go vet
+```
+
+### Utilities
+```bash
+make download-unstable    # Download unstable certsuite image for testing
 ```
 
 ## Architecture
@@ -160,7 +171,6 @@ Available test features (set via `FEATURES` env var):
 - `operator` - Operator installation and status
 - `performance` - CPU pinning and scheduling
 - `platformalteration` - Node and kernel configuration
-- `preflight` - Red Hat preflight certification checks
 
 ### Go Version
 This project uses Go 1.26.1.
