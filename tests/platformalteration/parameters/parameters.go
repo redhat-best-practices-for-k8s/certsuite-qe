@@ -57,7 +57,7 @@ const (
 	FindHugePagesFiles    = "find /host/sys/devices/system/node/ -name nr_hugepages"
 	PerformanceProfileCrd = "performanceprofiles.performance.openshift.io"
 
-	SampleWorkloadImage = globalparameters.UBIMicroImage
+	SampleWorkloadImage = "registry.access.redhat.com/ubi9/ubi-minimal:latest"
 
 	IstioVersion = "1.30.2"
 )
