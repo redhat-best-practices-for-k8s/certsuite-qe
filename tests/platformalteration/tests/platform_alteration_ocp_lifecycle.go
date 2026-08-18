@@ -177,6 +177,7 @@ var ocpMaintenanceSupportEndDates = map[string]time.Time{
 	"4.19": time.Date(2026, 12, 17, 0, 0, 0, 0, time.UTC),
 	"4.20": time.Date(2028, 10, 21, 0, 0, 0, 0, time.UTC),
 	"4.21": time.Date(2027, 8, 3, 0, 0, 0, 0, time.UTC),
+	"4.22": time.Date(2027, 12, 31, 0, 0, 0, 0, time.UTC),
 }
 
 func isOCPEndOfLife(version string) bool {
