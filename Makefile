@@ -120,7 +120,7 @@ coverage-html: test ## Generate HTML coverage report from test results
 	@echo "$(BOLD)$(BLUE)📊 Generating HTML coverage report...$(RESET)"
 	@go tool cover -html cover.out && echo "$(GREEN)✅ Coverage report generated: $(CYAN)cover.out$(RESET)" || (echo "$(RED)❌ Failed to generate coverage report$(RESET)" && exit 1)
 
-# Utility Targets  
+# Utility Targets
 download-unstable: ## Download unstable certsuite image for testing
 	@echo "$(BOLD)$(BLUE)⬇️  Downloading unstable certsuite...$(RESET)"
 	@./scripts/download-unstable.sh && echo "$(GREEN)✅ Unstable certsuite downloaded successfully$(RESET)" || (echo "$(RED)❌ Failed to download unstable certsuite$(RESET)" && exit 1)

@@ -173,7 +173,7 @@ Available test features (set via `FEATURES` env var):
 - `platformalteration` - Node and kernel configuration
 
 ### Go Version
-This project uses Go 1.26.1.
+This project uses Go 1.26.0 (toolchain go1.26.5).
 
 ### Kind Cluster Limitations
 The following tests are known to fail on local Kind clusters:

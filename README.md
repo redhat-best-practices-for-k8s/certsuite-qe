@@ -3,7 +3,7 @@
 
 [![Test Incoming Changes](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/actions/workflows/pre-main.yml/badge.svg)](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/actions/workflows/pre-main.yml)
 [![red hat](https://img.shields.io/badge/red%20hat---?color=gray&logo=redhat&logoColor=red&style=flat)](https://www.redhat.com) [![openshift](https://img.shields.io/badge/openshift---?color=gray&logo=redhatopenshift&logoColor=red&style=flat)](https://www.redhat.com/en/technologies/cloud-computing/openshift)
-[![license](https://img.shields.io/github/license/redhat-best-practices-for-k8s/certsuite-qe?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/redhat-best-practices-for-k8s/certsuite-qe?color=blue&labelColor=gray&logo=apache&logoColor=lightgray&style=flat)](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/main/LICENSE)
 
 ## Objective
 
@@ -15,7 +15,7 @@ The certsuite-qe project is based on golang+[ginkgo](https://onsi.github.io/gink
 [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite)
 several times using different pre-configured OCP environment.
 
-Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the excepted result: skip/fail/pass.
+Once the triggered scenario is completed, the test case processes the report and verifies that the scenario is completed with the expected result: skip/fail/pass.
 
 ## Requirements
 
@@ -27,11 +27,11 @@ The tests are run on the OCP cluster with certain requirements that are listed b
 | Installed Operators | Performance Addon, Machine-config-operator | Yes |
 |  | Machine config pool, PTP operator, SR-IOV operator| No |
 
-> Bare-minimum requirements consists of a OCP cluster with 3 nodes where 2 are cnf-worker nodes and 1 worker node.
+> Bare-minimum requirements consist of an OCP cluster with 3 nodes where 2 are cnf-worker nodes and 1 worker node.
 
 ## Overview
 
-The following test features are can run selectively or altogether.
+The following test features can run selectively or altogether.
 
 * *accesscontrol*
 * *affiliatedcertification*
@@ -42,7 +42,6 @@ The following test features are can run selectively or altogether.
 * *platformalteration*
 * *performance*
 * *operator*
-* *preflight*
 
 Choose the variant that suits you best:
 
@@ -55,17 +54,20 @@ The following environment variables are used to configure the test setup.
 
 | Env Variable Name | Purpose |
 | ------ | ------ |
-| FEATURES | To select the test scenarios that you are going to test, comma separated |
-| CERTSUITE_REPO_PATH | Points to the absolute path to  [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) on your machine |
-| CERTSUITE_IMAGE | Links to the Certsuite image. Default is quay.io/redhat-best-practices-for-k8s/certsuite |
-| CERTSUITE_IMAGE_TAG | image tag that is going to be tested. Default is latest |
-| DEBUG_CERTSUITE | Generate `Debug` folder that will contain Certsuite suites folders with Certsuite logs for each test. |
-| CERTSUITE_LOG_LEVEL | Log level. Default is 4 |
-| DISABLE_INTRUSIVE_TESTS | Turns off the intrusive tests for faster execution. Default is `false`. |
-| ENABLE_PARALLEL | Enable ginkgo -p parallel flags (experimental). Default is `false`. |
-| FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false`. |
-| NON_LINUX_ENV | Allow the test suites to run in a non Linux environment. Default is `false`. |
-| CONTAINER_ENGINE | Container runtime to use (`docker` or `podman`). Default is `docker`. |
+| KUBECONFIG | Path to cluster kubeconfig (required) |
+| FEATURES | Select test scenarios to run, comma separated |
+| CERTSUITE_REPO_PATH | Absolute path to [certsuite](https://github.com/redhat-best-practices-for-k8s/certsuite) on your machine |
+| CERTSUITE_IMAGE | Certsuite image. Default is `quay.io/redhat-best-practices-for-k8s/certsuite` |
+| CERTSUITE_IMAGE_TAG | Image tag to test. Default is `latest` |
+| USE_BINARY | Use local certsuite binary instead of container image. Default is `false` |
+| DEBUG_CERTSUITE | Generate a `Debug` folder with Certsuite logs for each test |
+| CERTSUITE_LOG_LEVEL | Log level when debugging. Set to `debug` with `DEBUG_CERTSUITE=true` |
+| DISABLE_INTRUSIVE_TESTS | Skip intrusive tests for faster execution. Default is `false` |
+| ENABLE_PARALLEL | Enable ginkgo parallel execution via `--procs=16` (experimental). Default is `false` |
+| FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false` |
+| NON_LINUX_ENV | Set to any value (including empty string) to run on macOS. Unset on Linux |
+| DOCKER_CONFIG_DIR | Docker config directory (required on macOS; example: `$HOME/.docker`) |
+| CONTAINER_ENGINE | Container runtime to use (`docker` or `podman`). Default is `docker` |
 
 ## Steps to run the tests
 
@@ -114,7 +116,6 @@ make install
 
 ```sh
 # Linux user with force download unstable image
- \
   FORCE_DOWNLOAD_UNSTABLE=true \
   KUBECONFIG=$HOME/.kube/config \
   CERTSUITE_REPO_PATH=$HOME/path/to/certsuite \
@@ -184,13 +185,16 @@ make test
 * affiliated-certification-operator-is-certified
 * platform-alteration-tainted-node-kernel
 
-## Nightly Runs Against Various Environments
+## CI Workflows
 
-The QE repo is being used in nightly automated runs in the following files:
+Nightly and on-demand QE runs use the following workflows:
 
-* [QE via Kind (Github Hosted)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-hosted.yml)
-* [QE via OCP (Intrusive)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-ocp-intrusive.yaml)
-* [QE via OCP (Non-Intrusive)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-ocp.yaml)
+* [QE via Kind](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/main/.github/workflows/qe.yml) (this repo)
+* [QE via OCP](https://github.com/redhat-best-practices-for-k8s/certsuite-qe/blob/main/.github/workflows/qe-ocp.yml) (this repo)
+* [QE via Kind (certsuite-hosted)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-hosted.yml)
+* [QE via OCP 4.22 (certsuite-hosted)](https://github.com/redhat-best-practices-for-k8s/certsuite/blob/main/.github/workflows/qe-ocp-422.yaml)
+
+For agent-oriented architecture and command reference, see [AGENTS.md](AGENTS.md).
 
 ## Contribution Guidelines
 
