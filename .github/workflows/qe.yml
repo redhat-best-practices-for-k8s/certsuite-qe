@@ -195,9 +195,16 @@ jobs:
           path: certsuite-sample-workload
 
       - name: Install dependencies
+        timeout-minutes: 5
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
+          if python3 -m pip --version >/dev/null 2>&1; then
+            echo "pip already available, skipping apt-get"
+            python3 -m pip --version
+            exit 0
+          fi
+          echo "pip not found, installing via apt"
+          sudo DEBIAN_FRONTEND=noninteractive timeout 120 apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive timeout 180 apt-get install -y python3-pip python3-venv
 
       - name: Setup up k8s cluster
         uses: palmsoftware/quick-k8s@5837755b20f6d3b6a103c955cb843792945eab61 # v1.0.1
