@@ -464,10 +464,12 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.10
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.11.1
+# github.com/stretchr/testify v1.12.1
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/assert/yaml
+github.com/stretchr/testify/internal/difflib
+github.com/stretchr/testify/internal/spew
 # github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 ## explicit; go 1.19
 github.com/test-network-function/cr-scale-operator/api/v1
@@ -507,7 +509,7 @@ go.opentelemetry.io/otel/trace/internal/telemetry
 # go.yaml.in/yaml/v2 v2.4.3
 ## explicit; go 1.15
 go.yaml.in/yaml/v2
-# go.yaml.in/yaml/v3 v3.0.4
+# go.yaml.in/yaml/v3 v3.0.5
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
 # golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b
