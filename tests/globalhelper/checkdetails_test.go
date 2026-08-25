@@ -57,6 +57,26 @@ func TestParseCheckDetails(t *testing.T) {
 	})
 }
 
+func TestCountReasonsContaining(t *testing.T) {
+	t.Parallel()
+
+	objects := []*ReportObject{
+		{
+			ObjectFieldsKeys:   []string{ReasonForNonCompliance},
+			ObjectFieldsValues: []string{"Port 8080 accepts plaintext connections (plaintext service)"},
+		},
+		{
+			ObjectFieldsKeys:   []string{ReasonForCompliance},
+			ObjectFieldsValues: []string{"Port 8443 uses TLS (TLSv1.3)"},
+		},
+		nil,
+	}
+
+	assert.Equal(t, 1, CountReasonsContaining(objects, "accepts plaintext"))
+	assert.Equal(t, 1, CountReasonsContaining(objects, "uses TLS"))
+	assert.Equal(t, 0, CountReasonsContaining(objects, "exempt via annotation"))
+}
+
 func TestGetReportObjectFieldValue(t *testing.T) {
 	obj := &ReportObject{
 		ObjectType:         "Pod",
