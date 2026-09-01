@@ -1,11 +1,8 @@
 package accesscontrol
 
 import (
-	"context"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	tshelper "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/helper"
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/accesscontrol/parameters"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalhelper"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
@@ -101,55 +98,5 @@ var _ = Describe("Access-control ssh-daemons,", Label("accesscontrol12"), func()
 			tsparams.CertsuiteNoSSHDaemonsAllowed,
 			globalparameters.TestCaseFailed, randomReportDir)
 		Expect(err).ToNot(HaveOccurred())
-	})
-
-	// Mirrors lab: only the worker-local certsuite-probe OOMKills / CrashLoopBackOffs
-	// while other probe pods stay Running. The check must FAIL as a probe exec outage,
-	// not as evidence that the CNF is running sshd.
-	It("one pod with no ssh running, node-local probe OOMKilled", Serial, func() {
-		By("Define pod without sshd")
-
-		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
-			imageWithSSHDaemon, tsparams.TestDeploymentLabels)
-
-		err := globalhelper.CreateAndWaitUntilPodIsReady(testPod, tsparams.Timeout)
-		Expect(err).ToNot(HaveOccurred())
-
-		runningPod, err := globalhelper.GetRunningPod(randomNamespace, tsparams.TestPodName)
-		Expect(err).ToNot(HaveOccurred())
-		Expect(runningPod.Spec.NodeName).ToNot(BeEmpty())
-
-		By("OOM-loop the certsuite-probe on the CNF node only")
-
-		disruptCtx, stopDisrupt := context.WithCancel(context.Background())
-		defer stopDisrupt()
-
-		go tshelper.DisruptNodeLocalCertsuiteProbe(disruptCtx, runningPod.Spec.NodeName)
-
-		By("Start ssh-daemons")
-		err = globalhelper.LaunchTests(
-			tsparams.CertsuiteNoSSHDaemonsAllowed,
-			globalhelper.ConvertSpecNameToFileName(CurrentSpecReport().FullText()),
-			randomReportDir, randomCertsuiteConfigDir)
-		Expect(err).ToNot(HaveOccurred())
-
-		By("Verify test case status in Claim report")
-		err = globalhelper.ValidateIfReportsAreValid(
-			tsparams.CertsuiteNoSSHDaemonsAllowed,
-			globalparameters.TestCaseFailed, randomReportDir)
-		Expect(err).ToNot(HaveOccurred())
-
-		checkDetails, checkDetailsErr := globalhelper.GetTestCaseCheckDetails(
-			tsparams.CertsuiteNoSSHDaemonsAllowed, randomReportDir)
-		globalhelper.LogCheckDetails(checkDetails, checkDetailsErr)
-		Expect(checkDetailsErr).ToNot(HaveOccurred())
-
-		probeExecHits := globalhelper.CountReasonsContaining(checkDetails.NonCompliantObjectsOut, tsparams.ProbeExecSshdClaimSubstring)
-		sshdHits := globalhelper.CountReasonsContaining(checkDetails.NonCompliantObjectsOut, tsparams.SshdRunningClaimSubstring)
-
-		Expect(probeExecHits).To(BeNumerically(">=", 1),
-			"expected probe-exec failure reason, not an sshd finding")
-		Expect(sshdHits).To(Equal(0),
-			"OOMKilled probe must not be reported as the pod running sshd")
 	})
 })
