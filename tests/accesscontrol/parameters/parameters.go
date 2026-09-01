@@ -43,17 +43,6 @@ var (
 	CertsuiteCustomResourceResourceName = "memcacheds"
 
 	SSHDaemonStartContainerCommand = []string{"/usr/sbin/sshd", "-f", "/home/tnf-user/sshd/sshd_config", "-D", "-d"}
-
-	// Claim reason substrings for access-control-ssh-daemons after the checks-library
-	// migration (certsuite main). Probe exec outages use Failed to get container PID;
-	// a real sshd finding uses SSH daemon found running.
-	ProbeExecSshdClaimSubstring      = "Failed to get container PID"
-	SshdRunningClaimSubstring        = "SSH daemon found running"
-	CertsuiteProbeDaemonSetName      = "certsuite-probe"
-	CertsuiteProbePodLabel           = "name=" + CertsuiteProbeDaemonSetName
-	CertsuiteProbeDaemonSetNamespace = "cnf-suite"
-	ProbeDisruptPollInterval         = 2 * time.Second
-	ProbeDisruptReadyGracePeriod     = 6 * time.Second
 )
 
 const (
