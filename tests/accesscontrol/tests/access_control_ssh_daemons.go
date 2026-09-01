@@ -103,10 +103,10 @@ var _ = Describe("Access-control ssh-daemons,", Label("accesscontrol12"), func()
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	// Mirrors lab: only the worker-local certsuite-probe OOMKills / CrashLoopBackOffs
+	// Mirrors lab: only the worker-local certsuite-probe CrashLoopBackOffs
 	// while other probe pods stay Running. The check must FAIL as a probe exec outage,
 	// not as evidence that the CNF is running sshd.
-	It("one pod with no ssh running, node-local probe OOMKilled", Serial, func() {
+	It("one pod with no ssh running, node-local probe disrupted", Serial, func() {
 		By("Define pod without sshd")
 
 		testPod := pod.DefinePod(tsparams.TestPodName, randomNamespace,
@@ -119,7 +119,7 @@ var _ = Describe("Access-control ssh-daemons,", Label("accesscontrol12"), func()
 		Expect(err).ToNot(HaveOccurred())
 		Expect(runningPod.Spec.NodeName).ToNot(BeEmpty())
 
-		By("OOM-loop the certsuite-probe on the CNF node only")
+		By("Disrupt the certsuite-probe on the CNF node only")
 
 		disruptCtx, stopDisrupt := context.WithCancel(context.Background())
 		defer stopDisrupt()
@@ -150,6 +150,6 @@ var _ = Describe("Access-control ssh-daemons,", Label("accesscontrol12"), func()
 		Expect(probeExecHits).To(BeNumerically(">=", 1),
 			"expected probe-exec failure reason, not an sshd finding")
 		Expect(sshdHits).To(Equal(0),
-			"OOMKilled probe must not be reported as the pod running sshd")
+			"disrupted probe must not be reported as the pod running sshd")
 	})
 })
