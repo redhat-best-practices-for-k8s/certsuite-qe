@@ -87,13 +87,13 @@ func disruptRunningProbeOnNode(ctx context.Context, nodeName string) {
 }
 
 func probeDaemonSetReady(ctx context.Context) (bool, error) {
-	ds, err := globalhelper.GetAPIClient().DaemonSets(tsparams.CertsuiteProbeDaemonSetNamespace).Get(
+	daemonSet, err := globalhelper.GetAPIClient().DaemonSets(tsparams.CertsuiteProbeDaemonSetNamespace).Get(
 		ctx, tsparams.CertsuiteProbeDaemonSetName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
 
-	return isProbeDaemonSetReady(&ds.Status), nil
+	return isProbeDaemonSetReady(&daemonSet.Status), nil
 }
 
 func isProbeDaemonSetReady(status *appsv1.DaemonSetStatus) bool {
@@ -101,9 +101,11 @@ func isProbeDaemonSetReady(status *appsv1.DaemonSetStatus) bool {
 		return false
 	}
 
-	return status.DesiredNumberScheduled == status.CurrentNumberScheduled &&
-		status.DesiredNumberScheduled == status.NumberAvailable &&
-		status.DesiredNumberScheduled == status.NumberReady &&
+	desired := status.DesiredNumberScheduled
+
+	return status.CurrentNumberScheduled == desired &&
+		status.NumberAvailable == desired &&
+		status.NumberReady == desired &&
 		status.NumberMisscheduled == 0
 }
 
