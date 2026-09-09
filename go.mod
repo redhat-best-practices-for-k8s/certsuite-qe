@@ -1,8 +1,8 @@
 module github.com/redhat-best-practices-for-k8s/certsuite-qe
 
-go 1.26.0
+go 1.27
 
-toolchain go1.26.5
+toolchain go1.27.1
 
 require (
 	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.7
@@ -29,8 +29,6 @@ require (
 	sigs.k8s.io/controller-runtime v0.22.4
 )
 
-require github.com/evanphx/json-patch/v5 v5.9.11 // indirect
-
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
@@ -45,6 +43,7 @@ require (
 	github.com/containernetworking/plugins v1.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
+	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
