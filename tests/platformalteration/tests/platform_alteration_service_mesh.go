@@ -36,7 +36,7 @@ var _ = Describe("platform-alteration-service-mesh-usage-installed", Ordered, La
 			By("Install istio")
 			_, err := globalhelper.RunShellCommand(
 				fmt.Sprintf("curl -L https://istio.io/downloadIstio | ISTIO_VERSION=%s sh - "+
-					"&& istio-%s/bin/istioctl install --set profile=demo -y --set hub=gcr.io/istio-release",
+					"&& istio-%s/bin/istioctl install --set profile=demo -y --set hub=docker.io/istio",
 					tsparams.IstioVersion, tsparams.IstioVersion))
 			Expect(err).ToNot(HaveOccurred(), "Error installing istio")
 		}

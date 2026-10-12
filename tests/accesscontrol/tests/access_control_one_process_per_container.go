@@ -115,10 +115,21 @@ var _ = Describe("Access-control one-process-per-container,", Label("accesscontr
 		err = globalhelper.CreateAndWaitUntilDeploymentIsReady(dep, tsparams.Timeout)
 		Expect(err).ToNot(HaveOccurred())
 
-		By("Assert deployment has two containers")
+		By("Assert deployment has two containers and pod is running with all containers ready")
 		runningDeployment, err := globalhelper.GetRunningDeployment(dep.Namespace, dep.Name)
 		Expect(err).ToNot(HaveOccurred())
 		Expect(len(runningDeployment.Spec.Template.Spec.Containers)).To(Equal(2))
+
+		podList, err := globalhelper.GetListOfPodsInNamespace(randomNamespace)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(podList.Items)).To(Equal(1))
+
+		pod := &podList.Items[0]
+		Expect(pod.Status.Phase).To(Equal(corev1.PodRunning))
+
+		for _, cs := range pod.Status.ContainerStatuses {
+			Expect(cs.Ready).To(BeTrue(), "container %s not ready", cs.Name)
+		}
 
 		By("Start test")
 		err = globalhelper.LaunchTests(

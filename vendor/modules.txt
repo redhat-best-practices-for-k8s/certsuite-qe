@@ -292,7 +292,7 @@ github.com/munnerz/goautoneg
 # github.com/oklog/ulid v1.3.1
 ## explicit
 github.com/oklog/ulid
-# github.com/onsi/ginkgo/v2 v2.32.0
+# github.com/onsi/ginkgo/v2 v2.33.0
 ## explicit; go 1.25.0
 github.com/onsi/ginkgo/v2
 github.com/onsi/ginkgo/v2/config
@@ -316,7 +316,7 @@ github.com/onsi/ginkgo/v2/internal/reporters
 github.com/onsi/ginkgo/v2/internal/testingtproxy
 github.com/onsi/ginkgo/v2/reporters
 github.com/onsi/ginkgo/v2/types
-# github.com/onsi/gomega v1.42.1
+# github.com/onsi/gomega v1.44.0
 ## explicit; go 1.25.0
 github.com/onsi/gomega
 github.com/onsi/gomega/format
@@ -461,8 +461,8 @@ github.com/prometheus/procfs/internal/util
 # github.com/red-hat-storage/odf-operator v0.0.0-20241124050455-02681e6c10df
 ## explicit; go 1.22.7
 github.com/red-hat-storage/odf-operator/api/v1alpha1
-# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.66
-## explicit; go 1.26
+# github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.67
+## explicit; go 1.27
 github.com/redhat-best-practices-for-k8s/certsuite-claim/pkg/claim
 # github.com/redhat-best-practices-for-k8s/oct v0.0.55
 ## explicit; go 1.25.5
@@ -484,10 +484,12 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.10
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.11.1
+# github.com/stretchr/testify v1.12.1
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/assert/yaml
+github.com/stretchr/testify/internal/difflib
+github.com/stretchr/testify/internal/spew
 # github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 ## explicit; go 1.19
 github.com/test-network-function/cr-scale-operator/api/v1
@@ -527,7 +529,7 @@ go.opentelemetry.io/otel/trace/internal/telemetry
 # go.yaml.in/yaml/v2 v2.4.4
 ## explicit; go 1.15
 go.yaml.in/yaml/v2
-# go.yaml.in/yaml/v3 v3.0.4
+# go.yaml.in/yaml/v3 v3.0.5
 ## explicit; go 1.16
 go.yaml.in/yaml/v3
 # golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f

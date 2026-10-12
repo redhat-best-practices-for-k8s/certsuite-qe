@@ -127,7 +127,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 
 			By("Add istio helm chart repo")
 			_, err = globalhelper.RunShellCommand(
-				"helm repo add istio https://istio-release.storage.googleapis.com/charts --force-update" +
+				"helm repo add istio https://blob.istio.io/istio-release/charts --force-update" +
 					" && helm repo update")
 			Expect(err).ToNot(HaveOccurred(), "Error adding istio charts repo")
 
@@ -155,7 +155,7 @@ var _ = Describe("Affiliated-certification helm chart certification,", Serial,
 			By("Install istio-base helm chart")
 			_, err = globalhelper.RunShellCommand(
 				"helm install istio-base istio/base --set defaultRevision=default -n " + randomNamespace +
-					" --set hub=gcr.io/istio-release")
+					" --set hub=docker.io/istio")
 			Expect(err).ToNot(HaveOccurred(), "Error installing istio-base helm chart")
 
 			By("Start test")

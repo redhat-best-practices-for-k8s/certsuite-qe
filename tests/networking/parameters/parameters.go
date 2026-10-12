@@ -32,8 +32,22 @@ var (
 	CertsuiteNetworkPolicyDenyAllTcName          = "networking-network-policy-deny-all"
 	CertsuiteOcpReservedPortsUsageTcName         = "networking-ocp-reserved-ports-usage"
 	CertsuiteUndeclaredContainerPortsUsageTcName = "networking-undeclared-container-ports-usage"
+	CertsuiteUnsecuredContainerPortsTcName       = "networking-unsecured-container-ports"
 	CertsuiteReservedPartnerPortsTcName          = "networking-reserved-partner-ports"
 	CertsuiteDualStackServiceTcName              = "networking-dual-stack-service"
+
+	// Annotation consumed by networking-unsecured-container-ports.
+	NonTLSPortsAnnotationKey = "certsuite.redhat.com/non-tls-ports"
+
+	// nginxinc/nginx-unprivileged matches the Kind scenario workloads for this check.
+	NginxUnprivilegedImage = "nginxinc/nginx-unprivileged:1.27"
+	HTTPListenPort         = int32(8080)
+	TLSListenPort          = int32(8443)
+
+	PlaintextClaimSubstring = "accepts plaintext"
+	TLSClaimSubstring       = "uses TLS"
+	ExemptClaimSubstring    = "exempt via annotation"
+	NoPortsClaimSubstring   = "No listening ports"
 
 	NetworkingTestSkipLabel       = map[string]string{"redhat-best-practices-for-k8s.com/skip_connectivity_tests": ""}
 	NetworkingTestMultusSkipLabel = map[string]string{"redhat-best-practices-for-k8s.com/skip_multus_connectivity_tests": ""}
