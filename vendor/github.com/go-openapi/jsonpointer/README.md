@@ -27,7 +27,7 @@ An implementation of JSON Pointer for golang, which supports go `struct`.
 * **2026-04-15** : added support for trailing "-" for arrays (v0.23.0)
   * this brings full support of [RFC6901][RFC6901]
   * this is supported for types relying on the reflection-based implemented
-  * API semantics remain essentially unaltered. Exception: `Pointer.Set(document any,value any) (document any, err error)`
+  * API semantics remain essentially unaltered. Exception: `Pointer.Set(document any,value any) (document any, err error)` 
     can only perform a best-effort to mutate the input document in place. In the case of adding elements to an array with a
     trailing "-", either pass a mutable array (`*[]T`) as the input document, or use the returned updated document instead.
   * types that implement the `JSONSetable` interface may not implement the mutation implied by the trailing "-"

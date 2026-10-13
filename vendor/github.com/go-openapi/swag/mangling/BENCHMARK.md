@@ -40,7 +40,7 @@ BenchmarkToXXXName/ToHumanNameTitle-4 	 9188260	      3941 ns/op	     104 B/op	 
 goos: linux
 goarch: amd64
 pkg: github.com/go-openapi/swag
-cpu: AMD Ryzen 7 5800X 8-Core Processor
+cpu: AMD Ryzen 7 5800X 8-Core Processor             
 BenchmarkToXXXName/ToGoName-16         	18527378	      1972 ns/op	      42 B/op	       5 allocs/op
 BenchmarkToXXXName/ToVarName-16        	15552692	      2093 ns/op	      62 B/op	       7 allocs/op
 BenchmarkToXXXName/ToFileName-16       	32161176	      1117 ns/op	     147 B/op	       7 allocs/op
@@ -57,7 +57,7 @@ go1.24
 goos: linux
 goarch: amd64
 pkg: github.com/go-openapi/swag
-cpu: AMD Ryzen 7 5800X 8-Core Processor
+cpu: AMD Ryzen 7 5800X 8-Core Processor             
 BenchmarkToXXXName/ToGoName-16         	19757858	      1881 ns/op	      42 B/op	       5 allocs/op
 BenchmarkToXXXName/ToVarName-16        	17494111	      2094 ns/op	      74 B/op	       7 allocs/op
 BenchmarkToXXXName/ToFileName-16       	28161226	      1492 ns/op	     158 B/op	       7 allocs/op
@@ -80,7 +80,7 @@ go1.24
 goos: linux
 goarch: amd64
 pkg: github.com/go-openapi/swag/mangling
-cpu: AMD Ryzen 7 5800X 8-Core Processor
+cpu: AMD Ryzen 7 5800X 8-Core Processor             
 BenchmarkToXXXName/ToGoName-16         	22496130	      1618 ns/op	      31 B/op	       3 allocs/op
 BenchmarkToXXXName/ToVarName-16        	22538068	      1618 ns/op	      33 B/op	       3 allocs/op
 BenchmarkToXXXName/ToFileName-16       	27722977	      1236 ns/op	     105 B/op	       6 allocs/op
