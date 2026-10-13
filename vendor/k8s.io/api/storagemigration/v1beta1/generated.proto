@@ -83,3 +83,4 @@ message StorageVersionMigrationStatus {
   // kube-controller-manager first observes this StorageVersionMigration resource.
   optional string resourceVersion = 2;
 }
+

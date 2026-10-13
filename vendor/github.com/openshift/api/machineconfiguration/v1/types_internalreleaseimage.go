@@ -19,7 +19,7 @@ import (
 // InternalReleaseImage is used to keep track and manage a set
 // of release bundles (OCP and OLM operators images) that are stored
 // into the control planes nodes.
-// This is a singleton resource with 'cluster' as the only valid name.
+// This is a singleton resource with 'cluster' as the only valid name. 
 //
 // Compatibility level 1: Stable within a major release for a minimum of 12 months or 3 minor releases (whichever is longer).
 // +openshift:compatibility-gen:level=1

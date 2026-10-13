@@ -27,7 +27,7 @@ import (
 	"github.com/redhat-best-practices-for-k8s/oct/pkg/certdb/offlinecheck"
 	log "github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v3"
-	"helm.sh/helm/v3/pkg/release"
+	release "helm.sh/helm/v4/pkg/release/v1"
 )
 
 // Endpoints document can be found here
