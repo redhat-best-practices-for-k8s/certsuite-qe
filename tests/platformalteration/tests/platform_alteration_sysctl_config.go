@@ -129,16 +129,17 @@ var _ = Describe("platform-alteration-sysctl-config", Label("platformalteration4
 			podList.Items[0], []string{"/bin/bash", "-c", "echo " + newValue + " > " + sysctlPath})
 		Expect(err).ToNot(HaveOccurred())
 
-		// Ensure the original value is restored regardless of test outcome.
-		DeferCleanup(func() {
+		// Restore via plain defer, not DeferCleanup: it runs when this It body
+		// returns, before the AfterEach deletes the namespace and the daemonset
+		// pod; DeferCleanup runs after that teardown, leaving the node drifted.
+		defer func() {
 			By("Restore original sysctl value")
 
 			_, restoreErr := globalhelper.ExecCommand(
 				podList.Items[0], []string{"/bin/bash", "-c", "echo " + origValue + " > " + sysctlPath})
-			if restoreErr != nil {
-				GinkgoWriter.Printf("Warning: failed to restore sysctl value: %v\n", restoreErr)
-			}
-		})
+			Expect(restoreErr).ToNot(HaveOccurred(), "failed to restore sysctl value %s: %v ",
+				sysctlPath, restoreErr)
+		}()
 
 		By("Start platform-alteration-sysctl-config test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteSysctlConfigName,
