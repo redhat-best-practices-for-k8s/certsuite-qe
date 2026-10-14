@@ -131,16 +131,17 @@ var _ = Describe("platform-alteration-hugepages-config", Serial, Label("platform
 		err = tshelper.UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber, hugePagesPaths[0], &podList.Items[0])
 		Expect(err).ToNot(HaveOccurred(), "failed to update and verify hugepages file: %s, %v ", hugePagesPaths[0], err)
 
-		// Ensure the original hugepages value is restored regardless of test outcome.
-		DeferCleanup(func() {
+		// Restore via plain defer, not DeferCleanup: it runs when this It body
+		// returns, before the AfterEach deletes the namespace and the daemonset
+		// pod; DeferCleanup runs after that teardown, leaving the node drifted.
+		defer func() {
 			By("Restore original hugepages config")
 
 			restoreErr := tshelper.UpdateAndVerifyHugePagesConfig(
 				currentHugepagesNumber, hugePagesPaths[0], &podList.Items[0])
-			if restoreErr != nil {
-				GinkgoWriter.Printf("Warning: failed to restore hugepages config: %v\n", restoreErr)
-			}
-		})
+			Expect(restoreErr).ToNot(HaveOccurred(), "failed to restore hugepages config: %s, %v ",
+				hugePagesPaths[0], restoreErr)
+		}()
 
 		By("Start platform-alteration-hugepages-config test")
 		err = globalhelper.LaunchTests(tsparams.CertsuiteHugePagesConfigName,
