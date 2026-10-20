@@ -23,10 +23,19 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 )
 
 const (
 	sampleWorkloadImage = "quay.io/redhat-best-practices-for-k8s/certsuite-sample-workload"
+)
+
+var (
+	createAndWaitDeployment = globalhelper.CreateAndWaitUntilDeploymentIsReady
+	createAndWaitDaemonSet  = globalhelper.CreateAndWaitUntilDaemonSetIsReady
+	createNetworkPolicy     = globalhelper.CreateNetworkPolicy
+	execPodCommand          = globalhelper.ExecCommand
+	getConfiguration        = globalhelper.GetConfiguration
 )
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
@@ -34,7 +43,7 @@ func DefineAndCreateDeploymentOnCluster(replicaNumber int32, namespace string) e
 	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentAName, namespace,
 		replicaNumber, false, nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusOnCluster defines deployment resource and creates it on cluster.
@@ -42,7 +51,7 @@ func DefineAndCreateDeploymentWithMultusOnCluster(name, namespace string, nadNam
 	deploymentUnderTest := defineDeploymentBasedOnArgs(name, namespace,
 		replicaNumber, true, nadNames, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster defines deployment resource and creates it on cluster.
@@ -55,7 +64,7 @@ func DefineAndCreateDeploymentWithMultusAndSkipLabelOnCluster(
 		nadNames,
 		tsparams.NetworkingTestMultusSkipLabel)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreatePrivilegedDeploymentOnCluster defines deployment resource and creates it on cluster.
@@ -64,7 +73,7 @@ func DefineAndCreatePrivilegedDeploymentOnCluster(replicaNumber int32, namespace
 		replicaNumber, true,
 		nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // DefineAndCreateDeploymentWithSkippedLabelOnCluster defines deployment resource and creates it on cluster.
@@ -73,7 +82,7 @@ func DefineAndCreateDeploymentWithSkippedLabelOnCluster(replicaNumber int32, nam
 		replicaNumber,
 		true, nil, tsparams.NetworkingTestSkipLabel)
 
-	err := globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	err := createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 	if err != nil {
 		return fmt.Errorf("failed to create deployment: %w", err)
 	}
@@ -85,14 +94,14 @@ func DefineAndCreateDeploymentWithNamespace(namespace string, replicaNumber int3
 	deploymentUnderTest := defineDeploymentBasedOnArgs(tsparams.TestDeploymentBName, namespace,
 		replicaNumber, false, nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 func DefineAndCreateDeployment(deploymentName, namespace string, replicaNumber int32) error {
 	deploymentUnderTest := defineDeploymentBasedOnArgs(deploymentName, namespace,
 		replicaNumber, false, nil, nil)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 func DefineAndCreateDaemonsetWithMultusOnCluster(nadName, namespace, daemonsetName string) error {
@@ -114,7 +123,7 @@ func DefineAndCreateDeploymentWithContainerPorts(replicaNumber int32, ports []co
 
 	deployment.RedefineWithContainerSpecs(deploymentUnderTest, portSpecs)
 
-	return globalhelper.CreateAndWaitUntilDeploymentIsReady(deploymentUnderTest, tsparams.WaitingTime)
+	return createAndWaitDeployment(deploymentUnderTest, tsparams.WaitingTime)
 }
 
 // ExecCmdOnOnePodInNamespace runs command on the first available pod in namespace.
@@ -133,31 +142,21 @@ func RedefineServiceToHeadless(service *corev1.Service) {
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
 func DefineAndCreateServiceOnCluster(name, namespace string, port, targetPort int32, withNodePort, headless bool,
 	ipFams []corev1.IPFamily, ipFamPolicy string) error {
-	var testService *corev1.Service
+	var ipPolicy *corev1.IPFamilyPolicy
 
-	if ipFamPolicy == "" {
-		testService = service.DefineService(
-			name,
-			namespace,
-			port,
-			targetPort,
-			corev1.ProtocolTCP,
-			tsparams.TestDeploymentLabels,
-			ipFams,
-			nil)
-	} else {
-		ipPolicy := corev1.IPFamilyPolicy(ipFamPolicy)
-
-		testService = service.DefineService(
-			name,
-			namespace,
-			port,
-			targetPort,
-			corev1.ProtocolTCP,
-			tsparams.TestDeploymentLabels,
-			ipFams,
-			&ipPolicy)
+	if ipFamPolicy != "" {
+		ipPolicy = ptr.To(corev1.IPFamilyPolicy(ipFamPolicy))
 	}
+
+	testService := service.DefineService(
+		name,
+		namespace,
+		port,
+		targetPort,
+		corev1.ProtocolTCP,
+		tsparams.TestDeploymentLabels,
+		ipFams,
+		ipPolicy)
 
 	if withNodePort {
 		err := service.RedefineWithNodePort(testService)
@@ -250,7 +249,7 @@ func DefineAndCreateNetworkPolicy(name, ns string, policyTypes []string, labels 
 	types := networkpolicy.DefinePolicyTypes(policyTypes)
 	policy := networkpolicy.DefineDenyAllNetworkPolicy(name, ns, types, labels)
 
-	return globalhelper.CreateNetworkPolicy(policy, tsparams.WaitingTime)
+	return createNetworkPolicy(policy, tsparams.WaitingTime)
 }
 
 func findListIntersections(listA, listB []string) []string {
@@ -268,7 +267,7 @@ func findListIntersections(listA, listB []string) []string {
 }
 
 func getInterfacesList(runningPod corev1.Pod) ([]string, error) {
-	links, err := globalhelper.ExecCommand(
+	links, err := execPodCommand(
 		runningPod,
 		[]string{"ip", "-j", "link", "show"},
 	)
@@ -341,28 +340,22 @@ func defineDaemonSetBasedOnArgs(nadName, namespace, daemonsetName string, labels
 	testDaemonset := daemonset.DefineDaemonSet(namespace,
 		sampleWorkloadImage, tsparams.TestDeploymentLabels, daemonsetName)
 	daemonset.RedefineWithMultus(testDaemonset, nadName)
-	//nolint:lll
-	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{globalhelper.GetConfiguration().General.CnfNodeLabel: ""})
+	daemonset.RedefineDaemonSetWithNodeSelector(testDaemonset, map[string]string{getConfiguration().General.CnfNodeLabel: ""})
 
 	if labels != nil {
 		daemonset.RedefineWithLabel(testDaemonset, labels)
 	}
 
-	return globalhelper.CreateAndWaitUntilDaemonSetIsReady(testDaemonset, tsparams.WaitingTime)
+	return createAndWaitDaemonSet(testDaemonset, tsparams.WaitingTime)
 }
 
 func defineAndCreatePrivilegedDaemonset(namespace string) error {
 	daemonSet := daemonset.DefineDaemonSet(namespace, sampleWorkloadImage,
 		tsparams.TestDeploymentLabels, "daemonsetnetworkingput")
-	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{globalhelper.GetConfiguration().General.WorkerNodeLabel: ""})
+	daemonset.RedefineDaemonSetWithNodeSelector(daemonSet, map[string]string{getConfiguration().General.WorkerNodeLabel: ""})
 	daemonset.RedefineWithPrivilegeAndHostNetwork(daemonSet)
 
-	err := globalhelper.CreateAndWaitUntilDaemonSetIsReady(daemonSet, tsparams.WaitingTime)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return createAndWaitDaemonSet(daemonSet, tsparams.WaitingTime)
 }
 
 func execCmdOnPodsListInNamespace(command []string, execOn, namespace string) error {
@@ -380,6 +373,10 @@ func execCmdOnPodsListInNamespace(command []string, execOn, namespace string) er
 		execOcPods = runningTestPods
 
 	case "first":
+		if len(runningTestPods.Items) == 0 {
+			return fmt.Errorf("no pods found in namespace %s", namespace)
+		}
+
 		execOcPods = &corev1.PodList{
 			TypeMeta: runningTestPods.TypeMeta,
 			ListMeta: runningTestPods.ListMeta,
@@ -389,7 +386,7 @@ func execCmdOnPodsListInNamespace(command []string, execOn, namespace string) er
 	}
 
 	for _, runningPod := range execOcPods.Items {
-		_, err := globalhelper.ExecCommand(runningPod, command)
+		_, err := execPodCommand(runningPod, command)
 		if err != nil {
 			return err
 		}
