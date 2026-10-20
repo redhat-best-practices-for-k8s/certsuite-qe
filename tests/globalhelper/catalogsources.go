@@ -6,7 +6,6 @@ import (
 	"slices"
 	"time"
 
-	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiClusterVersion "github.com/openshift-kni/eco-goinfra/pkg/clusterversion"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	v1alpha1typed "github.com/operator-framework/operator-lifecycle-manager/pkg/api/client/clientset/versioned/typed/operators/v1alpha1"
@@ -20,6 +19,11 @@ const (
 	CatalogSourceNamespace = "openshift-marketplace"
 )
 
+var (
+	catalogValidationTimeout  = 5 * time.Minute
+	catalogValidationInterval = 10 * time.Second
+)
+
 func ValidateCatalogSources() error {
 	return validateCatalogSources(GetAPIClient().OperatorsV1alpha1Interface)
 }
@@ -27,12 +31,7 @@ func ValidateCatalogSources() error {
 func validateCatalogSources(opclient v1alpha1typed.OperatorsV1alpha1Interface) error {
 	requiredCatalogSources := []string{"certified-operators", "community-operators"}
 
-	const (
-		timeout  = 5 * time.Minute
-		interval = 10 * time.Second
-	)
-
-	return wait.PollUntilContextTimeout(context.TODO(), interval, timeout, true,
+	return wait.PollUntilContextTimeout(context.TODO(), catalogValidationInterval, catalogValidationTimeout, true,
 		func(ctx context.Context) (bool, error) {
 			catalogSources, err := opclient.CatalogSources(
 				CatalogSourceNamespace).List(ctx, metav1.ListOptions{})
@@ -159,7 +158,7 @@ func CreateCommunityOperatorsCatalogSource() error {
 }
 
 func GetClusterVersion() (string, error) {
-	client := egiClients.New("")
+	client := GetEcoGoinfraClient()
 
 	builder, err := egiClusterVersion.Pull(client)
 

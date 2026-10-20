@@ -14,6 +14,15 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/globalparameters"
 )
 
+var (
+	openReportDirectory  = os.Open
+	removeReportContent  = os.RemoveAll
+	removeReportDir      = os.Remove
+	makeReportDir        = os.MkdirAll
+	marshalClaimResult   = json.Marshal
+	unmarshalClaimResult = json.Unmarshal
+)
+
 // OpenClaimReport opens claim.json file and returns struct.
 func OpenClaimReport(reportDir string) (*claim.Root, error) {
 	byteValueClaim, err := os.ReadFile(path.Join(reportDir, globalparameters.DefaultClaimFileName))
@@ -75,7 +84,7 @@ func removeContentsFromDir(dirPath, dirType string) error {
 
 	klog.V(5).Infof("removing all files from %s directory", dirPath)
 
-	dir, err := os.Open(dirPath)
+	dir, err := openReportDirectory(dirPath)
 	if err != nil {
 		return fmt.Errorf("failed to open %s directory: %w", dirType, err)
 	}
@@ -88,7 +97,7 @@ func removeContentsFromDir(dirPath, dirType string) error {
 	}
 
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dirPath, name))
+		err = removeReportContent(filepath.Join(dirPath, name))
 		if err != nil {
 			return fmt.Errorf("failed to remove content from %s directory: %w", dirType, err)
 		}
@@ -99,7 +108,7 @@ func removeContentsFromDir(dirPath, dirType string) error {
 	}
 
 	// Delete the directory
-	err = os.Remove(dirPath)
+	err = removeReportDir(dirPath)
 	if err != nil {
 		return fmt.Errorf("failed to remove %s directory: %w", dirType, err)
 	}
@@ -122,12 +131,12 @@ func getTestCaseResult(testCaseName string, claimReport claim.Root) (*claim.Resu
 		if formatTestCaseName(testCaseClaim) == formatTestCaseName(testCaseName) {
 			var testCaseResult *claim.Result
 
-			encodedTestResult, err := json.Marshal(claimReport.Claim.Results[testCaseClaim])
+			encodedTestResult, err := marshalClaimResult(claimReport.Claim.Results[testCaseClaim])
 			if err != nil {
 				return nil, err
 			}
 
-			err = json.Unmarshal(encodedTestResult, &testCaseResult)
+			err = unmarshalClaimResult(encodedTestResult, &testCaseResult)
 			if err != nil {
 				return nil, err
 			}
@@ -193,7 +202,7 @@ func CopyClaimFileToTcFolder(tcName, formattedTcName, reportDir string) {
 		return
 	}
 
-	err = os.MkdirAll(dstDir, globalparameters.DirPermissions)
+	err = makeReportDir(dstDir, globalparameters.DirPermissions)
 	if err != nil {
 		klog.ErrorS(err, "could not create dest directory", "dir", dstDir)
 

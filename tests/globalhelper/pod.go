@@ -19,6 +19,14 @@ import (
 	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
 )
 
+var execPodCommand = (*egiPod.Builder).ExecCommand
+
+var (
+	podDiscoveryTimeout  = 50 * time.Second
+	podDiscoveryInterval = 5 * time.Second
+	podReadyPollInterval = time.Second
+)
+
 // ExecCommand runs command in the pod and returns buffer output.
 func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
@@ -29,7 +37,7 @@ func ExecCommand(pod corev1.Pod, command []string) (bytes.Buffer, error) {
 	}
 
 	// Exec in the first container by default (matches previous behavior)
-	buf, err = builder.ExecCommand(command)
+	buf, err = execPodCommand(builder, command)
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
@@ -89,7 +97,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		}
 
 		return podUnschedulable
-	}, timeout, 1*time.Second).Should(Equal(true), "Pod is not running")
+	}, timeout, podReadyPollInterval).Should(Equal(true), "Pod is not running")
 
 	if podUnschedulable {
 		return fmt.Errorf("pod %s is not schedulable", createdPod.Name)
@@ -105,7 +113,7 @@ func CreateAndWaitUntilPodIsReady(pod *corev1.Pod, timeout time.Duration) error 
 		}
 
 		return status
-	}, timeout, 1*time.Second).Should(Equal(true), "Pod is not ready")
+	}, timeout, podReadyPollInterval).Should(Equal(true), "Pod is not ready")
 
 	return nil
 }
@@ -181,11 +189,6 @@ func getRunningPod(client typedcorev1.CoreV1Interface, namespace, name string) (
 }
 
 func GetControllerPodFromOperator(namespace, operatorName string) (*corev1.Pod, error) {
-	const (
-		podDiscoveryTimeout  = 50 * time.Second
-		podDiscoveryInterval = 5 * time.Second
-	)
-
 	var pods *corev1.PodList
 
 	err := wait.PollUntilContextTimeout(context.TODO(), podDiscoveryInterval, podDiscoveryTimeout, true,

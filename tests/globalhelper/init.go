@@ -18,8 +18,12 @@ import (
 )
 
 var (
-	apiclient *testclient.ClientSet
-	conf      *config.Config
+	apiclient    *testclient.ClientSet
+	conf         *config.Config
+	newAPIClient = config.DefineClients
+	newConfig    = config.NewConfig
+	fatalf       = klog.Fatalf
+	runSpecs     = RunSpecs
 )
 
 func SetTestK8sAPIClient(client kubernetes.Interface) {
@@ -46,10 +50,10 @@ func GetAPIClient() *testclient.ClientSet {
 	}
 
 	var err error
-	apiclient, err = config.DefineClients()
+	apiclient, err = newAPIClient()
 
 	if err != nil {
-		klog.Fatalf("can not load api client. Please check KUBECONFIG env var - %s", err)
+		fatalf("can not load api client. Please check KUBECONFIG env var - %s", err)
 	}
 
 	return apiclient
@@ -61,10 +65,10 @@ func GetConfiguration() *config.Config {
 	}
 
 	var err error
-	conf, err = config.NewConfig()
+	conf, err = newConfig()
 
 	if err != nil {
-		klog.Fatalf("can not load configuration - %s", err)
+		fatalf("can not load configuration - %s", err)
 	}
 
 	return conf
@@ -130,7 +134,7 @@ func RunSuite(t *testing.T, suiteName string) {
 	reporterConfig.JUnitReport = GetConfiguration().GetReportPath(callerFile)
 
 	RegisterFailHandler(Fail)
-	RunSpecs(t, suiteName, reporterConfig)
+	runSpecs(t, suiteName, reporterConfig)
 }
 
 func AfterEachCleanupWithRandomNamespace(randomNamespace, randomReportDir, randomConfigDir string, waitingTime time.Duration) {

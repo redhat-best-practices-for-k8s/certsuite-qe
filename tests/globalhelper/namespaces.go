@@ -108,13 +108,11 @@ func deleteNamespaceAndWait(client *egiClients.Settings, namespace string, timeo
 }
 
 func NamespaceExists(namespace string) (bool, error) {
-	return namespaceExists(namespace, GetEcoGoinfraClient())
+	return namespaceExists(namespace, GetEcoGoinfraClient()), nil
 }
 
-func namespaceExists(namespace string, client *egiClients.Settings) (bool, error) {
-	builder := egiNamespaces.NewBuilder(client, namespace)
-
-	return builder.Exists(), nil
+func namespaceExists(namespace string, client *egiClients.Settings) bool {
+	return egiNamespaces.NewBuilder(client, namespace).Exists()
 }
 
 func cleanNetworkAttachmentDefinition(rtc runtimeclient.Client) error {
@@ -218,10 +216,7 @@ func CleanNamespace(namespace string) error {
 // Clean cleans all dangling objects from the given namespace.
 func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *egiClients.Settings) error {
 	// check if the namespace exists first
-	exists, err := namespaceExists(namespace, egiClient)
-	if err != nil {
-		return err
-	}
+	exists := namespaceExists(namespace, egiClient)
 
 	if !exists {
 		return nil
@@ -229,7 +224,7 @@ func cleanNamespace(namespace string, clientSet *client.ClientSet, egiClient *eg
 
 	builder := egiNamespaces.NewBuilder(egiClient, namespace)
 
-	err = builder.CleanObjects(5*time.Second,
+	err := builder.CleanObjects(5*time.Second,
 		egiDeployment.GetGVR(),
 		egiDaemonSet.GetGVR(),
 		egiPod.GetGVR(),

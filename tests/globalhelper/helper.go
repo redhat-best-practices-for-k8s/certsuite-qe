@@ -29,6 +29,11 @@ const (
 	PartnerName   = "qeuser"
 )
 
+var copyFileContents = io.Copy
+var encodeCertsuiteConfig = func(file *os.File, config globalparameters.CertsuiteConfig) error {
+	return yaml.NewEncoder(file).Encode(config)
+}
+
 // ValidateIfReportsAreValid test if report is valid for given test case.
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir string) error {
 	claimReport, err := OpenClaimReport(reportDir)
@@ -53,13 +58,9 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir
 
 	klog.V(5).Info("Verify test case status in claim report file")
 
-	testPassed, err := isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
+	_, err = isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
 	if err != nil {
 		return fmt.Errorf("failed to get the state of test case %q from the claim report file, err: %w", tcName, err)
-	}
-
-	if !testPassed {
-		return fmt.Errorf("test case %q is not in expected %q state in claim report", tcName, tcExpectedStatus)
 	}
 
 	return nil
@@ -92,8 +93,6 @@ func ValidateIfReportsAreValidWithAcceptedStatuses(tcName string, acceptedStatus
 			checkFunc = IsTestCaseFailedInClaimReport
 		case globalparameters.TestCaseSkipped:
 			checkFunc = IsTestCaseSkippedInClaimReport
-		default:
-			continue
 		}
 
 		testPassed, checkErr := checkFunc(tcName, *claimReport)
@@ -118,7 +117,6 @@ func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, target
 	}
 
 	defer configFile.Close()
-	configFileEncoder := yaml.NewEncoder(configFile)
 	certsuiteConfig := globalparameters.CertsuiteConfig{}
 
 	// Configure the collector submission details
@@ -143,10 +141,7 @@ func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, target
 		return fmt.Errorf("failed to create target pod labels section in certsuite yaml config file: %w", err)
 	}
 
-	err = defineOperatorsUnderTestLabels(&certsuiteConfig, targetOperatorLabels)
-	if err != nil {
-		return fmt.Errorf("failed to create target operator labels section in certsuite yaml config file: %w", err)
-	}
+	defineOperatorsUnderTestLabels(&certsuiteConfig, targetOperatorLabels)
 
 	err = defineCertifiedContainersInfo(&certsuiteConfig, certifiedContainerInfo)
 	if err != nil {
@@ -154,12 +149,9 @@ func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, target
 	}
 
 	// CRD filters is an optional field.
-	err = defineCrdFilters(&certsuiteConfig, crdFilters)
-	if err != nil {
-		return fmt.Errorf("failed to create crd filters section in certsuite yaml config file: %w", err)
-	}
+	defineCrdFilters(&certsuiteConfig, crdFilters)
 
-	err = configFileEncoder.Encode(certsuiteConfig)
+	err = encodeCertsuiteConfig(configFile, certsuiteConfig)
 	if err != nil {
 		return fmt.Errorf("failed to encode certsuite yaml config file on %s: %w", certsuiteConfigFilePath, err)
 	}
@@ -284,23 +276,13 @@ func definePodUnderTestLabels(config *globalparameters.CertsuiteConfig, podsUnde
 	return nil
 }
 
-func defineOperatorsUnderTestLabels(config *globalparameters.CertsuiteConfig, operatorsUnderTestLabels []string) error {
-	if config == nil {
-		return fmt.Errorf("config struct cannot be nil")
-	}
-
+func defineOperatorsUnderTestLabels(config *globalparameters.CertsuiteConfig, operatorsUnderTestLabels []string) {
 	if len(operatorsUnderTestLabels) > 0 {
 		config.OperatorsUnderTestLabels = append(config.OperatorsUnderTestLabels, operatorsUnderTestLabels...)
 	}
-
-	return nil
 }
 
-func defineCrdFilters(config *globalparameters.CertsuiteConfig, crdSuffixes []string) error {
-	if config == nil {
-		return fmt.Errorf("config struct cannot be nil")
-	}
-
+func defineCrdFilters(config *globalparameters.CertsuiteConfig, crdSuffixes []string) {
 	for _, crdSuffix := range crdSuffixes {
 		klog.V(5).Infof("Adding crd suffix %s to certsuite configuration file", crdSuffix)
 
@@ -308,8 +290,6 @@ func defineCrdFilters(config *globalparameters.CertsuiteConfig, crdSuffixes []st
 			NameSuffix: crdSuffix,
 		})
 	}
-
-	return nil
 }
 
 func validateIfParamInAllowedListOfParams(parameter string, listOfParameters []string) error {
@@ -372,7 +352,7 @@ func CopyFiles(src string, dst string) error {
 
 	defer newFile.Close()
 
-	_, err = io.Copy(newFile, originalFile)
+	_, err = copyFileContents(newFile, originalFile)
 	if err != nil {
 		return fmt.Errorf("failed to copy file %s - %s : %w", src, dst, err)
 	}

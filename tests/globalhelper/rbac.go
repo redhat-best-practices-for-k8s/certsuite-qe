@@ -16,6 +16,8 @@ import (
 	"k8s.io/utils/ptr"
 )
 
+var persistentVolumePollInterval = time.Duration(retryInterval) * time.Second
+
 // CreateServiceAccount creates a service account.
 func CreateServiceAccount(serviceAccountName, namespace string) error {
 	return createServiceAccount(GetAPIClient().K8sClient.CoreV1(), serviceAccountName, namespace)
@@ -226,7 +228,7 @@ func deletePersistentVolume(client corev1Typed.CoreV1Interface, persistentVolume
 		_, err := client.PersistentVolumes().Get(context.TODO(), persistentVolume, metav1.GetOptions{})
 
 		return err != nil
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "PV is not removed yet.")
+	}, timeout, persistentVolumePollInterval).Should(Equal(true), "PV is not removed yet.")
 
 	return nil
 }
@@ -254,7 +256,7 @@ func createAndWaitUntilPVCIsBound(client corev1Typed.CoreV1Interface, pvc *corev
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "pvc is not bound")
+	}, timeout, persistentVolumePollInterval).Should(Equal(true), "pvc is not bound")
 
 	return nil
 }

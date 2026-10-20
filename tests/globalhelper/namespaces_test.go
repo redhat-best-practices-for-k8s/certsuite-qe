@@ -102,9 +102,7 @@ func TestNamespaceExists(t *testing.T) {
 		fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{
 			K8sMockObjects: runtimeObjects,
 		})
-		exists, err := namespaceExists(testCase.name, fakeClient)
-		assert.NoError(t, err)
-		assert.Equal(t, testCase.alreadyExists, exists)
+		assert.Equal(t, testCase.alreadyExists, namespaceExists(testCase.name, fakeClient))
 	}
 }
 

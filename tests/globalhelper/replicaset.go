@@ -12,6 +12,8 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+var replicaSetReadyPollInterval = time.Second
+
 // CreateAndWaitUntilReplicaSetIsReady creates replicaSet and waits until all it's replicas are ready.
 func CreateAndWaitUntilReplicaSetIsReady(replicaSet *appsv1.ReplicaSet, timeout time.Duration) error {
 	runningReplica, err := GetAPIClient().ReplicaSets(replicaSet.Namespace).Create(context.TODO(),
@@ -32,7 +34,7 @@ func CreateAndWaitUntilReplicaSetIsReady(replicaSet *appsv1.ReplicaSet, timeout 
 		}
 
 		return status
-	}, timeout, 1*time.Second).Should(Equal(true), "replicaSet is not ready")
+	}, timeout, replicaSetReadyPollInterval).Should(Equal(true), "replicaSet is not ready")
 
 	return nil
 }
