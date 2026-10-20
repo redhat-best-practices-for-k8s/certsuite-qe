@@ -23,9 +23,19 @@ import (
 	machineconfigv1 "github.com/openshift/api/machineconfiguration/v1"
 	mcv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 
+	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	egiMco "github.com/openshift-kni/eco-goinfra/pkg/mco"
 	egiNodes "github.com/openshift-kni/eco-goinfra/pkg/nodes"
 	klog "k8s.io/klog/v2"
+	"k8s.io/utils/ptr"
+)
+
+const workerRoleLabel = "node-role.kubernetes.io/worker"
+
+// Test seams; tests that override them must not run in parallel.
+var (
+	getEgiClient    = globalhelper.GetEcoGoinfraClient
+	mcpStartTimeout = tsparams.McpStartTimeout
 )
 
 func DefineDeploymentWithImage(replica int32, containers int, name, namespace, image string) (*appsv1.Deployment, error) {
@@ -43,17 +53,7 @@ func DefineDeploymentWithImage(replica int32, containers int, name, namespace, i
 }
 
 func DefineDeployment(replica int32, containers int, name, namespace string) (*appsv1.Deployment, error) {
-	if containers < 1 {
-		return nil, errors.New("invalid number of containers")
-	}
-
-	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
-
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
-	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
-
-	return deploymentStruct, nil
+	return DefineDeploymentWithImage(replica, containers, name, namespace, tsparams.SampleWorkloadImage)
 }
 
 func DefineStatefulSet(replica int32, containers int, name, namespace string) (*appsv1.StatefulSet, error) {
@@ -72,28 +72,18 @@ func DefineStatefulSet(replica int32, containers int, name, namespace string) (*
 
 func DefineDeploymentWithClusterRoleBindingWithServiceAccount(replica int32,
 	containers int, name, namespace, serviceAccountName string) (*appsv1.Deployment, error) {
-	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
+	deploymentStruct, err := DefineDeploymentWithImage(replica, containers, name, namespace, tsparams.SampleWorkloadImage)
+	if err != nil {
+		return nil, err
+	}
 
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
-	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
 	deployment.AppendServiceAccount(deploymentStruct, serviceAccountName)
 
 	return deploymentStruct, nil
 }
 
 func DefineDeploymentWithNamespace(replica int32, containers int, name string, namespace string) (*appsv1.Deployment, error) {
-	if containers < 1 {
-		return nil, errors.New("invalid number of containers")
-	}
-
-	deploymentStruct := deployment.DefineDeployment(name, namespace,
-		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
-
-	globalhelper.AppendContainersToDeployment(deploymentStruct, containers-1, tsparams.SampleWorkloadImage)
-	deployment.RedefineWithReplicaNumber(deploymentStruct, replica)
-
-	return deploymentStruct, nil
+	return DefineDeploymentWithImage(replica, containers, name, namespace, tsparams.SampleWorkloadImage)
 }
 
 func DefineDeploymentWithContainerPorts(name, namespace string, replicaNumber int32,
@@ -104,8 +94,6 @@ func DefineDeploymentWithContainerPorts(name, namespace string, replicaNumber in
 
 	deploymentStruct := deployment.DefineDeployment(name, namespace,
 		tsparams.SampleWorkloadImage, tsparams.TestDeploymentLabels)
-
-	globalhelper.AppendContainersToDeployment(deploymentStruct, len(ports)-1, tsparams.SampleWorkloadImage)
 	deployment.RedefineWithReplicaNumber(deploymentStruct, replicaNumber)
 
 	portSpecs := container.CreateContainerSpecsFromContainerPorts(ports,
@@ -151,31 +139,21 @@ func SetServiceAccountAutomountServiceAccountToken(namespace, saname, value stri
 // DefineAndCreateServiceOnCluster defines service resource and creates it on cluster.
 func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetPort int32, withNodePort bool,
 	ipFams []corev1.IPFamily, ipFamPolicy string) error {
-	var testService *corev1.Service
+	var ipPolicy *corev1.IPFamilyPolicy
 
-	if ipFamPolicy == "" {
-		testService = service.DefineService(
-			name,
-			namespace,
-			port,
-			targetPort,
-			corev1.ProtocolTCP,
-			tsparams.TestDeploymentLabels,
-			ipFams,
-			nil)
-	} else {
-		ipPolicy := corev1.IPFamilyPolicy(ipFamPolicy)
-
-		testService = service.DefineService(
-			name,
-			namespace,
-			port,
-			targetPort,
-			corev1.ProtocolTCP,
-			tsparams.TestDeploymentLabels,
-			ipFams,
-			&ipPolicy)
+	if ipFamPolicy != "" {
+		ipPolicy = ptr.To(corev1.IPFamilyPolicy(ipFamPolicy))
 	}
+
+	testService := service.DefineService(
+		name,
+		namespace,
+		port,
+		targetPort,
+		corev1.ProtocolTCP,
+		tsparams.TestDeploymentLabels,
+		ipFams,
+		ipPolicy)
 
 	if withNodePort {
 		err := service.RedefineWithNodePort(testService)
@@ -200,8 +178,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetP
 // Finds the MachineConfigPools that manage worker nodes of the cluster. Returns a map of MCP names
 // to slices of worker names.
 func GetWorkersMCPs() (mcpNodes map[string][]string, err error) {
-	// Get the eco-goinfra client.
-	egiClient := globalhelper.GetEcoGoinfraClient()
+	egiClient := getEgiClient()
 	if egiClient == nil {
 		return nil, fmt.Errorf("eco-goinfra client is not initialized")
 	}
@@ -218,9 +195,8 @@ func GetWorkersMCPs() (mcpNodes map[string][]string, err error) {
 
 	mcps := map[string][]string{}
 
-	// For each mcp, add entry to the herlpe mcps map if it has worker nodes.
 	for i := range mcpBuilders {
-		mcpNodes := []string{}
+		workers := []string{}
 		mcp := mcpBuilders[i].Object
 
 		if mcp.Status.MachineCount == 0 {
@@ -240,22 +216,22 @@ func GetWorkersMCPs() (mcpNodes map[string][]string, err error) {
 				continue
 			}
 
-			if _, exist := node.Labels["node-role.kubernetes.io/worker"]; !exist {
-				break
+			if _, exist := node.Labels[workerRoleLabel]; !exist {
+				continue
 			}
-			mcpNodes = append(mcpNodes, node.Name)
+
+			workers = append(workers, node.Name)
 		}
 
-		// Continue if this MCP doesn't manage any worker node
-		if len(mcpNodes) == 0 {
+		if len(workers) == 0 {
 			klog.V(5).Infof("MCP=%s doesn't manage any worker node", mcp.Name)
 
 			continue
 		}
 
-		mcps[mcp.Name] = mcpNodes
+		mcps[mcp.Name] = workers
 
-		klog.V(5).Infof("MCP=%s is candidate, num workers=%d", mcp.Name, len(mcpNodes))
+		klog.V(5).Infof("MCP=%s is candidate, num workers=%d", mcp.Name, len(workers))
 	}
 
 	return mcps, nil
@@ -269,8 +245,7 @@ func GetWorkersMCPs() (mcpNodes map[string][]string, err error) {
 // The code uses the MachineConfigSelector on each MachineConfig found and returns the labels of the MachineConfig that
 // matches that selector.
 func GetMachineConfigTargetLabels(mcpName string) (map[string]string, error) {
-	// Get the eco-goinfra client.
-	egiClient := globalhelper.GetEcoGoinfraClient()
+	egiClient := getEgiClient()
 	if egiClient == nil {
 		return nil, fmt.Errorf("eco-goinfra client is not initialized")
 	}
@@ -318,12 +293,11 @@ func HasNodeRtKernel(nodeName string) (bool, error) {
 	return strings.Contains(node.Status.NodeInfo.KernelVersion, "+rt"), nil
 }
 
-// Deploys a Machineconfig to switch the kernel to realtime type on all th enodes of a MachineConfigPool.
+// Deploys a Machineconfig to switch the kernel to realtime type on all the nodes of a MachineConfigPool.
 //
 // Warning: This is a disruptive operation that will reboot all the worker nodes one by one.
 func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[string]string, timeout time.Duration) error {
-	// Get the eco-goinfra client.
-	egiClient := globalhelper.GetEcoGoinfraClient()
+	egiClient := getEgiClient()
 	if egiClient == nil {
 		return fmt.Errorf("eco-goinfra client is not initialized")
 	}
@@ -340,23 +314,28 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	}
 
 	klog.V(5).Infof("Creating MC=%s in the cluster.", mcName)
-	// Apply MachineConfig
+
 	_, err := mcBuilder.Create()
 	if err != nil {
 		return fmt.Errorf("failed to create MachineConfig: %w", err)
 	}
 
-	// MachineConfigPool
+	return waitForMCPRollout(egiClient, mcpName, timeout)
+}
+
+// waitForMCPRollout waits for a MachineConfigPool to start and then finish applying a MachineConfig
+// change, and fails if the pool ends up Degraded.
+func waitForMCPRollout(egiClient *egiClients.Settings, mcpName string, timeout time.Duration) error {
 	mcpBuilder := egiMco.NewMCPBuilder(egiClient, mcpName)
 	if mcpBuilder == nil {
 		return fmt.Errorf("failed to get MachineConfigPool builder")
 	}
 
 	// Wait for MCP to start updating: condition Updating=True
-	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
+	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, mcpStartTimeout)
 
-	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
-		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, tsparams.McpStartTimeout)
+	err := mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
+		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, mcpStartTimeout)
 	if err != nil {
 		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=True: %w", err)
 	}
@@ -370,7 +349,6 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=False: %w", err)
 	}
 
-	// Make sure everything went ok
 	if mcpBuilder.IsInCondition(machineconfigv1.MachineConfigPoolConditionType(mcv1.MachineConfigPoolDegraded)) {
 		return fmt.Errorf("machineconfigpool appears as Degraded after machineconfig was applied")
 	}
@@ -382,48 +360,17 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 //
 // Warning: This is a disruptive operation that will reboot all the worker nodes one by one.
 func RemoveRTKernelMachineConfig(mcpName string, mcName string, timeout time.Duration) error {
-	// Get the eco-goinfra client.
-	egiClient := globalhelper.GetEcoGoinfraClient()
+	egiClient := getEgiClient()
 	if egiClient == nil {
 		return fmt.Errorf("eco-goinfra client is not initialized")
 	}
 
-	// Delete the MachineConfig
 	err := egiMco.NewMCBuilder(egiClient, mcName).Delete()
 	if err != nil {
 		return fmt.Errorf("failed to delete machineconfig %s: %w", mcName, err)
 	}
 
-	// Wait for MCP to start updating.
-	mcpBuilder := egiMco.NewMCPBuilder(egiClient, mcpName)
-	if mcpBuilder == nil {
-		return fmt.Errorf("failed to get MachineConfigPool builder")
-	}
-
-	// Wait for MCP to start updating: condition Updating=True
-	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be True", mcpName, tsparams.McpStartTimeout)
-
-	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
-		mcv1.MachineConfigPoolUpdating), corev1.ConditionTrue, tsparams.McpStartTimeout)
-	if err != nil {
-		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=True: %w", err)
-	}
-
-	// Wait for MCP to finish the update using the dynamic timeout as deadline.
-	klog.V(5).Infof("MCP=%s: waiting %s for condition Updating to be False", mcpName, timeout)
-
-	err = mcpBuilder.WaitToBeInCondition(machineconfigv1.MachineConfigPoolConditionType(
-		mcv1.MachineConfigPoolUpdating), corev1.ConditionFalse, timeout)
-	if err != nil {
-		return fmt.Errorf("failed waiting for MachineConfigPool to set condition Updating=False: %w", err)
-	}
-
-	// Make sure everything went ok
-	if mcpBuilder.IsInCondition(machineconfigv1.MachineConfigPoolConditionType(mcv1.MachineConfigPoolDegraded)) {
-		return fmt.Errorf("machineconfigpool appears as Degraded after machineconfig was applied")
-	}
-
-	return nil
+	return waitForMCPRollout(egiClient, mcpName, timeout)
 }
 
 // Returns true if MachineConfigPool's Condition "Updating" (MachineConfigPoolUpdated) exists and is True.
