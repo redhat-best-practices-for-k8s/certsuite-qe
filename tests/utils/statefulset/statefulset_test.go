@@ -65,3 +65,34 @@ func TestRedefineWithPostStart(t *testing.T) {
 	RedefineWithPostStart(testStatefulSet)
 	assert.Equal(t, "ls", testStatefulSet.Spec.Template.Spec.Containers[0].Lifecycle.PostStart.Exec.Command[0])
 }
+
+func TestRedefineWithContainersSecurityContextCaps(t *testing.T) {
+	testCases := []struct {
+		name         string
+		add          []string
+		drop         []string
+		expectedCaps corev1.Capabilities
+	}{
+		{
+			name:         "add and drop capabilities",
+			add:          []string{"NET_ADMIN", "NET_RAW"},
+			drop:         []string{"ALL"},
+			expectedCaps: corev1.Capabilities{Add: []corev1.Capability{"NET_ADMIN", "NET_RAW"}, Drop: []corev1.Capability{"ALL"}},
+		},
+		{
+			name:         "no capabilities",
+			expectedCaps: corev1.Capabilities{},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			testStatefulSet := DefineStatefulSet("testStatefulSet", "testNamespace", "testImage", map[string]string{"app": "test"})
+			RedefineWithContainersSecurityContextCaps(testStatefulSet, testCase.add, testCase.drop)
+
+			for _, container := range testStatefulSet.Spec.Template.Spec.Containers {
+				assert.Equal(t, &testCase.expectedCaps, container.SecurityContext.Capabilities)
+			}
+		})
+	}
+}

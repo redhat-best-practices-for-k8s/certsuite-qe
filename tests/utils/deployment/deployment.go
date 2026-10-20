@@ -546,12 +546,12 @@ func RedefineWithContainersSecurityContextSysAdmin(deployment *appsv1.Deployment
 func RedefineWithContainersSecurityContextCaps(deployment *appsv1.Deployment, add, drop []string) {
 	var addedCaps, droppedCaps []corev1.Capability
 
-	for _, cap := range add {
-		addedCaps = append(addedCaps, corev1.Capability(cap))
+	for _, capability := range add {
+		addedCaps = append(addedCaps, corev1.Capability(capability))
 	}
 
-	for _, cap := range drop {
-		droppedCaps = append(droppedCaps, corev1.Capability(cap))
+	for _, capability := range drop {
+		droppedCaps = append(droppedCaps, corev1.Capability(capability))
 	}
 
 	for index := range deployment.Spec.Template.Spec.Containers {

@@ -7,7 +7,7 @@ import (
 )
 
 func DeleteClusterRole(name string) error {
-	return deleteClusterRole(egiClients.New(""), name)
+	return deleteClusterRole(GetEcoGoinfraClient(), name)
 }
 
 func deleteClusterRole(client *egiClients.Settings, name string) error {

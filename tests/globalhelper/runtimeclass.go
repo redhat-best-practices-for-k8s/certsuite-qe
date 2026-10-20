@@ -13,6 +13,8 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+var runtimeClassPollInterval = time.Duration(retryInterval) * time.Second
+
 func CreateRunTimeClass(rtc *nodev1.RuntimeClass) error {
 	return createRunTimeClass(GetAPIClient().K8sClient, rtc)
 }
@@ -34,7 +36,7 @@ func createRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) e
 		}
 
 		return rtcCreated
-	}, retryInterval*time.Minute, retryInterval*time.Second).Should(Equal(true), "rtc was not created")
+	}, retryInterval*time.Minute, runtimeClassPollInterval).Should(Equal(true), "rtc was not created")
 
 	return nil
 }
@@ -67,7 +69,7 @@ func deleteRunTimeClass(client kubernetes.Interface, rtc *nodev1.RuntimeClass) e
 		}
 
 		return rtcDeleted
-	}, retryInterval*time.Minute, retryInterval*time.Second).Should(Equal(true), "rtc was not deleted")
+	}, retryInterval*time.Minute, runtimeClassPollInterval).Should(Equal(true), "rtc was not deleted")
 
 	return nil
 }

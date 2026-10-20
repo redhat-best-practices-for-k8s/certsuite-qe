@@ -15,6 +15,11 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+var (
+	statefulSetReadyPollInterval = time.Second
+	statefulSetReadyChecker      = isStatefulSetReady
+)
+
 // CreateAndWaitUntilStatefulSetIsReady creates statefulset and waits until all it's replicas are ready.
 func CreateAndWaitUntilStatefulSetIsReady(statefulSet *appsv1.StatefulSet, timeout time.Duration) error {
 	return createAndWaitUntilStatefulSetIsReady(GetEcoGoinfraClient(), statefulSet, timeout)
@@ -33,7 +38,7 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 	}
 
 	Eventually(func() bool {
-		status, err := isStatefulSetReady(client, statefulSet.Namespace, statefulSet.Name)
+		status, err := statefulSetReadyChecker(client, statefulSet.Namespace, statefulSet.Name)
 		if err != nil {
 			klog.V(5).Infof(
 				"statefulSet %s is not ready, retry in 1 second", statefulSet.Name)
@@ -42,7 +47,7 @@ func createAndWaitUntilStatefulSetIsReady(client *egiClients.Settings, statefulS
 		}
 
 		return status
-	}, timeout, 1*time.Second).Should(Equal(true), "statefulSet is not ready")
+	}, timeout, statefulSetReadyPollInterval).Should(Equal(true), "statefulSet is not ready")
 
 	return nil
 }

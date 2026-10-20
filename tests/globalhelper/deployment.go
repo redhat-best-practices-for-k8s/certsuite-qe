@@ -14,6 +14,12 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+var (
+	deploymentPollInterval      = 10 * time.Second
+	deploymentReadyProbeTimeout = time.Second
+	deploymentReadyChecker      = IsDeploymentReady
+)
+
 // IsDeploymentReady checks if a deployment is ready.
 func IsDeploymentReady(client *egiClients.Settings, namespace, deploymentName string) (bool, error) {
 	dep, err := egiDeployment.Pull(client, deploymentName, namespace)
@@ -21,7 +27,7 @@ func IsDeploymentReady(client *egiClients.Settings, namespace, deploymentName st
 		return false, fmt.Errorf("failed to get deployment %q (ns %s): %w", deploymentName, namespace, err)
 	}
 
-	return dep.IsReady(1 * time.Second), nil
+	return dep.IsReady(deploymentReadyProbeTimeout), nil
 }
 
 // CreateAndWaitUntilDeploymentIsReady creates deployment and wait until all deployment replicas are up and running.
@@ -51,7 +57,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 	timeoutChan := time.After(timeout)
 
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(deploymentPollInterval)
 	defer ticker.Stop()
 
 	running := false
@@ -98,7 +104,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 
 	timeoutChan = time.After(timeout)
 
-	ticker = time.NewTicker(10 * time.Second)
+	ticker = time.NewTicker(deploymentPollInterval)
 	defer ticker.Stop()
 
 	for {
@@ -106,7 +112,7 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		case <-timeoutChan:
 			return fmt.Errorf("deployment %s timed out after %v waiting to become ready", runningDeployment.Name, timeout)
 		case <-ticker.C:
-			status, err := IsDeploymentReady(client, runningDeployment.Namespace, runningDeployment.Name)
+			status, err := deploymentReadyChecker(client, runningDeployment.Namespace, runningDeployment.Name)
 			if err != nil {
 				klog.V(5).Infof("deployment %s is not ready, retrying in 10 seconds", runningDeployment.Name)
 

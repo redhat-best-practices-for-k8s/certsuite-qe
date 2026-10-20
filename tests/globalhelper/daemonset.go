@@ -17,6 +17,11 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var (
+	daemonSetReadyPollInterval = time.Second
+	daemonSetReadyChecker      = isDaemonSetReady
+)
+
 func CreateAndWaitUntilDaemonSetIsReady(daemonSet *appsv1.DaemonSet, timeout time.Duration) error {
 	return createAndWaitUntilDaemonSetIsReady(GetEcoGoinfraClient(), daemonSet, timeout)
 }
@@ -35,7 +40,7 @@ func createAndWaitUntilDaemonSetIsReady(client *egiClients.Settings,
 	}
 
 	Eventually(func() bool {
-		status, err := isDaemonSetReady(client, runningDaemonSet.Namespace, runningDaemonSet.Name)
+		status, err := daemonSetReadyChecker(client, runningDaemonSet.Namespace, runningDaemonSet.Name)
 		if err != nil {
 			klog.Errorf(
 				"daemonset %s is not ready, retry in 1 second: %v", runningDaemonSet.Name, err)
@@ -44,7 +49,7 @@ func createAndWaitUntilDaemonSetIsReady(client *egiClients.Settings,
 		}
 
 		return status
-	}, timeout, 1*time.Second).Should(Equal(true), "DaemonSet is not ready")
+	}, timeout, daemonSetReadyPollInterval).Should(Equal(true), "DaemonSet is not ready")
 
 	return nil
 }

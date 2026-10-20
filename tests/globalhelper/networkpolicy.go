@@ -11,7 +11,10 @@ import (
 )
 
 func CreateNetworkPolicy(networkPolicy *networkingv1.NetworkPolicy, timeout time.Duration) error {
-	client := egiClients.New("")
+	return createNetworkPolicy(GetEcoGoinfraClient(), networkPolicy)
+}
+
+func createNetworkPolicy(client *egiClients.Settings, networkPolicy *networkingv1.NetworkPolicy) error {
 	_, err := client.NetworkPolicies(networkPolicy.Namespace).Create(
 		context.TODO(),
 		networkPolicy,

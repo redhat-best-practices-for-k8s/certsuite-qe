@@ -11,20 +11,17 @@ import (
 )
 
 func CreateResourceQuota(quota *corev1.ResourceQuota) error {
-	return createResourceQuota(egiClients.New(""), quota)
+	return createResourceQuota(GetEcoGoinfraClient(), quota)
 }
 
 func createResourceQuota(client *egiClients.Settings, quota *corev1.ResourceQuota) error {
-	nsExist, err := namespaceExists(quota.Namespace, client)
-	if err != nil {
-		return err
-	}
+	nsExist := namespaceExists(quota.Namespace, client)
 
 	if !nsExist {
 		return nil
 	}
 
-	_, err = client.ResourceQuotas(quota.Namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
+	_, err := client.ResourceQuotas(quota.Namespace).Create(context.TODO(), quota, metav1.CreateOptions{})
 
 	if k8serrors.IsAlreadyExists(err) {
 		klog.V(5).Infof("resource quota %s already exists", quota.Name)

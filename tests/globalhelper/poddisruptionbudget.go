@@ -13,6 +13,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var podDisruptionBudgetReadyPollInterval = time.Duration(retryInterval) * time.Second
+
 // IsPodDisruptionBudgetCreated checks if a pod disruption budget is created.
 func IsPodDisruptionBudgetCreated(pdbName string, namespace string) (bool, error) {
 	pdb, err := GetAPIClient().PolicyV1Interface.PodDisruptionBudgets(namespace).Get(context.TODO(), pdbName, metav1.GetOptions{})
@@ -45,7 +47,7 @@ func CreatePodDisruptionBudget(pdb *policyv1.PodDisruptionBudget, timeout time.D
 		}
 
 		return status
-	}, timeout, retryInterval*time.Second).Should(Equal(true), "Pod Disruption Budget is not ready")
+	}, timeout, podDisruptionBudgetReadyPollInterval).Should(Equal(true), "Pod Disruption Budget is not ready")
 
 	return nil
 }

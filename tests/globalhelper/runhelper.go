@@ -24,13 +24,20 @@ const (
 	MemoryLimitMB = 50
 )
 
+var (
+	commandTimeout = TestTimeout
+	setEnv         = os.Setenv
+	debugCertsuite = func() (bool, error) { return GetConfiguration().DebugCertsuite() }
+	writeDebugLog  = fmt.Fprintf
+)
+
 // executeWithRetry executes a command with timeout and retry logic.
 func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File, env []string) error {
 	var err error
 
 	for attempt := 1; attempt <= MaxRetries; attempt++ {
 		// Create a context with timeout for each attempt
-		ctx, cancel := context.WithTimeout(context.Background(), TestTimeout)
+		ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
 
 		// Create a new command for each attempt
 		cmd := exec.CommandContext(ctx, cmdPath, args...)
@@ -94,13 +101,13 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	}
 
 	// disable the zip file creation
-	err = os.Setenv("CERTSUITE_OMIT_ARTIFACTS_ZIP_FILE", "true")
+	err = setEnv("CERTSUITE_OMIT_ARTIFACTS_ZIP_FILE", "true")
 	if err != nil {
 		return fmt.Errorf("failed to set CERTSUITE_OMIT_ARTIFACTS_ZIP_FILE: %w", err)
 	}
 
 	// enable the collector
-	err = os.Setenv("CERTSUITE_ENABLE_DATA_COLLECTION", "false")
+	err = setEnv("CERTSUITE_ENABLE_DATA_COLLECTION", "false")
 	if err != nil {
 		return fmt.Errorf("failed to set CERTSUITE_ENABLE_DATA_COLLECTION: %w", err)
 	}
@@ -120,14 +127,14 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 
 	klog.Infof("cmd: %s %s", cmdPath, strings.Join(testArgs, " "))
 
-	debugCertsuite, err := GetConfiguration().DebugCertsuite()
+	debugEnabled, err := debugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
 	var outfile *os.File
 
-	if debugCertsuite {
+	if debugEnabled {
 		suiteName, suiteErr := getTestSuiteName(testCaseName)
 		if suiteErr != nil {
 			return fmt.Errorf("failed to create debug log file: %w", suiteErr)
@@ -137,7 +144,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 
 		defer outfile.Close()
 
-		_, err = fmt.Fprintf(outfile, "Running test: %s\n", tcNameForReport)
+		_, err = writeDebugLog(outfile, "Running test: %s\n", tcNameForReport)
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
@@ -203,12 +210,12 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 	cmd := exec.CommandContext(context.TODO(), containerEngine, certsuiteCmdArgs...)
 
-	debugCertsuite, err := GetConfiguration().DebugCertsuite()
+	debugEnabled, err := debugCertsuite()
 	if err != nil {
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
-	if debugCertsuite {
+	if debugEnabled {
 		suiteName, suiteErr := getTestSuiteName(testCaseName)
 		if suiteErr != nil {
 			return fmt.Errorf("failed to create debug log file: %w", suiteErr)
@@ -218,7 +225,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 		defer outfile.Close()
 
-		_, err = fmt.Fprintf(outfile, "Running test: %s\n", tcNameForReport)
+		_, err = writeDebugLog(outfile, "Running test: %s\n", tcNameForReport)
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
@@ -243,7 +250,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	if err != nil {
 		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s",
 			testCaseName, err, cmd.String())
-		if debugCertsuite && cmd.Stdout != nil {
+		if debugEnabled && cmd.Stdout != nil {
 			if outfile, ok := cmd.Stdout.(*os.File); ok {
 				errStr += ", outFile=" + outfile.Name()
 			}

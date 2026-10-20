@@ -17,6 +17,8 @@ import (
 	goclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+var clusterVersionForCatalogSource = GetClusterVersion
+
 func DeployOperatorGroup(namespace string, operatorGroup *olmv1.OperatorGroup) error {
 	err := CreateNamespace(namespace)
 	if err != nil {
@@ -110,7 +112,7 @@ func deployRHCatalogSource(name, imagePath, displayName, ocpVersion string) erro
 	ocpVersionToUse := ocpVersion
 
 	if ocpVersion == "" {
-		o, err := GetClusterVersion()
+		o, err := clusterVersionForCatalogSource()
 		if err != nil {
 			return fmt.Errorf("unable to get OCP version: %w", err)
 		}
