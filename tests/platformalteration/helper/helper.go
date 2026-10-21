@@ -24,6 +24,14 @@ import (
 
 const WaitingTime = globalparameters.DefaultTimeout
 
+var (
+	// execPodCommand and the hugepages poll timers are seams for the unit tests.
+	execPodCommand = globalhelper.ExecCommand
+
+	hugePagesRetryInterval = tsparams.RetryInterval * time.Second
+	hugePagesWaitTimeout   = WaitingTime
+)
+
 // IsRealOCPCluster checks if the cluster is a real OCP cluster (not CRC/SNO development cluster).
 // Real clusters typically have multiple nodes or specific configurations that indicate
 // they are production-like environments.
@@ -144,12 +152,12 @@ func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval t
 func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string, pod *corev1.Pod) error {
 	cmd := fmt.Sprintf("echo %d > %s", updatedHugePagesNumber, filePath)
 
-	_, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
+	_, err := execPodCommand(*pod, []string{"/bin/bash", "-c", cmd})
 	if err != nil {
 		return fmt.Errorf("failed to execute command %s: %w", cmd, err)
 	}
 
-	return wait.PollUntilContextTimeout(context.TODO(), tsparams.RetryInterval*time.Second, WaitingTime, true,
+	return wait.PollUntilContextTimeout(context.TODO(), hugePagesRetryInterval, hugePagesWaitTimeout, true,
 		func(ctx context.Context) (bool, error) {
 			currentHugepagesNumber, err := GetHugePagesConfigNumber(filePath, pod)
 			if err != nil {
@@ -164,7 +172,7 @@ func UpdateAndVerifyHugePagesConfig(updatedHugePagesNumber int, filePath string,
 func GetHugePagesConfigNumber(file string, pod *corev1.Pod) (int, error) {
 	cmd := fmt.Sprintf("cat %s", file)
 
-	buf, err := globalhelper.ExecCommand(*pod, []string{"/bin/bash", "-c", cmd})
+	buf, err := execPodCommand(*pod, []string{"/bin/bash", "-c", cmd})
 	if err != nil {
 		return -1, err
 	}
