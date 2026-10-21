@@ -15,15 +15,25 @@ import (
 	utils "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/operator"
 )
 
+var (
+	isOperatorGroupInstalled = globalhelper.IsOperatorGroupInstalled
+	deployOperatorGroup      = globalhelper.DeployOperatorGroup
+	deployOperator           = globalhelper.DeployOperator
+
+	operatorReadyTimeout     = tsparams.Timeout
+	operatorPollInterval     = tsparams.PollingInterval
+	subscriptionCheckTimeout = 10 * time.Second
+)
+
 func DeployTestOperatorGroup(namespace string, clusterWide bool) error {
-	if globalhelper.IsOperatorGroupInstalled(tsparams.OperatorGroupName,
+	if isOperatorGroupInstalled(tsparams.OperatorGroupName,
 		namespace) != nil {
 		targetNamespaces := []string{namespace}
 		if clusterWide {
 			targetNamespaces = []string{}
 		}
 
-		return globalhelper.DeployOperatorGroup(namespace,
+		return deployOperatorGroup(namespace,
 			utils.DefineOperatorGroup(tsparams.OperatorGroupName,
 				namespace,
 				targetNamespaces),
@@ -38,9 +48,9 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 
 	var csv *v1alpha1.ClusterServiceVersion
 
-	timeoutChan := time.After(tsparams.Timeout)
+	timeoutChan := time.After(operatorReadyTimeout)
 
-	ticker := time.NewTicker(tsparams.PollingInterval)
+	ticker := time.NewTicker(operatorPollInterval)
 	defer ticker.Stop()
 
 	ready := false
@@ -48,7 +58,7 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 		select {
 		case <-timeoutChan:
 			return fmt.Errorf("operator %s timed out after %v waiting for CSV to become ready in namespace %s",
-				csvPrefix, tsparams.Timeout, namespace)
+				csvPrefix, operatorReadyTimeout, namespace)
 		case <-ticker.C:
 			// Fetch the CSV from the cluster
 			csv, err = GetCsvByPrefix(csvPrefix, namespace)
@@ -60,8 +70,14 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 
 			if csv != nil && csv.Status.Phase == v1alpha1.CSVPhaseSucceeded {
 				klog.V(5).Infof("CSV %s is in Succeeded phase", csv.Name)
-				checkInstalledCSV(namespace)
-				klog.Infof("Operator %s is ready and subscription verification passed in namespace %s", csvPrefix, namespace)
+
+				if checkInstalledCSV(namespace) {
+					klog.Infof("Operator %s is ready and subscription verification passed in namespace %s", csvPrefix, namespace)
+				} else {
+					klog.Infof("Operator %s is ready but subscription verification did not complete in namespace %s",
+						csvPrefix, namespace)
+				}
+
 				ready = true
 
 				break
@@ -78,20 +94,21 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 	return nil
 }
 
-func checkInstalledCSV(namespace string) {
+// checkInstalledCSV reports whether the subscription's installedCSV matches currentCSV before the timeout.
+func checkInstalledCSV(namespace string) bool {
 	// Additional check: verify that the subscription's installedcsv matches currentCsv
 	// This ensures the operator was installed successfully
-	timeoutChan := time.After(10 * time.Second)
+	timeoutChan := time.After(subscriptionCheckTimeout)
 
-	ticker := time.NewTicker(tsparams.PollingInterval)
+	ticker := time.NewTicker(operatorPollInterval)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-timeoutChan:
-			klog.Warningf("Subscription verification timed out after 10 seconds in namespace %s", namespace)
+			klog.Warningf("Subscription verification timed out after %v in namespace %s", subscriptionCheckTimeout, namespace)
 
-			return
+			return false
 		case <-ticker.C:
 			subscriptions, err := globalhelper.GetAPIClient().OperatorsV1alpha1Interface.Subscriptions(namespace).List(
 				context.TODO(), metav1.ListOptions{})
@@ -127,7 +144,7 @@ func checkInstalledCSV(namespace string) {
 			klog.V(5).Infof("Subscription %s: InstalledCSV matches CurrentCSV (%s) - operator installed successfully",
 				subscription.Name, subscription.Status.InstalledCSV)
 
-			return
+			return true
 		}
 	}
 }
@@ -164,19 +181,20 @@ func displayCSVStatus(csv *v1alpha1.ClusterServiceVersion, logLevel int) {
 	}
 }
 
-func displayDeploymentStatus(namespace string, logLevel int) {
+// displayDeploymentStatus logs deployment status in the namespace and reports whether all are ready.
+func displayDeploymentStatus(namespace string, logLevel int) bool {
 	deployments, err := globalhelper.GetAPIClient().AppsV1Interface.Deployments(namespace).List(
 		context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		klog.V(klog.Level(logLevel)).Infof("Failed to list deployments in namespace %s: %v", namespace, err)
 
-		return
+		return false
 	}
 
 	if len(deployments.Items) == 0 {
 		klog.V(klog.Level(logLevel)).Infof("No deployments found in namespace %s", namespace)
 
-		return
+		return false
 	}
 
 	allDeploymentsReady := true
@@ -217,6 +235,8 @@ func displayDeploymentStatus(namespace string, logLevel int) {
 	} else {
 		klog.V(klog.Level(logLevel)).Infof("Not all deployments are ready in namespace %s", namespace)
 	}
+
+	return allDeploymentsReady
 }
 
 // AddLabelToInstalledCSV adds given label to existing csv object.
@@ -276,7 +296,7 @@ func DeployOperatorSubscription(subscriptionName, operatorPackage, channel, name
 		startingCSV,
 		installApproval)
 
-	err := globalhelper.DeployOperator(operatorSubscription)
+	err := deployOperator(operatorSubscription)
 
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
@@ -298,7 +318,7 @@ func DeployOperatorSubscriptionWithNodeSelector(operatorPackage, channel, namesp
 		installApproval,
 		nodeSelector)
 
-	err := globalhelper.DeployOperator(operatorSubscription)
+	err := deployOperator(operatorSubscription)
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
 	}
@@ -330,9 +350,9 @@ func updateCsv(namespace string, csv *v1alpha1.ClusterServiceVersion) error {
 }
 
 func DeployTestOperatorGroupWithTargetNamespace(operatorGroupName, namespace string, targetNamespaces []string) error {
-	if globalhelper.IsOperatorGroupInstalled(operatorGroupName,
+	if isOperatorGroupInstalled(operatorGroupName,
 		namespace) != nil {
-		return globalhelper.DeployOperatorGroup(namespace,
+		return deployOperatorGroup(namespace,
 			utils.DefineOperatorGroup(operatorGroupName,
 				namespace,
 				targetNamespaces),
