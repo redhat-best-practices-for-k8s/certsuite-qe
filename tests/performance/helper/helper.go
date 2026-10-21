@@ -22,6 +22,13 @@ import (
 	egiPod "github.com/openshift-kni/eco-goinfra/pkg/pod"
 )
 
+// The eco-goinfra client, pod pull and pod exec calls are seams for the unit tests.
+var (
+	getEgiClient = globalhelper.GetEcoGoinfraClient
+	egiPodPull   = egiPod.Pull
+	egiPodExec   = (*egiPod.Builder).ExecCommand
+)
+
 func DefineExclusivePod(podName string, namespace string, image string, label map[string]string) *corev1.Pod {
 	cpuLimit := "1"
 	memoryLimit := "112Mi"
@@ -125,9 +132,16 @@ func RedefinePodWithSharedContainer(pod *corev1.Pod, containerIndex int) {
 }
 
 func ChangeSchedulingPolicy(pod *corev1.Pod, command string) (outStr, errStr string, err error) {
+	// The error wrap below must not index an empty container list: ExecCommandContainer
+	// already rejects container-less pods, so fall back to naming the pod itself.
+	target := pod.Name
+	if len(pod.Spec.Containers) > 0 {
+		target = pod.Spec.Containers[0].Name
+	}
+
 	outStr, errStr, err = ExecCommandContainer(pod, command)
 	if err != nil {
-		return "", "", fmt.Errorf("cannot execute command: \" %s \"  on %s err:%w", command, pod.Spec.Containers[0].Name, err)
+		return "", "", fmt.Errorf("cannot execute command: \" %s \"  on %s err:%w", command, target, err)
 	}
 
 	return outStr, errStr, err
@@ -143,18 +157,22 @@ func ExecCommandContainer(
 	podName := pod.Name
 	podNamespace := pod.Namespace
 
+	if len(pod.Spec.Containers) == 0 {
+		return "", "", fmt.Errorf("pod %s has no containers", podName)
+	}
+
 	containerName := pod.Spec.Containers[0].Name
 	klog.V(5).Infof("execute command on ns=%s, pod=%s container=%s, cmd: %s",
 		podNamespace, podName, containerName, strings.Join(commandStr, " "))
 
-	builder, err := egiPod.Pull(globalhelper.GetEcoGoinfraClient(), podName, podNamespace)
+	builder, err := egiPodPull(getEgiClient(), podName, podNamespace)
 	if err != nil {
 		klog.ErrorS(err, "failed to create SPDY executor")
 
 		return "", "", err
 	}
 
-	buffOut, err = builder.ExecCommand(commandStr)
+	buffOut, err = egiPodExec(builder, commandStr)
 	stdout = buffOut.String()
 	// stderr is not captured by eco-goinfra ExecCommand; leave empty
 
