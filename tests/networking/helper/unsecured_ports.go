@@ -39,6 +39,8 @@ const (
 `
 )
 
+var generateTLSCert = generateSelfSignedCert
+
 // AnnotatePodTemplate sets an annotation on the deployment pod template.
 func AnnotatePodTemplate(dep *appsv1.Deployment, key, value string) {
 	if dep.Spec.Template.Annotations == nil {
@@ -186,7 +188,7 @@ func mountNginxTLS(dep *appsv1.Deployment) {
 }
 
 func createNginxTLSMaterials(namespace string) error {
-	certPEM, keyPEM, err := generateSelfSignedCert()
+	certPEM, keyPEM, err := generateTLSCert()
 	if err != nil {
 		return err
 	}
