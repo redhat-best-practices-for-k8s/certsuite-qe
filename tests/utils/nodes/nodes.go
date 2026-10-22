@@ -147,10 +147,8 @@ func EnableMasterScheduling(client corev1Typed.NodeInterface, scheduleable bool)
 
 	// Loop through the nodes and modify the taints
 	for _, node := range nodes.Items {
-		isMaster, err := IsNodeMaster(&node, client)
-		if err != nil {
-			return fmt.Errorf("failed to get node %s: %w", node.Name, err)
-		}
+		// IsNodeMaster only inspects node labels and never returns an error.
+		isMaster, _ := IsNodeMaster(&node, client)
 
 		if isMaster {
 			if scheduleable {
