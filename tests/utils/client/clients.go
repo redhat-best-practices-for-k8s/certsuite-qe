@@ -28,6 +28,19 @@ import (
 	runtimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// schemeAdders and newRuntimeClient are seams for the unit tests: they keep
+// the panic-on-failure paths in New reachable from tests, which a fresh scheme
+// and a valid rest config never trigger on their own.
+var (
+	schemeAdders = []func(*runtime.Scheme) error{
+		clientgoscheme.AddToScheme,
+		netattdefv1.SchemeBuilder.AddToScheme,
+		olm.AddToScheme,
+	}
+
+	newRuntimeClient = runtimeclient.New
+)
+
 // ClientSet provides the struct to talk with relevant API.
 type ClientSet struct {
 	corev1client.CoreV1Interface
@@ -91,19 +104,13 @@ func New(kubeconfig string) *ClientSet {
 
 	crScheme := runtime.NewScheme()
 
-	if err := clientgoscheme.AddToScheme(crScheme); err != nil {
-		panic(err)
+	for _, addToScheme := range schemeAdders {
+		if err := addToScheme(crScheme); err != nil {
+			panic(err)
+		}
 	}
 
-	if err := netattdefv1.SchemeBuilder.AddToScheme(crScheme); err != nil {
-		panic(err)
-	}
-
-	if err := olm.AddToScheme(crScheme); err != nil {
-		panic(err)
-	}
-
-	clientSet.Client, err = runtimeclient.New(config, runtimeclient.Options{
+	clientSet.Client, err = newRuntimeClient(config, runtimeclient.Options{
 		Scheme: crScheme,
 	})
 
