@@ -13,6 +13,10 @@ import (
 	crscaleoperator "github.com/test-network-function/cr-scale-operator/api/v1"
 )
 
+// marshalCustomResource is a seam for the unit tests: json.Marshal never fails
+// on the plain Memcached struct, so the error path is otherwise unreachable.
+var marshalCustomResource = json.Marshal
+
 func DefineCustomResourceDefinition(names apiextv1.CustomResourceDefinitionNames,
 	group string, addStatusSubresource bool) *apiextv1.CustomResourceDefinition {
 	// Helper object for the fake "v1" version schema.
@@ -111,7 +115,7 @@ func RedefineCustomResourceWithReplica(aCustomResource *crscaleoperator.Memcache
 func CreateCustomResourceScale(name, namespace, operatorLabels string, operatorLabelsMap map[string]string) (string, error) {
 	aCustomResource := DefineCustomResource(name, namespace, operatorLabels, operatorLabelsMap)
 
-	body, err := json.Marshal(aCustomResource)
+	body, err := marshalCustomResource(aCustomResource)
 
 	if err != nil {
 		return "", fmt.Errorf("error during marshaling the custom resource definition: %w", err)
