@@ -110,8 +110,9 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 			metav1.GetOptions{},
 		)
 		if err != nil {
+			// runningCrd is nil when Get fails, so name the requested CRD instead.
 			klog.V(5).Infof(
-				"crd %s is not ready, retry in 5 seconds", runningCrd.Name)
+				"crd %s is not ready, retry in 5 seconds", crd.Name)
 
 			return false
 		}
