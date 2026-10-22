@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/utils/ptr"
 )
 
@@ -74,6 +76,15 @@ func TestRedefineWithMultus(t *testing.T) {
 
 	// Assert multus is in the deployment.
 	assert.Equal(t, "[{\"name\":\"test-network\"}]", deployment.Spec.Template.Annotations["k8s.v1.cni.cncf.io/networks"])
+}
+
+func TestRedefineWithMultusWithoutNads(t *testing.T) {
+	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+
+	RedefineWithMultus(deployment, []string{})
+
+	// Assert the multus annotation is left unset.
+	assert.Empty(t, deployment.Spec.Template.Annotations)
 }
 
 func TestRedefineWithReplicaNumber(t *testing.T) {
@@ -426,6 +437,36 @@ func TestRedefineWithSysPtrace(t *testing.T) {
 	assert.Equal(t, securityContext.Capabilities, deployment.Spec.Template.Spec.Containers[0].SecurityContext.Capabilities)
 }
 
+func TestRedefineWith2MiHugepages(t *testing.T) {
+	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+
+	// The container resource lists are nil on a fresh deployment and must be initialized first.
+	RedefineWithCPUResources(deployment, "150m", "100m")
+
+	RedefineWith2MiHugepages(deployment, 64)
+
+	// Assert that the deployment has 2Mi hugepages requests and limits set.
+	assert.Equal(t, resource.MustParse("64Mi"),
+		deployment.Spec.Template.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"2Mi"])
+	assert.Equal(t, resource.MustParse("64Mi"),
+		deployment.Spec.Template.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"2Mi"])
+}
+
+func TestRedefineWith1GiHugepages(t *testing.T) {
+	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+
+	// The container resource lists are nil on a fresh deployment and must be initialized first.
+	RedefineWithCPUResources(deployment, "150m", "100m")
+
+	RedefineWith1GiHugepages(deployment, 2)
+
+	// Assert that the deployment has 1Gi hugepages requests and limits set.
+	assert.Equal(t, resource.MustParse("2Gi"),
+		deployment.Spec.Template.Spec.Containers[0].Resources.Requests[corev1.ResourceHugePagesPrefix+"1Gi"])
+	assert.Equal(t, resource.MustParse("2Gi"),
+		deployment.Spec.Template.Spec.Containers[0].Resources.Limits[corev1.ResourceHugePagesPrefix+"1Gi"])
+}
+
 func TestRedefineWithNoExecuteToleration(t *testing.T) {
 	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
 
@@ -493,6 +534,29 @@ func TestRedefineWithNoScheduleToleration(t *testing.T) {
 	assert.Equal(t, tol.Effect, deployment.Spec.Template.Spec.Tolerations[0].Effect)
 	assert.Equal(t, tol.Operator, deployment.Spec.Template.Spec.Tolerations[0].Operator)
 	assert.Equal(t, tol.Value, deployment.Spec.Template.Spec.Tolerations[0].Value)
+}
+
+func TestRedefineWithCustomTolerations(t *testing.T) {
+	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+
+	// Replace whatever DefineDeployment auto-added (depends on ENABLE_INFRASTRUCTURE_TOLERATIONS)
+	// with one known toleration, so the assertion is deterministic and pins that
+	// RedefineWithCustomTolerations appends rather than replaces.
+	existingToleration := corev1.Toleration{Key: "existing-taint", Operator: corev1.TolerationOpExists}
+	deployment.Spec.Template.Spec.Tolerations = []corev1.Toleration{existingToleration}
+
+	customToleration := corev1.Toleration{
+		Key:      "custom-taint",
+		Operator: corev1.TolerationOpEqual,
+		Value:    "custom-value",
+		Effect:   corev1.TaintEffectNoExecute,
+	}
+
+	RedefineWithCustomTolerations(deployment, []corev1.Toleration{customToleration})
+	assert.NotNil(t, deployment)
+
+	// Assert that the deployment has the custom toleration appended after the existing one.
+	assert.Equal(t, []corev1.Toleration{existingToleration, customToleration}, deployment.Spec.Template.Spec.Tolerations)
 }
 
 func TestRedefineWithServiceAccount(t *testing.T) {
@@ -726,6 +790,38 @@ func TestRedefineWithContainersSecurityContextAllowPrivilegeEscalation(t *testin
 	}
 }
 
+func TestRedefineWithReadOnlyRootFilesystem(t *testing.T) {
+	testCases := []struct {
+		name     string
+		readOnly bool
+	}{
+		{
+			name:     "true",
+			readOnly: true,
+		},
+		{
+			name:     "false",
+			readOnly: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+			securityContext := corev1.SecurityContext{
+				ReadOnlyRootFilesystem: &testCase.readOnly,
+			}
+
+			RedefineWithReadOnlyRootFilesystem(deployment, testCase.readOnly)
+			assert.NotNil(t, deployment)
+
+			// Assert that the deployment has securityContext set.
+			assert.Equal(t, securityContext.ReadOnlyRootFilesystem,
+				deployment.Spec.Template.Spec.Containers[0].SecurityContext.ReadOnlyRootFilesystem)
+		})
+	}
+}
+
 func TestRedefineContainerCommand(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -752,6 +848,14 @@ func TestRedefineContainerCommand(t *testing.T) {
 			assert.Equal(t, testCase.commands, deployment.Spec.Template.Spec.Containers[0].Command)
 		})
 	}
+}
+
+func TestRedefineContainerCommandWithInvalidIndex(t *testing.T) {
+	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+
+	err := RedefineContainerCommand(deployment, 1, []string{"ls"})
+
+	require.EqualError(t, err, "deployment test-deployment does not have container index 1")
 }
 
 func TestRedefineContainerEnvVarList(t *testing.T) {
@@ -794,4 +898,12 @@ func TestRedefineContainerEnvVarList(t *testing.T) {
 			assert.Equal(t, testCase.envs, deployment.Spec.Template.Spec.Containers[0].Env)
 		})
 	}
+}
+
+func TestRedefineContainerEnvVarListWithInvalidIndex(t *testing.T) {
+	deployment := DefineDeployment("test-deployment", "test-namespace", "test-image", map[string]string{"app": "test"})
+
+	err := RedefineContainerEnvVarList(deployment, 1, []corev1.EnvVar{{Name: "test", Value: "test"}})
+
+	require.EqualError(t, err, "deployment test-deployment does not have container index 1")
 }
