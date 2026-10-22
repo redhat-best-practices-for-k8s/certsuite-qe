@@ -34,8 +34,11 @@ const workerRoleLabel = "node-role.kubernetes.io/worker"
 
 // Test seams; tests that override them must not run in parallel.
 var (
-	getEgiClient    = globalhelper.GetEcoGoinfraClient
-	mcpStartTimeout = tsparams.McpStartTimeout
+	getEgiClient         = globalhelper.GetEcoGoinfraClient
+	mcpStartTimeout      = tsparams.McpStartTimeout
+	newMCPBuilder        = egiMco.NewMCPBuilder
+	newMCBuilder         = egiMco.NewMCBuilder
+	redefineWithNodePort = service.RedefineWithNodePort
 )
 
 func DefineDeploymentWithImage(replica int32, containers int, name, namespace, image string) (*appsv1.Deployment, error) {
@@ -156,7 +159,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port int32, targetP
 		ipPolicy)
 
 	if withNodePort {
-		err := service.RedefineWithNodePort(testService)
+		err := redefineWithNodePort(testService)
 		if err != nil {
 			return err
 		}
@@ -251,7 +254,7 @@ func GetMachineConfigTargetLabels(mcpName string) (map[string]string, error) {
 	}
 
 	// Create a labelSelector from MCP's Spec.MachineConfigSelector
-	mcpBuilder := egiMco.NewMCPBuilder(egiClient, mcpName)
+	mcpBuilder := newMCPBuilder(egiClient, mcpName)
 	if mcpBuilder == nil {
 		return nil, fmt.Errorf("failed to get MachineConfigPool builder")
 	}
@@ -303,7 +306,7 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 	}
 
 	// Create custom MachineConfig with kerneltype realtime.
-	mcBuilder := egiMco.NewMCBuilder(egiClient, mcName).WithKernelType("realtime")
+	mcBuilder := newMCBuilder(egiClient, mcName).WithKernelType("realtime")
 	if mcBuilder == nil {
 		return fmt.Errorf("failed to get MachineConfig builder")
 	}
@@ -326,7 +329,7 @@ func DeployRTKernelMachineConfig(mcpName string, mcName string, mcpLabels map[st
 // waitForMCPRollout waits for a MachineConfigPool to start and then finish applying a MachineConfig
 // change, and fails if the pool ends up Degraded.
 func waitForMCPRollout(egiClient *egiClients.Settings, mcpName string, timeout time.Duration) error {
-	mcpBuilder := egiMco.NewMCPBuilder(egiClient, mcpName)
+	mcpBuilder := newMCPBuilder(egiClient, mcpName)
 	if mcpBuilder == nil {
 		return fmt.Errorf("failed to get MachineConfigPool builder")
 	}

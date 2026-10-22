@@ -7,6 +7,7 @@ import (
 	"time"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
+	egiMco "github.com/openshift-kni/eco-goinfra/pkg/mco"
 	machineconfigv1 "github.com/openshift/api/machineconfiguration/v1"
 	mcv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 	"github.com/stretchr/testify/assert"
@@ -202,6 +203,18 @@ func TestDefineAndCreateServiceOnClusterErrors(t *testing.T) {
 		require.ErrorIs(t, err, errInjected)
 		assert.Contains(t, err.Error(), "failed to create service on cluster")
 	})
+
+	t.Run("node port redefinition failure is returned", func(t *testing.T) {
+		oldRedefine := redefineWithNodePort
+
+		t.Cleanup(func() { redefineWithNodePort = oldRedefine })
+
+		redefineWithNodePort = func(*corev1.Service) error { return errInjected }
+
+		err := DefineAndCreateServiceOnCluster("service-name", parameters.TestAccessControlNameSpace,
+			8080, 8080, true, nil, "")
+		require.ErrorIs(t, err, errInjected)
+	})
 }
 
 func TestHasNodeRtKernel(t *testing.T) {
@@ -326,6 +339,20 @@ func TestGetMachineConfigTargetLabels(t *testing.T) {
 		require.ErrorIs(t, err, errInjected)
 		assert.Contains(t, err.Error(), "failed getting MachineConfigs")
 	})
+
+	t.Run("MachineConfigPool builder construction failure", func(t *testing.T) {
+		withEgiClient(t, nil)
+
+		oldNewMCPBuilder := newMCPBuilder
+
+		t.Cleanup(func() { newMCPBuilder = oldNewMCPBuilder })
+
+		newMCPBuilder = func(*egiClients.Settings, string) *egiMco.MCPBuilder { return nil }
+
+		_, err := GetMachineConfigTargetLabels(testMCPName)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to get MachineConfigPool builder")
+	})
 }
 
 func mcpCondition(condType machineconfigv1.MachineConfigPoolConditionType,
@@ -425,6 +452,34 @@ func TestDeployRTKernelMachineConfig(t *testing.T) {
 		err := DeployRTKernelMachineConfig(testMCPName, testMCName, map[string]string{"": "x"}, time.Second)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed to create MachineConfig")
+	})
+
+	t.Run("MachineConfig builder construction failure", func(t *testing.T) {
+		withEgiClient(t, nil)
+
+		oldNewMCBuilder := newMCBuilder
+
+		t.Cleanup(func() { newMCBuilder = oldNewMCBuilder })
+
+		newMCBuilder = func(*egiClients.Settings, string) *egiMco.MCBuilder { return nil }
+
+		err := DeployRTKernelMachineConfig(testMCPName, testMCName, mcpLabels, time.Second)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to get MachineConfig builder")
+	})
+
+	t.Run("rollout MachineConfigPool builder construction failure", func(t *testing.T) {
+		withEgiClient(t, nil)
+
+		oldNewMCPBuilder := newMCPBuilder
+
+		t.Cleanup(func() { newMCPBuilder = oldNewMCPBuilder })
+
+		newMCPBuilder = func(*egiClients.Settings, string) *egiMco.MCPBuilder { return nil }
+
+		err := DeployRTKernelMachineConfig(testMCPName, testMCName, mcpLabels, time.Second)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to get MachineConfigPool builder")
 	})
 }
 
