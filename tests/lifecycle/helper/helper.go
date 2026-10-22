@@ -82,6 +82,10 @@ func DefineDaemonSetWithImagePullPolicy(name, namespace string, image string, pu
 	return daemonSet
 }
 
+// waitForNodesReady is a seam for the unit tests: the real poll only fails after
+// tsparams.WaitingTime has elapsed, which is too slow to exercise inline.
+var waitForNodesReady = nodes.WaitForNodesReady
+
 // WaitUntilClusterIsStable validates that all nodes are schedulable, and in ready state.
 func WaitUntilClusterIsStable() error {
 	Eventually(func() bool {
@@ -91,7 +95,7 @@ func WaitUntilClusterIsStable() error {
 		return isClusterReady
 	}, tsparams.WaitingTime, tsparams.RetryInterval*time.Second).Should(BeTrue())
 
-	err := nodes.WaitForNodesReady(globalhelper.GetAPIClient().Nodes(),
+	err := waitForNodesReady(globalhelper.GetAPIClient().Nodes(),
 		tsparams.WaitingTime, tsparams.RetryInterval*time.Second)
 	if err != nil {
 		return fmt.Errorf("failed to wait for node to become ready: %w", err)
