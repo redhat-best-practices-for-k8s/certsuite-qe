@@ -16,6 +16,9 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+// deployOperator is a seam for the unit tests.
+var deployOperator = globalhelper.DeployOperator
+
 // AddLabelToInstalledCSV adds given label to existing csv object.
 func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[string]string) error {
 	csv, err := GetCsvByPrefix(prefixCsvName, namespace)
@@ -114,7 +117,7 @@ func DeployOperatorSubscription(subscriptionName, operatorPackage, channel, name
 		startingCSV,
 		installApproval)
 
-	err := globalhelper.DeployOperator(operatorSubscription)
+	err := deployOperator(operatorSubscription)
 
 	if err != nil {
 		return fmt.Errorf("Error deploying operator "+operatorPackage+": %w", err)
