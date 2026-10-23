@@ -37,6 +37,11 @@ func TestExtractShortVersion(t *testing.T) {
 			input:    "  4.14.2  ",
 			expected: "4.14",
 		},
+		{
+			name:     "single component without dots",
+			input:    "4",
+			expected: "4",
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -96,6 +101,14 @@ func TestGetOperatorConfig(t *testing.T) {
 			expectedLightweightPkg: "prometheus-exporter-operator",
 			expectedUncertifiedPkg: "redis-operator",
 		},
+		{
+			name:                   "Unknown pre-4.20 version falls back to default config",
+			ocpVersion:             "4.5",
+			expectedCertifiedPkg:   "cockroachdb-certified",
+			expectedCommunityPkg:   "grafana-operator",
+			expectedLightweightPkg: "prometheus-exporter-operator",
+			expectedUncertifiedPkg: "redis-operator",
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -148,6 +161,18 @@ func TestGetLightweightOperator(t *testing.T) {
 	assert.Equal(t, "prometheus-exporter-operator", lightweightOp.PackageName)
 }
 
+func TestGetUncertifiedOperator(t *testing.T) {
+	// redis-operator ships in community-operators but not in certified-operators,
+	// which is what qualifies it for the uncertified role in negative certification tests.
+	uncertifiedOp := GetUncertifiedOperator("4.14")
+	assert.Equal(t, "redis-operator", uncertifiedOp.PackageName)
+	assert.Equal(t, CatalogCommunityOperators, uncertifiedOp.CatalogSource)
+	assert.Equal(t, "stable", uncertifiedOp.Channel)
+
+	uncertifiedOp = GetUncertifiedOperator("4.20")
+	assert.Equal(t, "redis-operator", uncertifiedOp.PackageName)
+}
+
 func TestIsVersion420OrLater(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -160,6 +185,7 @@ func TestIsVersion420OrLater(t *testing.T) {
 		{"4.20 nightly is 4.20 or later", "4.20.0-0.nightly", true},
 		{"4.21 is 4.20 or later", "4.21", true},
 		{"5.0 is 4.20 or later", "5.0", true},
+		{"unparsable version is not 4.20 or later", "unknown", false},
 	}
 
 	for _, testCase := range testCases {
