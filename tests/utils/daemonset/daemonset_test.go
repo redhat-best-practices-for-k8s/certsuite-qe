@@ -99,3 +99,24 @@ func TestRedefineWithRunTimeClass(t *testing.T) {
 	RedefineWithRunTimeClass(ds, "test")
 	assert.Equal(t, "test", *ds.Spec.Template.Spec.RuntimeClassName)
 }
+
+func TestRedefineWithCustomTolerations(t *testing.T) {
+	daemonSet := DefineDaemonSet("default", "nginx", map[string]string{"app": "nginx"}, "nginx")
+
+	// Replace whatever DefineDaemonSet auto-added (depends on ENABLE_INFRASTRUCTURE_TOLERATIONS)
+	// with one known toleration, so the assertion is deterministic and pins that
+	// RedefineWithCustomTolerations appends rather than replaces.
+	existingToleration := corev1.Toleration{Key: "existing-taint", Operator: corev1.TolerationOpExists}
+	daemonSet.Spec.Template.Spec.Tolerations = []corev1.Toleration{existingToleration}
+
+	customToleration := corev1.Toleration{
+		Key:      "custom-taint",
+		Operator: corev1.TolerationOpEqual,
+		Value:    "custom-value",
+		Effect:   corev1.TaintEffectNoExecute,
+	}
+
+	RedefineWithCustomTolerations(daemonSet, []corev1.Toleration{customToleration})
+	assert.Equal(t, []corev1.Toleration{existingToleration, customToleration},
+		daemonSet.Spec.Template.Spec.Tolerations)
+}
