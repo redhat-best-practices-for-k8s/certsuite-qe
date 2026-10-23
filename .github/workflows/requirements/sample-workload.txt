@@ -1,5 +1,5 @@
 # Hash-pinned lock for the qe.yml 'Install partner resources' step.
-# Regenerate with: pip install pip==26.0.1 jinjanator==25.3.1 && pip freeze,
+# Regenerate with: pip install pip==26.2 jinjanator==25.3.1 && pip freeze,
 # then collect sha256 of every release file per version from PyPI.
 
 attrs==26.1.0 \
@@ -171,7 +171,7 @@ MarkupSafe==3.0.4 \
     --hash=sha256:fd9f8797427910198f95bced71ddfed61130d7e349213bfb8466c9c99e2c46a8 \
     --hash=sha256:fdb4ca07ab75ffadab4a8b135ad59cdbb3156b99310f3d565370da74a15d6bd3
 
-pip==26.0.1 \
+pip==26.2 \
     --hash=sha256:bdb1b08f4274833d62c1aa29e20907365a2ceb950410df15fc9521bad440122b \
     --hash=sha256:c4037d8a277c89b320abe636d59f91e6d0922d08a05b60e85e53b296613346d8
 
