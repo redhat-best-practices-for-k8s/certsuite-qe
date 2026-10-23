@@ -96,3 +96,23 @@ func TestRedefineWithContainersSecurityContextCaps(t *testing.T) {
 		})
 	}
 }
+
+func TestRedefineWithCustomTolerations(t *testing.T) {
+	testStatefulSet := DefineStatefulSet("testStatefulSet", "testNamespace", "testImage", map[string]string{"app": "test"})
+
+	// Replace whatever DefineStatefulSet auto-added (depends on ENABLE_INFRASTRUCTURE_TOLERATIONS)
+	// with one known toleration, so the assertion is deterministic and pins that
+	// RedefineWithCustomTolerations appends rather than replaces.
+	existingToleration := corev1.Toleration{Key: "existing-taint", Operator: corev1.TolerationOpExists}
+	testStatefulSet.Spec.Template.Spec.Tolerations = []corev1.Toleration{existingToleration}
+
+	customToleration := corev1.Toleration{
+		Key:      "custom-taint",
+		Operator: corev1.TolerationOpEqual,
+		Value:    "custom-value",
+		Effect:   corev1.TaintEffectNoExecute,
+	}
+
+	RedefineWithCustomTolerations(testStatefulSet, []corev1.Toleration{customToleration})
+	assert.Equal(t, []corev1.Toleration{existingToleration, customToleration}, testStatefulSet.Spec.Template.Spec.Tolerations)
+}
