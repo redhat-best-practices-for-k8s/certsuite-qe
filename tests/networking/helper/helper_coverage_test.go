@@ -3,8 +3,13 @@ package helper
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"errors"
+	"io"
 	"testing"
+	"testing/iotest"
 	"time"
 
 	nadv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
@@ -16,6 +21,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
+	corev1Typed "k8s.io/client-go/kubernetes/typed/core/v1"
 	k8stesting "k8s.io/client-go/testing"
 	runtimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -50,10 +56,14 @@ func withFakeCluster(t *testing.T, objects ...runtime.Object) *k8sfake.Clientset
 
 	oldDeployment, oldDaemonSet, oldPolicy := createAndWaitDeployment, createAndWaitDaemonSet, createNetworkPolicy
 	oldExec, oldConfig, oldCert := execPodCommand, getConfiguration, generateTLSCert
+	oldNodePort, oldIsMaster := redefineWithNodePort, isNodeMaster
+	oldRSAKey, oldCreateCert := generateRSAKey, createCertificate
 
 	t.Cleanup(func() {
 		createAndWaitDeployment, createAndWaitDaemonSet, createNetworkPolicy = oldDeployment, oldDaemonSet, oldPolicy
 		execPodCommand, getConfiguration, generateTLSCert = oldExec, oldConfig, oldCert
+		redefineWithNodePort, isNodeMaster = oldNodePort, oldIsMaster
+		generateRSAKey, createCertificate = oldRSAKey, oldCreateCert
 
 		globalhelper.UnsetTestK8sAPIClient()
 	})
@@ -333,6 +343,15 @@ func TestDefineAndCreateServiceOnCluster(t *testing.T) {
 		err := DefineAndCreateServiceOnCluster("svc", testNamespace, 80, 8080, false, false, nil, "")
 		require.ErrorIs(t, err, errInjected)
 		assert.Contains(t, err.Error(), "failed to create service on cluster")
+	})
+
+	t.Run("node port redefinition failure is returned", func(t *testing.T) {
+		withFakeCluster(t)
+
+		redefineWithNodePort = func(*corev1.Service) error { return errInjected }
+
+		err := DefineAndCreateServiceOnCluster("svc", testNamespace, 80, 8080, true, false, nil, "")
+		require.ErrorIs(t, err, errInjected)
 	})
 }
 
@@ -622,6 +641,15 @@ func TestGetClusterMultusInterfaces(t *testing.T) {
 		_, err := GetClusterMultusInterfaces(testNamespace)
 		assert.ErrorIs(t, err, errInjected)
 	})
+
+	t.Run("node role check failure", func(t *testing.T) {
+		withFakeCluster(t, workerA, testPod("pod-a", "worker-a", nil))
+
+		isNodeMaster = func(*corev1.Node, corev1Typed.NodeInterface) (bool, error) { return false, errInjected }
+
+		_, err := GetClusterMultusInterfaces(testNamespace)
+		assert.ErrorIs(t, err, errInjected)
+	})
 }
 
 func TestDefineDeploymentWithContainers(t *testing.T) {
@@ -752,4 +780,56 @@ func TestDefineTLSNginxDeployment(t *testing.T) {
 			assert.Nil(t, dep)
 		})
 	}
+}
+
+// Sequential by design: the serial-number subtest swaps the process-global rand.Reader,
+// which the parallel TestGenerateSelfSignedCert also reads, and parallel tests only run
+// once the sequential ones have finished.
+func TestGenerateSelfSignedCertErrors(t *testing.T) {
+	// The failing paths never touch the key material, so one small key keeps the slow
+	// 2048-bit generation out of these subtests.
+	testKey, err := rsa.GenerateKey(rand.Reader, 1024)
+	require.NoError(t, err)
+
+	t.Run("rsa key generation failure", func(t *testing.T) {
+		withFakeCluster(t)
+
+		generateRSAKey = func(io.Reader, int) (*rsa.PrivateKey, error) { return nil, errInjected }
+
+		_, _, err := generateSelfSignedCert()
+		require.ErrorIs(t, err, errInjected)
+		assert.Contains(t, err.Error(), "failed to generate RSA key")
+	})
+
+	t.Run("serial number generation failure", func(t *testing.T) {
+		withFakeCluster(t)
+
+		generateRSAKey = func(io.Reader, int) (*rsa.PrivateKey, error) { return testKey, nil }
+
+		oldReader := rand.Reader
+
+		t.Cleanup(func() { rand.Reader = oldReader })
+
+		// rand.Int is the only call here that honors its reader, so the swap surfaces
+		// only the serial-number branch.
+		rand.Reader = iotest.ErrReader(errInjected)
+
+		_, _, err := generateSelfSignedCert()
+		require.ErrorIs(t, err, errInjected)
+		assert.Contains(t, err.Error(), "failed to generate serial number")
+	})
+
+	t.Run("certificate creation failure", func(t *testing.T) {
+		withFakeCluster(t)
+
+		generateRSAKey = func(io.Reader, int) (*rsa.PrivateKey, error) { return testKey, nil }
+
+		createCertificate = func(io.Reader, *x509.Certificate, *x509.Certificate, any, any) ([]byte, error) {
+			return nil, errInjected
+		}
+
+		_, _, err := generateSelfSignedCert()
+		require.ErrorIs(t, err, errInjected)
+		assert.Contains(t, err.Error(), "failed to create certificate")
+	})
 }

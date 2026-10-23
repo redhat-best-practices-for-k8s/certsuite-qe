@@ -36,6 +36,8 @@ var (
 	createNetworkPolicy     = globalhelper.CreateNetworkPolicy
 	execPodCommand          = globalhelper.ExecCommand
 	getConfiguration        = globalhelper.GetConfiguration
+	isNodeMaster            = nodes.IsNodeMaster
+	redefineWithNodePort    = service.RedefineWithNodePort
 )
 
 // DefineAndCreateDeploymentOnCluster defines deployment resource and creates it on cluster.
@@ -159,7 +161,7 @@ func DefineAndCreateServiceOnCluster(name, namespace string, port, targetPort in
 		ipPolicy)
 
 	if withNodePort {
-		err := service.RedefineWithNodePort(testService)
+		err := redefineWithNodePort(testService)
 		if err != nil {
 			return err
 		}
@@ -218,7 +220,7 @@ func GetClusterMultusInterfaces(namespace string) ([]string, error) {
 			return nil, err
 		}
 
-		isMasterNode, err := nodes.IsNodeMaster(node, globalhelper.GetAPIClient().Nodes())
+		isMasterNode, err := isNodeMaster(node, globalhelper.GetAPIClient().Nodes())
 		if err != nil {
 			return nil, err
 		}

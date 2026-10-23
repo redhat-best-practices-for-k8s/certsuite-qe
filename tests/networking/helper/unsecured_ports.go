@@ -39,7 +39,11 @@ const (
 `
 )
 
-var generateTLSCert = generateSelfSignedCert
+var (
+	generateTLSCert   = generateSelfSignedCert
+	generateRSAKey    = rsa.GenerateKey
+	createCertificate = x509.CreateCertificate
+)
 
 // AnnotatePodTemplate sets an annotation on the deployment pod template.
 func AnnotatePodTemplate(dep *appsv1.Deployment, key, value string) {
@@ -229,7 +233,7 @@ func createNginxTLSMaterials(namespace string) error {
 }
 
 func generateSelfSignedCert() ([]byte, []byte, error) {
-	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	privateKey, err := generateRSAKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate RSA key: %w", err)
 	}
@@ -252,7 +256,7 @@ func generateSelfSignedCert() ([]byte, []byte, error) {
 		DNSNames:              []string{"localhost"},
 	}
 
-	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &privateKey.PublicKey, privateKey)
+	certDER, err := createCertificate(rand.Reader, &template, &template, &privateKey.PublicKey, privateKey)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create certificate: %w", err)
 	}
