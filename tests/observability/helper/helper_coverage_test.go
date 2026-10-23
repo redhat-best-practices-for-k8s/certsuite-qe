@@ -338,8 +338,12 @@ func TestCreateAndWaitUntilCrdIsReady(t *testing.T) {
 		crdClient := withFakeCrds(t)
 		crdClient.getFailsOnce = true
 
-		// The poll interval is tsparams.CrdRetryInterval, so the timeout must span one retry.
-		require.NoError(t, CreateAndWaitUntilCrdIsReady(testCrd, 3*tsparams.CrdRetryInterval))
+		crdRetryInterval = 10 * time.Millisecond
+
+		t.Cleanup(func() { crdRetryInterval = tsparams.CrdRetryInterval })
+
+		// The poll interval is crdRetryInterval, so the timeout must span one retry.
+		require.NoError(t, CreateAndWaitUntilCrdIsReady(testCrd, 3*crdRetryInterval))
 	})
 
 	t.Run("retries until the crd reports the established condition", func(t *testing.T) {
@@ -348,8 +352,12 @@ func TestCreateAndWaitUntilCrdIsReady(t *testing.T) {
 		crdClient := withFakeCrds(t)
 		crdClient.establishedAfter = 1
 
-		// The poll interval is tsparams.CrdRetryInterval, so the timeout must span one retry.
-		require.NoError(t, CreateAndWaitUntilCrdIsReady(testCrd, 3*tsparams.CrdRetryInterval))
+		crdRetryInterval = 10 * time.Millisecond
+
+		t.Cleanup(func() { crdRetryInterval = tsparams.CrdRetryInterval })
+
+		// The poll interval is crdRetryInterval, so the timeout must span one retry.
+		require.NoError(t, CreateAndWaitUntilCrdIsReady(testCrd, 3*crdRetryInterval))
 	})
 }
 
