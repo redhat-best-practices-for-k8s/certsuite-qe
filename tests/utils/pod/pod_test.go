@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/utils/ptr"
@@ -212,6 +213,14 @@ func TestRedefineFirstContainerWith2MiHugepages(t *testing.T) {
 	assert.Equal(t, testPod.Spec.Containers[0].Resources.Limits["hugepages-2Mi"], resource.MustParse("2Mi"))
 }
 
+func TestRedefineFirstContainerWith2MiHugepagesWithoutContainers(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+	testPod.Spec.Containers = nil
+
+	require.EqualError(t, RedefineFirstContainerWith2MiHugepages(testPod, 2),
+		"pod test-pod does not have enough containers")
+}
+
 func TestRedefineSecondContainerWith1GHugepages(t *testing.T) {
 	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
 	testPod.Spec.Containers = append(testPod.Spec.Containers, corev1.Container{})
@@ -220,6 +229,13 @@ func TestRedefineSecondContainerWith1GHugepages(t *testing.T) {
 	assert.Nil(t, RedefineSecondContainerWith1GHugepages(testPod, 2))
 	assert.Equal(t, testPod.Spec.Containers[1].Resources.Requests["hugepages-1Gi"], resource.MustParse("2Gi"))
 	assert.Equal(t, testPod.Spec.Containers[1].Resources.Limits["hugepages-1Gi"], resource.MustParse("2Gi"))
+}
+
+func TestRedefineSecondContainerWith1GHugepagesWithoutSecondContainer(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+
+	require.EqualError(t, RedefineSecondContainerWith1GHugepages(testPod, 2),
+		"pod test-pod does not have enough containers")
 }
 
 func TestRedefineWithPostStart(t *testing.T) {
@@ -236,6 +252,13 @@ func TestRedefineWithContainerExecCommand(t *testing.T) {
 	assert.Equal(t, testPod.Spec.Containers[0].Command, []string{"ls"})
 }
 
+func TestRedefineWithContainerExecCommandWithInvalidIndex(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+
+	require.EqualError(t, RedefineWithContainerExecCommand(testPod, []string{"ls"}, 1),
+		"pod test-pod does not have enough containers")
+}
+
 func TestRedefineWithReadinessProbe(t *testing.T) {
 	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
 
@@ -249,4 +272,12 @@ func TestRedefineFirstContainerWith1GiHugepages(t *testing.T) {
 	assert.Nil(t, RedefineFirstContainerWith1GiHugepages(testPod, 2))
 	assert.Equal(t, testPod.Spec.Containers[0].Resources.Requests["hugepages-1Gi"], resource.MustParse("2Gi"))
 	assert.Equal(t, testPod.Spec.Containers[0].Resources.Limits["hugepages-1Gi"], resource.MustParse("2Gi"))
+}
+
+func TestRedefineFirstContainerWith1GiHugepagesWithoutContainers(t *testing.T) {
+	testPod := DefinePod("test-pod", "test-namespace", "nginx", map[string]string{"app": "nginx"})
+	testPod.Spec.Containers = nil
+
+	require.EqualError(t, RedefineFirstContainerWith1GiHugepages(testPod, 2),
+		"pod test-pod does not have enough containers")
 }
