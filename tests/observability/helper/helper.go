@@ -24,6 +24,11 @@ import (
 	tsparams "github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/observability/parameters"
 )
 
+// crdRetryInterval is a seam for the unit tests: Gomega sleeps real time between
+// polls, so retry subtests under the fake clientset would each wait out the full
+// production cadence. It always defaults to tsparams.CrdRetryInterval.
+var crdRetryInterval = tsparams.CrdRetryInterval
+
 // For some reason, there's a function that expects labels' key/values separated
 // by colon instead of the equal char.
 func GetCertsuiteTargetPodLabelsSlice() []string {
@@ -112,7 +117,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		if err != nil {
 			// runningCrd is nil when Get fails, so name the requested CRD instead.
 			klog.V(5).Infof(
-				"crd %s is not ready, retry in 5 seconds", crd.Name)
+				"crd %s is not ready, retry in %s", crd.Name, crdRetryInterval)
 
 			return false
 		}
@@ -124,7 +129,7 @@ func CreateAndWaitUntilCrdIsReady(crd *apiextv1.CustomResourceDefinition, timeou
 		}
 
 		return false
-	}, timeout, tsparams.CrdRetryInterval).Should(Equal(true), "CRD is not ready")
+	}, timeout, crdRetryInterval).Should(Equal(true), "CRD is not ready")
 
 	return nil
 }
@@ -144,7 +149,7 @@ func DeleteCrdAndWaitUntilIsRemoved(crd string, timeout time.Duration) {
 
 		// If the CRD was already removed, we'll get an error.
 		return err != nil
-	}, timeout, tsparams.CrdRetryInterval).Should(Equal(true), "CRD is not removed yet")
+	}, timeout, crdRetryInterval).Should(Equal(true), "CRD is not removed yet")
 }
 
 func DefineDeploymentWithTerminationMsgPolicies(name, namespace string, replicas int,
