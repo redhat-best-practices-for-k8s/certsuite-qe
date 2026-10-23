@@ -217,7 +217,12 @@ jobs:
           removeControlPlaneTaint: true
 
       - name: Install partner resources
-        run: python3 -m venv .venv; source .venv/bin/activate; pip install pip==26.0.1; pip install jinjanator==25.3.1; cp .venv/bin/jinjanate .venv/bin/j2; make install-for-qe
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --require-hashes -r "$GITHUB_WORKSPACE/.github/workflows/requirements/sample-workload.txt"
+          cp .venv/bin/jinjanate .venv/bin/j2
+          make install-for-qe
         working-directory: certsuite-sample-workload
 
       - name: Show pods
