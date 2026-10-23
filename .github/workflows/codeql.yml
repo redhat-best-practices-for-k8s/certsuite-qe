@@ -1,0 +1,46 @@
+# This workflow uses actions that are not certified by GitHub. They are provided
+# by a third party and are governed by separate terms of service, privacy
+# policy, and support documentation.
+
+name: CodeQL static analysis
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: '37 3 * * 1'
+
+# Declare default permissions as read only.
+permissions: read-all
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-24.04
+    permissions:
+      # Required to upload SARIF results to the code-scanning dashboard.
+      security-events: write
+      contents: read
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v3.29.5
+        with:
+          languages: go
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v3.29.5
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v3.29.5
+        with:
+          category: "/language:go"
