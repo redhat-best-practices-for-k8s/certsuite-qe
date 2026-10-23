@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -30,4 +31,10 @@ func TestRedefineWithNodePort(t *testing.T) {
 	assert.NotNil(t, testService)
 	assert.Equal(t, corev1.ServiceTypeNodePort, testService.Spec.Type)
 	assert.Equal(t, int32(80), testService.Spec.Ports[0].NodePort)
+}
+
+func TestRedefineWithNodePortWithoutPorts(t *testing.T) {
+	err := RedefineWithNodePort(&corev1.Service{})
+
+	require.EqualError(t, err, "service does not have available ports")
 }
