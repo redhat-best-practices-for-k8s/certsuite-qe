@@ -263,22 +263,6 @@ check_prerequisites() {
 	echo ""
 }
 
-# Check if logged into registry
-check_registry_login() {
-	echo -e "${BLUE}Checking registry authentication...${NC}"
-
-	# Try a simple catalog query to check auth
-	if ! opm render "registry.redhat.io/redhat/certified-operator-index:v4.14" 2>&1 | head -1 >/dev/null; then
-		echo -e "${YELLOW}Warning: You may need to authenticate to registry.redhat.io${NC}"
-		echo ""
-		echo "Run: podman login registry.redhat.io"
-		echo "  or: docker login registry.redhat.io"
-		echo ""
-		echo "You'll need a Red Hat account. Get one at: https://access.redhat.com"
-		echo ""
-	fi
-}
-
 # Force pull a catalog image to ensure we have the latest
 force_pull_image() {
 	local catalog_image="$1"
@@ -293,43 +277,174 @@ force_pull_image() {
 	fi
 }
 
-# Check a single operator in a catalog
+# Rendered catalogs are shared by every check in a run, so a catalog image is
+# rendered at most once per OCP version. The directory is created on first use
+# and removed by the EXIT trap.
+RENDER_DIR=""
+
+# Result of the last check_operator call: present, missing or render-failed.
+CHECK_RESULT=""
+
+ensure_render_dir() {
+	if [ -z "$RENDER_DIR" ]; then
+		RENDER_DIR=$(mktemp -d)
+		trap 'rm -rf "$RENDER_DIR"' EXIT
+	fi
+}
+
+# Path of the rendered catalog for an OCP version, and of its status file. The
+# status file holds ok, empty or failed and doubles as the "already rendered"
+# marker so a catalog is never rendered twice in one run.
+render_file_path() {
+	local ocp_version="$1"
+	local catalog_type="$2"
+
+	printf '%s/%s-v%s.json' "$RENDER_DIR" "$catalog_type" "$ocp_version"
+}
+
+render_status_path() {
+	local ocp_version="$1"
+	local catalog_type="$2"
+
+	printf '%s/%s-v%s.status' "$RENDER_DIR" "$catalog_type" "$ocp_version"
+}
+
+catalog_image_for() {
+	local catalog_type="$1"
+	local ocp_version="$2"
+
+	local catalog_base
+	catalog_base=$(get_catalog_image "$catalog_type")
+	if [ -z "$catalog_base" ]; then
+		return 1
+	fi
+
+	printf '%s:v%s\n' "$catalog_base" "$ocp_version"
+}
+
+# Render a catalog image once, recording ok/empty/failed in its status file.
+render_catalog() {
+	local ocp_version="$1"
+	local catalog_type="$2"
+
+	ensure_render_dir
+
+	local status_file
+	status_file=$(render_status_path "$ocp_version" "$catalog_type")
+
+	if [ -f "$status_file" ]; then
+		return 0
+	fi
+
+	local catalog_image
+	if ! catalog_image=$(catalog_image_for "$catalog_type" "$ocp_version"); then
+		echo -e "  ${YELLOW}⚠ Unknown catalog type: $catalog_type${NC}"
+		echo failed >"$status_file"
+
+		return 0
+	fi
+
+	echo -e "  ${BLUE}Rendering catalog:${NC} $catalog_type"
+	echo -e "    Image:   $catalog_image"
+
+	if [ "$FRESH_PULL" = "true" ]; then
+		force_pull_image "$catalog_image"
+	fi
+
+	if [ "$VERBOSE" = "true" ]; then
+		echo -e "    ${YELLOW}Running: opm render $catalog_image${NC}"
+	fi
+
+	local render_file render_err
+	render_file=$(render_file_path "$ocp_version" "$catalog_type")
+	render_err="${render_file}.err"
+
+	# opm render pulls the catalog image and outputs all packages/channels/bundles
+	# as JSON. A failing render is an infrastructure problem (registry auth, opm
+	# bugs), not a missing operator, so keep its stderr and status around instead
+	# of collapsing it into "missing".
+	if opm render "$catalog_image" >"$render_file" 2>"$render_err"; then
+		if [ -s "$render_file" ]; then
+			echo ok >"$status_file"
+		else
+			echo empty >"$status_file"
+			echo -e "    ${YELLOW}⚠ opm render produced no content${NC}"
+		fi
+	else
+		echo failed >"$status_file"
+		echo -e "    ${YELLOW}⚠ opm render failed${NC}"
+		sed -n '1,5p' "$render_err" | sed 's/^/      /'
+
+		# The usual cause is a missing registry login, so point at the fix here
+		# instead of paying for a separate preflight render of the catalog.
+		echo "      If this is an authentication error, run: podman login registry.redhat.io"
+		echo "      You'll need a Red Hat account. Get one at: https://access.redhat.com"
+	fi
+
+	return 0
+}
+
+# Check whether an operator package exists in an already rendered catalog.
+operator_in_catalog() {
+	local operator_name="$1"
+	local render_file="$2"
+
+	# Match only olm.package schema entries: grep would produce false positives
+	# by matching relatedImages.
+	jq -e "select(.schema == \"olm.package\" and .name == \"$operator_name\")" "$render_file" >/dev/null 2>&1
+}
+
+# Check a single operator in a catalog. Sets CHECK_RESULT to present, missing or
+# render-failed; it reports through a global rather than stdout so callers can
+# count results without a subshell swallowing the increments.
 check_operator() {
 	local ocp_version="$1"
 	local catalog_type="$2"
 	local operator_name="$3"
 	local description="$4"
 
-	local catalog_base
-	catalog_base=$(get_catalog_image "$catalog_type")
-	local catalog_image="${catalog_base}:v${ocp_version}"
+	local catalog_image
+	catalog_image=$(catalog_image_for "$catalog_type" "$ocp_version") || catalog_image="unknown"
 
 	echo -e "  ${BLUE}Checking:${NC} $operator_name"
 	echo -e "    Catalog: $catalog_type"
 	echo -e "    Image:   $catalog_image"
 
-	# Force pull if requested
-	if [ "$FRESH_PULL" = "true" ]; then
-		force_pull_image "$catalog_image"
-	fi
+	local status
+	status=$(cat "$(render_status_path "$ocp_version" "$catalog_type")" 2>/dev/null || echo failed)
 
-	if [ "$VERBOSE" = "true" ]; then
-		echo -e "    ${YELLOW}Running: opm render $catalog_image | jq 'select(.schema==\"olm.package\" and .name==\"$operator_name\")'${NC}"
-	fi
+	case "$status" in
+	ok)
+		echo -n "    Status:  "
+		if operator_in_catalog "$operator_name" "$(render_file_path "$ocp_version" "$catalog_type")"; then
+			echo -e "${GREEN}✅ Found${NC}"
+			CHECK_RESULT="present"
+		else
+			echo -e "${RED}❌ MISSING${NC}"
+			CHECK_RESULT="missing"
+		fi
+		;;
+	empty)
+		echo -e "    Status:  ${YELLOW}⚠ catalog rendered empty${NC}"
+		CHECK_RESULT="render-failed"
+		;;
+	*)
+		echo -e "    Status:  ${YELLOW}⚠ catalog failed to render${NC}"
+		CHECK_RESULT="render-failed"
+		;;
+	esac
 
-	# Try to find the operator in the catalog
-	# opm render pulls the catalog image and outputs all packages/channels/bundles as JSON
-	# IMPORTANT: Use jq to check for actual package names (only olm.package schema entries)
-	# NOT grep, which can produce false positives by matching relatedImages
-	echo -n "    Status:  "
-	# Note: 'timeout' may not exist on macOS, so we run without it
-	if opm render "$catalog_image" 2>/dev/null | jq -e "select(.schema == \"olm.package\" and .name == \"$operator_name\")" >/dev/null 2>&1; then
-		echo -e "${GREEN}✅ Found${NC}"
-		return 0
-	else
-		echo -e "${RED}❌ MISSING${NC}"
-		return 1
-	fi
+	echo -e "    ${YELLOW}↳ $description${NC}"
+}
+
+# Distinct catalog types referenced by REQUIRED_OPERATORS, in a stable order.
+required_catalog_types() {
+	printf '%s\n' "$REQUIRED_OPERATORS" |
+		while IFS= read -r operator_entry; do
+			[ -z "$operator_entry" ] && continue
+			printf '%s\n' "${operator_entry%%:*}"
+		done |
+		sort -u
 }
 
 # List all operators in a catalog (for debugging)
@@ -338,21 +453,27 @@ list_operators() {
 	local catalog_type="$2"
 	local search_term="${3:-}"
 
-	local catalog_base
-	catalog_base=$(get_catalog_image "$catalog_type")
-	local catalog_image="${catalog_base}:v${ocp_version}"
-
 	echo -e "${BLUE}Listing operators in $catalog_type for OCP $ocp_version...${NC}"
+
+	render_catalog "$ocp_version" "$catalog_type"
+
+	local render_file status
+	render_file=$(render_file_path "$ocp_version" "$catalog_type")
+	status=$(cat "$(render_status_path "$ocp_version" "$catalog_type")" 2>/dev/null || echo failed)
+
+	if [ "$status" != "ok" ]; then
+		echo -e "${RED}Error: catalog $catalog_type for OCP $ocp_version could not be rendered (status: $status)${NC}"
+
+		return 2
+	fi
 
 	if [ -n "$search_term" ]; then
 		echo "Filtering for: $search_term"
-		opm render "$catalog_image" 2>/dev/null |
-			jq -r 'select(.schema == "olm.package") | .name' |
+		jq -r 'select(.schema == "olm.package") | .name' "$render_file" |
 			grep -i "$search_term" |
 			sort -u
 	else
-		opm render "$catalog_image" 2>/dev/null |
-			jq -r 'select(.schema == "olm.package") | .name' |
+		jq -r 'select(.schema == "olm.package") | .name' "$render_file" |
 			sort -u
 	fi
 }
@@ -363,27 +484,35 @@ get_operator_info() {
 	local catalog_type="$2"
 	local operator_name="$3"
 
-	local catalog_base
-	catalog_base=$(get_catalog_image "$catalog_type")
-	local catalog_image="${catalog_base}:v${ocp_version}"
-
 	echo -e "${BLUE}Getting info for $operator_name in $catalog_type (OCP $ocp_version)...${NC}"
+
+	render_catalog "$ocp_version" "$catalog_type"
+
+	local render_file status
+	render_file=$(render_file_path "$ocp_version" "$catalog_type")
+	status=$(cat "$(render_status_path "$ocp_version" "$catalog_type")" 2>/dev/null || echo failed)
+
+	if [ "$status" != "ok" ]; then
+		echo -e "${RED}Error: catalog $catalog_type for OCP $ocp_version could not be rendered (status: $status)${NC}"
+
+		return 2
+	fi
 
 	# Get channels
 	echo "Channels:"
-	opm render "$catalog_image" 2>/dev/null |
-		jq -r "select(.schema == \"olm.channel\" and .package == \"$operator_name\") | \"  - \" + .name" |
+	jq -r "select(.schema == \"olm.channel\" and .package == \"$operator_name\") | \"  - \" + .name" "$render_file" |
 		sort -u
 
 	# Get bundle versions
 	echo "Versions:"
-	opm render "$catalog_image" 2>/dev/null |
-		jq -r "select(.schema == \"olm.bundle\" and .package == \"$operator_name\") | \"  - \" + .name" |
+	jq -r "select(.schema == \"olm.bundle\" and .package == \"$operator_name\") | \"  - \" + .name" "$render_file" |
 		sort -V |
 		tail -10
 }
 
-# Main check function
+# Main check function. Returns 0 when every operator is present and every catalog
+# rendered, 1 when at least one operator is missing, 2 when at least one catalog
+# could not be rendered (the check is incomplete).
 main_check() {
 	local versions="$*"
 
@@ -404,28 +533,42 @@ main_check() {
 	fi
 	echo ""
 
-	local missing_count=0
 	local total_count=0
+	local present_count=0
+	local missing_count=0
+	local render_failure_count=0
 
 	for ocp_version in $versions; do
 		echo ""
 		echo -e "${YELLOW}=== OCP $ocp_version ===${NC}"
 
-		echo "$REQUIRED_OPERATORS" | while IFS= read -r operator_entry; do
-			# Skip empty lines
+		# One render per distinct catalog, shared by every operator in it.
+		while IFS= read -r catalog_type; do
+			[ -z "$catalog_type" ] && continue
+			render_catalog "$ocp_version" "$catalog_type"
+		done < <(required_catalog_types)
+
+		echo ""
+
+		while IFS= read -r operator_entry; do
 			[ -z "$operator_entry" ] && continue
 
-			catalog_type=$(echo "$operator_entry" | cut -d: -f1)
-			operator_name=$(echo "$operator_entry" | cut -d: -f2)
-			description=$(echo "$operator_entry" | cut -d: -f3)
+			local catalog_type operator_name description
+			catalog_type="${operator_entry%%:*}"
+			operator_name="${operator_entry#*:}"
+			operator_name="${operator_name%%:*}"
+			description="${operator_entry#*:}"
+			description="${description#*:}"
 
 			total_count=$((total_count + 1))
+			check_operator "$ocp_version" "$catalog_type" "$operator_name" "$description"
 
-			if ! check_operator "$ocp_version" "$catalog_type" "$operator_name" "$description"; then
-				missing_count=$((missing_count + 1))
-				echo -e "    ${YELLOW}↳ $description${NC}"
-			fi
-		done
+			case "$CHECK_RESULT" in
+			present) present_count=$((present_count + 1)) ;;
+			missing) missing_count=$((missing_count + 1)) ;;
+			*) render_failure_count=$((render_failure_count + 1)) ;;
+			esac
+		done < <(printf '%s\n' "$REQUIRED_OPERATORS")
 	done
 
 	echo ""
@@ -433,19 +576,35 @@ main_check() {
 	echo -e "${BLUE}  Summary${NC}"
 	echo -e "${BLUE}========================================${NC}"
 	echo ""
+	echo "OCP versions checked:   $versions"
+	echo "Operator entries checked: $total_count"
+	echo -e "  ${GREEN}present:${NC}          $present_count"
+	echo -e "  ${RED}missing:${NC}          $missing_count"
+	echo -e "  ${YELLOW}render failures:${NC}  $render_failure_count"
+	echo ""
 
-	# Re-count since subshell doesn't persist variables
-	missing_count=0
-	total_count=0
-	for ocp_version in $versions; do
-		echo "$REQUIRED_OPERATORS" | while IFS= read -r operator_entry; do
-			[ -z "$operator_entry" ] && continue
-			total_count=$((total_count + 1))
-		done
-	done
+	if [ "$render_failure_count" -gt 0 ]; then
+		echo -e "${YELLOW}⚠ $render_failure_count check(s) could not complete: a catalog failed to render.${NC}"
+		echo "  Render errors indicate infrastructure problems (registry auth, opm bugs),"
+		echo "  not missing operators."
+		echo ""
+	fi
 
-	echo "Completed catalog check for OCP versions: $versions"
-	echo -e "${GREEN}Check complete. Review output above for any missing operators.${NC}"
+	if [ "$missing_count" -gt 0 ]; then
+		echo -e "${RED}❌ $missing_count of $total_count operator entries are missing from their catalog.${NC}"
+
+		# A confirmed missing operator is actionable on its own, so it wins over
+		# the "incomplete check" exit code.
+		return 1
+	fi
+
+	if [ "$render_failure_count" -gt 0 ]; then
+		return 2
+	fi
+
+	echo -e "${GREEN}✅ All $total_count operator entries are present.${NC}"
+
+	return 0
 }
 
 # Show usage
@@ -458,6 +617,13 @@ usage() {
 	echo "  -l, --list CATALOG [SEARCH]   List all operators in a catalog"
 	echo "  -i, --info CATALOG OPERATOR   Get info about a specific operator"
 	echo "  -h, --help                    Show this help message"
+	echo ""
+	echo "Exit codes:"
+	echo "  0  every required operator is present and every catalog rendered"
+	echo "  1  at least one required operator is missing from its catalog"
+	echo "  2  at least one catalog could not be rendered, so the check is incomplete"
+	echo "     (takes effect only when nothing is confirmed missing)"
+	echo "     -l/--list and -i/--info use 0 on success and 2 when the catalog cannot be rendered"
 	echo ""
 	echo "Examples:"
 	echo "  $0                           # Check all default OCP versions"
@@ -473,7 +639,8 @@ usage() {
 	echo "How it works:"
 	echo "  This script uses 'opm render' to pull OLM catalog images from registry.redhat.io"
 	echo "  and searches for specific operator package names in the rendered JSON output."
-	echo "  The catalog images contain all operators available for a specific OCP version."
+	echo "  Each catalog image is rendered once per OCP version and shared by every"
+	echo "  operator check for that version."
 	echo ""
 	echo "Note: By default, cached catalog images may be used. Use -f/--fresh to ensure"
 	echo "      you're checking against the latest catalog content."
@@ -497,13 +664,15 @@ while [[ $# -gt 0 ]]; do
 		;;
 	-l | --list)
 		check_prerequisites
-		list_operators "${4:-4.20}" "$2" "${3:-}"
-		exit 0
+		EXIT_CODE=0
+		list_operators "${4:-4.20}" "$2" "${3:-}" || EXIT_CODE=$?
+		exit "$EXIT_CODE"
 		;;
 	-i | --info)
 		check_prerequisites
-		get_operator_info "${4:-4.20}" "$2" "$3"
-		exit 0
+		EXIT_CODE=0
+		get_operator_info "${4:-4.20}" "$2" "$3" || EXIT_CODE=$?
+		exit "$EXIT_CODE"
 		;;
 	*)
 		POSITIONAL_ARGS+=("$1")
@@ -514,5 +683,6 @@ done
 
 # Run main check with remaining positional arguments
 check_prerequisites
-check_registry_login
-main_check "${POSITIONAL_ARGS[@]}"
+EXIT_CODE=0
+main_check "${POSITIONAL_ARGS[@]}" || EXIT_CODE=$?
+exit "$EXIT_CODE"
