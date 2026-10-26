@@ -2,6 +2,11 @@
 export GO111MODULE=on
 GO_PACKAGES=$(shell go list ./... | grep -v vendor)
 
+# Minimum total statement coverage enforced by `unit-tests`. Kept one point
+# under the current total so ordinary churn passes but a whole untested package
+# does not. Override on the command line: make unit-tests COVERAGE_FLOOR=95
+COVERAGE_FLOOR ?= 92.0
+
 # Color definitions for better output formatting
 RED     := \033[31m
 GREEN   := \033[32m
@@ -18,6 +23,9 @@ RESET   := \033[0m
 
 .PHONY: help \
 		lint \
+		lint-ci \
+		compile-tests \
+		verify \
 		deps-update \
 		gofmt \
 		fmt \
@@ -66,6 +74,43 @@ lint: ## Run golangci-lint to check code quality and style
 	@echo "$(BOLD)$(BLUE)🔧 Running shfmt on shell scripts...$(RESET)"
 	@shfmt -d scripts/*.sh && echo "$(GREEN)✅ Shell scripts formatted correctly$(RESET)" || (echo "$(RED)❌ Shell script formatting issues found. Run 'shfmt -w scripts/*.sh' to fix$(RESET)" && exit 1)
 
+# `lint-ci` mirrors .github/workflows/pre-main.yml. Its tools are installed out
+# of band, so a missing tool is reported as SKIP rather than failing the target.
+# markdownlint's MD060 (table column style) ships in 0.38+, newer than the
+# version CI pins, so the call below disables it to match CI's result.
+lint-ci: lint compile-tests ## Run every static check CI runs (shellcheck, yamllint, typos, markdownlint, ginkgo build)
+	@echo "$(BOLD)$(BLUE)🔎 Running CI-only static checks...$(RESET)"
+	@if ! command -v shellcheck >/dev/null 2>&1; then \
+		echo "$(YELLOW)⚠ SKIP: shellcheck not installed (brew install shellcheck)$(RESET)"; \
+	elif ! shellcheck scripts/*.sh rebase_all.sh; then \
+		echo "$(RED)❌ shellcheck reported issues$(RESET)"; exit 1; \
+	fi
+	@if ! command -v yamllint >/dev/null 2>&1; then \
+		echo "$(YELLOW)⚠ SKIP: yamllint not installed (pip install yamllint)$(RESET)"; \
+	elif ! yamllint .github/workflows/*.yml config/*.yaml; then \
+		echo "$(RED)❌ yamllint reported issues$(RESET)"; exit 1; \
+	fi
+	@if ! command -v typos >/dev/null 2>&1; then \
+		echo "$(YELLOW)⚠ SKIP: typos not installed (brew install typos-cli)$(RESET)"; \
+	elif ! typos; then \
+		echo "$(RED)❌ typos reported misspellings$(RESET)"; exit 1; \
+	fi
+	@if ! command -v markdownlint >/dev/null 2>&1; then \
+		echo "$(YELLOW)⚠ SKIP: markdownlint not installed (npm install -g markdownlint-cli)$(RESET)"; \
+	elif ! markdownlint --disable MD060 -- README.md; then \
+		echo "$(RED)❌ markdownlint reported issues$(RESET)"; exit 1; \
+	fi
+
+compile-tests: ## Compile every Ginkgo suite (the only local check that builds the integration packages)
+	@echo "$(BOLD)$(BLUE)🏗  Compiling Ginkgo suites...$(RESET)"
+	@ginkgo build -r ./tests && status=0 || status=$$?; \
+	find ./tests -type f -name '*.test' -delete; \
+	if [ $$status -ne 0 ]; then echo "$(RED)❌ Ginkgo suites failed to compile$(RESET)"; exit 1; fi; \
+	echo "$(GREEN)✅ Ginkgo suites compiled successfully$(RESET)"
+
+verify: vet gofmt lint-ci unit-tests ## Run the full pre-push suite (static checks first, then unit tests)
+	@echo "$(BOLD)$(GREEN)🎉 All pre-push checks passed!$(RESET)"
+
 gofmt: ## Check Go code formatting (use 'gofmt -w' to fix issues)
 	@echo "$(BOLD)$(BLUE)📝 Checking Go code formatting...$(RESET)"
 	@files=$$(gofmt -s -l `find . -path ./vendor -prune -o -type f -name '*.go' -print`); \
@@ -97,9 +142,12 @@ install: deps-update install-ginkgo ## Install all project dependencies and tool
 # Testing Targets
 test: unit-tests ## Run unit tests (alias for unit-tests)
 
-unit-tests: ## Run unit tests with coverage output
+unit-tests: ## Run unit tests with race detection and the coverage floor
 	@echo "$(BOLD)$(BLUE)🧪 Running unit tests...$(RESET)"
-	@UNIT_TEST=true go test ./... -tags=utest -coverprofile=cover.out && echo "$(GREEN)✅ Unit tests completed successfully$(RESET)" || (echo "$(RED)❌ Unit tests failed$(RESET)" && exit 1)
+	@UNIT_TEST=true go test ./... -tags=utest -race -count=1 -coverprofile=cover.out && echo "$(GREEN)✅ Unit tests completed successfully$(RESET)" || (echo "$(RED)❌ Unit tests failed$(RESET)" && exit 1)
+	@coverage=$$(go tool cover -func=cover.out | awk '/^total:/ {gsub(/%/, "", $$NF); print $$NF}'); \
+	echo "$(BOLD)$(BLUE)📊 Total coverage:$(RESET) $${coverage}% (floor $(COVERAGE_FLOOR)%)"; \
+	awk -v actual="$$coverage" -v floor="$(COVERAGE_FLOOR)" 'BEGIN { if (actual + 0 < floor + 0) { printf "$(RED)❌ Coverage is below the %.1f%% floor$(RESET)\n", floor; exit 1 } }' || exit 1
 
 test-all: install-ginkgo download-unstable ## Run all test suites (requires cluster setup)
 	@echo "$(BOLD)$(BLUE)🚀 Running all test suites...$(RESET)"

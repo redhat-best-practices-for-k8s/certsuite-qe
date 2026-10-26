@@ -94,6 +94,13 @@ cd certsuite-qe
 make install
 ```
 
+#### Verify your changes before pushing
+
+`make verify` runs the full pre-push suite: `vet`, `gofmt`, every static check CI runs
+(`make lint-ci`: golangci-lint, shfmt, shellcheck, yamllint, typos, markdownlint,
+Ginkgo compilation), and the unit tests with race detection and the coverage floor
+(default 92.0%, overridable with `make unit-tests COVERAGE_FLOOR=95`).
+
 #### Execute tests
 
 * To run all tests

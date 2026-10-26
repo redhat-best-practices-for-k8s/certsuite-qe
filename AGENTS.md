@@ -26,8 +26,8 @@ make deps-update          # Update and vendor Go module dependencies
 ### Running Tests
 ```bash
 # Unit tests (no cluster required)
-make test                 # Run unit tests with coverage
-make unit-tests           # Same as above
+make test                 # Run unit tests (alias for unit-tests)
+make unit-tests           # Run unit tests with race detection and the coverage floor
 make coverage-html        # Generate HTML coverage report
 
 # Integration tests (requires OCP cluster)
@@ -53,9 +53,12 @@ ginkgo -v ./tests/accesscontrol/
 ### Linting
 ```bash
 make lint                 # Run golangci-lint and shfmt
+make lint-ci              # Run every static check CI runs (shellcheck, yamllint, typos, markdownlint, ginkgo build)
+make compile-tests        # Compile every Ginkgo suite
 make gofmt                # Check Go code formatting
 make fmt                  # Format Go code
 make vet                  # Run go vet
+make verify               # Run the full pre-push suite (vet, gofmt, lint-ci, unit-tests)
 ```
 
 ### Utilities
@@ -173,7 +176,7 @@ Available test features (set via `FEATURES` env var):
 - `platformalteration` - Node and kernel configuration
 
 ### Go Version
-This project uses Go 1.26.0 (toolchain go1.26.5).
+This project uses Go 1.27 (toolchain go1.27.3).
 
 ### Kind Cluster Limitations
 The following tests are known to fail on local Kind clusters:
