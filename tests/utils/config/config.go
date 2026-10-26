@@ -19,6 +19,10 @@ import (
 const (
 	// FileConfigPath path to config file.
 	FileConfigPath = "config/config.yaml"
+
+	// defaultDockerConfigDirName is the directory created under the OS temp dir
+	// when neither config.yaml nor DOCKER_CONFIG_DIR points at a docker config.
+	defaultDockerConfigDirName = "certsuite-qe-docker"
 )
 
 // Config type keeps general GetConfiguration().
@@ -79,6 +83,10 @@ func NewConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to read env vars: %w", err)
 	}
 
+	if conf.General.DockerConfigDir == "" {
+		conf.General.DockerConfigDir = filepath.Join(os.TempDir(), defaultDockerConfigDirName)
+	}
+
 	err = conf.deployCertsuiteConfigDir(confFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deploy certsuite config dir: %w", err)
@@ -106,6 +114,10 @@ func NewConfig() (*Config, error) {
 
 // DebugCertsuite activates debug mode.
 func (c *Config) DebugCertsuite() (bool, error) {
+	if c == nil {
+		return false, fmt.Errorf("config is nil")
+	}
+
 	if c.General.DebugCertsuite == "true" {
 		err := os.Setenv("CERTSUITE_LOG_LEVEL", "debug")
 		if err != nil {
@@ -240,22 +252,29 @@ func deployCertsuiteDir(confFileName string, dirName string, yamlTag string, env
 }
 
 func (c *Config) makeDockerConfig() error {
-	var configFile *os.File
+	configPath := filepath.Join(c.General.DockerConfigDir, "config")
 
-	err := os.MkdirAll(c.General.DockerConfigDir, globalparameters.DirPermissions)
+	// Never overwrite an existing docker config: it may hold the registry
+	// credentials a developer or CI runner logged in with.
+	_, err := os.Stat(configPath)
+	if err == nil {
+		klog.V(4).Infof("%s already exists. Leaving it untouched", configPath)
+
+		return nil
+	}
+
+	if !os.IsNotExist(err) {
+		return fmt.Errorf("failed to check for existing docker config %s: %w", configPath, err)
+	}
+
+	err = os.MkdirAll(c.General.DockerConfigDir, globalparameters.DirPermissions)
 	if err != nil {
 		return fmt.Errorf("failed to create dir %v: %w", c.General.DockerConfigDir, err)
 	}
 
-	configFile, err = os.Create(filepath.Join(c.General.DockerConfigDir, "config"))
+	err = os.WriteFile(configPath, []byte("{ \"auths\": {} }"), 0o600)
 	if err != nil {
-		return fmt.Errorf("failed to create docker config file: %w", err)
-	}
-	defer configFile.Close()
-
-	_, err = configFile.Write([]byte("{ \"auths\": {} }"))
-	if err != nil {
-		return fmt.Errorf("failed to write docker config content: %w", err)
+		return fmt.Errorf("failed to write docker config file: %w", err)
 	}
 
 	return nil

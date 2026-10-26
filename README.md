@@ -66,7 +66,7 @@ The following environment variables are used to configure the test setup.
 | ENABLE_PARALLEL | Enable ginkgo parallel execution via `--procs=16` (experimental). Default is `false` |
 | FORCE_DOWNLOAD_UNSTABLE | Force download the unstable image. Default is `false` |
 | NON_LINUX_ENV | Set to any value (including empty string) to run on macOS. Unset on Linux |
-| DOCKER_CONFIG_DIR | Docker config directory (required on macOS; example: `$HOME/.docker`) |
+| DOCKER_CONFIG_DIR | Docker config directory. Defaults to `$TMPDIR/certsuite-qe-docker`; point it at `$HOME/.docker` to reuse your existing registry login (an existing `config` file is never overwritten) |
 | CONTAINER_ENGINE | Container runtime to use (`docker` or `podman`). Default is `docker` |
 
 ## Steps to run the tests
