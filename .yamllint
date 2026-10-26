@@ -1,0 +1,14 @@
+---
+# Mirrors the inline config_data of the yamllint step in
+# .github/workflows/pre-main.yml so `make lint-ci` reports what CI reports.
+extends: default
+
+rules:
+  line-length:
+    level: warning
+  trailing-spaces:
+    level: warning
+  brackets:
+    level: warning
+  empty-lines:
+    level: warning
