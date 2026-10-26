@@ -1059,6 +1059,55 @@ func TestCoverageDirectoriesAndFileHelpers(t *testing.T) {
 	CopyClaimFileToTcFolder("networking-test", "missing", filepath.Join(root, "missing-report"))
 }
 
+func TestIsCRCSingleNode(t *testing.T) {
+	crcLabels := map[string]string{
+		"node-role.kubernetes.io/master":        "",
+		"node-role.kubernetes.io/control-plane": "",
+	}
+
+	testCases := []struct {
+		name  string
+		nodes []corev1.Node
+		want  bool
+	}{
+		{name: "no nodes", nodes: nil, want: false},
+		{
+			name:  "single CRC node",
+			nodes: []corev1.Node{{ObjectMeta: metav1.ObjectMeta{Name: "crc-abcdef-master-0"}}},
+			want:  true,
+		},
+		{
+			name:  "single CRC node with role labels",
+			nodes: []corev1.Node{{ObjectMeta: metav1.ObjectMeta{Name: "crc-abcdef-master-0", Labels: crcLabels}}},
+			want:  true,
+		},
+		{
+			name:  "single node with role labels but no CRC name",
+			nodes: []corev1.Node{{ObjectMeta: metav1.ObjectMeta{Name: "sno-master-0", Labels: crcLabels}}},
+			want:  false,
+		},
+		{
+			name:  "single CRC-named worker node",
+			nodes: []corev1.Node{{ObjectMeta: metav1.ObjectMeta{Name: "crc-abcdef-worker-0"}}},
+			want:  false,
+		},
+		{
+			name: "multiple nodes including a CRC-named one",
+			nodes: []corev1.Node{
+				{ObjectMeta: metav1.ObjectMeta{Name: "crc-abcdef-master-0"}},
+				{ObjectMeta: metav1.ObjectMeta{Name: "crc-abcdef-worker-0"}},
+			},
+			want: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			assert.Equal(t, testCase.want, isCRCSingleNode(testCase.nodes))
+		})
+	}
+}
+
 func TestCoverageClusterDetectionAndSCCHelper(t *testing.T) {
 	coverageFixture(t)
 
@@ -1078,8 +1127,10 @@ func TestCoverageClusterDetectionAndSCCHelper(t *testing.T) {
 	writeOC("echo 'https://api.example.test'\nexit 0\n")
 	coverageFixture(t, &corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "crc-abcdef-master-0"}})
 	assert.True(t, IsCRCCluster())
+	// A single node carrying both control-plane role labels is a Single Node
+	// OpenShift cluster, not a CRC cluster, and must not take the CRC branch.
 	coverageFixture(t, &corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "single", Labels: map[string]string{"node-role.kubernetes.io/master": "", "node-role.kubernetes.io/control-plane": ""}}})
-	assert.True(t, IsCRCCluster())
+	assert.False(t, IsCRCCluster())
 	coverageFixture(t, &corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "worker"}})
 	assert.False(t, IsCRCCluster())
 	k8s, _ := coverageFixture(t)
