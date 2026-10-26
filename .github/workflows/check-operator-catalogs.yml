@@ -335,24 +335,50 @@ jobs:
           path: catalog-check-results.md
           retention-days: 30
 
+      - name: Find existing operator catalog issue
+        id: find-issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            // github.rest.issues.listForRepo returns an empty array on this
+            // repository even when issues are open, so resolve the issue via
+            // GraphQL instead.
+            const query = `query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                issues(states: OPEN, labels: ["operator-catalog-check"], first: 20) {
+                  nodes { number title }
+                }
+              }
+            }`;
+
+            const result = await github.graphql(query, {
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const existingIssue = result.repository.issues.nodes.find(i =>
+              i.title.includes('Operator Catalog Check'));
+
+            if (existingIssue) {
+              core.info(`Found existing operator catalog issue #${existingIssue.number}`);
+              core.setOutput('number', String(existingIssue.number));
+            } else {
+              core.info('No open operator catalog issue found');
+              core.setOutput('number', '');
+            }
+
       - name: Create or update issue if operators are missing
         if: steps.check.outputs.has_missing == 'true'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          EXISTING_ISSUE_NUMBER: ${{ steps.find-issue.outputs.number }}
         with:
           script: |
             const fs = require('fs');
             const results = fs.readFileSync('catalog-check-results.md', 'utf8');
 
-            // Check if there's already an open issue
-            const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'operator-catalog-check'
-            });
-
-            const existingIssue = issues.data.find(i =>
-              i.title.includes('Operator Catalog Check'));
+            // Issue number resolved by the "Find existing operator catalog issue" step
+            const existingIssueNumber = process.env.EXISTING_ISSUE_NUMBER;
 
             const issueBody = `## Automated Operator Catalog Check
 
@@ -372,15 +398,15 @@ jobs:
             *This issue is automatically updated by the operator catalog check workflow.*
             `;
 
-            if (existingIssue) {
+            if (existingIssueNumber) {
               // Update the issue body directly instead of adding comments
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: existingIssue.number,
+                issue_number: Number(existingIssueNumber),
                 body: issueBody
               });
-              console.log(`Updated issue #${existingIssue.number} body with latest results`);
+              console.log(`Updated issue #${existingIssueNumber} body with latest results`);
             } else {
               // Create new issue
               const newIssue = await github.rest.issues.create({
@@ -396,33 +422,27 @@ jobs:
       - name: Close issue if no operators are missing
         if: steps.check.outputs.has_missing == 'false'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          EXISTING_ISSUE_NUMBER: ${{ steps.find-issue.outputs.number }}
         with:
           script: |
-            const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'operator-catalog-check'
-            });
+            const existingIssueNumber = process.env.EXISTING_ISSUE_NUMBER;
 
-            const existingIssue = issues.data.find(i =>
-              i.title.includes('Operator Catalog Check'));
-
-            if (existingIssue) {
+            if (existingIssueNumber) {
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: existingIssue.number,
+                issue_number: Number(existingIssueNumber),
                 state: 'closed',
                 state_reason: 'completed'
               });
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: existingIssue.number,
+                issue_number: Number(existingIssueNumber),
                 body: 'All required operators are now available. Closing automatically.'
               });
-              console.log(`Closed issue #${existingIssue.number}`);
+              console.log(`Closed issue #${existingIssueNumber}`);
             }
 
       - name: Fail if operators are missing (manual run only)
