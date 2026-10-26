@@ -90,9 +90,30 @@ jobs:
           path: certsuite/certsuite
           retention-days: 1
 
+  # The partner-resources lock is hash-pinned, so a dependabot bump that leaves
+  # old hashes breaks every qe-testing entry in its "Install partner resources"
+  # step. Validate it here so a bad lock fails one cheap job, not the matrix.
+  verify-partner-lock:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      # --dry-run resolves and hash-checks the whole graph without installing;
+      # --no-cache-dir keeps a warm runner cache from masking a stale hash.
+      - name: Validate the hash-pinned lock
+        run: >-
+          python3 -m pip install --require-hashes --dry-run --no-cache-dir
+          -r .github/workflows/requirements/sample-workload.txt
+
   qe-testing:
-    needs: [build-and-store-binary, build-and-store-image]
-    if: ${{ needs.build-and-store-binary.result == 'success' && needs.build-and-store-image.result == 'success' }}
+    needs: [build-and-store-binary, build-and-store-image, verify-partner-lock]
+    if: >-
+      ${{ needs.build-and-store-binary.result == 'success' &&
+      needs.build-and-store-image.result == 'success' &&
+      needs.verify-partner-lock.result == 'success' }}
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
