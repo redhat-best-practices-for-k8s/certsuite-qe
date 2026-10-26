@@ -407,30 +407,26 @@ func IsCRCCluster() bool {
 		return false
 	}
 
-	// CRC typically has exactly one node
-	if len(nodes.Items) == 1 {
-		nodeName := nodes.Items[0].Name
-		// CRC nodes often have names starting with "crc-" followed by random characters
-		if strings.HasPrefix(nodeName, "crc-") && strings.HasSuffix(nodeName, "-master-0") {
-			return true
-		}
+	return isCRCSingleNode(nodes.Items)
+}
+
+// isCRCSingleNode reports whether nodes is the single-node topology that CRC
+// provisions: exactly one node whose name follows the CRC pattern, such as
+// crc-abcdef-master-0.
+//
+// Node names are the discriminator here. The master and control-plane role
+// labels are not CRC specific -- Single Node OpenShift, MicroShift and other
+// compact deployments set the same ones -- so treating them on their own as a
+// CRC signal misclassifies those clusters and silently skips tests that were
+// meant to run on them.
+func isCRCSingleNode(nodes []corev1.Node) bool {
+	if len(nodes) != 1 {
+		return false
 	}
 
-	// Method 3: A single node carrying both master and control-plane role
-	// labels is a strong CRC signal. Use the comma-ok idiom because CRC sets
-	// these labels with empty values, and a plain map lookup returns "" for
-	// both "present but empty" and "absent".
-	if len(nodes.Items) == 1 {
-		labels := nodes.Items[0].Labels
-		_, hasMaster := labels["node-role.kubernetes.io/master"]
-		_, hasControlPlane := labels["node-role.kubernetes.io/control-plane"]
+	nodeName := nodes[0].Name
 
-		if hasMaster && hasControlPlane {
-			return true
-		}
-	}
-
-	return false
+	return strings.HasPrefix(nodeName, "crc-") && strings.HasSuffix(nodeName, "-master-0")
 }
 
 func RunShellCommand(script string) (string, error) {
