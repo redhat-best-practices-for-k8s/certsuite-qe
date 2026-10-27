@@ -35,21 +35,52 @@ FRESH_PULL="${FRESH_PULL:-false}"
 # Default OCP versions to check
 DEFAULT_VERSIONS="4.14 4.16 4.17 4.18 4.19 4.20"
 
-# Operators we depend on for QE tests
+# Operators we depend on for QE tests, split by OCP version.
 # Format: catalog_type:operator_package_name:description
 #
-# Note: We have version-specific operators due to catalog availability:
+# The certified operator differs by catalog availability:
 #   - cockroachdb-certified: Used for OCP 4.14-4.19 (certified operator)
 #   - mongodb-enterprise: Used for OCP 4.20+ (alternative certified operator)
-#   - prometheus-exporter-operator: Used for all OCP versions (lightweight operator)
-# See tests/utils/operatorversions/ for the mapping logic.
-REQUIRED_OPERATORS="
-certified-operators:cockroachdb-certified:Used for affiliated certification tests (OCP 4.14-4.19)
-certified-operators:mongodb-enterprise:Used for affiliated certification tests (OCP 4.20+)
+# See tests/utils/operatorversions/ for the authoritative mapping.
+COMMON_OPERATORS="
 community-operators:grafana-operator:Used for operator tests
 community-operators:prometheus-exporter-operator:Used as lightweight operator (all OCP versions)
 redhat-operators:cluster-logging:Used for cluster-wide operator tests
 "
+
+PRE420_OPERATORS="
+certified-operators:cockroachdb-certified:Used for affiliated certification tests (OCP 4.14-4.19)
+"
+
+POST420_OPERATORS="
+certified-operators:mongodb-enterprise:Used for affiliated certification tests (OCP 4.20+)
+"
+
+# Operators required for the given OCP version, in the
+# catalog_type:operator_package_name:description format.
+# Keep the 4.20 cutoff in sync with IsVersion420OrLater in
+# tests/utils/operatorversions/operatorversions.go. Versions that do not parse
+# fall back to the pre-4.20 set, as that helper does.
+required_operators_for_version() {
+	local ocp_version="$1"
+	local major minor
+
+	major="${ocp_version%%.*}"
+	minor="${ocp_version#*.}"
+	minor="${minor%%.*}"
+
+	printf '%s\n' "$COMMON_OPERATORS"
+
+	if [[ "$major" =~ ^[0-9]+$ && "$minor" =~ ^[0-9]+$ ]]; then
+		if [ "$major" -gt 4 ] || { [ "$major" -eq 4 ] && [ "$minor" -ge 20 ]; }; then
+			printf '%s\n' "$POST420_OPERATORS"
+
+			return 0
+		fi
+	fi
+
+	printf '%s\n' "$PRE420_OPERATORS"
+}
 
 # Get catalog image URL for a catalog type
 get_catalog_image() {
@@ -437,9 +468,10 @@ check_operator() {
 	echo -e "    ${YELLOW}↳ $description${NC}"
 }
 
-# Distinct catalog types referenced by REQUIRED_OPERATORS, in a stable order.
+# Distinct catalog types referenced by any version's operator list, in a stable
+# order. Catalog images are shared across versions, so the union is checked.
 required_catalog_types() {
-	printf '%s\n' "$REQUIRED_OPERATORS" |
+	printf '%s\n%s\n%s\n' "$COMMON_OPERATORS" "$PRE420_OPERATORS" "$POST420_OPERATORS" |
 		while IFS= read -r operator_entry; do
 			[ -z "$operator_entry" ] && continue
 			printf '%s\n' "${operator_entry%%:*}"
@@ -568,7 +600,7 @@ main_check() {
 			missing) missing_count=$((missing_count + 1)) ;;
 			*) render_failure_count=$((render_failure_count + 1)) ;;
 			esac
-		done < <(printf '%s\n' "$REQUIRED_OPERATORS")
+		done < <(required_operators_for_version "$ocp_version")
 	done
 
 	echo ""
@@ -645,6 +677,12 @@ usage() {
 	echo "Note: By default, cached catalog images may be used. Use -f/--fresh to ensure"
 	echo "      you're checking against the latest catalog content."
 }
+
+# Allow tests (check-operator-catalogs-test.sh) to source the functions above
+# without running the check.
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+	return 0
+fi
 
 # Parse arguments
 POSITIONAL_ARGS=()
