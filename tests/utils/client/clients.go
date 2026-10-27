@@ -45,7 +45,7 @@ var (
 type ClientSet struct {
 	corev1client.CoreV1Interface
 	OcpClientInterface ocpclientconfigv1.ConfigV1Interface
-	networkv1client.NetworkingV1Client
+	networkv1client.NetworkingV1Interface
 	rbacv1client.RbacV1Interface
 	K8sClient kubernetes.Interface
 	appsv1client.AppsV1Interface
@@ -91,7 +91,7 @@ func New(kubeconfig string) *ClientSet {
 	clientSet.AppsV1Interface = appsv1client.NewForConfigOrDie(config)
 	clientSet.RbacV1Interface = rbacv1client.NewForConfigOrDie(config)
 	clientSet.DiscoveryInterface = discovery.NewDiscoveryClientForConfigOrDie(config)
-	clientSet.NetworkingV1Client = *networkv1client.NewForConfigOrDie(config)
+	clientSet.NetworkingV1Interface = networkv1client.NewForConfigOrDie(config)
 	clientSet.OperatorsV1alpha1Interface = v1alpha1.NewForConfigOrDie(config)
 	clientSet.ApiextensionsV1Interface = apiextv1client.NewForConfigOrDie(config)
 	clientSet.MachineconfigurationV1Interface = clientmcv1.NewForConfigOrDie(config)

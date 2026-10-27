@@ -31,12 +31,12 @@ func SetTestK8sAPIClient(client kubernetes.Interface) {
 		apiclient = &testclient.ClientSet{}
 	}
 
-	//nolint:godox
-	// TODO: Add more client interfaces as needed
 	apiclient.CoreV1Interface = client.CoreV1()
 	apiclient.AppsV1Interface = client.AppsV1()
 	apiclient.RbacV1Interface = client.RbacV1()
 	apiclient.NodeV1Interface = client.NodeV1()
+	apiclient.PolicyV1Interface = client.PolicyV1()
+	apiclient.NetworkingV1Interface = client.NetworkingV1()
 	apiclient.K8sClient = client
 }
 
