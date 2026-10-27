@@ -54,11 +54,12 @@ ginkgo -v ./tests/accesscontrol/
 ```bash
 make lint                 # Run golangci-lint and shfmt
 make lint-ci              # Run every static check CI runs (shellcheck, yamllint, typos, markdownlint, ginkgo build)
+make govulncheck          # Scan dependencies and the standard library for known vulnerabilities
 make compile-tests        # Compile every Ginkgo suite
 make gofmt                # Check Go code formatting
 make fmt                  # Format Go code
 make vet                  # Run go vet
-make verify               # Run the full pre-push suite (vet, gofmt, lint-ci, unit-tests)
+make verify               # Run the full pre-push suite (vet, gofmt, lint-ci, govulncheck, unit-tests)
 ```
 
 ### Utilities
