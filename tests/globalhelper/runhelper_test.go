@@ -3,6 +3,7 @@ package globalhelper
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -30,6 +31,83 @@ func TestExecuteWithRetry(t *testing.T) {
 	sleeper := writeExecutable(t, "#!/bin/sh\nsleep 1\n")
 	err = executeWithRetry(sleeper, nil, "tc", nil, nil, nil)
 	assert.Error(t, err)
+}
+
+func TestTailWriter(t *testing.T) {
+	tail := &tailWriter{limit: 8}
+	assert.Equal(t, 0, len(tail.buf))
+	assert.Empty(t, tail.failureDetails())
+
+	_, err := tail.Write([]byte("1234"))
+	assert.NoError(t, err)
+
+	_, err = tail.Write([]byte("5678"))
+	assert.NoError(t, err)
+	assert.Equal(t, 8, len(tail.buf))
+	assert.Equal(t, "12345678", string(tail.buf))
+
+	_, err = tail.Write([]byte("90abcdef"))
+	assert.NoError(t, err)
+	assert.Equal(t, 8, len(tail.buf))
+	assert.Equal(t, "90abcdef", string(tail.buf))
+
+	_, err = tail.Write([]byte("0123456789ABCDEF"))
+	assert.NoError(t, err)
+	assert.Equal(t, 8, len(tail.buf))
+	assert.Equal(t, "89ABCDEF", string(tail.buf))
+
+	tail = &tailWriter{limit: 8}
+	_, err = tail.Write([]byte("abcdef"))
+	assert.NoError(t, err)
+
+	_, err = tail.Write([]byte("ghi"))
+	assert.NoError(t, err)
+	assert.Equal(t, 8, len(tail.buf))
+	assert.Equal(t, "bcdefghi", string(tail.buf))
+
+	var builder strings.Builder
+
+	for i := range 100 {
+		fmt.Fprintf(&builder, "line-%03d\n", i)
+	}
+
+	tail = &tailWriter{limit: capturedOutputLimitBytes}
+
+	_, err = tail.Write([]byte(builder.String()))
+	assert.NoError(t, err)
+	assert.LessOrEqual(t, len(tail.buf), capturedOutputLimitBytes)
+
+	details := tail.failureDetails()
+	assert.Contains(t, details, "--- last 50 lines of certsuite output ---")
+	assert.Contains(t, details, "line-050")
+	assert.Contains(t, details, "line-099")
+	assert.NotContains(t, details, "line-049")
+	assert.Contains(t, details, "DEBUG_CERTSUITE=true CERTSUITE_LOG_LEVEL=debug")
+}
+
+func TestFailureOutputCapturedViaBinary(t *testing.T) {
+	oldConfig := conf
+
+	t.Cleanup(func() { conf = oldConfig })
+	root := t.TempDir()
+	binary := writeExecutable(t, "#!/bin/sh\necho stdout-marker\necho stderr-marker >&2\nexit 7\n")
+	conf = &config.Config{}
+	conf.General.CertsuiteRepoPath = root
+	conf.General.CertsuiteEntryPointBinary = filepath.Base(binary)
+	conf.General.ReportDirAbsPath = filepath.Join(root, "reports")
+	conf.General.DebugCertsuite = "false"
+	conf.General.UseBinary = "true"
+	reportDir, configDir := filepath.Join(root, "results"), filepath.Join(root, "config")
+	assert.NoError(t, os.MkdirAll(reportDir, 0o755))
+	assert.NoError(t, os.MkdirAll(configDir, 0o755))
+	assert.NoError(t, os.Rename(binary, filepath.Join(root, filepath.Base(binary))))
+
+	err := launchTestsViaBinary("networking-case", "networking_failure", reportDir, configDir)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to run tc")
+	assert.Contains(t, err.Error(), "stdout-marker")
+	assert.Contains(t, err.Error(), "stderr-marker")
+	assert.Contains(t, err.Error(), "DEBUG_CERTSUITE=true CERTSUITE_LOG_LEVEL=debug")
 }
 
 func TestLaunchTestsViaBinary(t *testing.T) {
@@ -65,6 +143,14 @@ func TestLaunchTestsViaBinary(t *testing.T) {
 	logData, err := os.ReadFile(logPath)
 	assert.NoError(t, err)
 	assert.Contains(t, string(logData), "Running test: networking_debug")
+
+	assert.NoError(t, os.WriteFile(filepath.Join(root, filepath.Base(binary)), []byte("#!/bin/sh\necho debug-tee-marker\n"), 0o700))
+	assert.NoError(t, launchTestsViaBinary("networking-case", "networking_tee", reportDir, configDir))
+
+	teeLogPath := filepath.Join(conf.General.ReportDirAbsPath, "Debug", globalparameters.NetworkSuiteName, "networking_tee", "networking_tee.log")
+	teeLogData, err := os.ReadFile(teeLogPath)
+	assert.NoError(t, err)
+	assert.Contains(t, string(teeLogData), "debug-tee-marker")
 
 	oldDebug, oldWrite, oldSet := debugCertsuite, writeDebugLog, setEnv
 
@@ -150,12 +236,14 @@ func TestLaunchTestsViaImage(t *testing.T) {
 
 	assert.NoError(t, launchTestsViaImage("networking-case", "networking_debug", filepath.Join(root, "results"), filepath.Join(root, "config")))
 
-	failedEngine := writeExecutable(t, "#!/bin/sh\necho failed >&2\nexit 3\n")
+	failedEngine := writeExecutable(t, "#!/bin/sh\necho engine-stderr-marker >&2\nexit 3\n")
 	conf.General.ContainerEngine = failedEngine
 	conf.General.DebugCertsuite = "false"
 	err := launchTestsViaImage("networking-case", "case", filepath.Join(root, "results"), filepath.Join(root, "config"))
 	assert.Error(t, err)
 	assert.True(t, strings.Contains(err.Error(), "failed to run tc"))
+	assert.Contains(t, err.Error(), "engine-stderr-marker")
+	assert.Contains(t, err.Error(), "DEBUG_CERTSUITE=true CERTSUITE_LOG_LEVEL=debug")
 
 	t.Setenv("ENABLE_CERTSUITE_MEMORY_LIMIT", "true")
 	t.Setenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB", "bad")

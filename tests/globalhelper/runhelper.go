@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strconv"
@@ -22,6 +23,10 @@ const (
 	TestTimeout = 30 * time.Minute
 	// MemoryLimitMB is the default soft cap for Go-managed memory when enabled.
 	MemoryLimitMB = 50
+	// capturedOutputLimitBytes bounds the certsuite output retained in memory for failure reporting.
+	capturedOutputLimitBytes = 64 * 1024
+	// failureOutputTailLines is how many trailing output lines a failure error includes.
+	failureOutputTailLines = 50
 )
 
 var (
@@ -31,8 +36,62 @@ var (
 	writeDebugLog  = fmt.Fprintf
 )
 
+// tailWriter keeps only the trailing limit bytes of everything written to it, so
+// certsuite output can be reported on failure without unbounded memory growth.
+type tailWriter struct {
+	limit int
+	buf   []byte
+}
+
+func (w *tailWriter) Write(data []byte) (int, error) {
+	written := len(data)
+
+	if written >= w.limit {
+		w.buf = append(w.buf[:0], data[written-w.limit:]...)
+
+		return written, nil
+	}
+
+	w.buf = append(w.buf, data...)
+
+	if overflow := len(w.buf) - w.limit; overflow > 0 {
+		w.buf = append(w.buf[:0], w.buf[overflow:]...)
+	}
+
+	return written, nil
+}
+
+// newOutputWriter returns a writer for certsuite output that always feeds the bounded
+// tail retained for failure reporting, and the debug log when one is available.
+func newOutputWriter(outfile *os.File) (io.Writer, *tailWriter) {
+	tail := &tailWriter{limit: capturedOutputLimitBytes}
+
+	if outfile == nil {
+		return tail, tail
+	}
+
+	return io.MultiWriter(outfile, tail), tail
+}
+
+// failureDetails renders the last failureOutputTailLines lines of captured output
+// plus a hint on how to get the full logs.
+func (w *tailWriter) failureDetails() string {
+	if len(w.buf) == 0 {
+		return ""
+	}
+
+	lines := strings.Split(strings.TrimRight(string(w.buf), "\n"), "\n")
+	if len(lines) > failureOutputTailLines {
+		lines = lines[len(lines)-failureOutputTailLines:]
+	}
+
+	return fmt.Sprintf("\n--- last %d lines of certsuite output ---\n%s\n"+
+		"(hint: set DEBUG_CERTSUITE=true CERTSUITE_LOG_LEVEL=debug for full logs)",
+		failureOutputTailLines, strings.Join(lines, "\n"))
+}
+
 // executeWithRetry executes a command with timeout and retry logic.
-func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr *os.File, env []string) error {
+func executeWithRetry(cmdPath string, args []string, testCaseName string, stdout, stderr io.Writer, env []string) error {
 	var err error
 
 	for attempt := 1; attempt <= MaxRetries; attempt++ {
@@ -164,10 +223,12 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 		env = append(env, fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB))
 	}
 
-	err = executeWithRetry(cmdPath, testArgs, testCaseName, outfile, outfile, env)
+	output, tail := newOutputWriter(outfile)
+
+	err = executeWithRetry(cmdPath, testArgs, testCaseName, output, output, env)
 	if err != nil {
-		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s %s",
-			testCaseName, err, cmdPath, strings.Join(testArgs, " "))
+		err = fmt.Errorf("failed to run tc: %s, err: %w, cmd: %s %s%s",
+			testCaseName, err, cmdPath, strings.Join(testArgs, " "), tail.failureDetails())
 	}
 
 	CopyClaimFileToTcFolder(testCaseName, tcNameForReport, reportDir)
@@ -215,13 +276,15 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		return fmt.Errorf("failed to set env var CERTSUITE_LOG_LEVEL: %w", err)
 	}
 
+	var outfile *os.File
+
 	if debugEnabled {
 		suiteName, suiteErr := getTestSuiteName(testCaseName)
 		if suiteErr != nil {
 			return fmt.Errorf("failed to create debug log file: %w", suiteErr)
 		}
 
-		outfile := GetConfiguration().CreateLogFile(suiteName, tcNameForReport)
+		outfile = GetConfiguration().CreateLogFile(suiteName, tcNameForReport)
 
 		defer outfile.Close()
 
@@ -229,10 +292,12 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		if err != nil {
 			return fmt.Errorf("failed to write to debug file: %w", err)
 		}
-
-		cmd.Stdout = outfile
-		cmd.Stderr = outfile
 	}
+
+	output, tail := newOutputWriter(outfile)
+
+	cmd.Stdout = output
+	cmd.Stderr = output
 
 	// set optional GOMEMLIMIT inside container
 	if os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") == "true" {
@@ -250,13 +315,11 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 	if err != nil {
 		errStr := fmt.Sprintf("failed to run tc: %s, err: %v, cmd: %s",
 			testCaseName, err, cmd.String())
-		if debugEnabled && cmd.Stdout != nil {
-			if outfile, ok := cmd.Stdout.(*os.File); ok {
-				errStr += ", outFile=" + outfile.Name()
-			}
+		if outfile != nil {
+			errStr += ", outFile=" + outfile.Name()
 		}
 
-		return errors.New(errStr)
+		return errors.New(errStr + tail.failureDetails())
 	}
 
 	CopyClaimFileToTcFolder(testCaseName, tcNameForReport, reportDir)
