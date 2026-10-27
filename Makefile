@@ -7,6 +7,10 @@ GO_PACKAGES=$(shell go list ./... | grep -v vendor)
 # does not. Override on the command line: make unit-tests COVERAGE_FLOOR=95
 COVERAGE_FLOOR ?= 92.0
 
+# govulncheck is invoked through 'go run' with an explicit version so local and
+# CI results match without adding the tool to go.mod.
+GOVULNCHECK_VERSION ?= v1.8.0
+
 # Color definitions for better output formatting
 RED     := \033[31m
 GREEN   := \033[32m
@@ -26,6 +30,7 @@ RESET   := \033[0m
 		lint-ci \
 		compile-tests \
 		verify \
+		govulncheck \
 		deps-update \
 		gofmt \
 		fmt \
@@ -108,8 +113,14 @@ compile-tests: ## Compile every Ginkgo suite (the only local check that builds t
 	if [ $$status -ne 0 ]; then echo "$(RED)❌ Ginkgo suites failed to compile$(RESET)"; exit 1; fi; \
 	echo "$(GREEN)✅ Ginkgo suites compiled successfully$(RESET)"
 
-verify: vet gofmt lint-ci unit-tests ## Run the full pre-push suite (static checks first, then unit tests)
+verify: vet gofmt lint-ci govulncheck unit-tests ## Run the full pre-push suite (static checks and vulnerability scan, then unit tests)
 	@echo "$(BOLD)$(GREEN)🎉 All pre-push checks passed!$(RESET)"
+
+govulncheck: ## Run govulncheck to detect reachable vulnerabilities in dependencies and the standard library
+	@echo "$(BOLD)$(BLUE)🛡  Running govulncheck...$(RESET)"
+	@go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./... \
+		&& echo "$(GREEN)✅ govulncheck found no vulnerabilities$(RESET)" \
+		|| (echo "$(RED)❌ govulncheck reported vulnerabilities$(RESET)" && exit 1)
 
 gofmt: ## Check Go code formatting (use 'gofmt -w' to fix issues)
 	@echo "$(BOLD)$(BLUE)📝 Checking Go code formatting...$(RESET)"
