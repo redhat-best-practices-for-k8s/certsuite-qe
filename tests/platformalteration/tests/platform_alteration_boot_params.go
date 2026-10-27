@@ -187,11 +187,22 @@ var _ = Describe("platform-alteration-boot-params", Label("platformalteration1",
 					foundWorkerCNF = true
 
 					GinkgoWriter.Printf("Found worker-cnf MCP with machineConfig: %s\n", machineConfig.Name)
+					originalKernelArguments := append([]string(nil), machineConfig.Spec.KernelArguments...)
 					machineConfig.Spec.KernelArguments = []string{"skew_tick=1", "nohz=off"}
 
 					By("Update the current machineConfig")
 					_, err := globalhelper.GetAPIClient().MachineConfigs().Update(context.TODO(), &machineConfig, metav1.UpdateOptions{})
 					Expect(err).ToNot(HaveOccurred())
+
+					DeferCleanup(func() {
+						By("Restore the original machineConfig kernel arguments")
+						err := tshelper.RestoreMachineConfigKernelArguments(machineConfig.Name, originalKernelArguments)
+						Expect(err).ToNot(HaveOccurred())
+
+						By("Wait for the worker-cnf machineConfigPool rollout to complete")
+						err = tshelper.WaitForMachineConfigPoolRollout(mcp.Name, tsparams.WaitingTime)
+						Expect(err).ToNot(HaveOccurred())
+					})
 
 					By("Assert machineConfig has been updated")
 					updatedMachineConfig, err := globalhelper.GetAPIClient().MachineConfigs().Get(context.TODO(),

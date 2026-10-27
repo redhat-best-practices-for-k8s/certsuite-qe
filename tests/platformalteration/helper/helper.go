@@ -16,10 +16,12 @@ import (
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/nodes"
 	"github.com/redhat-best-practices-for-k8s/certsuite-qe/tests/utils/statefulset"
 
+	machineconfigv1 "github.com/openshift/api/machineconfiguration/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/util/retry"
 )
 
 const WaitingTime = globalparameters.DefaultTimeout
@@ -30,6 +32,8 @@ var (
 
 	hugePagesRetryInterval = tsparams.RetryInterval * time.Second
 	hugePagesWaitTimeout   = WaitingTime
+
+	machineConfigPoolRolloutRetryInterval = tsparams.RetryInterval * time.Second
 )
 
 // IsRealOCPCluster checks if the cluster is a real OCP cluster (not CRC/SNO development cluster).
@@ -145,6 +149,62 @@ func WaitForSpecificNodeCondition(clients *client.ClientSet, timeout, interval t
 
 			return false, nil
 		})
+}
+
+// RestoreMachineConfigKernelArguments restores the kernel arguments of the given MachineConfig
+// to the provided values, retrying the update on conflict.
+func RestoreMachineConfigKernelArguments(name string, kernelArguments []string) error {
+	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		machineConfig, err := globalhelper.GetAPIClient().MachineConfigs().Get(context.TODO(), name, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		machineConfig.Spec.KernelArguments = append([]string(nil), kernelArguments...)
+
+		_, err = globalhelper.GetAPIClient().MachineConfigs().Update(context.TODO(), machineConfig, metav1.UpdateOptions{})
+
+		return err
+	})
+	if err != nil {
+		return fmt.Errorf("failed to restore kernel arguments of machineconfig %s: %w", name, err)
+	}
+
+	return nil
+}
+
+// WaitForMachineConfigPoolRollout waits until the given MachineConfigPool finished rolling out
+// its current configuration and is not degraded.
+func WaitForMachineConfigPoolRollout(poolName string, timeout time.Duration) error {
+	return wait.PollUntilContextTimeout(context.TODO(), machineConfigPoolRolloutRetryInterval, timeout, true,
+		func(ctx context.Context) (bool, error) {
+			pool, err := globalhelper.GetAPIClient().MachineConfigPools().Get(ctx, poolName, metav1.GetOptions{})
+			if err != nil {
+				return false, err
+			}
+
+			if pool.Generation != pool.Status.ObservedGeneration {
+				return false, nil
+			}
+
+			if !machineConfigPoolConditionTrue(pool, machineconfigv1.MachineConfigPoolUpdated) {
+				return false, nil
+			}
+
+			return !machineConfigPoolConditionTrue(pool, machineconfigv1.MachineConfigPoolDegraded), nil
+		})
+}
+
+// machineConfigPoolConditionTrue reports whether the pool carries the given condition with status True.
+func machineConfigPoolConditionTrue(pool *machineconfigv1.MachineConfigPool,
+	conditionType machineconfigv1.MachineConfigPoolConditionType) bool {
+	for _, condition := range pool.Status.Conditions {
+		if condition.Type == conditionType {
+			return condition.Status == corev1.ConditionTrue
+		}
+	}
+
+	return false
 }
 
 // UpdateAndVerifyHugePagesConfig updates the hugepages file with a given number,

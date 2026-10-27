@@ -13,8 +13,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 	k8stesting "k8s.io/client-go/testing"
 
@@ -25,17 +27,49 @@ import (
 
 var errInjected = errors.New("injected failure")
 
-// fakeMachineConfigs and fakeMachineConfigPools implement only List; any other method panics
-// on the nil embedded interface.
+// fakeMachineConfigs and fakeMachineConfigPools implement only the methods the helpers use; any
+// other method panics on the nil embedded interface.
 type fakeMachineConfigs struct {
 	clientmcv1.MachineConfigInterface
 
 	list    machineconfigv1.MachineConfigList
 	listErr error
+
+	object     *machineconfigv1.MachineConfig
+	getErr     error
+	updateErr  error
+	updateFunc func(*machineconfigv1.MachineConfig) (*machineconfigv1.MachineConfig, error)
 }
 
 func (f *fakeMachineConfigs) List(context.Context, metav1.ListOptions) (*machineconfigv1.MachineConfigList, error) {
 	return &f.list, f.listErr
+}
+
+func (f *fakeMachineConfigs) Get(_ context.Context, name string, _ metav1.GetOptions) (*machineconfigv1.MachineConfig, error) {
+	if f.getErr != nil {
+		return nil, f.getErr
+	}
+
+	if f.object == nil {
+		f.object = &machineconfigv1.MachineConfig{ObjectMeta: metav1.ObjectMeta{Name: name}}
+	}
+
+	return f.object, nil
+}
+
+func (f *fakeMachineConfigs) Update(_ context.Context, machineConfig *machineconfigv1.MachineConfig,
+	_ metav1.UpdateOptions) (*machineconfigv1.MachineConfig, error) {
+	if f.updateFunc != nil {
+		return f.updateFunc(machineConfig)
+	}
+
+	if f.updateErr != nil {
+		return nil, f.updateErr
+	}
+
+	f.object = machineConfig
+
+	return machineConfig, nil
 }
 
 type fakeMachineConfigPools struct {
@@ -43,10 +77,20 @@ type fakeMachineConfigPools struct {
 
 	list    machineconfigv1.MachineConfigPoolList
 	listErr error
+
+	getFunc func() (*machineconfigv1.MachineConfigPool, error)
 }
 
 func (f *fakeMachineConfigPools) List(context.Context, metav1.ListOptions) (*machineconfigv1.MachineConfigPoolList, error) {
 	return &f.list, f.listErr
+}
+
+func (f *fakeMachineConfigPools) Get(context.Context, string, metav1.GetOptions) (*machineconfigv1.MachineConfigPool, error) {
+	if f.getFunc != nil {
+		return f.getFunc()
+	}
+
+	return &machineconfigv1.MachineConfigPool{}, nil
 }
 
 // fakeMachineConfigClient implements only the MachineConfiguration getters the helpers use;
@@ -401,6 +445,161 @@ func TestWaitForSpecificNodeCondition(t *testing.T) {
 
 		err := WaitForSpecificNodeCondition(clients, 50*time.Millisecond, time.Millisecond, "worker-0", true)
 		require.ErrorIs(t, err, errInjected)
+	})
+}
+
+func TestRestoreMachineConfigKernelArguments(t *testing.T) {
+	_, machineConfigClient := withFakeCluster(t)
+	machineConfigClient.mcs.object = &machineconfigv1.MachineConfig{
+		ObjectMeta: metav1.ObjectMeta{Name: "99-worker-cnf-generated"},
+		Spec: machineconfigv1.MachineConfigSpec{
+			KernelArguments: []string{"skew_tick=1", "nohz=off"},
+		},
+	}
+
+	require.NoError(t, RestoreMachineConfigKernelArguments("99-worker-cnf-generated", []string{"default_hugepagesz=1G"}))
+	assert.Equal(t, []string{"default_hugepagesz=1G"}, machineConfigClient.mcs.object.Spec.KernelArguments)
+
+	// The restored MachineConfig must not alias the caller's slice.
+	kernelArguments := []string{"nohz=off"}
+	require.NoError(t, RestoreMachineConfigKernelArguments("99-worker-cnf-generated", kernelArguments))
+	kernelArguments[0] = "mutated"
+
+	assert.Equal(t, []string{"nohz=off"}, machineConfigClient.mcs.object.Spec.KernelArguments)
+}
+
+func TestRestoreMachineConfigKernelArgumentsErrors(t *testing.T) {
+	t.Run("get fails", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		machineConfigClient.mcs.getErr = errInjected
+
+		err := RestoreMachineConfigKernelArguments("mc", nil)
+		require.ErrorIs(t, err, errInjected)
+	})
+
+	t.Run("update fails", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		machineConfigClient.mcs.updateErr = errInjected
+
+		err := RestoreMachineConfigKernelArguments("mc", nil)
+		require.ErrorIs(t, err, errInjected)
+	})
+}
+
+func TestRestoreMachineConfigKernelArgumentsRetriesOnConflict(t *testing.T) {
+	_, machineConfigClient := withFakeCluster(t)
+	machineConfigClient.mcs.object = &machineconfigv1.MachineConfig{
+		ObjectMeta: metav1.ObjectMeta{Name: "99-worker-cnf-generated"},
+		Spec:       machineconfigv1.MachineConfigSpec{KernelArguments: []string{"skew_tick=1"}},
+	}
+
+	attempts := 0
+	machineConfigClient.mcs.updateFunc = func(
+		machineConfig *machineconfigv1.MachineConfig) (*machineconfigv1.MachineConfig, error) {
+		attempts++
+		if attempts == 1 {
+			return nil, apierrors.NewConflict(
+				schema.GroupResource{Group: "machineconfiguration.openshift.io", Resource: "machineconfigs"},
+				machineConfig.Name, errInjected)
+		}
+
+		machineConfigClient.mcs.object = machineConfig
+
+		return machineConfig, nil
+	}
+
+	require.NoError(t, RestoreMachineConfigKernelArguments("99-worker-cnf-generated", []string{"nohz=off"}))
+	assert.Equal(t, 2, attempts)
+	assert.Equal(t, []string{"nohz=off"}, machineConfigClient.mcs.object.Spec.KernelArguments)
+}
+
+func updatedMachineConfigPool(conditions ...machineconfigv1.MachineConfigPoolCondition) *machineconfigv1.MachineConfigPool {
+	return &machineconfigv1.MachineConfigPool{
+		ObjectMeta: metav1.ObjectMeta{Name: "worker-cnf", Generation: 2},
+		Status: machineconfigv1.MachineConfigPoolStatus{
+			ObservedGeneration: 2,
+			Conditions:         conditions,
+		},
+	}
+}
+
+func TestWaitForMachineConfigPoolRollout(t *testing.T) {
+	interval := machineConfigPoolRolloutRetryInterval
+	machineConfigPoolRolloutRetryInterval = 10 * time.Millisecond
+
+	t.Cleanup(func() { machineConfigPoolRolloutRetryInterval = interval })
+
+	t.Run("returns when the pool finished rolling out", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		machineConfigClient.mcps.getFunc = func() (*machineconfigv1.MachineConfigPool, error) {
+			return updatedMachineConfigPool(machineconfigv1.MachineConfigPoolCondition{
+				Type:   machineconfigv1.MachineConfigPoolUpdated,
+				Status: corev1.ConditionTrue,
+			}), nil
+		}
+
+		require.NoError(t, WaitForMachineConfigPoolRollout("worker-cnf", time.Second))
+	})
+
+	t.Run("returns once the pool becomes updated", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		calls := 0
+		machineConfigClient.mcps.getFunc = func() (*machineconfigv1.MachineConfigPool, error) {
+			calls++
+			if calls < 3 {
+				return updatedMachineConfigPool(), nil
+			}
+
+			return updatedMachineConfigPool(machineconfigv1.MachineConfigPoolCondition{
+				Type:   machineconfigv1.MachineConfigPoolUpdated,
+				Status: corev1.ConditionTrue,
+			}), nil
+		}
+
+		require.NoError(t, WaitForMachineConfigPoolRollout("worker-cnf", time.Second))
+		assert.Equal(t, 3, calls)
+	})
+
+	t.Run("fails when the pool is degraded", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		machineConfigClient.mcps.getFunc = func() (*machineconfigv1.MachineConfigPool, error) {
+			return updatedMachineConfigPool(
+				machineconfigv1.MachineConfigPoolCondition{
+					Type:   machineconfigv1.MachineConfigPoolUpdated,
+					Status: corev1.ConditionTrue,
+				},
+				machineconfigv1.MachineConfigPoolCondition{
+					Type:   machineconfigv1.MachineConfigPoolDegraded,
+					Status: corev1.ConditionTrue,
+				},
+			), nil
+		}
+
+		require.Error(t, WaitForMachineConfigPoolRollout("worker-cnf", 100*time.Millisecond))
+	})
+
+	t.Run("fails when the rollout does not finish", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		machineConfigClient.mcps.getFunc = func() (*machineconfigv1.MachineConfigPool, error) {
+			pool := updatedMachineConfigPool(machineconfigv1.MachineConfigPoolCondition{
+				Type:   machineconfigv1.MachineConfigPoolUpdated,
+				Status: corev1.ConditionTrue,
+			})
+			pool.Generation = 3
+
+			return pool, nil
+		}
+
+		require.Error(t, WaitForMachineConfigPoolRollout("worker-cnf", 100*time.Millisecond))
+	})
+
+	t.Run("fails when the pool cannot be read", func(t *testing.T) {
+		_, machineConfigClient := withFakeCluster(t)
+		machineConfigClient.mcps.getFunc = func() (*machineconfigv1.MachineConfigPool, error) {
+			return nil, errInjected
+		}
+
+		require.ErrorIs(t, WaitForMachineConfigPoolRollout("worker-cnf", time.Second), errInjected)
 	})
 }
 
