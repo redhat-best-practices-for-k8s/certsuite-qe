@@ -312,14 +312,13 @@ jobs:
             echo "Version-aware mapping: cockroachdb-certified is checked for 4.14-4.19," >> "$RESULTS_FILE"
             echo "mongodb-enterprise for 4.20+. See tests/utils/operatorversions/ for details." >> "$RESULTS_FILE"
             echo "has_missing=true" >> $GITHUB_OUTPUT
+          elif [ "$RENDER_ERRORS" -gt 0 ]; then
+            echo "No operators confirmed missing, but some checks failed due to render errors." >> "$RESULTS_FILE"
+            echo "The check is inconclusive, so any open issue is left open until a complete check passes." >> "$RESULTS_FILE"
+            echo "has_missing=unknown" >> $GITHUB_OUTPUT
           else
-            if [ "$RENDER_ERRORS" -gt 0 ]; then
-              echo "No operators confirmed missing, but some checks failed due to render errors." >> "$RESULTS_FILE"
-              echo "has_missing=false" >> $GITHUB_OUTPUT
-            else
-              echo "All required operators are available in all checked OCP versions." >> "$RESULTS_FILE"
-              echo "has_missing=false" >> $GITHUB_OUTPUT
-            fi
+            echo "All required operators are available in all checked OCP versions." >> "$RESULTS_FILE"
+            echo "has_missing=false" >> $GITHUB_OUTPUT
           fi
 
           # Output results
