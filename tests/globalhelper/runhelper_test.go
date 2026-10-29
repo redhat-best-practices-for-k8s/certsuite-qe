@@ -254,6 +254,92 @@ func TestLaunchTestsViaImage(t *testing.T) {
 	assert.NoError(t, launchTestsViaImage("networking-case", "memory_configured", filepath.Join(root, "results"), filepath.Join(root, "config")))
 }
 
+func TestCertsuiteMemoryLimitMB(t *testing.T) {
+	tests := []struct {
+		name     string
+		enabled  string
+		override string
+		wantMB   int
+		wantOK   bool
+	}{
+		{name: "unset", wantMB: 0, wantOK: false},
+		{name: "disabled", enabled: "false", wantMB: 0, wantOK: false},
+		{name: "enabled with default", enabled: "true", wantMB: MemoryLimitMB, wantOK: true},
+		{name: "enabled with override", enabled: "true", override: "256", wantMB: 256, wantOK: true},
+		{name: "non-numeric override", enabled: "true", override: "bad", wantMB: MemoryLimitMB, wantOK: true},
+		{name: "zero override", enabled: "true", override: "0", wantMB: MemoryLimitMB, wantOK: true},
+		{name: "negative override", enabled: "true", override: "-5", wantMB: MemoryLimitMB, wantOK: true},
+	}
+
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Setenv("ENABLE_CERTSUITE_MEMORY_LIMIT", testCase.enabled)
+			t.Setenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB", testCase.override)
+
+			memLimitMB, enabled := certsuiteMemoryLimitMB()
+
+			assert.Equal(t, testCase.wantMB, memLimitMB)
+			assert.Equal(t, testCase.wantOK, enabled)
+		})
+	}
+}
+
+func TestCertsuiteMemoryLimitArgs(t *testing.T) {
+	t.Setenv("ENABLE_CERTSUITE_MEMORY_LIMIT", "false")
+	t.Setenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB", "256")
+	assert.Empty(t, certsuiteMemoryLimitArgs())
+
+	t.Setenv("ENABLE_CERTSUITE_MEMORY_LIMIT", "true")
+	assert.Equal(t, []string{"-e", "GOMEMLIMIT=256MiB"}, certsuiteMemoryLimitArgs())
+}
+
+func TestLaunchTestsViaImagePassesMemoryLimit(t *testing.T) {
+	oldConfig := conf
+
+	t.Cleanup(func() { conf = oldConfig })
+
+	argsFile := filepath.Join(t.TempDir(), "args")
+	engine := writeExecutable(t, "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$FAKE_ARGS_FILE\"\n")
+
+	t.Setenv("FAKE_ARGS_FILE", argsFile)
+
+	conf = &config.Config{}
+	conf.General.ContainerEngine = engine
+	conf.General.CertsuiteImage = "example/certsuite"
+	conf.General.CertsuiteImageTag = "latest"
+	conf.General.DockerConfigDir = filepath.Join(t.TempDir(), "docker")
+	conf.General.ReportDirAbsPath = t.TempDir()
+	conf.General.DebugCertsuite = "false"
+
+	runImage := func() string {
+		t.Helper()
+
+		assert.NoError(t, launchTestsViaImage("networking-case", "case", t.TempDir(), t.TempDir()))
+
+		contents, err := os.ReadFile(argsFile)
+		assert.NoError(t, err)
+
+		return string(contents)
+	}
+
+	t.Setenv("ENABLE_CERTSUITE_MEMORY_LIMIT", "true")
+	t.Setenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB", "256")
+
+	enabledArgs := runImage()
+
+	assert.Contains(t, enabledArgs, "-e\nGOMEMLIMIT=256MiB\n")
+
+	gomemlimitIdx := strings.Index(enabledArgs, "GOMEMLIMIT=256MiB")
+	imageIdx := strings.Index(enabledArgs, "example/certsuite:latest")
+
+	assert.GreaterOrEqual(t, gomemlimitIdx, 0)
+	assert.Greater(t, imageIdx, gomemlimitIdx, "-e flags must precede the image reference")
+
+	t.Setenv("ENABLE_CERTSUITE_MEMORY_LIMIT", "false")
+
+	assert.NotContains(t, runImage(), "GOMEMLIMIT")
+}
+
 func writeExecutable(t *testing.T, contents string) string {
 	t.Helper()
 
