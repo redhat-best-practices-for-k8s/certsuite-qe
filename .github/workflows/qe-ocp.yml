@@ -127,7 +127,7 @@ jobs:
 
       - name: Setup up OCP cluster
         if: steps.check-secret.outputs.has-secret == 'true'
-        uses: palmsoftware/quick-ocp@4926cc468c13717996450985954f8ac44eda2ef3 # v1.0.6
+        uses: palmsoftware/quick-ocp@e4354b65e810f292a2b03031f24f5b3707f0cff1 # v1.0.7
         with:
           ocpPullSecret: $OCP_PULL_SECRET
           bundleCache: true
