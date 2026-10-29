@@ -286,8 +286,11 @@ jobs:
           max_attempts: 3
           command: FEATURES=${{matrix.suite}} CERTSUITE_REPO_PATH=${GITHUB_WORKSPACE}/certsuite CERTSUITE_IMAGE=${{env.TEST_CERTSUITE_IMAGE_NAME}} CERTSUITE_IMAGE_TAG=${{env.TEST_CERTSUITE_IMAGE_TAG}} DISABLE_INTRUSIVE_TESTS=true ENABLE_PARALLEL=true ENABLE_FLAKY_RETRY=true JOB_ID=${{github.run_id}} make test-features
 
-      # Only run against the binary during a scheduled run
+      # Only run outside pull requests: scheduled and manual runs exercise the
+      # binary launch path. Pull requests already cover the same specs through
+      # the image pass, so running both would double the matrix runtime.
       - name: Run the tests (against binary)
+        if: github.event_name != 'pull_request'
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         with:
           timeout_minutes: 150
