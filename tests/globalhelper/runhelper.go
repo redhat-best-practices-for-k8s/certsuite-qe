@@ -36,6 +36,36 @@ var (
 	writeDebugLog  = fmt.Fprintf
 )
 
+// certsuiteMemoryLimitMB returns the Go soft memory limit to apply and whether
+// the limit is enabled. Invalid or non-positive overrides fall back to
+// MemoryLimitMB.
+func certsuiteMemoryLimitMB() (int, bool) {
+	if os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") != "true" {
+		return 0, false
+	}
+
+	memLimitMB := MemoryLimitMB
+
+	if v := os.Getenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB"); v != "" {
+		if parsed, err := strconv.Atoi(v); err == nil && parsed > 0 {
+			memLimitMB = parsed
+		}
+	}
+
+	return memLimitMB, true
+}
+
+// certsuiteMemoryLimitArgs returns the container engine flags that set
+// GOMEMLIMIT inside the certsuite container, or nil when the limit is disabled.
+func certsuiteMemoryLimitArgs() []string {
+	memLimitMB, enabled := certsuiteMemoryLimitMB()
+	if !enabled {
+		return nil
+	}
+
+	return []string{"-e", fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB)}
+}
+
 // tailWriter keeps only the trailing limit bytes of everything written to it, so
 // certsuite output can be reported on failure without unbounded memory growth.
 type tailWriter struct {
@@ -212,14 +242,7 @@ func launchTestsViaBinary(testCaseName string, tcNameForReport string, reportDir
 	// before running, construct env with optional GOMEMLIMIT
 	env := os.Environ()
 
-	if os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") == "true" {
-		memLimitMB := MemoryLimitMB
-
-		if v := os.Getenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB"); v != "" {
-			if parsed, perr := strconv.Atoi(v); perr == nil && parsed > 0 {
-				memLimitMB = parsed
-			}
-		}
+	if memLimitMB, enabled := certsuiteMemoryLimitMB(); enabled {
 		env = append(env, fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB))
 	}
 
@@ -252,6 +275,11 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"-v", fmt.Sprintf("%s:%s", GetConfiguration().General.DockerConfigDir+"/config", "/usr/certsuite/dockerconfig/config:Z"),
 		"-v", fmt.Sprintf("%s:%s", configDir, "/usr/certsuite/config:Z"),
 		"-v", fmt.Sprintf("%s:%s", reportDir, "/usr/certsuite/results:Z"),
+	}
+
+	// container engine flags (such as -e GOMEMLIMIT) must precede the image reference
+	certsuiteCmdArgs = append(certsuiteCmdArgs, certsuiteMemoryLimitArgs()...)
+	certsuiteCmdArgs = append(certsuiteCmdArgs,
 		fmt.Sprintf("%s:%s", GetConfiguration().General.CertsuiteImage, GetConfiguration().General.CertsuiteImageTag),
 		"certsuite",
 		"run",
@@ -264,7 +292,7 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 		"--sanitize-claim", "true",
 		"--cleanup-probe", "false",
 		"--label-filter", testCaseName,
-	}
+	)
 
 	// print the command
 	klog.V(5).Infof("Running command: %s %s", containerEngine, strings.Join(certsuiteCmdArgs, " "))
@@ -298,18 +326,6 @@ func launchTestsViaImage(testCaseName string, tcNameForReport string, reportDir 
 
 	cmd.Stdout = output
 	cmd.Stderr = output
-
-	// set optional GOMEMLIMIT inside container
-	if os.Getenv("ENABLE_CERTSUITE_MEMORY_LIMIT") == "true" {
-		memLimitMB := MemoryLimitMB
-
-		if v := os.Getenv("CERTSUITE_MEMORY_SOFT_LIMIT_MB"); v != "" {
-			if parsed, perr := strconv.Atoi(v); perr == nil && parsed > 0 {
-				memLimitMB = parsed
-			}
-		}
-		cmd.Env = append(os.Environ(), fmt.Sprintf("GOMEMLIMIT=%dMiB", memLimitMB))
-	}
 
 	err = cmd.Run()
 	if err != nil {
