@@ -21,3 +21,8 @@ updates:
           - "actions/upload-artifact"
           - "actions/download-artifact"
           - "actions/github-script"
+      # All codeql-action steps in a workflow must run the same version, so bump
+      # them together instead of one step per PR.
+      codeql-action:
+        patterns:
+          - "github/codeql-action/*"
