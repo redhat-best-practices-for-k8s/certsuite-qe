@@ -44,47 +44,36 @@ func DeployTestOperatorGroup(namespace string, clusterWide bool) error {
 }
 
 func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
-	var err error
-
-	var csv *v1alpha1.ClusterServiceVersion
-
-	timeoutChan := time.After(operatorReadyTimeout)
-
-	ticker := time.NewTicker(operatorPollInterval)
-	defer ticker.Stop()
-
-	ready := false
-	for !ready {
-		select {
-		case <-timeoutChan:
-			return fmt.Errorf("operator %s timed out after %v waiting for CSV to become ready in namespace %s",
-				csvPrefix, operatorReadyTimeout, namespace)
-		case <-ticker.C:
-			// Fetch the CSV from the cluster
-			csv, err = GetCsvByPrefix(csvPrefix, namespace)
+	err := globalhelper.WaitForState(context.TODO(),
+		fmt.Sprintf("operator %s CSV to succeed in namespace %s", csvPrefix, namespace),
+		operatorPollInterval, operatorReadyTimeout,
+		func(ctx context.Context) (bool, error) {
+			csv, err := getCsvByPrefix(ctx, csvPrefix, namespace)
 			if err != nil {
 				klog.V(5).Infof("Failed to get CSV with prefix %s: %v", csvPrefix, err)
 
-				continue
+				return false, nil
 			}
 
-			if csv != nil && csv.Status.Phase == v1alpha1.CSVPhaseSucceeded {
-				klog.V(5).Infof("CSV %s is in Succeeded phase", csv.Name)
+			if csv.Status.Phase != v1alpha1.CSVPhaseSucceeded {
+				displayCSVStatus(csv, 5)
 
-				if checkInstalledCSV(namespace) {
-					klog.Infof("Operator %s is ready and subscription verification passed in namespace %s", csvPrefix, namespace)
-				} else {
-					klog.Infof("Operator %s is ready but subscription verification did not complete in namespace %s",
-						csvPrefix, namespace)
-				}
-
-				ready = true
-
-				break
+				return false, nil
 			}
 
-			displayCSVStatus(csv, 5)
-		}
+			klog.V(5).Infof("CSV %s is in Succeeded phase", csv.Name)
+
+			return true, nil
+		})
+	if err != nil {
+		return err
+	}
+
+	if checkInstalledCSV(namespace) {
+		klog.Infof("Operator %s is ready and subscription verification passed in namespace %s", csvPrefix, namespace)
+	} else {
+		klog.Infof("Operator %s is ready but subscription verification did not complete in namespace %s",
+			csvPrefix, namespace)
 	}
 
 	// Display deployment status in the namespace
@@ -96,32 +85,22 @@ func WaitUntilOperatorIsReady(csvPrefix, namespace string) error {
 
 // checkInstalledCSV reports whether the subscription's installedCSV matches currentCSV before the timeout.
 func checkInstalledCSV(namespace string) bool {
-	// Additional check: verify that the subscription's installedcsv matches currentCsv
-	// This ensures the operator was installed successfully
-	timeoutChan := time.After(subscriptionCheckTimeout)
-
-	ticker := time.NewTicker(operatorPollInterval)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-timeoutChan:
-			klog.Warningf("Subscription verification timed out after %v in namespace %s", subscriptionCheckTimeout, namespace)
-
-			return false
-		case <-ticker.C:
+	err := globalhelper.WaitForState(context.TODO(),
+		fmt.Sprintf("subscription to settle on its installed CSV in namespace %s", namespace),
+		operatorPollInterval, subscriptionCheckTimeout,
+		func(ctx context.Context) (bool, error) {
 			subscriptions, err := globalhelper.GetAPIClient().OperatorsV1alpha1Interface.Subscriptions(namespace).List(
-				context.TODO(), metav1.ListOptions{})
+				ctx, metav1.ListOptions{})
 			if err != nil {
 				klog.V(5).Infof("Failed to list subscriptions in namespace %s: %v", namespace, err)
 
-				continue
+				return false, nil
 			}
 
 			if len(subscriptions.Items) == 0 {
 				klog.V(5).Infof("No subscriptions found in namespace %s", namespace)
 
-				continue
+				return false, nil
 			}
 
 			// Assume there's a single subscription in the namespace
@@ -131,22 +110,28 @@ func checkInstalledCSV(namespace string) bool {
 				klog.V(5).Infof("Subscription %s: InstalledCSV='%s', CurrentCSV='%s' - not ready yet",
 					subscription.Name, subscription.Status.InstalledCSV, subscription.Status.CurrentCSV)
 
-				continue
+				return false, nil
 			}
 
 			if subscription.Status.InstalledCSV != subscription.Status.CurrentCSV {
 				klog.V(5).Infof("Subscription %s: InstalledCSV='%s' does not match CurrentCSV='%s'",
 					subscription.Name, subscription.Status.InstalledCSV, subscription.Status.CurrentCSV)
 
-				continue
+				return false, nil
 			}
 
 			klog.V(5).Infof("Subscription %s: InstalledCSV matches CurrentCSV (%s) - operator installed successfully",
 				subscription.Name, subscription.Status.InstalledCSV)
 
-			return true
-		}
+			return true, nil
+		})
+	if err != nil {
+		klog.Warningf("Subscription verification failed in namespace %s: %v", namespace, err)
+
+		return false
 	}
+
+	return true
 }
 
 func displayCSVStatus(csv *v1alpha1.ClusterServiceVersion, logLevel int) {
@@ -262,8 +247,12 @@ func AddLabelToInstalledCSV(prefixCsvName string, namespace string, label map[st
 
 // GetCsvByPrefix returns csv object based on given prefix.
 func GetCsvByPrefix(prefixCsvName string, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
+	return getCsvByPrefix(context.TODO(), prefixCsvName, namespace)
+}
+
+func getCsvByPrefix(ctx context.Context, prefixCsvName, namespace string) (*v1alpha1.ClusterServiceVersion, error) {
 	csvs, err := globalhelper.GetAPIClient().ClusterServiceVersions(namespace).List(
-		context.TODO(), metav1.ListOptions{},
+		ctx, metav1.ListOptions{},
 	)
 	if err != nil {
 		return nil, err

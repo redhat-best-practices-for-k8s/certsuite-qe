@@ -52,78 +52,65 @@ func createAndWaitUntilDeploymentIsReady(client *egiClients.Settings, deployment
 		return fmt.Errorf("failed to create deployment %q (ns %s): %w", deployment.Name, deployment.Namespace, err)
 	}
 
-	// Check if all pods in the deployment are schedulable
-	deploymentUnschedulable := false
-
-	timeoutChan := time.After(timeout)
-
-	ticker := time.NewTicker(deploymentPollInterval)
-	defer ticker.Stop()
-
-	running := false
-	for !running && !deploymentUnschedulable {
-		select {
-		case <-timeoutChan:
-			return fmt.Errorf("deployment %s timed out after %v waiting to become running", deployment.Name, timeout)
-		case <-ticker.C:
+	// Wait until every replica is running, failing fast when the deployment cannot be scheduled.
+	err = WaitForState(context.TODO(),
+		fmt.Sprintf("deployment %s to run", deployment.Name),
+		deploymentPollInterval, timeout,
+		func(ctx context.Context) (bool, error) {
 			testDeployment, err := client.Deployments(deployment.Namespace).Get(
-				context.TODO(), deployment.Name, metav1.GetOptions{})
-
+				ctx, deployment.Name, metav1.GetOptions{})
 			if err != nil {
-				klog.V(5).Infof(
-					"deployment %s is not running, retry in 1 second", deployment.Name)
+				klog.V(5).Infof("deployment %s is not running, retry in %v: %v",
+					deployment.Name, deploymentPollInterval, err)
 
-				continue
+				return false, nil
 			}
 
-			// If it is running, we can break the loop
 			if testDeployment.Status.ReadyReplicas == *testDeployment.Spec.Replicas {
 				klog.V(5).Infof("deployment %s is running", testDeployment.Name)
 				klog.V(5).Infof("deployment %s status: %v", testDeployment.Name, testDeployment.Status)
-				running = true
 
-				break
+				return true, nil
 			}
 
-			// print the conditions
 			klog.V(5).Infof("Deployment %s conditions: %v", testDeployment.Name, testDeployment.Status.Conditions)
 
-			for _, condition := range testDeployment.Status.Conditions {
-				if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
-					deploymentUnschedulable = true
-
-					break
-				}
+			if hasReplicaFailure(testDeployment) {
+				return false, fmt.Errorf("deployment %s is not schedulable", testDeployment.Name)
 			}
-		}
+
+			return false, nil
+		})
+	if err != nil {
+		return err
 	}
 
-	if deploymentUnschedulable {
-		return fmt.Errorf("deployment %s is not schedulable", runningDeployment.Name)
-	}
-
-	timeoutChan = time.After(timeout)
-
-	ticker = time.NewTicker(deploymentPollInterval)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-timeoutChan:
-			return fmt.Errorf("deployment %s timed out after %v waiting to become ready", runningDeployment.Name, timeout)
-		case <-ticker.C:
+	// Wait until the deployment reports itself ready.
+	return WaitForState(context.TODO(),
+		fmt.Sprintf("deployment %s to become ready", runningDeployment.Name),
+		deploymentPollInterval, timeout,
+		func(context.Context) (bool, error) {
 			status, err := deploymentReadyChecker(client, runningDeployment.Namespace, runningDeployment.Name)
 			if err != nil {
-				klog.V(5).Infof("deployment %s is not ready, retrying in 10 seconds", runningDeployment.Name)
+				klog.V(5).Infof("deployment %s is not ready, retrying in %v: %v",
+					runningDeployment.Name, deploymentPollInterval, err)
 
-				continue
+				return false, nil
 			}
 
-			if status {
-				return nil
-			}
+			return status, nil
+		})
+}
+
+// hasReplicaFailure reports whether the deployment hit a condition that no amount of polling will fix.
+func hasReplicaFailure(deployment *appsv1.Deployment) bool {
+	for _, condition := range deployment.Status.Conditions {
+		if condition.Type == appsv1.DeploymentReplicaFailure && condition.Status == corev1.ConditionTrue {
+			return true
 		}
 	}
+
+	return false
 }
 
 // GetRunningDeployment returns a running deployment.
