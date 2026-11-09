@@ -3,6 +3,7 @@ package globalhelper
 import (
 	"errors"
 	"testing"
+	"time"
 
 	egiClients "github.com/openshift-kni/eco-goinfra/pkg/clients"
 	"github.com/stretchr/testify/assert"
@@ -136,6 +137,96 @@ func TestCreateAndWaitUntilDeploymentIsReady(t *testing.T) {
 		err := createAndWaitUntilDeploymentIsReady(fakeClient,
 			testDeployment, 5)
 		assert.Equal(t, testCase.expectedError, err)
+	}
+}
+
+func TestCreateAndWaitUntilDeploymentIsReadyFailsFast(t *testing.T) {
+	generatePendingDeployment := func(conditions []appsv1.DeploymentCondition) *appsv1.Deployment {
+		replicas := int32(1)
+
+		return &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "pending-deployment",
+				Namespace: "test-namespace",
+			},
+			Spec: appsv1.DeploymentSpec{Replicas: &replicas},
+			Status: appsv1.DeploymentStatus{
+				Conditions: conditions,
+			},
+		}
+	}
+
+	oldInterval := deploymentPollInterval
+
+	deploymentPollInterval = time.Millisecond
+
+	t.Cleanup(func() { deploymentPollInterval = oldInterval })
+
+	testCases := []struct {
+		name              string
+		conditions        []appsv1.DeploymentCondition
+		expectedErrorText string
+	}{
+		{
+			name: "replica failure is fatal",
+			conditions: []appsv1.DeploymentCondition{
+				{Type: appsv1.DeploymentProgressing, Status: v1.ConditionTrue},
+				{Type: appsv1.DeploymentReplicaFailure, Status: v1.ConditionTrue},
+			},
+			expectedErrorText: "not schedulable",
+		},
+		{
+			name:              "a deployment that never runs times out",
+			expectedErrorText: "timed out after",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			fakeClient := egiClients.GetTestClients(egiClients.TestClientParams{})
+			deployment := generatePendingDeployment(testCase.conditions)
+
+			err := createAndWaitUntilDeploymentIsReady(fakeClient, deployment, 20*time.Millisecond)
+			assert.ErrorContains(t, err, testCase.expectedErrorText)
+		})
+	}
+}
+
+func TestHasReplicaFailure(t *testing.T) {
+	testCases := []struct {
+		name       string
+		conditions []appsv1.DeploymentCondition
+		expected   bool
+	}{
+		{
+			name:     "no conditions",
+			expected: false,
+		},
+		{
+			name:       "replica failure reported as true",
+			conditions: []appsv1.DeploymentCondition{{Type: appsv1.DeploymentReplicaFailure, Status: v1.ConditionTrue}},
+			expected:   true,
+		},
+		{
+			name:       "replica failure reported as false",
+			conditions: []appsv1.DeploymentCondition{{Type: appsv1.DeploymentReplicaFailure, Status: v1.ConditionFalse}},
+			expected:   false,
+		},
+		{
+			name:       "unrelated condition reported as true",
+			conditions: []appsv1.DeploymentCondition{{Type: appsv1.DeploymentProgressing, Status: v1.ConditionTrue}},
+			expected:   false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			deployment := &appsv1.Deployment{
+				Status: appsv1.DeploymentStatus{Conditions: testCase.conditions},
+			}
+
+			assert.Equal(t, testCase.expected, hasReplicaFailure(deployment))
+		})
 	}
 }
 

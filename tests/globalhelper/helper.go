@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"maps"
 	"math/rand"
 	"os"
 	"os/exec"
 	"path"
+	"slices"
 	"strings"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -34,6 +36,14 @@ var encodeCertsuiteConfig = func(file *os.File, config globalparameters.Certsuit
 	return yaml.NewEncoder(file).Encode(config)
 }
 
+// testCaseStatusCheckers is the single mapping from a claim status to the predicate that reports it.
+// Adding a status means adding one entry here; every validator below reads this table.
+var testCaseStatusCheckers = map[string]func(string, claim.Root) (bool, error){
+	globalparameters.TestCasePassed:  IsTestCasePassedInClaimReport,
+	globalparameters.TestCaseFailed:  IsTestCaseFailedInClaimReport,
+	globalparameters.TestCaseSkipped: IsTestCaseSkippedInClaimReport,
+}
+
 // ValidateIfReportsAreValid test if report is valid for given test case.
 func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir string) error {
 	claimReport, err := OpenClaimReport(reportDir)
@@ -41,24 +51,15 @@ func ValidateIfReportsAreValid(tcName string, tcExpectedStatus string, reportDir
 		return fmt.Errorf("failed to open certsuite claim report, err: %w", err)
 	}
 
-	err = IsExpectedStatusParamValid(tcExpectedStatus)
-	if err != nil {
-		return fmt.Errorf("expected status %q is not valid, err: %w", tcExpectedStatus, err)
-	}
-
-	isTestCaseInValidStatusInClaimReport := IsTestCasePassedInClaimReport
-
-	if tcExpectedStatus == globalparameters.TestCaseFailed {
-		isTestCaseInValidStatusInClaimReport = IsTestCaseFailedInClaimReport
-	}
-
-	if tcExpectedStatus == globalparameters.TestCaseSkipped {
-		isTestCaseInValidStatusInClaimReport = IsTestCaseSkippedInClaimReport
+	checkFunc, ok := testCaseStatusCheckers[tcExpectedStatus]
+	if !ok {
+		return fmt.Errorf("expected status %q is not one of %v", tcExpectedStatus,
+			slices.Sorted(maps.Keys(testCaseStatusCheckers)))
 	}
 
 	klog.V(5).Info("Verify test case status in claim report file")
 
-	_, err = isTestCaseInValidStatusInClaimReport(tcName, *claimReport)
+	_, err = checkFunc(tcName, *claimReport)
 	if err != nil {
 		return fmt.Errorf("failed to get the state of test case %q from the claim report file, err: %w", tcName, err)
 	}
@@ -79,20 +80,9 @@ func ValidateIfReportsAreValidWithAcceptedStatuses(tcName string, acceptedStatus
 
 	// Try each accepted status
 	for _, status := range acceptedStatuses {
-		err = IsExpectedStatusParamValid(status)
-		if err != nil {
+		checkFunc, ok := testCaseStatusCheckers[status]
+		if !ok {
 			continue
-		}
-
-		var checkFunc func(string, claim.Root) (bool, error)
-
-		switch status {
-		case globalparameters.TestCasePassed:
-			checkFunc = IsTestCasePassedInClaimReport
-		case globalparameters.TestCaseFailed:
-			checkFunc = IsTestCaseFailedInClaimReport
-		case globalparameters.TestCaseSkipped:
-			checkFunc = IsTestCaseSkippedInClaimReport
 		}
 
 		testPassed, checkErr := checkFunc(tcName, *claimReport)
@@ -164,9 +154,7 @@ func DefineCertsuiteConfig(namespaces []string, targetPodLabels []string, target
 
 // IsExpectedStatusParamValid validates if requested test status is valid.
 func IsExpectedStatusParamValid(status string) error {
-	return validateIfParamInAllowedListOfParams(
-		status,
-		[]string{globalparameters.TestCaseFailed, globalparameters.TestCasePassed, globalparameters.TestCaseSkipped})
+	return validateIfParamInAllowedListOfParams(status, slices.Sorted(maps.Keys(testCaseStatusCheckers)))
 }
 
 // AppendContainersToDeployment appends containers to a deployment.
