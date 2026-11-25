@@ -17,7 +17,7 @@ require (
 	github.com/operator-framework/api v0.47.1
 	github.com/operator-framework/operator-lifecycle-manager v0.0.0-00010101000000-000000000000
 	github.com/redhat-best-practices-for-k8s/certsuite-claim v1.0.69
-	github.com/redhat-best-practices-for-k8s/oct v0.0.69
+	github.com/redhat-best-practices-for-k8s/oct v0.0.70
 	github.com/stretchr/testify v1.12.1
 	github.com/test-network-function/cr-scale-operator v0.0.0-20230810174010-26b23b7b446f
 	gopkg.in/yaml.v3 v3.0.1
@@ -132,7 +132,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/oauth2 v0.37.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
@@ -146,11 +146,11 @@ require (
 	gopkg.in/k8snetworkplumbingwg/multus-cni.v4 v4.1.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gorm.io/gorm v1.25.12 // indirect
-	helm.sh/helm/v4 v4.3.1 // indirect
-	k8s.io/cli-runtime v0.37.1 // indirect
+	helm.sh/helm/v4 v4.3.2 // indirect
+	k8s.io/cli-runtime v0.37.2 // indirect
 	k8s.io/component-base v0.37.2 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
-	k8s.io/kubectl v0.37.1 // indirect
+	k8s.io/kubectl v0.37.2 // indirect
 	k8s.io/kubelet v0.37.1 // indirect
 	k8s.io/streaming v0.37.2 // indirect
 	sigs.k8s.io/container-object-storage-interface-api v0.1.0 // indirect
