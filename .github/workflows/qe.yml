@@ -228,7 +228,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive timeout 180 apt-get install -y python3-pip python3-venv
 
       - name: Setup up k8s cluster
-        uses: palmsoftware/quick-k8s@6c0589ecb4842491d0d9f83c71b47c45d534e347 # v1.0.12
+        uses: palmsoftware/quick-k8s@bc45c9b754b7d87cc536e9c9d6c011a879bccbe8 # v1.0.13
         with:
           disableDefaultCni: true
           numControlPlaneNodes: 1
